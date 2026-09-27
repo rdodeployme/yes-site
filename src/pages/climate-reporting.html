@@ -1,0 +1,249 @@
+<style>
+/* mandatory climate reporting (scoped) */
+.page-climate-reporting .hero-sub h1{max-width:18ch}
+.page-climate-reporting .hero-sub .lead{max-width:62ch}
+.page-climate-reporting .keydates{display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin-top:clamp(32px,4vw,48px);border-top:1px solid #2A2C2A}
+@media(min-width:800px){.page-climate-reporting .keydates{grid-template-columns:repeat(3,minmax(0,1fr));gap:0 32px}}
+.page-climate-reporting .kd{padding:18px 0;border-bottom:1px solid #2A2C2A}
+@media(min-width:800px){.page-climate-reporting .kd{border-bottom:0}}
+.page-climate-reporting .kd .g{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate)}
+.page-climate-reporting .kd .w{font-family:var(--font-display);font-weight:700;font-size:clamp(22px,2.2vw,28px);letter-spacing:-.02em;color:var(--paper);margin:8px 0 6px;line-height:1.1}
+.page-climate-reporting .kd .w.now{color:var(--green-3)}
+.page-climate-reporting .kd .s{font-size:14.5px;color:var(--mist);margin:0;max-width:34ch}
+/* timeline */
+.page-climate-reporting .tl{margin-top:8px}
+.page-climate-reporting .tl-axis{display:grid;grid-template-columns:150px minmax(0,1fr);gap:0 18px;align-items:end}
+.page-climate-reporting .tl-years{position:relative;height:22px}
+.page-climate-reporting .tl-years span{position:absolute;bottom:0;transform:translateX(-50%);font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--slate)}
+.page-climate-reporting .tl-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:0 18px;align-items:center;padding:16px 0;border-top:1px solid var(--mist)}
+.page-climate-reporting .tl-row:last-of-type{border-bottom:1px solid var(--mist)}
+.page-climate-reporting .tl-name b{display:block;font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:-.01em}
+.page-climate-reporting .tl-name span{display:block;font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;color:var(--slate);margin-top:3px;line-height:1.5}
+.page-climate-reporting .tl-track{position:relative;height:34px;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(20% - 1px),var(--mist-2) calc(20% - 1px),var(--mist-2) 20%)}
+.page-climate-reporting .tl-bar{position:absolute;top:6px;height:22px;border-radius:3px;display:flex;align-items:center;justify-content:flex-end;padding:0 10px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;white-space:nowrap;overflow:hidden}
+.page-climate-reporting .tl-bar.r{background:var(--mist);color:var(--charcoal)}
+.page-climate-reporting .tl-bar.s{background:var(--green);color:var(--paper)}
+.page-climate-reporting .tl-today{position:absolute;top:-6px;bottom:-6px;width:0;border-left:2px solid var(--ink);pointer-events:none}
+.page-climate-reporting .tl-today i{position:absolute;top:-22px;left:-1px;transform:translateX(-50%);font-style:normal;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:2px 6px;border-radius:3px;white-space:nowrap}
+.page-climate-reporting .tl-legend{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:16px;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--graphite)}
+.page-climate-reporting .tl-legend i{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-2px;margin-right:8px}
+@media(max-width:700px){.page-climate-reporting .tl-axis,.page-climate-reporting .tl-row{grid-template-columns:1fr}.page-climate-reporting .tl-axis>div:first-child{display:none}.page-climate-reporting .tl-name{margin-bottom:10px}}
+.page-climate-reporting .thr td.g{font-family:var(--font-display);font-weight:700;font-size:18px;white-space:nowrap}
+.page-climate-reporting .thr td.m{font-family:var(--font-mono);font-size:13px;white-space:nowrap}
+/* checker */
+.page-climate-reporting .chk{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(24px,3vw,40px);align-items:start}
+@media(min-width:960px){.page-climate-reporting .chk{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}}
+.page-climate-reporting .chk-in{background:var(--white);border:1px solid var(--mist);border-radius:var(--r-lg);padding:clamp(20px,2.4vw,28px)}
+.page-climate-reporting .chk-in .form label{color:var(--graphite)}
+.page-climate-reporting .chk-out{border-radius:var(--r-lg);border:1px solid #262826;padding:clamp(22px,2.6vw,32px);min-height:100%}
+.page-climate-reporting .chk-out .grp{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--green-3)}
+.page-climate-reporting .chk-out .big{font-family:var(--font-display);font-weight:700;font-size:clamp(34px,3.6vw,52px);letter-spacing:-.035em;line-height:1;margin:10px 0 8px;color:var(--paper)}
+.page-climate-reporting .chk-out .st{font-size:17px;color:var(--mist);margin:0 0 18px;max-width:52ch}
+.page-climate-reporting .chk-out dl{display:grid;grid-template-columns:minmax(0,1fr) auto;margin:0;font-family:var(--font-mono);font-size:13px}
+.page-climate-reporting .chk-out dt{color:var(--slate);padding:10px 14px 10px 0;border-top:1px solid #262826;text-transform:uppercase;font-size:11px;letter-spacing:.1em}
+.page-climate-reporting .chk-out dd{margin:0;padding:10px 0;border-top:1px solid #262826;color:var(--paper);text-align:right}
+.page-climate-reporting .chk-out dd.now{color:var(--green-3)}
+.page-climate-reporting .chk-out .todo{margin:18px 0 0;padding:14px 16px;background:var(--ink-3);border-left:3px solid var(--green-3);border-radius:4px;font-size:15px;color:var(--paper);line-height:1.55}
+.page-climate-reporting .chk-out .fine{font-size:12.5px;color:var(--slate);margin:14px 0 0;line-height:1.55}
+/* auditor questions */
+.page-climate-reporting .qa{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.page-climate-reporting .qa-row{display:grid;grid-template-columns:minmax(0,1fr);gap:8px 32px;padding:20px 0;border-top:1px solid var(--mist)}
+.page-climate-reporting .qa-row:last-child{border-bottom:1px solid var(--mist)}
+@media(min-width:860px){.page-climate-reporting .qa-row{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}}
+.page-climate-reporting .qa-row .q{font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:-.01em;line-height:1.3}
+.page-climate-reporting .qa-row .a{color:var(--graphite);font-size:15.5px;line-height:1.6;margin:0}
+.page-climate-reporting .qa-row .a b{color:var(--green);font-weight:600}
+/* method ladder */
+.page-climate-reporting .ladder{display:grid;gap:12px}
+.page-climate-reporting .rung{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:18px;align-items:center;padding:20px 22px;border:1px solid #262826;border-radius:10px;background:var(--ink-2)}
+.page-climate-reporting .rung .n{font-family:var(--font-display);font-weight:800;font-size:30px;letter-spacing:-.03em;color:var(--green-3);line-height:1}
+.page-climate-reporting .rung h4{font-size:19px;margin:0 0 4px;color:var(--paper)}
+.page-climate-reporting .rung p{margin:0;color:var(--mist);font-size:15px;max-width:62ch}
+.page-climate-reporting .rung .who{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:6px 10px;border-radius:999px;white-space:nowrap}
+.page-climate-reporting .rung .who.yes{background:#1B3A26;color:var(--green-4)}
+.page-climate-reporting .rung .who.no{border:1px solid #3A3D3A;color:var(--slate)}
+.page-climate-reporting .rung.low{opacity:.72}
+@media(max-width:640px){.page-climate-reporting .rung{grid-template-columns:44px minmax(0,1fr)}.page-climate-reporting .rung .who{grid-column:2;justify-self:start}}
+/* what's changing */
+.page-climate-reporting .chg{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(20px,3vw,40px)}
+@media(min-width:900px){.page-climate-reporting .chg{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.page-climate-reporting .chg .card h4{margin-bottom:8px}
+.page-climate-reporting .chg .card p{font-size:15.5px;color:var(--graphite)}
+.page-climate-reporting .asat{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin:0 0 10px}
+.page-climate-reporting .srcs{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.02em;color:var(--slate);line-height:1.8;margin-top:28px}
+.page-climate-reporting .srcs a{color:var(--green);text-decoration:underline;text-underline-offset:2px}
+</style>
+
+<!-- HERO -->
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">Mandatory climate reporting</p>
+    <h1>Your waste number now has to hold up to an auditor.</h1>
+    <p class="lead">Australia's mandatory climate reporting is live. From their second reporting year, companies report their Scope 3 emissions, and an auditor reviews them. Waste is Scope 3, Category 5. YES gives you that number from the processor that handled your material, with the evidence behind every line.</p>
+    <div class="btn-row"><a class="btn btn-primary" href="#checker">Check your reporting year {{ARROW}}</a><a class="btn btn-ghost" href="/contact/">Book a walkthrough</a></div>
+    <div class="keydates">
+      <div class="kd"><div class="g">Group 1 · large companies</div><div class="w now">Scope 3 year running now</div><p class="s">June year-ends: 1 July 2026 to 30 June 2027 is the first Scope 3 year, reviewed by the auditor.</p></div>
+      <div class="kd"><div class="g">Group 2 · mid-large</div><div class="w">Reporting from 1 July 2026</div><p class="s">Scope 3 from the second year: 1 July 2027 for June year-ends. The data has to be in place before then.</p></div>
+      <div class="kd"><div class="g">Group 3 · mid-sized</div><div class="w">Reporting from 1 July 2027</div><p class="s">Scope 3 from the year after, unless the company has no material climate risks and says so instead.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 01 · WHO AND WHEN -->
+<section id="who-when">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">01</span><p class="eyebrow">Who has to report, and when</p><h2>Three groups. Scope 3 from each group's second year.</h2></div><p class="lead">A company is in a group if it meets two of the three size tests. Companies that report under the National Greenhouse and Energy Reporting scheme are captured too.</p></div>
+    <div class="reveal">
+      <div class="tl" id="tl" aria-label="Reporting timeline for companies with a June year-end">
+        <div class="tl-axis"><div></div><div class="tl-years" id="tl-years"></div></div>
+        <div class="tl-row"><div class="tl-name"><b>Group 1</b><span>$500m revenue · $1b assets · 500+ staff</span></div><div class="tl-track" data-first="2025-07-01" data-s3="2026-07-01"></div></div>
+        <div class="tl-row"><div class="tl-name"><b>Group 2</b><span>$200m revenue · $500m assets · 250+ staff</span></div><div class="tl-track" data-first="2026-07-01" data-s3="2027-07-01"></div></div>
+        <div class="tl-row"><div class="tl-name"><b>Group 3</b><span>$50m revenue · $25m assets · 100+ staff</span></div><div class="tl-track" data-first="2027-07-01" data-s3="2028-07-01" data-g3="1"></div></div>
+      </div>
+      <div class="tl-legend"><span><i style="background:var(--mist)"></i>Climate reporting, first year</span><span><i style="background:var(--green)"></i>Scope 3 reported, auditor review (limited assurance)</span><span>Shown for a June year-end · December year-ends start six months later</span></div>
+    </div>
+    <div class="table-wrap reveal mt-4">
+      <table class="table thr" aria-label="Reporting groups, thresholds and dates">
+        <thead><tr><th>Group</th><th>Two of these three</th><th>Financial years starting on or after</th><th>Scope 3 from</th></tr></thead>
+        <tbody>
+          <tr><td class="g">Group 1</td><td>Revenue $500m+ · gross assets $1b+ · 500+ employees</td><td class="m">1 Jan 2025</td><td>The second reporting year</td></tr>
+          <tr><td class="g">Group 2</td><td>Revenue $200m+ · gross assets $500m+ · 250+ employees</td><td class="m">1 Jul 2026</td><td>The second reporting year</td></tr>
+          <tr><td class="g">Group 3</td><td>Revenue $50m+ · gross assets $25m+ · 100+ employees</td><td class="m">1 Jul 2027</td><td>The second reporting year, if climate risks are material</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note reveal">Waste is one of the 15 Scope 3 categories. The standard (AASB S2) requires a company to consider all 15 and disclose the ones it includes, so waste is in the number wherever it is material: property, retail, construction, manufacturing, logistics and hospitality usually; a bank or a software company usually not.</p>
+  </div>
+</section>
+
+<!-- 02 · CHECKER -->
+<section class="paper-2" id="checker">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">Check your reporting year</p><h2>Which group are you in, and when does waste count?</h2></div><p class="lead">Four answers, no email required. It runs in your browser and nothing is sent anywhere.</p></div>
+    <div class="chk reveal">
+      <div class="chk-in">
+        <form class="form" id="chk-form" novalidate>
+          <label>Consolidated revenue<select id="c-rev"><option value="0">Under $50m</option><option value="50">$50m to $199m</option><option value="200" selected>$200m to $499m</option><option value="500">$500m or more</option></select></label>
+          <label>Consolidated gross assets<select id="c-ast"><option value="0">Under $25m</option><option value="25">$25m to $499m</option><option value="500" selected>$500m to $999m</option><option value="1000">$1b or more</option></select></label>
+          <label>Employees, including controlled entities<select id="c-emp"><option value="0">Under 100</option><option value="100">100 to 249</option><option value="250" selected>250 to 499</option><option value="500">500 or more</option></select></label>
+          <label>Financial year ends<select id="c-ye"><option value="5" selected>30 June</option><option value="11">31 December</option><option value="2">31 March</option><option value="8">30 September</option><option value="0">31 January</option><option value="1">28 February</option><option value="3">30 April</option><option value="4">31 May</option><option value="6">31 July</option><option value="7">31 August</option><option value="9">31 October</option><option value="10">30 November</option></select></label>
+        </form>
+      </div>
+      <div class="chk-out dark" id="chk-out" aria-live="polite">
+        <div class="grp" id="o-grp">Your position</div>
+        <div class="big" id="o-big">—</div>
+        <p class="st" id="o-st">&nbsp;</p>
+        <dl>
+          <dt>First reporting year</dt><dd id="o-first">—</dd>
+          <dt>First Scope 3 year</dt><dd id="o-s3">—</dd>
+          <dt>Auditor review of Scope 3</dt><dd id="o-aud">—</dd>
+        </dl>
+        <div class="todo" id="o-todo">&nbsp;</div>
+        <p class="fine">General information based on the thresholds published by ASIC and summarised by KPMG (updated 31 August 2026). It is not legal or accounting advice: confirm your position with your auditor. National Greenhouse and Energy Reporting obligations can place a company in a group regardless of size.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · WHAT THE AUDITOR ASKS -->
+<section id="auditor">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">What your auditor will ask</p><h2>Seven questions about your waste number. Each one answered on the certificate.</h2></div><p class="lead">Limited assurance means an auditor reviews how the number was built. These are the questions that review asks of a waste figure, and where YES answers them.</p></div>
+    <div class="qa reveal">
+      <div class="qa-row"><div class="q">What's in the boundary, and does it match yours?</div><p class="a"><b>On the certificate:</b> the program, sites, streams and period, and which entries were handed to the processor versus evidenced by you.</p></div>
+      <div class="qa-row"><div class="q">Which method did you use for each line?</div><p class="a"><b>Stated per line:</b> the processor's own energy use for handling your material, and published landfill factors by waste type for anything landfilled.</p></div>
+      <div class="qa-row"><div class="q">Where did each factor come from, and which edition?</div><p class="a"><b>Printed with the figure:</b> the National Greenhouse Accounts edition and the source of every factor, pinned to the method version.</p></div>
+      <div class="qa-row"><div class="q">How did counts become tonnes?</div><p class="a"><b>Published unit weights</b> with their status, and weighbridge tonnes wherever the load was weighed.</p></div>
+      <div class="qa-row"><div class="q">How is stored material treated?</div><p class="a"><b>Reported separately</b> and never counted as recycled. It moves in the period it moves, with a line pointing back to the original receipt.</p></div>
+      <div class="qa-row"><div class="q">Are avoided emissions kept out of the inventory?</div><p class="a"><b>Always.</b> Avoided emissions are an estimate in their own box beside the inventory figure, never deducted from it and never an offset.</p></div>
+      <div class="qa-row"><div class="q">Show me the evidence for this line.</div><p class="a"><b>Every ledger line</b> carries the docket, count sheet or processor record it came from, and the initials of the YES operator who entered it. Customers never type their own figures.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · METHOD LADDER -->
+<section class="dark" id="methods">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">Three ways to calculate waste emissions</p><h2>Start at the top: the processor's own data.</h2></div><p class="lead">The GHG Protocol ranks three methods for waste. Most companies are stuck on the bottom one because nobody can tell them what happened to their material. YES works from the top two.</p></div>
+    <div class="ladder reveal">
+      <div class="rung"><span class="n">1</span><div><h4>Supplier-specific</h4><p>The waste company's own emissions for handling your material, allocated to your tonnes. Only the processor holds this data.</p></div><span class="who yes">YES · processor data</span></div>
+      <div class="rung"><span class="n">2</span><div><h4>Waste-type-specific</h4><p>Tonnes by waste type and treatment, multiplied by published factors. YES applies the National Greenhouse Accounts landfill factor to every landfilled tonne.</p></div><span class="who yes">YES · every landfilled tonne</span></div>
+      <div class="rung low"><span class="n">3</span><div><h4>Average-data</h4><p>Industry averages or spend-based estimates. Permitted, but it is what a company falls back on when nobody can give it the tonnes.</p></div><span class="who no">The fallback</span></div>
+    </div>
+    <p class="note reveal" style="color:var(--mist);border-color:#2A2C2A">Working processing values are published as illustrative on the <a href="/method/" style="color:var(--green-3)">YES Method</a> page until metered data replaces them. Designed to support Scope 3 Category 5 reporting and third-party assurance; YES does not certify compliance with any standard.</p>
+  </div>
+</section>
+
+<!-- 05 · WHAT'S CHANGING -->
+<section id="changing">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">05</span><p class="eyebrow">What's changing</p><h2>The rules are settling. Scope 3 is staying.</h2></div><p class="lead">We keep this page current. The position below is as at 28 September 2026.</p></div>
+    <div class="chg reveal">
+      <div class="card"><p class="asat">Treasury consultation · closes 2 October 2026</p><h4>Easier assurance, fewer supply-chain data requests</h4><p>Treasury is consulting on reducing compliance costs: changing the assurance rules, clarifying key terms, and reducing the burden of information requests along supply chains. KPMG's reading is that it will not change what is reported for 2026–27, and Scope 3 disclosure is still required.</p><p>What that means for waste: a supplier who hands you audit-ready numbers without being asked removes exactly the burden the reform is aimed at.</p></div>
+      <div class="card"><p class="asat">Councils</p><h4>Not covered by this law, still asked the question</h4><p>Councils are not companies under the Corporations Act, so this regime does not apply to them. Their waste reporting runs through state frameworks, such as Victoria's audited kerbside diversion indicator, and through the companies they contract with, who increasingly need the numbers.</p><p><a class="more" href="/councils/" style="font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;color:var(--green)">YES for councils →</a></p></div>
+    </div>
+    <p class="srcs reveal">Sources: <a href="https://asic.gov.au/regulatory-resources/sustainability-reporting/for-preparers-of-sustainability-reports/who-must-prepare-a-sustainability-report/" rel="noopener" target="_blank">ASIC, who must prepare a sustainability report</a> · <a href="https://kpmg.com/au/en/insights/financial-reporting/sustainability-climate-change/australian-sustainability-reporting-standards-legislation-finalised.html" rel="noopener" target="_blank">KPMG, updated 31 Aug 2026</a> · <a href="https://standards.aasb.gov.au/aasb-s2-sep-2024" rel="noopener" target="_blank">AASB S2</a> · <a href="https://www.auasb.gov.au/news/climate-and-sustainability-assurance-requirements-approved/" rel="noopener" target="_blank">AUASB, assurance phasing</a> · <a href="https://consult.treasury.gov.au/c2026-778607" rel="noopener" target="_blank">Treasury consultation</a> · <a href="https://ghgprotocol.org/sites/default/files/2022-12/Ch5_GHGP_Tech.pdf" rel="noopener" target="_blank">GHG Protocol, Category 5 guidance</a></p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band"><div class="wrap"><p class="eyebrow">The first step</p><h2>Get your waste number from the processor.</h2><p class="lead">Book a 30-minute walkthrough. We'll show you the Category 5 figure, the evidence behind it and the export your auditor will read, on one month of your own data.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/method/">Read the YES Method</a></div></div></section>
+
+<!--scripts-->
+<script>
+(function(){
+  var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function $(id){return document.getElementById(id);}
+  function d(y,m,day){return new Date(y,m,day||1);}
+  function fmt(dt){return dt.getDate()+' '+MON[dt.getMonth()]+' '+dt.getFullYear();}
+  function addYears(dt,n){return new Date(dt.getFullYear()+n,dt.getMonth(),dt.getDate());}
+  function dayBefore(dt){return new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()-1);}
+  var today=new Date();
+
+  // ---- timeline (June year-end) --------------------------------------------
+  var A=d(2025,0,1), Z=d(2030,0,1), span=Z-A;
+  function pct(dt){return Math.max(0,Math.min(100,(dt-A)/span*100));}
+  var yrs=$('tl-years'); if(yrs){ for(var y=2025;y<=2029;y++){ var s=document.createElement('span'); s.style.left=pct(d(y,6,1))+'%'; s.textContent='Jul '+y; yrs.appendChild(s);} }
+  document.querySelectorAll('.page-climate-reporting .tl-track').forEach(function(tr){
+    var f=new Date(tr.getAttribute('data-first')+'T00:00:00'), s3=new Date(tr.getAttribute('data-s3')+'T00:00:00');
+    var r=document.createElement('div'); r.className='tl-bar r'; r.style.left=pct(f)+'%'; r.style.width=(pct(s3)-pct(f))+'%'; r.textContent='Reporting';
+    var s=document.createElement('div'); s.className='tl-bar s'; s.style.left=pct(s3)+'%'; s.style.width=(100-pct(s3))+'%'; s.textContent=tr.getAttribute('data-g3')?'Scope 3, if risks are material':'Scope 3 · auditor review';
+    tr.appendChild(r); tr.appendChild(s);
+    if(today>A&&today<Z){ var t=document.createElement('div'); t.className='tl-today'; t.style.left=pct(today)+'%'; if(tr===document.querySelector('.page-climate-reporting .tl-track')){ var i=document.createElement('i'); i.textContent='Today'; t.appendChild(i);} tr.appendChild(t); }
+  });
+
+  // ---- checker ----------------------------------------------------------------
+  var G=[{g:1,rev:500,ast:1000,emp:500,start:d(2025,0,1),label:'Group 1'},{g:2,rev:200,ast:500,emp:250,start:d(2026,6,1),label:'Group 2'},{g:3,rev:50,ast:25,emp:100,start:d(2027,6,1),label:'Group 3'}];
+  function firstFY(ye,start){ // FY begins the month after the year-end month
+    var m=(ye+1)%12, y=start.getFullYear()-1, s=d(y,m,1);
+    while(s<start){ y++; s=d(y,m,1); }
+    return s;
+  }
+  function fyLabel(s){ var e=dayBefore(addYears(s,1)); return fmt(s)+' – '+fmt(e); }
+  function run(){
+    var rev=+$('c-rev').value, ast=+$('c-ast').value, emp=+$('c-emp').value, ye=+$('c-ye').value;
+    var grp=null;
+    for(var i=0;i<G.length;i++){ var g=G[i]; var n=(rev>=g.rev?1:0)+(ast>=g.ast?1:0)+(emp>=g.emp?1:0); if(n>=2){grp=g;break;} }
+    if(!grp){
+      $('o-grp').textContent='Below the thresholds'; $('o-big').textContent='Not covered';
+      $('o-st').textContent='At these sizes the law does not require you to report. Your customers may still ask for your waste figures: large companies need them for their own Scope 3.';
+      $('o-first').textContent='—'; $('o-s3').textContent='—'; $('o-aud').textContent='—'; $('o-s3').classList.remove('now');
+      $('o-todo').textContent='If a customer or a tender asks for your waste emissions, a YES Certificate gives you the number and the evidence in one document.';
+      return;
+    }
+    var f=firstFY(ye,grp.start), s3=addYears(f,1), s3end=dayBefore(addYears(s3,1));
+    $('o-grp').textContent='Your position'; $('o-big').textContent=grp.label;
+    $('o-first').textContent=fyLabel(f); $('o-s3').textContent=fyLabel(s3)+(grp.g===3?' *':'');
+    $('o-aud').textContent='Limited assurance from '+fmt(s3);
+    var st, todo, now=false;
+    if(today<f){ var months=Math.round((f-today)/(1000*60*60*24*30.44)); st='Your first reporting year starts in about '+months+' month'+(months===1?'':'s')+'. Scope 3 follows a year later.'; todo='Set up the waste data now, so your first Scope 3 year has twelve months of evidence behind it.'; }
+    else if(today<s3){ st='You are in your first reporting year now. Scope 3, including waste where it is material, starts on '+fmt(s3)+'.'; todo='This is the year to put the waste evidence in place. Your auditor will review the Scope 3 figure from '+fmt(s3)+'.'; }
+    else if(today<=s3end){ now=true; st='Your first Scope 3 year is running now, and your auditor will review it.'; todo='If waste is material to your Scope 3, you need a defensible Category 5 figure for this year. Start with the processor’s data.'; }
+    else { now=true; st='Scope 3 is part of every year’s report now, under auditor review.'; todo='Keep the waste number evidenced month by month, so each year’s review is routine.'; }
+    if(grp.g===3){ st+=' * If you conclude you have no material climate risks or opportunities, you can say so instead of making full disclosures.'; }
+    $('o-st').textContent=st; $('o-todo').textContent=todo; $('o-s3').classList.toggle('now',now);
+  }
+  ['c-rev','c-ast','c-emp','c-ye'].forEach(function(id){ var el=$(id); if(el) el.addEventListener('change',run); });
+  run();
+})();
+</script>

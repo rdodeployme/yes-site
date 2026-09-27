@@ -6,6 +6,18 @@
 .page-home .bar .n,.page-home .ledger div span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .page-home .dash-cap{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.08em;color:var(--slate);margin:14px 0 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .page-home .dash-cap a{color:var(--green-3)}
+.page-home .comply{border-top:1px solid #202220;background:linear-gradient(180deg,#0E0F0E,#0B0B0B)}
+.page-home .comply-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(28px,4vw,56px);align-items:center}
+@media(min-width:1000px){.page-home .comply-grid{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}}
+.page-home .comply h2{font-size:clamp(28px,3.2vw,44px);max-width:20ch;margin-top:6px}
+.page-home .comply .lead{margin-top:18px;max-width:58ch}
+.page-home .comply .btn-row{margin-top:26px}
+.page-home .comply-dates{list-style:none;margin:0;padding:0;border-top:1px solid #2A2C2A}
+.page-home .comply-dates li{display:grid;gap:4px;padding:16px 0;border-bottom:1px solid #2A2C2A}
+.page-home .comply-dates .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate)}
+.page-home .comply-dates b{font-family:var(--font-display);font-weight:700;font-size:clamp(20px,1.9vw,24px);letter-spacing:-.02em;color:var(--paper)}
+.page-home .comply-dates b.now{color:var(--green-3)}
+.page-home .comply-dates .s{font-size:14px;color:var(--mist)}
 .page-home .mri{border-top:1px solid #202220}
 .page-home .mri h3{font-size:clamp(38px,4.6vw,64px);letter-spacing:-.035em;line-height:1}
 .page-home .mri p.idx{margin:0 0 14px}
@@ -113,6 +125,25 @@
         </div>
         <p class="dash-cap"><span>Live demo · illustrative data</span><a href="/demo/">Open the demo →</a></p>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- 1b · MANDATORY CLIMATE REPORTING -->
+<section class="dark tight comply" id="climate-reporting">
+  <div class="wrap">
+    <div class="comply-grid reveal">
+      <div>
+        <p class="eyebrow">Mandatory climate reporting</p>
+        <h2>Scope 3 is reported now, and an auditor reviews it.</h2>
+        <p class="lead">Large companies are in their first Scope 3 year. Mid-sized companies start reporting from 1 July 2027. Waste is Scope 3, Category 5, and YES gives you that number from the processor that handled the material: the top tier of evidence the GHG Protocol allows.</p>
+        <div class="btn-row"><a class="btn btn-primary" href="/climate-reporting/#checker">Check your reporting year {{ARROW}}</a><a class="btn btn-ghost" href="/climate-reporting/">What your auditor will ask</a></div>
+      </div>
+      <ol class="comply-dates" aria-label="Key dates">
+        <li><span class="k">Group 1 · $500m+</span><b class="now">Scope 3 year running now</b><span class="s">June year-ends: 1 July 2026 to 30 June 2027</span></li>
+        <li><span class="k">Group 2 · $200m+</span><b>Scope 3 from 1 July 2027</b><span class="s">Reporting for years starting on or after 1 July 2026</span></li>
+        <li><span class="k">Group 3 · $50m+</span><b>Reporting from 1 July 2027</b><span class="s">Scope 3 the year after, where climate risks are material</span></li>
+      </ol>
     </div>
   </div>
 </section>

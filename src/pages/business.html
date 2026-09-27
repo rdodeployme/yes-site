@@ -10,6 +10,14 @@
 /* feature rows elsewhere */
 .page-business .feature-list li{grid-template-columns:30px minmax(0,1fr);gap:14px}
 .page-business .feature-list .ic{margin-top:2px}
+/* 01b · mandatory reporting dates */
+.page-business .biz-dates{display:grid;grid-template-columns:minmax(0,1fr);gap:0;border-top:1px solid var(--mist)}
+@media(min-width:900px){.page-business .biz-dates{grid-template-columns:repeat(3,minmax(0,1fr));gap:0 32px}}
+.page-business .biz-dates>div{display:grid;gap:6px;padding:20px 0;border-bottom:1px solid var(--mist)}
+.page-business .biz-dates .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);line-height:1.5}
+.page-business .biz-dates b{font-family:var(--font-display);font-weight:700;font-size:clamp(20px,1.9vw,24px);letter-spacing:-.02em}
+.page-business .biz-dates b.now{color:var(--green)}
+.page-business .biz-dates .s{font-size:14.5px;color:var(--graphite)}
 /* 02 · scope 3: the two figures, worked */
 .page-business .b-em{margin-top:clamp(36px,5vw,56px)}
 .page-business .b-em .k2{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0 0 14px}
@@ -56,6 +64,19 @@
     <div class="chips reveal" aria-label="What YES supports for business">
       <span class="chip">ESG reporting</span><span class="chip">Scope 3</span><span class="chip">Sustainability reporting</span><span class="chip">Procurement reporting</span><span class="chip">Supplier performance</span><span class="chip">Internal environmental KPIs</span>
     </div>
+  </div>
+</section>
+
+<!-- 01b · MANDATORY CLIMATE REPORTING -->
+<section class="paper-2" id="mandatory">
+  <div class="wrap">
+    <div class="section-head reveal"><div><p class="eyebrow">Mandatory climate reporting</p><h2>Your first Scope 3 year may already be running.</h2></div><p class="lead">Under Australia's mandatory climate reporting, Scope 3 is reported from each company's second year and reviewed by an auditor. Waste goes into that number wherever it is material.</p></div>
+    <div class="biz-dates reveal">
+      <div><span class="k">Group 1 · two of $500m revenue, $1b assets, 500+ staff</span><b class="now">Scope 3 year running now</b><span class="s">June year-ends: 1 July 2026 to 30 June 2027</span></div>
+      <div><span class="k">Group 2 · two of $200m, $500m, 250+ staff</span><b>Scope 3 from 1 July 2027</b><span class="s">Reporting for years starting on or after 1 July 2026</span></div>
+      <div><span class="k">Group 3 · two of $50m, $25m, 100+ staff</span><b>Reporting from 1 July 2027</b><span class="s">Scope 3 the year after, where climate risks are material</span></div>
+    </div>
+    <div class="btn-row mt-3 reveal"><a class="btn btn-ink" href="/climate-reporting/#checker">Check your reporting year {{ARROW}}</a><a class="btn btn-outline" href="/climate-reporting/">What your auditor will ask</a></div>
   </div>
 </section>
 
