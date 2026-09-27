@@ -90,4 +90,33 @@
 
   // close mobile nav on link click
   document.querySelectorAll('.nav-links a').forEach(function(a){a.addEventListener('click',function(){document.querySelector('.nav-links').classList.remove('open');});});
+
+  // ambient video: poster first; the loop loads only on wider screens, without reduced motion or data saver, and only while on screen
+  (function(){
+    var vids=[].slice.call(document.querySelectorAll('video[data-bgv]'));
+    if(!vids.length) return;
+    var rm=window.matchMedia?window.matchMedia('(prefers-reduced-motion: reduce)'):{matches:false};
+    var conn=navigator.connection||{};
+    function allowed(){return !rm.matches&&!conn.saveData&&window.innerWidth>=720;}
+    function play(v){var p=v.play();if(p&&p.catch)p.catch(function(){});}
+    function start(v){
+      if(!v.getAttribute('data-on')){
+        v.setAttribute('data-on','1');
+        [].forEach.call(v.querySelectorAll('source[data-src]'),function(s){s.src=s.getAttribute('data-src');});
+        v.addEventListener('playing',function(){v.classList.add('is-on');},{once:true});
+        v.load();
+      }
+      play(v);
+    }
+    vids.forEach(function(v){v.muted=true;v.defaultMuted=true;v.playsInline=true;});
+    if(!('IntersectionObserver' in window)){ if(allowed()) vids.forEach(start); return; }
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){var v=e.target; v._in=e.isIntersecting; if(e.isIntersecting){ if(allowed()) start(v); } else if(!v.paused) v.pause();});
+    },{rootMargin:'160px 0px'});
+    vids.forEach(function(v){io.observe(v);});
+    if(rm.addEventListener) rm.addEventListener('change',function(){ if(rm.matches) vids.forEach(function(v){v.pause();}); });
+    document.addEventListener('visibilitychange',function(){
+      vids.forEach(function(v){ if(document.hidden){ if(!v.paused) v.pause(); } else if(v._in&&allowed()) start(v); });
+    });
+  })();
 })();
