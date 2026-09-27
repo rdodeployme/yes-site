@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+"""YES site builder — wraps page fragments in the shared layout and writes dist/.
+Usage: python3 build.py
+"""
+import os, re, shutil, json, datetime
+
+ROOT = os.path.dirname(os.path.abspath(__file__))
+SRC = os.path.join(ROOT, "src")
+DIST = os.path.join(ROOT, "docs")   # GitHub Pages serves /docs on main
+BASE_PATH = os.environ.get("YES_BASE_PATH", "/yes-site")   # "" once yes.com.au is attached as the custom domain
+
+# ---- brand variables (one place to change) -------------------------------
+MARK = "YES"
+NAME_LINES = ["Your Environment", "Score"]          # the full name, always shown with the mark
+NAME_FULL = "Your Environment Score"
+URL = "www.yes.com.au"
+EMAIL = "contact@yes.com.au"
+POSITION = "Environmental Impact Intelligence by Recycle Group"
+SITE_TITLE = "YES · Your Environment Score · by Recycle Group"
+DOMAIN = "https://yes.com.au"
+
+PAGES = [
+    # path, nav label (None = not in nav), fragment file, <title>, meta description
+    ("/",                 None,           "index.html",        "YES — Measuring what recycling really achieves",       "YES is the recycling certificate and live environmental dashboard from Recycle Group. Verified data, documented method, real environmental outcomes."),
+    ("/how-it-works/",    "How it works", "how-it-works.html", "How YES works — from handover to headline number",     "Hand over a stream, YES enters and verifies it, your dashboard moves, your certificate issues. Only YES staff enter data."),
+    ("/yes-report/",      "The YES Report","yes-report.html",  "The YES Report — certificate, dashboard and data",     "The YES Report is two layers: a recycling certificate and a live environmental dashboard, backed by YES Data, YES Carbon, YES Circularity and YES Benchmark."),
+    ("/demo/",            "Live demo",    "demo.html",         "Live demo — Hepburn Shire hard waste program",        "An interactive YES dashboard for a council hard waste program. Hand over a stream and watch the environmental numbers move."),
+    ("/calculator/",      "Calculator",   "calculator.html",   "YES calculator — your recycling, measured",    "Enter what you recycled and see the YES impact: tonnes recovered, steel recovered, CO₂-e avoided, landfill avoided. Every figure with its method."),
+    ("/councils/",        "Councils",     "councils.html",     "YES for councils — hard waste, kerbside and transfer stations", "Purpose-built reporting for council recycling programs. Switched on in 30 days."),
+    ("/business/",        "Business",     "business.html",     "YES for business — ESG, Scope 3 and sustainability reporting", "Evidence-based recycling data with a documented method for every calculation, ready for ESG and Scope 3 reporting."),
+    ("/method/",          None,           "method.html",       "The YES Method — how every number is calculated",    "Reference factors, unit-weight assumptions, evidence grades and versioning. Every YES figure can be traced to its source."),
+    ("/pricing/",         "Pricing",      "pricing.html",      "YES pricing — councils and business",                 "Councils from $1,999 a month. Business $999 a month. Foundation Members join free in the first 12 months."),
+    ("/about/",           "About",        "about.html",        "About YES — a Recycle Group business",                "Why YES exists, who runs it, and the recovery infrastructure behind the numbers."),
+    ("/contact/",         None,           "contact.html",      "Talk to YES",                                          "Book a walkthrough or ask a question. contact@yes.com.au"),
+    ("/certificate/",     None,           "certificate.html",  "Sample YES Certificate — Hepburn Shire Council (demo)", "A sample YES Recycling Certificate, print-ready."),
+    ("/build-notes/",     None,           "build-notes.html",  "Build notes — confirmed, proposed, needs confirmation", "Internal: what is confirmed, proposed and still to confirm on this build."),
+]
+
+ARROW = '<svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+
+def logo(cls="logo"):
+    # YES wordmark, full name underneath, URL underneath that. Never the mark alone.
+    return (f'<a class="{cls}" href="/" aria-label="{MARK} — {NAME_FULL} — {URL}">'
+            f'<span class="logo-top"><span class="logo-mark">{MARK}</span>'
+            f'<span class="logo-bar" aria-hidden="true"><i></i><i></i><i></i></span></span>'
+            f'<span class="logo-name">{NAME_FULL}</span>'
+            f'<span class="logo-url">{URL}</span></a>')
+
+def nav(current):
+    items = []
+    for path, label, *_ in PAGES:
+        if not label: continue
+        cls = ' class="active"' if path == current else ''
+        items.append(f'<li><a href="{path}"{cls}>{label}</a></li>')
+    items.append(f'<li class="nav-cta"><a class="btn btn-primary btn-sm" href="/contact/">Talk to YES {ARROW}</a></li>')
+    return f'''<header class="nav">
+  <div class="wrap">
+    {logo()}
+    <button class="burger" aria-label="Menu" aria-expanded="false" onclick="document.querySelector('.nav-links').classList.toggle('open');this.setAttribute('aria-expanded',document.querySelector('.nav-links').classList.contains('open'))">MENU</button>
+    <ul class="nav-links">{''.join(items)}</ul>
+  </div>
+</header>'''
+
+def footer():
+    year = datetime.date.today().year
+    return f'''<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        {logo()}
+        <p class="foot-tag">{POSITION}. A recycling certificate and a live environmental dashboard — verified data, documented method, real outcomes.</p>
+      </div>
+      <div><h5>Product</h5><ul>
+        <li><a href="/yes-report/">The YES Report</a></li>
+        <li><a href="/how-it-works/">How it works</a></li>
+        <li><a href="/demo/">Live demo</a></li>
+        <li><a href="/calculator/">Impact calculator</a></li>
+        <li><a href="/method/">The YES Method</a></li>
+      </ul></div>
+      <div><h5>Who it's for</h5><ul>
+        <li><a href="/councils/">Councils</a></li>
+        <li><a href="/business/">Business</a></li>
+        <li><a href="/pricing/">Pricing</a></li>
+        <li><a href="/pricing/#foundation">Foundation Members</a></li>
+      </ul></div>
+      <div><h5>YES</h5><ul>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li><a href="mailto:{EMAIL}">{EMAIL}</a></li>
+        <li><a href="https://recycle.net.au" rel="noopener">Recycle Group</a></li>
+      </ul></div>
+    </div>
+    <div class="foot-mark" aria-hidden="true">YES</div>
+    <div class="foot-bottom">
+      <span>© {year} YES · A Recycle Group business</span>
+      <span>{SITE_TITLE}</span>
+    </div>
+  </div>
+</footer>'''
+
+HEAD = '''<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{title}</title>
+<meta name="description" content="{desc}">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{desc}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{domain}{path}">
+<meta name="theme-color" content="#0B0B0B">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v={v}">
+</head>
+<body class="page-{slug}">
+'''
+
+TAIL = '''
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="/assets/site.js?v={v}"></script>
+{extra}
+</body>
+</html>
+'''
+
+def rebase(text):
+    """Prefix root-relative URLs with BASE_PATH so the site works under a GitHub Pages project path."""
+    if not BASE_PATH: return text
+    for pat in ('href="/', 'src="/', 'action="/', "url(/", 'content="/'):
+        text = text.replace(pat, pat[:-1] + BASE_PATH + "/")
+    return text
+
+def build():
+    ICONS = open(os.path.join(SRC, "partials", "icons.svg"), encoding="utf-8").read()
+    if os.path.exists(DIST): shutil.rmtree(DIST)
+    os.makedirs(DIST)
+    shutil.copytree(os.path.join(SRC, "assets"), os.path.join(DIST, "assets"))
+    for css in ("style.css",):
+        p = os.path.join(DIST, "assets", css)
+        css_text = open(p, encoding="utf-8").read()
+        with open(p, "w", encoding="utf-8") as fh: fh.write(rebase(css_text))
+    v = datetime.datetime.now().strftime("%Y%m%d%H%M")
+    hero_fix = "" if os.path.exists(os.path.join(SRC, "assets", "img", "hero-springs.jpg")) else "<style>.hero-photo{background-image:none}</style>\n"
+    built = []
+    for path, label, frag, title, desc in PAGES:
+        fp = os.path.join(SRC, "pages", frag)
+        if not os.path.exists(fp):
+            print("MISSING", frag); continue
+        body = open(fp, encoding="utf-8").read()
+        # per-page extra scripts: a fragment may end with <!--scripts--> ... block
+        extra = ""
+        m = re.search(r"<!--scripts-->(.*)$", body, re.S)
+        if m:
+            extra = m.group(1); body = body[:m.start()]
+        body = (body.replace("{{NAME}}", NAME_FULL)
+                    .replace("{{NAME_L1}}", NAME_LINES[0]).replace("{{NAME_L2}}", NAME_LINES[1])
+                    .replace("{{URL}}", URL).replace("{{EMAIL}}", EMAIL).replace("{{MARK}}", MARK).replace("{{POSITION}}", POSITION)
+                    .replace("{{LOGO_BIG}}", logo("logo big on-paper"))
+                    .replace("{{LOGO_BIG_DARK}}", logo("logo big"))
+                    .replace("{{ARROW}}", ARROW))
+        slug = "home" if path == "/" else path.strip("/").replace("/", "-")
+        html = (HEAD.format(title=title, desc=desc, domain=DOMAIN, path=path, v=v, slug=slug)
+                + hero_fix + ICONS + nav(path) + "\n<main>\n" + body + "\n</main>\n" + footer()
+                + TAIL.format(v=v, extra=extra))
+        out_dir = os.path.join(DIST, path.strip("/"))
+        os.makedirs(out_dir, exist_ok=True)
+        with open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as f:
+            f.write(rebase(html))
+        built.append(path)
+    # netlify config
+    open(os.path.join(DIST, "robots.txt"), "w").write("User-agent: *\nDisallow: " + BASE_PATH + "/build-notes/\n")
+    open(os.path.join(DIST, ".nojekyll"), "w").write("")
+    print("built", len(built), "pages:", ", ".join(built))
+
+if __name__ == "__main__":
+    build()
