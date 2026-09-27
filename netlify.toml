@@ -1,0 +1,6 @@
+[build]
+  command = "python3 build.py"
+  publish = "docs"
+
+[build.environment]
+  YES_BASE_PATH = ""
