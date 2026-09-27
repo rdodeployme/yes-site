@@ -141,7 +141,7 @@ TAIL = '''
 def rebase(text):
     """Prefix root-relative URLs with BASE_PATH so the site works under a GitHub Pages project path."""
     if not BASE_PATH: return text
-    for pat in ('href="/', 'src="/', 'action="/', "url(/", 'content="/'):
+    for pat in ('href="/', 'src="/', 'action="/', "url(/", 'content="/', 'poster="/'):
         text = text.replace(pat, pat[:-1] + BASE_PATH + "/")
     return text
 
