@@ -8,6 +8,9 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(ROOT, "src")
 DIST = os.path.join(ROOT, "docs")   # GitHub Pages serves /docs on main
 BASE_PATH = os.environ.get("YES_BASE_PATH", "/yes-site")   # "" once yes.com.au is attached as the custom domain
+# Contact form: "netlify" posts to Netlify Forms; "mailto" opens a pre-filled email (GitHub Pages has no form backend).
+# Netlify sets NETLIFY=true in its build environment, so a Netlify build picks the form backend automatically.
+FORM_MODE = os.environ.get("YES_FORM") or ("netlify" if os.environ.get("NETLIFY") == "true" else "mailto")
 
 # ---- brand variables (one place to change) -------------------------------
 MARK = "YES"
@@ -33,8 +36,11 @@ PAGES = [
     ("/about/",           "About",        "about.html",        "About YES — a Recycle Group business",                "Why YES exists, who runs it, and the recovery infrastructure behind the numbers."),
     ("/contact/",         None,           "contact.html",      "Talk to YES",                                          "Book a walkthrough or ask a question. contact@yes.com.au"),
     ("/certificate/",     None,           "certificate.html",  "Sample YES Certificate — Hepburn Shire Council (demo)", "A sample YES Recycling Certificate, print-ready."),
-    ("/build-notes/",     None,           "build-notes.html",  "Build notes — confirmed, proposed, needs confirmation", "Internal: what is confirmed, proposed and still to confirm on this build."),
 ]
+
+FORM_NOTE = (f"Submitting opens an email to YES at {EMAIL} with your details filled in, ready to send. Nothing is stored on this site. No mailing list."
+             if FORM_MODE == "mailto" else
+             f"Submitting sends your details to YES at {EMAIL}. Nothing else. No mailing list.")
 
 ARROW = '<svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 
@@ -161,7 +167,9 @@ def build():
                     .replace("{{URL}}", URL).replace("{{EMAIL}}", EMAIL).replace("{{MARK}}", MARK).replace("{{POSITION}}", POSITION)
                     .replace("{{LOGO_BIG}}", logo("logo big on-paper"))
                     .replace("{{LOGO_BIG_DARK}}", logo("logo big"))
-                    .replace("{{ARROW}}", ARROW))
+                    .replace("{{ARROW}}", ARROW)
+                    .replace("{{FORM_MODE}}", FORM_MODE)
+                    .replace("{{FORM_NOTE}}", FORM_NOTE))
         slug = "home" if path == "/" else path.strip("/").replace("/", "-")
         html = (HEAD.format(title=title, desc=desc, domain=DOMAIN, path=path, v=v, slug=slug)
                 + hero_fix + ICONS + nav(path) + "\n<main>\n" + body + "\n</main>\n" + footer()
@@ -171,10 +179,9 @@ def build():
         with open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as f:
             f.write(rebase(html))
         built.append(path)
-    # netlify config
-    open(os.path.join(DIST, "robots.txt"), "w").write("User-agent: *\nDisallow: " + BASE_PATH + "/build-notes/\n")
+    open(os.path.join(DIST, "robots.txt"), "w").write("User-agent: *\nAllow: /\n")
     open(os.path.join(DIST, ".nojekyll"), "w").write("")
-    print("built", len(built), "pages:", ", ".join(built))
+    print("built", len(built), "pages:", ", ".join(built), "| form:", FORM_MODE, "| base:", BASE_PATH or "/")
 
 if __name__ == "__main__":
     build()
