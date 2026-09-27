@@ -1,0 +1,389 @@
+<style>
+/* calculator refinements (scoped) */
+.page-calculator .hero-sub .lead{max-width:64ch}
+.page-calculator .hero-meta{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;margin-top:22px;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--slate)}
+/* inputs */
+.page-calculator .calc-in{background:var(--white);border:1px solid var(--mist);border-radius:var(--r-lg);padding:clamp(20px,2.4vw,28px)}
+.page-calculator .calc-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px}
+.page-calculator .calc-top h3{font-size:20px}
+.page-calculator .calc-top .m{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);margin:4px 0 0}
+.page-calculator .c-row{display:grid;grid-template-columns:minmax(0,1fr) 148px;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--mist)}
+.page-calculator .c-row:last-child{border-bottom:1px solid var(--mist)}
+.page-calculator .c-row label{display:flex;align-items:center;gap:12px;font-family:var(--font-body);font-size:15px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink);line-height:1.3;min-width:0}
+.page-calculator .c-row label .ic{width:16px;height:16px;color:var(--graphite)}
+.page-calculator .c-row label .lt{display:block;min-width:0}
+.page-calculator .c-row label .u{display:block;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-top:3px;font-weight:400}
+/* section lede */
+.page-calculator .calc-lede{margin-bottom:clamp(24px,3vw,40px)}
+.page-calculator .calc-lede .sec-idx{margin-bottom:10px}
+.page-calculator .calc-lede .eyebrow{margin-bottom:0}
+.page-calculator .c-in{display:grid;gap:4px}
+.page-calculator .c-in input{padding:10px 12px;font-variant-numeric:tabular-nums;text-align:right;font-size:16px}
+.page-calculator .c-in .hint{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--slate);text-align:right;min-height:1.3em}
+.page-calculator .calc-foot{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.page-calculator .calc-foot .m{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--slate);margin:0}
+/* results card: sticky, capped to the viewport so the bottom is always reachable */
+.page-calculator .results{border-radius:var(--r-lg);border:1px solid #262826;padding:clamp(18px,2.2vw,26px);box-shadow:0 30px 80px rgba(0,0,0,.18);position:sticky;top:96px;max-height:calc(100vh - 110px);overflow:auto;scrollbar-width:thin;scrollbar-color:#3A3D3A transparent}
+.page-calculator .results::before{display:none}
+@media(max-width:640px){.page-calculator .results{position:static;max-height:none;overflow:visible}}
+.page-calculator .res-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.page-calculator .res-head .eyebrow{margin-bottom:8px}
+.page-calculator .res-head h3{font-size:20px}
+.page-calculator .res-head .m{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;color:var(--slate)}
+/* score row: gauge left, band + composition right */
+.page-calculator .score-row{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:center;padding:18px 20px;background:var(--ink-2);border:1px solid #262826;border-radius:10px}
+@media(min-width:800px){.page-calculator .score-row{grid-template-columns:auto minmax(0,1fr);gap:26px}}
+.page-calculator .score-row .gauge{margin:0}
+.page-calculator .score-row .l{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-bottom:8px}
+.page-calculator .score-row .band{font-family:var(--font-display);font-weight:700;font-size:clamp(24px,2.2vw,30px);letter-spacing:-.03em;line-height:1;color:var(--paper);margin:0 0 16px;min-height:1em}
+.page-calculator .stack{display:flex;height:10px;border-radius:3px;overflow:hidden;background:#242624}
+.page-calculator .stack i{display:block;height:100%;width:0;transition:width .5s var(--ease)}
+.page-calculator .stack .p1{background:var(--green)}.page-calculator .stack .p2{background:var(--green-3)}.page-calculator .stack .p3{background:var(--green-4)}
+.page-calculator .legend .p1 i{background:var(--green)}.page-calculator .legend .p2 i{background:var(--green-3)}.page-calculator .legend .p3 i{background:var(--green-4)}
+.page-calculator .score-row .legend{margin-top:10px;font-size:11px}
+.page-calculator .results .legend b{font-weight:500;color:var(--paper);margin-left:2px}
+.page-calculator .score-row .m{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;color:var(--slate);margin:12px 0 0}
+.page-calculator .tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+@media(min-width:1000px){.page-calculator .tiles{grid-template-columns:repeat(3,minmax(0,1fr))}.page-calculator .tiles .kpi:nth-child(7){grid-column:span 3;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"v l" "v d";column-gap:18px;row-gap:2px;align-content:center}.page-calculator .tiles .kpi:nth-child(7) .v{grid-area:v;align-self:center}.page-calculator .tiles .kpi:nth-child(7) .l{grid-area:l;align-self:end;margin-top:0;min-height:0}.page-calculator .tiles .kpi:nth-child(7) .d{grid-area:d;align-self:start;height:auto;margin-top:2px}}
+@media(max-width:999px){.page-calculator .tiles .kpi:nth-child(7){grid-column:span 2}}
+.page-calculator .kpi{min-height:118px;padding:12px 14px}
+.page-calculator .kpi .v{font-size:clamp(22px,2vw,28px);white-space:nowrap;overflow:hidden;line-height:1.05;height:1.05em;padding-right:30px}
+.page-calculator .kpi .v.long{font-size:19px}
+.page-calculator .kpi .v .u{font-size:.5em;color:var(--slate);margin-left:4px;font-weight:600;letter-spacing:0}
+.page-calculator .kpi .ic{top:12px;right:12px;width:18px;height:18px}
+.page-calculator .kpi .l{min-height:2.6em;line-height:1.3}
+.page-calculator .kpi .d{white-space:normal;line-height:1.25;height:2.5em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;color:var(--slate)}
+/* three buckets: 18px bar with tonnes */
+.page-calculator .buckets{margin-top:18px;padding-top:14px;border-top:1px solid #262826}
+.page-calculator .buckets .l{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-bottom:10px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.page-calculator .buckets .l b{font-weight:500;color:var(--paper);text-transform:none;letter-spacing:.04em}
+.page-calculator .results .bucket{height:18px;margin:0}
+.page-calculator .buckets .legend{margin-top:10px;font-size:11px}
+.page-calculator .results .faq{margin-top:18px}
+.page-calculator .results .faq details,.page-calculator .results .faq details:last-child{border-color:#262826}
+.page-calculator .results .faq summary{font-size:16px;padding:12px 0}
+.page-calculator .results .faq summary::after{color:var(--green-3)}
+.page-calculator .how{display:grid;gap:12px;padding-bottom:8px}
+.page-calculator .how-cat{border-top:1px solid #262826;padding-top:12px}
+.page-calculator .how-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;font-family:var(--font-display);font-weight:700;font-size:15px}
+.page-calculator .how-h .hn{display:inline-flex;align-items:center;gap:8px;min-width:0}
+.page-calculator .how-h .ic{width:12px;height:12px;color:var(--slate)}
+.page-calculator .how dl{margin:0;display:grid;grid-template-columns:118px minmax(0,1fr);gap:5px 12px;font-size:13px}
+.page-calculator .how dt{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);padding-top:2px}
+.page-calculator .how dd{margin:0;color:var(--mist);line-height:1.5}
+.page-calculator .how dd.out{color:var(--green-4);font-family:var(--font-mono);font-size:12px;letter-spacing:.02em}
+@media(max-width:480px){.page-calculator .how dl{grid-template-columns:1fr;gap:2px 0}.page-calculator .how dd{margin-bottom:6px}}
+.page-calculator .how-empty{color:var(--slate);font-size:14px;margin:0;padding-bottom:8px}
+.page-calculator .how-foot{font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;color:var(--slate);margin:0;padding-bottom:10px;line-height:1.6}
+.page-calculator .how-foot a{color:var(--green-3)}
+.page-calculator .results .attrib{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.06em;color:var(--mist);margin:18px 0 0;line-height:1.7}
+.page-calculator .results .note{margin-top:12px}
+.page-calculator .results .btn-row{margin-top:18px}
+/* worked example: one display moment, derivation beside it */
+.page-calculator .worked{display:grid;grid-template-columns:minmax(0,1fr);gap:40px}
+@media(min-width:900px){.page-calculator .worked{grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:clamp(32px,4vw,64px);align-items:start}.page-calculator .worked-hero{position:sticky;top:96px}}
+.page-calculator .worked-hero{border-top:1px solid #2A2C2A;padding-top:22px}
+.page-calculator .worked-hero .l{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate)}
+.page-calculator .worked-hero .display{margin:14px 0 12px}
+.page-calculator .worked-hero .s{font-size:15px;color:var(--mist);max-width:34ch;margin:0 0 26px}
+.page-calculator .w-ledger{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0;font-family:var(--font-mono);font-size:13px;letter-spacing:.02em}
+.page-calculator .w-ledger dt{color:var(--slate);padding:11px 16px 11px 0;border-top:1px solid #2A2C2A;text-transform:uppercase;font-size:10.5px;letter-spacing:.1em}
+.page-calculator .w-ledger dd{margin:0;padding:10px 0;border-top:1px solid #2A2C2A;text-align:right;color:var(--paper);font-variant-numeric:tabular-nums;white-space:nowrap}
+.page-calculator .w-ledger dd .u{color:var(--slate);margin-left:4px}
+.page-calculator .w-ledger dd:last-child{border-bottom:1px solid #2A2C2A}
+.page-calculator .w-ledger dt:nth-last-child(2){border-bottom:1px solid #2A2C2A}
+.page-calculator .steps b{color:var(--green-3);font-weight:600;font-variant-numeric:tabular-nums}
+.page-calculator .steps .why{margin-top:10px;color:var(--paper)}
+.page-calculator .steps .tab{font-variant-numeric:tabular-nums}
+</style>
+
+<!-- HERO -->
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">YES calculator</p>
+    <h1>Your recycling, measured.</h1>
+    <p class="lead">Enter what you recycled and see what YES would report: tonnes recovered, steel recovered, CO₂-e avoided, landfill avoided, and the proposed YES Score. Every figure shows its method.</p>
+    <div class="hero-meta"><span class="badge">Indicative · YES Method v0.1 draft</span><span>Computed in your browser. Nothing is sent anywhere.</span></div>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section id="calc">
+  <div class="wrap">
+    <div class="calc-lede reveal"><span class="sec-idx">01</span><p class="eyebrow">The calculator · one period</p></div>
+    <div class="grid g12 reveal">
+      <div class="span5">
+        <div class="calc-in">
+          <div class="calc-top"><div><h3>What you recycled</h3><p class="m">Thirteen reporting categories · one period</p></div><button type="button" class="btn btn-outline btn-sm" id="c-clear">Clear</button></div>
+          <form class="form" id="c-form" novalidate autocomplete="off">
+            <noscript><p class="note">The calculator needs JavaScript to run. The worked example below shows the method for 1,000 mattresses.</p></noscript>
+          </form>
+          <div class="calc-foot"><p class="m">Counts are converted to tonnes with the unit weights in the YES Method.</p></div>
+        </div>
+      </div>
+      <div class="span7">
+          <div class="results dark" id="results" aria-live="polite" aria-label="Your Environment Score, indicative">
+            <div class="res-head"><div><p class="eyebrow">Your Environment Score</p><h3>What YES would report</h3></div><span class="m">Computed live · YES Method <span id="c-ver">v0.1 draft</span></span></div>
+            <div class="score-row">
+              <div class="gauge" id="c-gauge" style="--gs:150px"></div>
+              <div class="score-meta">
+                <div class="l">YES Score · proposed v0.1</div>
+                <div class="band" id="c-band">&nbsp;</div>
+                <div class="l" id="c-wl">Composition · points of 100</div>
+                <div class="stack" id="c-stack" aria-label="YES Score composition"><i class="p1" id="c-p1"></i><i class="p2" id="c-p2"></i><i class="p3" id="c-p3"></i></div>
+                <div class="legend"><span class="p1"><i></i>Recovery <b id="c-l1"></b></span><span class="p2"><i></i>Carbon <b id="c-l2"></b></span><span class="p3"><i></i>Evidence <b id="c-l3"></b></span></div>
+                <p class="m">Proposed method · not an accredited rating · evidence assumed Grade A for the calculator</p>
+              </div>
+            </div>
+            <div class="tiles" aria-label="Your Environment Score tiles">
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-mattress"/></svg><div class="v green"><span id="c-matt">0</span></div><div class="l">Mattresses recycled</div><div class="d" id="c-matt-d">to The Mattress Recycling Company</div></div>
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-rate"/></svg><div class="v"><span id="c-steelpct">0</span><span class="u">%</span></div><div class="l">Steel recovery</div><div class="d" id="c-steelpct-d">of mattress steel</div></div>
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-steel"/></svg><div class="v green"><span id="c-steel">0</span><span class="u">t</span></div><div class="l">Steel recovered</div><div class="d" id="c-steel-d">&nbsp;</div></div>
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-co2"/></svg><div class="v green"><span id="c-co2">0</span><span class="u">t</span></div><div class="l">CO₂-e avoided</div><div class="d" id="c-co2-d">&nbsp;</div></div>
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-landfill"/></svg><div class="v"><span id="c-vol">0</span><span class="u">m³</span></div><div class="l">Landfill avoided</div><div class="d">volume that did not go in</div></div>
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-rate"/></svg><div class="v"><span id="c-rate">0</span><span class="u">%</span></div><div class="l">Material recovery rate</div><div class="d">recycled ÷ handed over</div></div>
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-loop"/></svg><div class="v green"><span id="c-ret">0</span><span class="u">t</span></div><div class="l">Returned to productive use</div><div class="d" id="c-ret-d">&nbsp;</div></div>
+            </div>
+            <div class="buckets">
+              <div class="l"><span>Three buckets · tonnes</span><b id="c-t-in">0 t handed over</b></div>
+              <div class="bucket" id="c-bucket" aria-label="Three buckets"><div class="rec" id="c-b-rec" style="width:0"></div><div class="sto" id="c-b-sto" style="width:0"></div><div class="lan" id="c-b-lan" style="width:0"></div></div>
+              <div class="legend"><span class="rec"><i></i>Recycled <b id="c-t-rec"></b></span><span class="sto"><i></i>Stored <b id="c-t-sto"></b></span><span class="lan"><i></i>Landfilled <b id="c-t-lan"></b></span></div>
+            </div>
+            <div class="faq">
+              <details id="c-details">
+                <summary>How this was calculated</summary>
+                <div class="how" id="c-how"></div>
+                <p class="how-foot">Generated from the YES Method factor library, so it cannot drift from the method. Sources, statuses and unit weights are listed in full on the <a href="/method/">method page</a>.</p>
+              </details>
+            </div>
+            <p class="attrib">Verified recycling data supplied by The Mattress Recycling Company and Recycle Group.</p>
+            <p class="note">Pending categories count recovered mass but claim no CO₂-e. The calculator is indicative and uses default pathways. A YES Certificate requires YES-entered, evidenced data for the period.</p>
+            <div class="btn-row"><a class="btn btn-primary" href="/contact/">Talk to YES about a certificate {{ARROW}}</a><a class="btn btn-ghost" href="/method/">See the YES Method</a></div>
+          </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKED EXAMPLE -->
+<section class="dark" id="worked">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">Worked example · 1,000 mattresses</p><h2>The arithmetic, in the open.</h2></div><p class="lead">Every number below is computed by the same engine as the calculator above, so the two cannot disagree.</p></div>
+    <div class="worked">
+    <div class="worked-hero reveal">
+      <div class="l">Steel recovered · 1,000 mattresses</div>
+      <div class="display g"><span id="w-steel-big">26.7</span><span class="u">t</span></div>
+      <p class="s">From <span class="tab" id="w-mass-big">80.0</span> t handed over, to the electric-arc-furnace route. Recycle Group recovers 99% of the steel in a mattress.</p>
+      <dl class="w-ledger" aria-label="Outcomes for 1,000 mattresses">
+        <dt>CO₂-e avoided</dt><dd><span id="w-co2-big">11.8</span><span class="u">t</span></dd>
+        <dt>Landfill avoided</dt><dd><span id="w-vol-big">583</span><span class="u">m³</span></dd>
+        <dt>Recovery rate</dt><dd><span id="w-rate-big">33.4</span><span class="u">%</span></dd>
+        <dt>YES Score · proposed</dt><dd><span id="w-score-big">42</span><span class="u">of 100 · <span id="w-band-big">Developing</span></span></dd>
+      </dl>
+    </div>
+    <ol class="steps reveal" id="worked-steps">
+      <li><div><h4>Mass handed over</h4><p>1,000 mattresses × <span class="tab" id="w-kg">80</span> kg average = <b id="w-mass">80.0</b> t handed over. The 80 kg average is Recycle Group's stated processing figure.</p></div></li>
+      <li><div><h4>Steel recovered</h4><p><span class="tab" id="w-mass2">80.0</span> t × <span class="tab" id="w-sf">33.75</span>% steel by mass × <span class="tab" id="w-sr">99</span>% recovered = <b id="w-steel">26.7</b> t of steel, to the electric-arc-furnace route.</p></div></li>
+      <li><div><h4>CO₂-e avoided</h4><p><span class="tab" id="w-steel2">26.7</span> t × <span class="tab" id="w-f">0.44</span> t CO₂-e per tonne recycled (steel, <span id="w-fsrc">NSW DECCW 2010</span>, Table 4) = <b id="w-co2">11.8</b> t CO₂-e. No carbon is claimed for the foam and fibre, because no factor for it is in the library yet.</p></div></li>
+      <li><div><h4>Landfill avoided</h4><p>Each mattress is <span class="tab" id="w-m3">0.7</span> m³, so <span class="tab" id="w-volin">700</span> m³ would have gone into landfill. The residual, <span class="tab" id="w-lanpct">67</span>% of the mass, is shredded to 25% of its volume, so <span class="tab" id="w-vollan">117</span> m³ did go in. <b id="w-vol">583</b> m³ avoided.</p></div></li>
+      <li><div><h4>Material recovery rate</h4><p><span class="tab" id="w-rec">26.7</span> t recovered ÷ <span class="tab" id="w-mass3">80.0</span> t handed over = <b id="w-rate">33.4</b>%.</p><p class="why">Why a third. The steel is recovered at 99%. The foam and fibre residual is shredded and landfilled while recovery trials continue, so two thirds of a mattress by mass currently counts as landfilled. YES reports it that way rather than counting the whole mattress as recycled.</p></div></li>
+      <li><div><h4>YES Score</h4><p>Recovery <span class="tab" id="w-p1">20.0</span> of <span id="w-w1">60</span> · Carbon <span class="tab" id="w-p2">7.4</span> of <span id="w-w2">25</span> (<span class="tab" id="w-int">0.15</span> t CO₂-e per tonne handed over against a reference of <span id="w-ref">0.5</span>) · Evidence <span class="tab" id="w-p3">15.0</span> of <span id="w-w3">15</span> (weighbridge docket assumed) = <b id="w-score">42</b> out of 100, <b id="w-band">Developing</b>. Proposed method v0.1, not an accredited rating.</p></div></li>
+    </ol>
+    </div>
+    <div class="btn-row mt-3 reveal"><a class="btn btn-ghost" href="/method/">Read the YES Method {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band"><div class="wrap"><p class="eyebrow">Switched on in 30 days</p><h2>See your YES impact before you commit.</h2><p class="lead">Book a 30-minute walkthrough with the demo dashboard, or send us one month of data and we will show you what YES makes of it.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div></div></section>
+
+<!--scripts-->
+<script src="/assets/yes-data.js"></script>
+<script>
+(function(){
+  var B=window.YES; if(!B||!B.compute||!B.score||!B.CATS||!B.CAT) return;
+  var fmt=B.fmt||function(n,d){return (+n).toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d});};
+  var $=function(id){return document.getElementById(id);};
+  var txt=function(id,s){var el=$(id); if(el) el.textContent=s;};
+  function srcId(k){return (B.SOURCES&&B.SOURCES[k]&&B.SOURCES[k].id)||k||'';}
+  function pct(x,d){return fmt(x*100,d||0)+'%';}
+  function num(v,dec){ if(Math.abs(v)>=10000) dec=0; return fmt(v,dec); }
+  var W=(B.SCORE&&B.SCORE.weights)||{recovery:60,carbon:25,evidence:15};
+  var STATUS={reference:{cls:'tag',label:'Reference'},group:{cls:'tag',label:'Group figure'},assumption:{cls:'tag assume',label:'Assumption'},pending:{cls:'tag pending',label:'Pending · no carbon'}};
+  // stream icon per category key (sprite ids), in YES.CATS order
+  var ICON={mattresses:'i-mattress',steel:'i-steel',aluminium:'i-alu',timber_plain:'i-timber',timber_coloured:'i-timber2',tyres:'i-tyre',whitegoods:'i-white',ewaste:'i-ewaste',clothing:'i-cloth',concrete:'i-rubble',vehicles:'i-car',greenwaste:'i-green',general:'i-bin'};
+  function icon(k){return '<svg class="ic" aria-hidden="true"><use href="#'+(ICON[k]||'i-bin')+'"/></svg>';}
+  txt('c-ver',B.METHOD_VERSION||'v0.1 draft');
+  txt('c-wl','Composition · weights '+W.recovery+' / '+W.carbon+' / '+W.evidence);
+
+  // ---- build the input rows from the engine, in YES.CATS order -------------------
+  var form=$('c-form');
+  if(form){
+    B.CATS.forEach(function(c){
+      var row=document.createElement('div'); row.className='c-row';
+      var id='c-in-'+c.k;
+      var lab=document.createElement('label'); lab.setAttribute('for',id);
+      lab.innerHTML=icon(c.k)+'<span class="lt"><span class="nm"></span><span class="u"></span></span>';
+      lab.querySelector('.nm').textContent=c.name;
+      lab.querySelector('.u').textContent=c.unit==='count'?'count':'tonnes';
+      var wrap=document.createElement('div'); wrap.className='c-in';
+      var inp=document.createElement('input');
+      inp.type='number'; inp.id=id; inp.name=c.k; inp.min='0'; inp.step=c.unit==='count'?'1':'0.1'; inp.inputMode=c.unit==='count'?'numeric':'decimal';
+      inp.value=c.k==='mattresses'?'1000':'0';
+      inp.setAttribute('aria-describedby',id+'-h');
+      var hint=document.createElement('span'); hint.className='hint'; hint.id=id+'-h';
+      hint.textContent=c.unit==='count'?('× '+kg(c.kgUnit)+' kg each'):'tonnes';
+      wrap.appendChild(inp); wrap.appendChild(hint);
+      row.appendChild(lab); row.appendChild(wrap);
+      form.appendChild(row);
+    });
+    form.addEventListener('submit',function(ev){ev.preventDefault();});
+  }
+  function readEntries(){
+    var out=[];
+    B.CATS.forEach(function(c){
+      var el=$('c-in-'+c.k); if(!el) return;
+      var q=parseFloat(el.value); if(!isFinite(q)||q<0) q=0;
+      if(q>0) out.push({k:c.k,qty:q});
+    });
+    return out;
+  }
+
+  // ---- results ---------------------------------------------------------------
+  function setV(id,v,dec){
+    var el=$(id); if(!el) return;
+    var s=num(v,dec); el.textContent=s;
+    var vbox=el.parentNode; if(vbox&&vbox.classList) vbox.classList.toggle('long',s.length>9);
+  }
+  function setW(id,v){var el=$(id); if(el) el.style.width=Math.max(0,Math.min(100,v))+'%';}
+  function fitDeg(x){ return x*100%1===0 ? fmt(x*100,0) : fmt(x*100,2); }
+  function kg(v){ return v%1===0 ? fmt(v,0) : fmt(v,1); }
+  var gaugeEl=$('c-gauge');
+  function paintGauge(sc,t){
+    if(!gaugeEl||!B.gauge||!B.gaugeUpdate) return;
+    if(!gaugeEl.firstChild) B.gauge(gaugeEl,sc,150); else B.gaugeUpdate(gaugeEl,sc);
+    gaugeEl.setAttribute('aria-label','YES Score '+sc.score+' of 100'+(t.inT>0?', '+sc.band:', nothing entered'));
+  }
+
+  function howBlock(c,e){
+    var one=B.compute([e]);
+    var b=one.byCat[c.k]||{mass:0,rec:0,sto:0,lan:0,steel:0,co2:0};
+    var st=STATUS[c.status]||STATUS.reference;
+    var wrapEl=document.createElement('div'); wrapEl.className='how-cat';
+    var h=document.createElement('div'); h.className='how-h';
+    var nm=document.createElement('span'); nm.className='hn'; nm.innerHTML=icon(c.k)+'<span></span>';
+    nm.lastChild.textContent=c.name+' · '+(c.unit==='count'?fmt(e.qty,0)+' '+c.unitLabel:fmt(e.qty,e.qty<10?1:0)+' t');
+    var tg=document.createElement('span'); tg.className=st.cls; tg.textContent=st.label;
+    h.appendChild(nm); h.appendChild(tg); wrapEl.appendChild(h);
+    var dl=document.createElement('dl');
+    function add(k,v,cls){ var dt=document.createElement('dt'); dt.textContent=k; var dd=document.createElement('dd'); dd.textContent=v; if(cls) dd.className=cls; dl.appendChild(dt); dl.appendChild(dd); }
+    add('Mass basis', c.unit==='count' ? fmt(e.qty,0)+' × '+kg(c.kgUnit)+' kg = '+fmt(b.mass,b.mass<10?2:1)+' t' : fmt(b.mass,b.mass<10?2:1)+' t as entered');
+    if(c.steelFrac>0){
+      add('Steel', fitDeg(c.steelFrac)+'% of mass × '+fitDeg(c.steelRecovery||1)+'% recovered = '+fmt(b.steel,b.steel<10?2:1)+' t steel · '+B.STEEL.f+' t CO₂-e per t ('+srcId(B.STEEL.src)+')');
+    } else {
+      add('Steel','No steel fraction');
+    }
+    if(c.carbon!=null){
+      add('Carbon', c.carbon+' t CO₂-e per tonne recycled ('+srcId(c.carbonSrc)+') on the '+(c.steelFrac>0?'non-steel ':'')+'recycled mass');
+    } else if(c.status==='pending'){
+      add('Carbon','No factor in the library yet · recovered mass is counted, no CO₂-e claimed');
+    } else if(c.steelFrac>0){
+      add('Carbon','Steel factor only · no CO₂-e claimed for the non-steel fraction');
+    } else {
+      add('Carbon','No CO₂-e claimed');
+    }
+    var p=c.path;
+    add('Pathway', pct(p.rec)+' recycled · '+pct(p.sto)+' stored · '+pct(p.lan)+' landfilled · default for a Recycle Group handover');
+    add('Landfill volume', c.m3t+' m³ per tonne'+(c.k==='mattresses'?' · residual shredded to 25% of volume':'')+(c.k==='general'?' · volume that went in, nothing avoided':''));
+    if(c.notes) add('Notes', c.notes);
+    var res=[fmt(b.rec,b.rec<10?2:1)+' t recovered'];
+    if(b.steel>0) res.push(fmt(b.steel,b.steel<10?2:1)+' t steel');
+    res.push(b.co2>0?fmt(b.co2,b.co2<10?2:1)+' t CO₂-e':'no CO₂-e claimed');
+    res.push(fmt(one.volAvoided,0)+' m³ landfill avoided');
+    add('Result', res.join(' · '),'out');
+    wrapEl.appendChild(dl);
+    return wrapEl;
+  }
+
+  function update(){
+    var entries=readEntries();
+    var t=B.compute(entries);
+    var sc=t.score||B.score(t);
+    var matt=t.units.mattresses||0;
+    setV('c-matt',matt,0);
+    if(matt>0){ setV('c-steelpct',(B.CAT.mattresses.steelRecovery||0)*100,0); txt('c-steelpct-d','of mattress steel · Recycle Group'); }
+    else { txt('c-steelpct','—'); txt('c-steelpct-d','no mattresses entered'); var sp=$('c-steelpct'); if(sp&&sp.parentNode) sp.parentNode.classList.remove('long'); }
+    setV('c-steel',t.steelT,1);
+    setV('c-co2',t.co2,1);
+    setV('c-vol',t.volAvoided,0);
+    setV('c-rate',t.recoveryRate*100,1);
+    setV('c-ret',t.recT,1);
+    var steelCats=Object.keys(t.byCat).filter(function(k){return t.byCat[k].steel>0;}).length;
+    txt('c-steel-d', steelCats?('from '+steelCats+' steel-bearing stream'+(steelCats===1?'':'s')):'no steel-bearing streams');
+    txt('c-co2-d', t.pendingCats.length?('no CO₂-e claimed for '+t.pendingCats.join(', ')):('steel + reference factors · '+srcId('nsw2010')));
+    txt('c-ret-d', t.inT>0?('of '+fmt(t.inT,t.inT<10?1:0)+' t handed over'):'nothing entered yet');
+    // score: gauge (shared component; arcs sweep on every recalculation) + band + composition
+    paintGauge(sc,t);
+    txt('c-band',t.inT>0?sc.band:'—');
+    setW('c-p1',sc.parts.recovery); setW('c-p2',sc.parts.carbon); setW('c-p3',sc.parts.evidence);
+    txt('c-l1',fmt(sc.parts.recovery,1)+' / '+W.recovery); txt('c-l2',fmt(sc.parts.carbon,1)+' / '+W.carbon); txt('c-l3',fmt(sc.parts.evidence,1)+' / '+W.evidence);
+    var stk=$('c-stack'); if(stk) stk.setAttribute('aria-label','YES Score '+sc.score+' of 100: recovery '+fmt(sc.parts.recovery,1)+', carbon '+fmt(sc.parts.carbon,1)+', evidence '+fmt(sc.parts.evidence,1));
+    // buckets
+    var tot=t.inT>0?t.inT:1;
+    setW('c-b-rec',t.recT/tot*100); setW('c-b-sto',t.stoT/tot*100); setW('c-b-lan',t.lanT/tot*100);
+    var bk=$('c-bucket'); if(bk) bk.setAttribute('aria-label','Three buckets: '+fmt(t.recT,1)+' t recycled, '+fmt(t.stoT,1)+' t stored, '+fmt(t.lanT,1)+' t landfilled');
+    txt('c-t-rec',fmt(t.recT,t.recT<10?1:0)+' t'); txt('c-t-sto',fmt(t.stoT,t.stoT<10?1:0)+' t'); txt('c-t-lan',fmt(t.lanT,t.lanT<10?1:0)+' t');
+    txt('c-t-in',fmt(t.inT,t.inT<10?1:0)+' t handed over');
+    // how
+    var how=$('c-how');
+    if(how){
+      while(how.firstChild) how.removeChild(how.firstChild);
+      if(!entries.length){ var p=document.createElement('p'); p.className='how-empty'; p.textContent='Enter a quantity in any category to see its mass basis, factors, pathway and status.'; how.appendChild(p); }
+      else entries.forEach(function(e){ var c=B.CAT[e.k]; if(c) how.appendChild(howBlock(c,e)); });
+    }
+  }
+  var timer=null;
+  if(form){
+    form.addEventListener('input',function(){ clearTimeout(timer); timer=setTimeout(update,120); });
+    form.addEventListener('change',function(){ clearTimeout(timer); timer=setTimeout(update,120); });
+  }
+  var clr=$('c-clear');
+  if(clr){
+    clr.addEventListener('click',function(){
+      B.CATS.forEach(function(c){ var el=$('c-in-'+c.k); if(el) el.value='0'; });
+      clearTimeout(timer); update();
+      var first=$('c-in-'+B.CATS[0].k); if(first) first.focus();
+    });
+  }
+  update();
+
+  // ---- worked example: 1,000 mattresses, computed by the engine -----------------
+  (function(){
+    var c=B.CAT.mattresses; if(!c) return;
+    var m=B.compute([{k:'mattresses',qty:1000}]);
+    var sc=m.score||B.score(m);
+    var b=m.byCat.mattresses||{};
+    txt('w-kg',fmt(c.kgUnit,0));
+    txt('w-mass',fmt(m.inT,1)); txt('w-mass2',fmt(m.inT,1)); txt('w-mass3',fmt(m.inT,1));
+    txt('w-sf',fitDeg(c.steelFrac)); txt('w-sr',fitDeg(c.steelRecovery||1));
+    txt('w-steel',fmt(m.steelT,1)); txt('w-steel2',fmt(m.steelT,1));
+    // display moment + outcome ledger, from the same computation
+    txt('w-steel-big',fmt(m.steelT,1)); txt('w-mass-big',fmt(m.inT,1));
+    txt('w-co2-big',fmt(m.co2,1)); txt('w-vol-big',fmt(m.volAvoided,0)); txt('w-rate-big',fmt(m.recoveryRate*100,1));
+    txt('w-score-big',String(sc.score)); txt('w-band-big',sc.band);
+    txt('w-f',String(B.STEEL.f)); txt('w-fsrc',srcId(B.STEEL.src));
+    txt('w-co2',fmt(m.co2,1));
+    txt('w-m3',fmt(c.kgUnit/1000*c.m3t,1));
+    txt('w-volin',fmt(m.inT*c.m3t,0));
+    txt('w-lanpct',fmt(c.path.lan*100,0));
+    txt('w-vollan',fmt(m.volLandfilled,0));
+    txt('w-vol',fmt(m.volAvoided,0));
+    txt('w-rec',fmt(m.recT,1));
+    txt('w-rate',fmt(m.recoveryRate*100,1));
+    txt('w-p1',fmt(sc.parts.recovery,1)); txt('w-p2',fmt(sc.parts.carbon,1)); txt('w-p3',fmt(sc.parts.evidence,1));
+    txt('w-w1',String(W.recovery)); txt('w-w2',String(W.carbon)); txt('w-w3',String(W.evidence));
+    txt('w-int',fmt(m.intensity,2)); txt('w-ref',String((B.SCORE&&B.SCORE.refIntensity)||0.5));
+    txt('w-score',String(sc.score)); txt('w-band',sc.band);
+  })();
+})();
+</script>

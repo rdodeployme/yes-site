@@ -1,0 +1,237 @@
+<style>
+/* yes-report refinements (scoped) */
+.page-yes-report .stat .v span[data-count]{font-size:1em;color:inherit;margin-left:0;letter-spacing:inherit;font-weight:inherit}
+.page-yes-report section:not(.dark) .badge.demo{border-color:var(--slate);color:var(--graphite);background:var(--white)}
+/* 01 · product family: numbered editorial list */
+.page-yes-report .fam{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:minmax(0,1fr);gap:0 clamp(32px,4vw,64px);border-bottom:1px solid var(--mist)}
+@media(min-width:800px){.page-yes-report .fam{grid-template-columns:1fr 1fr}.page-yes-report .fam .full{grid-column:1/-1}}
+.page-yes-report .fam li{display:grid;grid-template-columns:minmax(80px,auto) minmax(0,1fr);gap:20px;padding:28px 0 34px;border-top:1px solid var(--mist);margin:0;align-items:start}
+.page-yes-report .fam .sec-idx{margin:0;font-size:clamp(40px,4.5vw,64px);line-height:.95}
+.page-yes-report .fam .h{display:flex;align-items:center;gap:12px;margin:2px 0 8px}
+.page-yes-report .fam h3{font-size:clamp(21px,1.9vw,26px)}
+.page-yes-report .fam .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin:0 0 10px}
+.page-yes-report .fam p{font-size:15.5px;color:var(--graphite);margin:0;max-width:48ch}
+.page-yes-report .fam .full p{max-width:66ch}
+.page-yes-report .fam .more{display:inline-block;margin-top:14px;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;color:var(--green)}
+@media(max-width:480px){.page-yes-report .fam li{grid-template-columns:56px minmax(0,1fr);gap:14px}}
+/* 02 · score: gauge beside the breakdown */
+.page-yes-report .score{display:grid;grid-template-columns:minmax(0,1fr);gap:40px;align-items:start}
+@media(min-width:900px){.page-yes-report .score{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,5vw,72px)}}
+.page-yes-report .score-big{border-top:1px solid #2A2C2A;padding-top:22px}
+.page-yes-report .score-big .gauge{margin:6px 0 20px}
+.page-yes-report .score-big .band{font-family:var(--font-mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--green-3);display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.page-yes-report .score-big .band b{font-family:var(--font-display);font-weight:800;font-size:26px;letter-spacing:-.02em;color:var(--paper);text-transform:none}
+.page-yes-report .score-big .s{font-size:14px;color:var(--mist);margin-top:14px}
+.page-yes-report .parts-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.page-yes-report .parts-top .m{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
+.page-yes-report .stack{display:flex;height:18px;border-radius:3px;overflow:hidden;background:#242624}
+.page-yes-report .stack i{display:block;height:100%;width:0;transition:width 1.1s var(--ease)}
+.page-yes-report .stack .p1{background:var(--green)}.page-yes-report .stack .p2{background:var(--green-3)}.page-yes-report .stack .p3{background:var(--green-4)}
+.page-yes-report .legend .p1 i{background:var(--green)}.page-yes-report .legend .p2 i{background:var(--green-3)}.page-yes-report .legend .p3 i{background:var(--green-4)}.page-yes-report .legend .p0 i{background:#242624;border:1px solid #3A3D3A}
+.page-yes-report .parts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,2vw,28px);margin-top:32px}
+@media(max-width:640px){.page-yes-report .parts{grid-template-columns:1fr}}
+.page-yes-report .parts .stat .v{font-size:clamp(34px,3.4vw,48px)}
+.page-yes-report .parts .stat .v span.of{font-size:.42em;color:var(--slate);margin-left:6px;letter-spacing:0;font-weight:600}
+.page-yes-report .score-note{font-size:14px;color:var(--mist);border-top:1px solid #2A2C2A;padding-top:14px;margin-top:28px;max-width:none;line-height:1.6}
+.page-yes-report .score-note .mono{color:var(--slate);font-size:12.5px;display:block;margin-top:10px}
+/* 03 · dashboard shot with caption strip */
+.page-yes-report .cap{display:flex;justify-content:space-between;align-items:center;gap:12px 28px;flex-wrap:wrap;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--graphite);margin-top:22px;padding-top:14px;border-top:1px solid var(--mist);line-height:1.7}
+.page-yes-report .cap b{color:var(--ink);font-weight:500}
+.page-yes-report .attrib{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--graphite);margin:12px 0 0;line-height:1.7}
+/* 04 · certificate: split with the spec list */
+.page-yes-report .split .media{min-height:420px}
+.page-yes-report .split .media img{object-position:center top}
+.page-yes-report .split .copy .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.page-yes-report .split .copy .top p{margin:0}
+.page-yes-report .split .copy p{color:var(--mist);max-width:48ch}
+.page-yes-report .spec{list-style:none;padding:0;margin:20px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+.page-yes-report .spec li{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.04em;color:var(--mist);padding:10px 0;border-top:1px solid #262826;margin:0;display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px}
+.page-yes-report .spec li::before{content:attr(data-n);color:var(--slate);font-size:10.5px;letter-spacing:.1em}
+.page-yes-report .spec li:nth-last-child(-n+2){border-bottom:1px solid #262826}
+@media(max-width:560px){.page-yes-report .spec{grid-template-columns:1fr}.page-yes-report .spec li:nth-last-child(2){border-bottom:0}}
+/* 05 · exports: icons per row */
+.page-yes-report .feature-list li{grid-template-columns:34px minmax(0,1fr)}
+.page-yes-report .feature-list .ic{margin-top:2px}
+.page-yes-report .roadmap{margin-left:10px}
+</style>
+
+<!-- HERO -->
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">The YES Report</p>
+    <h1>Two layers. One method. Every number traceable.</h1>
+    <p class="lead">The YES Report is a recycling certificate and a live environmental dashboard, built on the YES Method and delivered as a family of products.</p>
+    <div class="btn-row"><a class="btn btn-primary" href="/demo/">Open the live demo {{ARROW}}</a><a class="btn btn-ghost" href="/certificate/">View a sample certificate</a></div>
+  </div>
+</section>
+
+<!-- 01 · THE PRODUCT FAMILY -->
+<section id="family">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">01</span><p class="eyebrow">The product family</p><h2>One report. Seven ways to read it.</h2></div><p class="lead">Every product below is a view of the same verified ledger. Nothing is calculated twice and nothing is calculated differently.</p></div>
+    <ol class="fam reveal" aria-label="The YES product family">
+      <li class="full"><span class="sec-idx">01</span><div><div class="h"><svg class="ic g"><use href="#i-doc"/></svg><h3>YES Report</h3></div><p class="k">The customer's environmental report</p><p>Contains the certificate for the period, the dashboard figures as at the close of the period, the three-bucket split for every stream, and the method version everything was calculated under. The six products below are its parts.</p></div></li>
+      <li><span class="sec-idx">02</span><div><div class="h"><svg class="ic g"><use href="#i-dash"/></svg><h3>YES Dashboard</h3></div><p class="k">Live reporting portal</p><p>Contains the Your Environment Score tiles, recovered tonnes by stream, the ledger of every handover and the monthly gap summary, updated the day material moves.</p></div></li>
+      <li><span class="sec-idx">03</span><div><div class="h"><svg class="ic g"><use href="#i-verify"/></svg><h3>YES Certificate</h3></div><p class="k">Downloadable certificate per project or period</p><p>Contains the period, streams, tonnes, steel, CO₂-e, landfill avoided, the YES Score, the method version, a verification statement and a certificate ID.</p><a class="more" href="/certificate/">Sample certificate →</a></div></li>
+      <li><span class="sec-idx">04</span><div><div class="h"><svg class="ic g"><use href="#i-ledger"/></svg><h3>YES Data</h3></div><p class="k">Underlying recovery and recycling data</p><p>Contains every ledger entry with its date, quantity, bucket, evidence grade and evidence reference, exportable as CSV.</p></div></li>
+      <li><span class="sec-idx">05</span><div><div class="h"><svg class="ic g"><use href="#i-co2"/></svg><h3>YES Carbon</h3></div><p class="k">CO₂-e measurement</p><p>Contains tonnes CO₂-e avoided per stream, the factor and source applied to each, and the streams where no carbon is claimed.</p></div></li>
+      <li><span class="sec-idx">06</span><div><div class="h"><svg class="ic g"><use href="#i-loop"/></svg><h3>YES Circularity</h3></div><p class="k">Material recovery and circular-economy outcomes</p><p>Contains the material recovery rate, tonnes returned to productive use and landfill volume avoided, by stream and in total.</p></div></li>
+      <li><span class="sec-idx">07</span><div><div class="h"><svg class="ic g"><use href="#i-bench"/></svg><h3>YES Benchmark</h3></div><p class="k">Comparison against previous periods or sites</p><p>Contains period-on-period and site-on-site movement in every tile, and which streams moved the number.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 02 · THE YES SCORE -->
+<section class="dark" id="score">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">The YES Score</p><h2>One number a board can read. Three parts an auditor can check.</h2></div><p class="lead">The headline number on every dashboard and certificate: a score out of 100 per customer per period, always shown with the tiles beneath it. Proposed, versioned, and published in full.</p></div>
+    <!-- The YES Score is PROPOSED (v0.1). Weights and the reference intensity come from YES.SCORE in the engine; the score is computed with YES.score and drawn with YES.gauge, never hand-typed. -->
+    <div class="score reveal">
+      <div class="score-big">
+        <div class="gauge" id="s-gauge" style="--gs:260px"></div>
+        <div class="band"><b id="s-band">&nbsp;</b><span>YES Score · out of 100</span></div>
+        <div class="s"><span id="s-who">Hepburn Shire Council</span> · <span id="s-prog">Hard waste program · FY2026–27 to date</span></div>
+        <div class="mt-2"><span class="badge demo">Demo data · illustrative</span></div>
+      </div>
+      <div>
+        <div class="parts-top"><span class="m">How the score is built</span><span class="badge">Proposed · v0.1</span></div>
+        <div class="stack" aria-label="YES Score composition, points earned of 100"><i class="p1" id="s-p1" data-w="0"></i><i class="p2" id="s-p2" data-w="0"></i><i class="p3" id="s-p3" data-w="0"></i></div>
+        <div class="legend mt-1"><span class="p1"><i></i>Material recovery</span><span class="p2"><i></i>Carbon performance</span><span class="p3"><i></i>Evidence quality</span><span class="p0"><i></i>Not earned</span></div>
+        <div class="parts">
+          <div class="stat"><div class="v"><span id="s-rec" data-count="0" data-dec="1">0</span><span class="of">of 60</span></div><div class="l">Material recovery rate</div><div class="s">Recycled ÷ handed over. 60% of the score.</div></div>
+          <div class="stat"><div class="v"><span id="s-car" data-count="0" data-dec="1">0</span><span class="of">of 25</span></div><div class="l">Carbon performance</div><div class="s">CO₂-e avoided per tonne handed over, indexed against the YES reference basket. 25%.</div></div>
+          <div class="stat"><div class="v"><span id="s-ev" data-count="0" data-dec="1">0</span><span class="of">of 15</span></div><div class="l">Evidence quality</div><div class="s">Share of tonnes backed by weighbridge dockets or processor certificates. 15%.</div></div>
+        </div>
+        <p class="score-note"><span id="s-note"></span><span class="mono">Stored material is neutral. Landfilled material counts against you. The YES Score is YES's own published method, versioned with the YES Method. It is not an accredited rating.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · THE DASHBOARD -->
+<section id="dashboard">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">The dashboard</p><h2>Your Environment Score, live.</h2></div><p class="lead">The YES Score, the seven headline tiles, recovered tonnes by stream and month, and the ledger behind them, recalculated every time a YES operator enters a handover.</p></div>
+    <div class="reveal">
+      <div class="shot"><img src="/assets/img/product-dashboard.webp" alt="YES Dashboard for a council hard waste program: YES Score with its composition, the seven Your Environment Score tiles, three buckets, recovered tonnes by month and equivalences with their sources (demo data)" loading="lazy" width="1600" height="1858"></div>
+      <div class="cap"><span><b id="c-who">Hepburn Shire Council</b> · <span id="c-prog">Hard waste program · FY2026–27 to date</span></span><span>YES Method <span id="c-ver">v0.1 draft</span> · entered by YES</span><span class="badge demo">Demo data · illustrative</span></div>
+      <p class="attrib">Verified recycling data supplied by The Mattress Recycling Company and Recycle Group.</p>
+    </div>
+    <div class="btn-row mt-3 reveal"><a class="btn btn-ink" href="/demo/">Open the live demo {{ARROW}}</a><a class="btn btn-outline" href="/how-it-works/">How the data gets in</a></div>
+  </div>
+</section>
+
+<!-- 04 · THE CERTIFICATE -->
+<section class="dark" id="certificate">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">The certificate</p><h2>One page. Every figure with its method.</h2></div><p class="lead">Issued for each project or reporting period. A board, a councillor or an auditor can read it in a minute and trace any number on it back to the ledger.</p></div>
+    <div class="split reveal">
+      <div class="media"><img src="/assets/img/product-certificate.webp" alt="YES Certificate, page one: Your Environment Score, headline outcomes, three buckets, real-world scale and the verification statement (demo data)" loading="lazy" width="1588" height="2470"></div>
+      <div class="copy">
+        <div class="top"><p class="idx">WHAT IS ON THE CERTIFICATE</p><span class="badge demo">Demo data · illustrative</span></div>
+        <p>The downloadable layer. It states what was handed over, what was recovered, what was stored and what went to landfill, then the outcomes those tonnes produced, each with the factor version it was calculated under. A certificate ID and the method version mean the figures can be reproduced later, even if the factor library has moved on.</p>
+        <ul class="spec" aria-label="What is on a YES Certificate">
+          <li data-n="01">Period</li>
+          <li data-n="02">Streams reported</li>
+          <li data-n="03">Tonnes handed over</li>
+          <li data-n="04">Tonnes recovered</li>
+          <li data-n="05">Tonnes stored</li>
+          <li data-n="06">Tonnes landfilled</li>
+          <li data-n="07">Steel recovered</li>
+          <li data-n="08">CO₂-e avoided, with factor version</li>
+          <li data-n="09">Landfill volume avoided</li>
+          <li data-n="10">Material recovery rate</li>
+          <li data-n="11">YES Score</li>
+          <li data-n="12">Method version</li>
+          <li data-n="13">Verification statement</li>
+          <li data-n="14">Certificate ID</li>
+        </ul>
+        <div class="btn-row mt-3"><a class="btn btn-primary" href="/certificate/">View a sample certificate {{ARROW}}</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · EXPORTS AND INTEGRATIONS -->
+<section id="exports">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">05</span><p class="eyebrow">Exports and integrations</p><h2>Built to leave the dashboard.</h2></div><p class="lead">The figures are yours. Every export carries the evidence reference and the method citation, so the number in your annual report is the number on the ledger.</p></div>
+    <div class="grid g12 reveal">
+      <div class="span7">
+        <ul class="feature-list">
+          <li><svg class="ic g"><use href="#i-export"/></svg><div><strong>CSV of every ledger entry.</strong> Date, stream, quantity, bucket, evidence grade, evidence reference and the operator's initials.</div></li>
+          <li><svg class="ic g"><use href="#i-doc"/></svg><div><strong>PDF certificate and report.</strong> The YES Certificate and the full YES Report for the period, print-ready.</div></li>
+          <li><svg class="ic g"><use href="#i-co2"/></svg><div><strong>Scope 3 export.</strong> Waste generated in operations, mapped to GHG Protocol Scope 3 Category 5, with the factor and source for every line.</div></li>
+          <li><svg class="ic g"><use href="#i-bench"/></svg><div><strong>Annual report figures.</strong> Tonnes recovered, steel, CO₂-e and landfill avoided as a citable table, each with its YES Method reference.</div></li>
+          <!-- API access is ROADMAP, not available at launch. -->
+          <li><svg class="ic g"><use href="#i-lock"/></svg><div><strong>API access.</strong> Read access to your ledger and tiles for your own systems. <span class="tag pending roadmap">Roadmap</span></div></li>
+        </ul>
+      </div>
+      <div class="span5">
+        <p class="callout">Evidence-based, not marketing-based. No trees saved. Every equivalence shown with its source.</p>
+        <p class="note">CO₂-e uses reference factors from NSW DECCW 2010, Table 4, applied to recovered mass. Streams with no factor in the library are reported as recovered tonnes with no carbon claimed, and are marked as pending on the certificate.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · COMPARE -->
+<section class="paper-2" id="compare">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">06</span><p class="eyebrow">The difference</p><h2>A tonnage line is not a report.</h2></div><p class="lead">Most organisations already receive a number from their contractor. The question is what it can support.</p></div>
+    <div class="compare reveal">
+      <div class="before"><h4>A contractor's tonnage report</h4><ul>
+        <li>One figure per invoice, entered by the contractor</li>
+        <li>A diversion percentage with no method behind it</li>
+        <li>No evidence reference a reader can follow</li>
+        <li>No carbon figure, or one without a source</li>
+        <li>A different format from every contractor</li>
+        <li>Nothing that survives an auditor's question</li>
+      </ul></div>
+      <div class="after"><h4>The YES Report</h4><ul>
+        <li>Every handover entered and verified by YES</li>
+        <li>Three buckets, and Stored never counts as recycled</li>
+        <li>An evidence reference and operator's initials on every entry</li>
+        <li>CO₂-e with the factor, the source and the version</li>
+        <li>One method across every stream and every contractor</li>
+        <li>A certificate ID and a method version that can be reproduced</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band"><div class="wrap"><p class="eyebrow">Switched on in 30 days</p><h2>See your YES impact before you commit.</h2><p class="lead">Book a 30-minute walkthrough with the demo dashboard, or send us one month of data and we will show you what YES makes of it.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div></div></section>
+
+<!--scripts-->
+<script src="/assets/yes-data.js"></script>
+<script>
+(function(){
+  var B=window.YES; if(!B||!B.compute||!B.DEMO) return;
+  var fmt=B.fmt||function(n,d){return n.toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d});};
+  function setCount(id,v,dec){
+    var el=document.getElementById(id); if(!el) return;
+    dec=dec||0; el.setAttribute('data-count',v); el.setAttribute('data-dec',dec);
+    if(el.getAttribute('data-from')) el.textContent=(el.getAttribute('data-prefix')||'')+fmt(v,dec)+(el.getAttribute('data-suffix')||'');
+  }
+  function txt(id,s){var el=document.getElementById(id); if(el) el.textContent=s;}
+  function w(id,v){var el=document.getElementById(id); if(el) el.setAttribute('data-w',Math.max(0,Math.min(100,v)));}
+
+  var t=B.compute(B.DEMO.entries);
+  var sc=t.score||B.score(t);
+
+  // --- 02 · the YES Score: gauge drawn by the shared component from the engine's score ---
+  var g=document.getElementById('s-gauge');
+  if(g&&B.gauge) B.gauge(g,sc,260);
+  txt('s-band',sc.band);
+  txt('s-who',B.DEMO.customer||''); txt('s-prog',B.DEMO.program||'');
+  setCount('s-rec',sc.parts.recovery,1);
+  setCount('s-car',sc.parts.carbon,1);
+  setCount('s-ev',sc.parts.evidence,1);
+  w('s-p1',sc.parts.recovery); w('s-p2',sc.parts.carbon); w('s-p3',sc.parts.evidence);
+  txt('s-note',(B.SCORE&&B.SCORE.note)||'');
+
+  // --- 03 · dashboard caption strip, from the same dataset the shot was rendered from ---
+  txt('c-who',B.DEMO.customer||''); txt('c-prog',B.DEMO.program||''); txt('c-ver',B.METHOD_VERSION||'');
+})();
+</script>

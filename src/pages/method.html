@@ -1,0 +1,374 @@
+<style>
+/* method refinements (scoped) */
+.page-method .hero-sub .badge{margin-top:28px}
+.page-method .stat .v span[data-count]{font-size:1em;color:inherit;margin-left:0;letter-spacing:inherit;font-weight:inherit}
+/* 01 · principles: numbered editorial list, one icon per rule */
+.page-method .principles li{grid-template-columns:64px 36px minmax(0,1fr);gap:20px;align-items:start}
+.page-method .principles li .ic{margin-top:4px}
+.page-method .principles h4{font-size:20px}
+.page-method .principles p{max-width:60ch}
+@media(max-width:640px){.page-method .principles li{grid-template-columns:44px 28px minmax(0,1fr);gap:12px}.page-method .principles li::before{font-size:26px}}
+/* 02 · factor library */
+.page-method .lib-stats{margin-bottom:clamp(28px,4vw,44px)}
+.page-method .lib-stats .stat .v{font-size:clamp(34px,3.6vw,52px);padding-right:34px}
+.page-method .lib-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 14px}
+.page-method .lib-top .m{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
+.page-method .factors{min-width:1100px;font-size:14px}
+.page-method .factors td.cat{font-weight:600;white-space:nowrap}
+.page-method .factors td.unit{min-width:110px}
+.page-method .factors td.carbon{white-space:nowrap}
+.page-method .factors td.carbon small{display:block;font-size:12px;color:var(--slate);margin-top:3px;white-space:normal;max-width:18ch}
+.page-method .factors td.notes{min-width:230px;max-width:380px;color:var(--graphite);font-size:13.5px}
+.page-method .factors td.tagcell{white-space:nowrap}
+.page-method .factors td.mono{font-family:var(--font-mono);font-size:12.5px;white-space:nowrap}
+.page-method .tag.group{background:var(--mist);color:var(--charcoal)}
+.page-method .anchor{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(24px,4vw,48px);margin-top:clamp(36px,5vw,64px);padding-top:clamp(28px,4vw,44px);border-top:1px solid var(--mist)}
+@media(min-width:800px){.page-method .anchor{grid-template-columns:1fr 1fr}}
+.page-method .anchor .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin:0 0 12px}
+.page-method .anchor .big{font-family:var(--font-display);font-weight:800;font-size:clamp(44px,5vw,72px);letter-spacing:-.04em;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.page-method .anchor .big small{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);font-weight:400}
+.page-method .anchor p{color:var(--graphite);font-size:15px;margin:14px 0 0;max-width:46ch}
+/* 03 · sources */
+.page-method .sources{min-width:900px}
+.page-method .scroll-hint{display:none;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);margin:10px 0 0}
+@media(max-width:700px){.page-method .scroll-hint{display:block}}
+.page-method .sources td.src{font-family:var(--font-mono);font-size:12.5px;white-space:nowrap;color:var(--green-3)}
+.page-method .sources td.det{min-width:380px;max-width:560px;color:var(--mist);font-size:14px}
+.page-method .sources a{color:var(--green-3);font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;white-space:nowrap}
+/* 05 · the score: gauge beside the weights */
+.page-method .score-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(28px,4vw,48px);align-items:start}
+@media(min-width:1000px){.page-method .score-grid{grid-template-columns:220px minmax(0,7fr) minmax(0,5fr)}}
+.page-method .sg .badge{white-space:nowrap}
+.page-method .score-grid .table-wrap+.score-note{border-top:0;padding-top:6px;margin-top:14px}
+.page-method .score-grid .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0 0 14px}
+.page-method .sg{border-top:1px solid #2A2C2A;padding-top:18px}
+.page-method .sg .gauge{margin:8px 0 14px}
+.page-method .sg .band{font-family:var(--font-display);font-weight:800;font-size:22px;letter-spacing:-.02em;color:var(--paper);margin:0 0 6px}
+.page-method .sg .parts{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.04em;color:var(--slate);line-height:1.8;margin:0 0 14px}
+.page-method .sg .parts b{color:var(--mist);font-weight:500}
+@media(min-width:560px) and (max-width:999px){.page-method .sg{display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 28px;align-items:center}.page-method .sg .k{grid-column:1/-1}.page-method .sg .gauge{grid-row:span 3;margin:0}}
+.page-method .score-grid .table td:first-child{white-space:nowrap}
+@media(max-width:640px){.page-method .score-grid .table td:first-child{white-space:normal}}
+.page-method .score-grid .table td.w{font-family:var(--font-display);font-weight:800;font-size:24px;letter-spacing:-.03em;color:var(--green-3);white-space:nowrap}
+.page-method .score-grid .table td.band{font-family:var(--font-display);font-weight:800;font-size:19px;letter-spacing:-.02em;white-space:nowrap}
+.page-method .score-note{font-size:14px;color:var(--mist);border-top:1px solid #2A2C2A;padding-top:14px;margin-top:24px;max-width:none;line-height:1.6}
+/* 06 · evidence grades: letter tiles */
+.page-method .grades-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 18px}
+.page-method .grades-top h4{margin:0}
+.page-method .grades{display:grid;gap:0}
+.page-method .grow{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:20px;align-items:start;padding:24px 0;border-top:1px solid var(--mist)}
+.page-method .grow:last-child{border-bottom:1px solid var(--mist)}
+.page-method .grow h4{margin-bottom:6px}
+.page-method .grow p{margin:0;color:var(--graphite);max-width:60ch;font-size:15.5px}
+.page-method .grow .gl{font-family:var(--font-mono);font-weight:500;font-size:22px;letter-spacing:0;width:48px;height:48px;border-radius:5px;background:var(--green-tint);color:var(--green-ink);display:inline-flex;align-items:center;justify-content:center;margin-top:2px}
+.page-method .grow.b .gl{background:var(--mist-2);color:var(--graphite);border:1px dashed var(--slate)}
+.page-method .grow.c .gl{background:var(--mist-2);color:var(--graphite)}
+.page-method .grow .tag{margin-top:6px}
+@media(max-width:640px){.page-method .grow{grid-template-columns:48px minmax(0,1fr)}.page-method .grow .tag{grid-column:2}}
+.page-method .grades+.note{border-top:0;padding-top:0;margin-top:18px}
+/* 07 · change log */
+.page-method .log td.v{font-family:var(--font-mono);font-size:12.5px;white-space:nowrap}
+.page-method .lock{margin-top:clamp(28px,4vw,44px)}
+.page-method .lock .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0 0 12px}
+.page-method .lock ul{margin:0;padding-left:1.1em;max-width:70ch;color:var(--graphite);font-size:15px}
+.page-method .lock li{margin-bottom:.5em}
+</style>
+
+<!-- HERO -->
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">The YES Method</p>
+    <h1>Every number, traced to its source.</h1>
+    <p class="lead">This page is the method. It is versioned, it is conservative by default, and it changes only when the change is published.</p>
+    <div><span class="badge"><span class="dot"></span>Method <span id="m-ver">v0.1 draft</span> · to be locked before first certificate</span></div>
+    <div class="btn-row mt-3"><a class="btn btn-primary" href="/calculator/">Try the calculator {{ARROW}}</a><a class="btn btn-ghost" href="/contact/">Talk to YES</a></div>
+  </div>
+</section>
+
+<!-- 01 · PRINCIPLES -->
+<section id="principles">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">01</span><p class="eyebrow">Principles</p><h2>Six rules every YES figure obeys.</h2></div><p class="lead">If a number on a certificate cannot be explained by one of these, it does not go on the certificate.</p></div>
+    <ol class="steps principles reveal" aria-label="The six principles of the YES Method">
+      <li><svg class="ic g"><use href="#i-weigh"/></svg><div><h4>Measured mass first</h4><p>Tonnes from a weighbridge or a processor record. Counts are converted with a stated unit weight, and the unit weight carries its own status.</p></div></li>
+      <li><svg class="ic g"><use href="#i-scale"/></svg><div><h4>Recycled, Stored, Landfilled</h4><p>Every tonne lands in one of three buckets. Recycled counts for you. Landfilled counts against you. Stored is neutral until it moves.</p></div></li>
+      <!-- Confirm weighbridge data is available per stream before this principle is stated as delivered rather than as the rule. -->
+      <li><svg class="ic g"><use href="#i-steel"/></svg><div><h4>Steel is measured, not assumed</h4><p>Steel recovered is the mass that leaves as scrap, credited only on the recycled portion of a load. Until measured figures replace them, the fractions in the library are marked group or assumption.</p></div></li>
+      <li><svg class="ic g"><use href="#i-ledger"/></svg><div><h4>Reference factors, cited and versioned</h4><p>CO₂-e uses published factors. Each carries its source and the version of the library it entered under.</p></div></li>
+      <li><svg class="ic g"><use href="#i-lock"/></svg><div><h4>Conservative by default</h4><p>Where two credible figures exist, YES uses the lower. The steel factor is the LCA net figure, not the gross.</p></div></li>
+      <li><svg class="ic g"><use href="#i-clock"/></svg><div><h4>Pending means no claim</h4><p>A stream with no factor is reported as recovered tonnes with no carbon. It is marked pending, never estimated.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 02 · THE FACTOR LIBRARY -->
+<section class="paper-2" id="library">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">The factor library</p><h2>Thirteen categories. Every factor with a status.</h2></div><p class="lead">Generated from the same library the dashboard, calculator and certificate use. If it is not in this table, YES does not calculate with it.</p></div>
+    <div class="grid g4 lib-stats reveal" aria-label="Factor library by status">
+      <div class="stat"><svg class="ic"><use href="#i-ledger"/></svg><div class="v"><span id="c-all" data-count="13" data-dec="0">0</span></div><div class="l">Categories</div><div class="s">The 13 reporting categories</div></div>
+      <div class="stat green"><svg class="ic"><use href="#i-verify"/></svg><div class="v"><span id="c-ref" data-count="0" data-dec="0">0</span></div><div class="l">Reference</div><div class="s">Published external source</div></div>
+      <div class="stat"><svg class="ic"><use href="#i-weigh"/></svg><div class="v"><span id="c-grp" data-count="0" data-dec="0">0</span></div><div class="l">Group</div><div class="s">Recycle Group stated figure</div></div>
+      <div class="stat"><svg class="ic"><use href="#i-clock"/></svg><div class="v"><span id="c-open" data-count="0" data-dec="0">0</span></div><div class="l">Assumption or pending</div><div class="s" id="c-open-s">Working assumptions to be replaced, and streams with no factor yet</div></div>
+    </div>
+    <div class="reveal">
+      <div class="lib-top"><span class="m">Factor library · <span id="lib-ver">v0.1 draft</span> · t CO₂-e per tonne recycled</span><span class="badge">Draft · to be locked</span></div>
+      <div class="table-wrap">
+        <table class="table factors" id="factors" aria-label="YES factor library">
+          <thead><tr><th>Category</th><th>Unit basis</th><th class="n">Steel fraction</th><th>Carbon factor · source</th><th class="n">Default pathway<br>rec / sto / lan %</th><th class="n">m³ per t</th><th>Status</th><th>Notes</th></tr></thead>
+          <tbody id="f-body"></tbody>
+        </table>
+      </div>
+      <p class="scroll-hint">Scroll sideways for the full table</p>
+      <p class="note">Steel fraction is the share of mass credited as recovered steel (steel fraction × steel recovery). The default pathway applies to a handover to Recycle Group unless the actual pathway is recorded on the docket. m³ per tonne is uncompacted volume, used for landfill volume avoided. Status: Reference is a published external source; Group is a Recycle Group or TMRC stated figure; Assumption is a YES working figure to be replaced; Pending means no factor and no carbon claimed.</p>
+    </div>
+    <div class="anchor reveal">
+      <div>
+        <p class="k">The steel anchor factor</p>
+        <div class="big"><span id="st-f">0.44</span><small>t CO₂-e per t steel</small></div>
+        <p id="st-note">Steel, C&amp;I/C&amp;D. Conservative LCA net figure (includes collection and reprocessing impacts). worldsteel's gross figure of ≈1.5 t CO₂-e per tonne of scrap is higher; YES uses the conservative figure by default.</p>
+        <p class="mono small" id="st-src" style="margin-top:10px;color:var(--slate)">NSW DECCW 2010</p>
+      </div>
+      <div>
+        <p class="k">The one equivalence YES shows</p>
+        <div class="big"><span id="eq-t">4.16</span><small>t CO₂-e per family vehicle, lifetime</small></div>
+        <p id="eq-note">A family vehicle is assumed to emit 4.16 t CO₂-e over its lifetime (NSW DECCW 2010): cars permanently retired.</p>
+        <p class="mono small" id="eq-src" style="margin-top:10px;color:var(--slate)">NSW DECCW 2010</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · SOURCES -->
+<section class="dark" id="sources">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">Sources</p><h2>Four sources. Each one named on the line it feeds.</h2></div><p class="lead">A factor without a source is not in the library. A source without a link is a stated figure, and is labelled as one.</p></div>
+    <div class="table-wrap reveal">
+      <table class="table sources" id="sources-table" aria-label="Sources used by the YES Method">
+        <thead><tr><th>Source</th><th>Title</th><th>Detail</th><th>Link</th></tr></thead>
+        <tbody id="s-body"></tbody>
+      </table>
+      <p class="scroll-hint">Scroll sideways for the full table</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · HOW A CERTIFICATE FIGURE IS BUILT -->
+<section id="build">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">How a figure is built</p><h2>From a docket to a certificate, in seven steps.</h2></div><p class="lead">The same sequence runs for every handover. The engine does the arithmetic. Nobody types a result.</p></div>
+    <ol class="steps reveal" aria-label="How a YES certificate figure is calculated">
+      <li><div><h4>Mass in</h4><p>Every handover is recorded as mass. Weighed streams arrive as tonnes from the docket. Counted streams (mattresses, tyres, white goods, vehicles) are converted with the unit weight in the library, which carries its own status.</p></div></li>
+      <li><div><h4>Pathway split</h4><p>The mass is split across Recycled, Stored and Landfilled. The category's default pathway applies unless the handover's actual pathway is recorded, which it is whenever the docket says so.</p></div></li>
+      <li><div><h4>Steel credited only on the recycled portion</h4><p>For steel-bearing streams, steel recovered is mass × steel fraction × steel recovery, capped at the recycled tonnes. A landfilled or stored load claims no steel.</p></div></li>
+      <li><div><h4>Carbon</h4><p>CO₂-e avoided is recovered steel × 0.44, plus non-steel recycled tonnes × the category factor. A category with no factor claims none and is marked pending on the certificate.</p></div></li>
+      <li><div><h4>Landfill volume avoided</h4><p>What would have gone in (mass × m³ per tonne) less what did. Mattress residual is counted at 25% of its original volume because it is shredded first.</p></div></li>
+      <li><div><h4>Recovery rate</h4><p>Recycled tonnes ÷ tonnes handed over. Stored tonnes are not recycled, so they do not lift the rate until they move. Landfilled tonnes pull it down.</p></div></li>
+      <li><div><h4>YES Score</h4><p>Recovery rate, carbon intensity and evidence share combine into one number out of 100 with the published weights below. Computed by the engine, never typed.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 05 · THE YES SCORE -->
+<section class="dark" id="score">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">05</span><p class="eyebrow">The YES Score</p><h2>One number. Three parts. Published weights.</h2></div><p class="lead">A score out of 100 per customer per period, always shown with the tiles beneath it. Proposed at v0.1 and published in full.</p></div>
+    <!-- The YES Score is PROPOSED (v0.1). Weights, reference intensity and the note are read from YES.SCORE; the bands match YES.score in the engine. The gauge is the demo dataset's score, computed by the engine. -->
+    <div class="score-grid reveal">
+      <div class="sg">
+        <p class="k">Worked on the demo</p>
+        <div class="gauge" id="m-gauge" style="--gs:150px"></div>
+        <p class="band" id="m-band">&nbsp;</p>
+        <p class="parts" id="m-parts">&nbsp;</p>
+        <span class="badge demo">Demo data · illustrative</span>
+      </div>
+      <div>
+        <p class="k">Composition · proposed v0.1</p>
+        <div class="table-wrap">
+          <table class="table" aria-label="YES Score composition">
+            <thead><tr><th>Component</th><th class="n">Weight</th><th>Measured as</th></tr></thead>
+            <tbody>
+              <tr><td>Material recovery rate</td><td class="n w"><span id="w-rec">60</span></td><td>Recycled tonnes ÷ tonnes handed over</td></tr>
+              <tr><td>Carbon performance</td><td class="n w"><span id="w-car">25</span></td><td>t CO₂-e avoided per tonne handed over, indexed to a reference intensity of <span id="ref-int">0.5</span> t/t and capped at 100%</td></tr>
+              <tr><td>Evidence quality</td><td class="n w"><span id="w-ev">15</span></td><td>Mass-weighted share of tonnes backed by weighbridge dockets or processor certificates</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="score-note"><span id="score-note">Material recovery rate 60% (recycled ÷ handed over) · Carbon performance 25% (t CO₂-e avoided per tonne handed over, indexed to a reference intensity of 0.5 t/t, capped at 100%) · Evidence quality 15% (mass-weighted share backed by weighbridge dockets or processor certificates). Stored is neutral; Landfilled counts against through the recovery rate.</span></p>
+      </div>
+      <div>
+        <p class="k">Bands</p>
+        <div class="table-wrap">
+          <table class="table" aria-label="YES Score bands">
+            <thead><tr><th>Band</th><th class="n">Score</th></tr></thead>
+            <tbody>
+              <tr><td class="band">Leading</td><td class="n mono">80 and above</td></tr>
+              <tr><td class="band">Strong</td><td class="n mono">60 to 79</td></tr>
+              <tr><td class="band">Developing</td><td class="n mono">40 to 59</td></tr>
+              <tr><td class="band">Starting</td><td class="n mono">below 40</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="score-note">The YES Score is YES's own published method, versioned with the YES Method. It is not an accredited rating and is never presented as one. The weights may change; when they do, the change is published in the log below and earlier certificates keep the version they were issued under.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · EVIDENCE GRADES -->
+<section id="grades">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">06</span><p class="eyebrow">Evidence grades</p><h2>Evidence is graded, not assumed.</h2></div><p class="lead">A weighbridge docket and a customer's say-so are both recorded. They do not carry the same weight.</p></div>
+    <div class="reveal">
+      <div class="grades-top"><h4>Grades A, B and C</h4><span class="badge">Proposed · YES Method v0.1</span></div>
+      <!-- Evidence grades are PROPOSED (YES Method v0.1). The engine weights weighbridge/processor evidence at 1; the weight applied to Grade B is not yet fixed and is not stated here. -->
+      <div class="grades" role="list" aria-label="Evidence grades">
+        <div class="grow a" role="listitem"><b class="gl" aria-label="Grade A">A</b><div><h4>Weighbridge docket or processor certificate</h4><p>Counts in full toward the YES Score and every tile.</p></div><span class="tag">Counts in full</span></div>
+        <div class="grow b" role="listitem"><b class="gl" aria-label="Grade B">B</b><div><h4>Signed count sheet or contractor report</h4><p>Counts, and is flagged on the ledger and the certificate so a reader can see what it rests on.</p></div><span class="tag assume">Counts · flagged</span></div>
+        <div class="grow c" role="listitem"><b class="gl" aria-label="Grade C">C</b><div><h4>Customer statement without documentation</h4><p>Recorded on the ledger. Does not count toward the YES Score until evidence is supplied.</p></div><span class="tag pending">Recorded · not counted</span></div>
+      </div>
+      <p class="note">The YES Score's evidence-quality component is the mass-weighted share of tonnes backed by Grade A evidence. A Grade C entry can be upgraded at any time: send the docket, the operator attaches it, and the tonnes start counting.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · VERSIONING AND CHANGE LOG -->
+<section class="paper-2" id="versions">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">07</span><p class="eyebrow">Versioning and change log</p><h2>The method changes only when the change is published.</h2></div><p class="lead">Every certificate states the version it was calculated under. A later version never rewrites an earlier certificate.</p></div>
+    <div class="table-wrap reveal">
+      <table class="table log" aria-label="YES Method change log">
+        <thead><tr><th>Version</th><th>Date</th><th>Change</th></tr></thead>
+        <tbody>
+          <tr><td class="v">v0.1 draft</td><td class="v">27 September 2026</td><td>Initial factor library. NSW DECCW 2010 reference factors. Recycle Group mattress figures. Working assumptions flagged as assumptions. Pending streams carry no carbon.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="lock reveal">
+      <p class="k">Locked before the first customer certificate</p>
+      <ul>
+        <li>Measured unit weights from the Recycle Group weighbridge, replacing the stated averages for mattresses, tyres, white goods and vehicles.</li>
+        <li>Steel recovery by stream, from processing records rather than a fraction.</li>
+        <li>A pathway for coloured timber, e-waste and textiles, so those streams leave Pending.</li>
+        <li>The TMRC per-size mattress table reconciled with the group's 30%-of-mass steel figure.</li>
+      </ul>
+      <p class="note">Until these are locked, the version reads "draft" on every page that uses it, and no customer certificate is issued.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band"><div class="wrap"><p class="eyebrow">The YES Method</p><h2>Want the method pack?</h2><p class="lead">The factor library, the sources and the change log as one document, with worked examples. Ask for it when you book a walkthrough, or run your own numbers through the calculator first.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/calculator/">Open the calculator</a></div></div></section>
+
+<!--scripts-->
+<script src="/assets/yes-data.js"></script>
+<script>
+(function(){
+  var B=window.YES; if(!B||!B.CATS) return;
+  var fmt=B.fmt||function(n,d){return n.toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d});};
+  function txt(id,s){var el=document.getElementById(id); if(el) el.textContent=s;}
+  function setCount(id,v,dec){
+    var el=document.getElementById(id); if(!el) return;
+    dec=dec||0; el.setAttribute('data-count',v); el.setAttribute('data-dec',dec);
+    if(el.getAttribute('data-from')) el.textContent=(el.getAttribute('data-prefix')||'')+fmt(v,dec)+(el.getAttribute('data-suffix')||'');
+  }
+  function td(cls,text){var c=document.createElement('td'); if(cls) c.className=cls; c.textContent=text; return c;}
+  function srcId(k){return (B.SOURCES&&B.SOURCES[k]&&B.SOURCES[k].id)||k||'';}
+  function pct(x){var v=x*100; return (Math.abs(v-Math.round(v))<0.05?fmt(v,0):fmt(v,1))+'%';}
+  function vol(x){return x.toLocaleString('en-AU',{minimumFractionDigits:1,maximumFractionDigits:2});}
+
+  var STATUS={reference:{cls:'tag',label:'Reference'},group:{cls:'tag group',label:'Group'},assumption:{cls:'tag assume',label:'Assumption'},pending:{cls:'tag pending',label:'Pending'}};
+  var counts={reference:0,group:0,assumption:0,pending:0};
+  var ver=B.METHOD_VERSION||'';
+  txt('m-ver',ver); txt('lib-ver',ver);
+
+  // --- 02 · factor library, generated from YES.CATS ---
+  var body=document.getElementById('f-body');
+  if(body){
+    B.CATS.forEach(function(c){
+      counts[c.status]=(counts[c.status]||0)+1;
+      var tr=document.createElement('tr');
+      tr.appendChild(td('cat',c.name));
+      var unit = c.unit==='count' ? fmt(c.kgUnit,0)+' kg per unit' : 'Weighed, tonnes';
+      tr.appendChild(td('unit',unit));
+      var sf = c.steelFrac>0 ? pct(c.steelFrac*(c.steelRecovery||1)) : '—';
+      tr.appendChild(td('n mono',sf));
+      var carbon, qual='';
+      if(c.carbon!=null){ carbon=fmt(c.carbon,2)+' · '+srcId(c.carbonSrc); }
+      else if(c.steelFrac>0){ carbon=fmt(B.STEEL.f,2)+' · '+srcId(B.STEEL.src); qual=c.steelFrac<1?'On recovered steel only. None on the balance.':'On recovered steel.'; }
+      else if(c.path&&c.path.lan>=1){ carbon='None'; qual='Landfilled.'; }
+      else { carbon='None claimed'; qual='No factor in the library.'; }
+      var cc=td('carbon',carbon);
+      if(qual){ var q=document.createElement('small'); q.textContent=qual; cc.appendChild(q); }
+      tr.appendChild(cc);
+      var p=c.path||{rec:0,sto:0,lan:0};
+      tr.appendChild(td('n mono',Math.round(p.rec*100)+' / '+Math.round(p.sto*100)+' / '+Math.round(p.lan*100)));
+      tr.appendChild(td('n mono',vol(c.m3t)));
+      var st=STATUS[c.status]||{cls:'tag pending',label:c.status||''};
+      var tc=document.createElement('td'); tc.className='tagcell';
+      var tag=document.createElement('span'); tag.className=st.cls; tag.textContent=st.label; tc.appendChild(tag);
+      tr.appendChild(tc);
+      tr.appendChild(td('notes',c.notes||''));
+      body.appendChild(tr);
+    });
+  }
+  setCount('c-all',B.CATS.length,0);
+  setCount('c-ref',counts.reference,0);
+  setCount('c-grp',counts.group,0);
+  setCount('c-open',counts.assumption+counts.pending,0);
+  txt('c-open-s',counts.assumption+' working assumption'+(counts.assumption===1?'':'s')+' to be replaced · '+counts.pending+' stream'+(counts.pending===1?'':'s')+' with no factor yet');
+
+  // --- steel anchor and equivalence ---
+  if(B.STEEL){ txt('st-f',String(B.STEEL.f)); txt('st-note',B.STEEL.note||''); txt('st-src',srcId(B.STEEL.src)); }
+  if(B.EQUIV){ txt('eq-t',String(B.EQUIV.carT)); txt('eq-note',B.EQUIV.carNote||''); txt('eq-src',srcId(B.EQUIV.carSrc)); }
+
+  // --- 03 · sources, generated from YES.SOURCES ---
+  var sb=document.getElementById('s-body');
+  if(sb&&B.SOURCES){
+    Object.keys(B.SOURCES).forEach(function(k){
+      var s=B.SOURCES[k]; var tr=document.createElement('tr');
+      tr.appendChild(td('src',s.id||k));
+      tr.appendChild(td('',s.title||''));
+      tr.appendChild(td('det',s.detail||''));
+      var lc=document.createElement('td');
+      if(s.url){ var a=document.createElement('a'); a.href=s.url; a.rel='noopener'; a.target='_blank'; a.textContent='Open source →'; lc.appendChild(a); }
+      else { lc.textContent='Stated figure'; lc.className='muted mono small'; }
+      tr.appendChild(lc);
+      sb.appendChild(tr);
+    });
+  }
+
+  // --- 05 · YES Score weights, from YES.SCORE ---
+  var w={};
+  if(B.SCORE){
+    w=B.SCORE.weights||{};
+    if(w.recovery!=null) txt('w-rec',String(w.recovery));
+    if(w.carbon!=null) txt('w-car',String(w.carbon));
+    if(w.evidence!=null) txt('w-ev',String(w.evidence));
+    if(B.SCORE.refIntensity!=null) txt('ref-int',String(B.SCORE.refIntensity));
+    if(B.SCORE.note) txt('score-note',B.SCORE.note);
+  }
+
+  // --- 05 · the gauge: the demo dataset's score, computed by the engine ---
+  var g=document.getElementById('m-gauge');
+  if(g&&B.gauge&&B.compute&&B.DEMO){
+    var t=B.compute(B.DEMO.entries);
+    var sc=t.score||B.score(t);
+    B.gauge(g,sc,150);
+    txt('m-band',sc.band);
+    var mp=document.getElementById('m-parts');
+    if(mp){
+      mp.innerHTML='';
+      [['Recovery','recovery'],['Carbon','carbon'],['Evidence','evidence']].forEach(function(pr){
+        var line=document.createElement('span');
+        var b=document.createElement('b'); b.textContent=fmt(sc.parts[pr[1]]||0,1);
+        line.appendChild(document.createTextNode(pr[0]+' '));
+        line.appendChild(b);
+        line.appendChild(document.createTextNode(' / '+(w[pr[1]]!=null?w[pr[1]]:'')));
+        mp.appendChild(line);
+        mp.appendChild(document.createElement('br'));
+      });
+    }
+  }
+})();
+</script>

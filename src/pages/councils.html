@@ -1,0 +1,221 @@
+<style>
+/* councils refinements (scoped) */
+.page-councils .cats{margin-bottom:clamp(28px,4vw,44px)}
+.page-councils .cats .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0 0 12px}
+/* 02 · product split: dashboard shot bleeding out of the media panel */
+.page-councils .split .media{min-height:520px;padding:clamp(28px,4vw,52px) 0 0 clamp(28px,4vw,52px)}
+.page-councils .split .media .shot{position:absolute;left:clamp(28px,4vw,52px);top:clamp(28px,4vw,52px);right:0;bottom:0;border-radius:10px 0 0 0;border-right:0;border-bottom:0}
+.page-councils .split .media .shot img{object-position:left top}
+@media(max-width:900px){.page-councils .split .media{min-height:360px}}
+.page-councils .split .copy .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.page-councils .split .copy .top p{margin:0}
+.page-councils .split .steps li{padding:22px 0;grid-template-columns:52px minmax(0,1fr);gap:14px}
+.page-councils .split .steps li:first-child{border-top:0;padding-top:8px}
+.page-councils .split .steps li:last-child{border-bottom:0;padding-bottom:0}
+.page-councils .split .steps li::before{font-size:28px}
+.page-councils .split .steps h4{font-size:18px}
+.page-councils .split .steps p{font-size:15px;max-width:44ch}
+.page-councils .split .more{display:inline-block;margin-top:10px;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;color:var(--green)}
+.page-councils section:not(.dark) .badge.demo{border-color:var(--slate);color:var(--graphite);background:var(--white)}
+/* feature rows with icons */
+.page-councils .feature-list li{grid-template-columns:30px minmax(0,1fr);gap:14px}
+.page-councils .feature-list .ic{margin-top:2px}
+/* 03 · onboarding */
+.page-councils .onb{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(32px,4vw,56px);align-items:start}
+@media(min-width:1100px){.page-councils .onb{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}.page-councils .onb .timeline{grid-template-columns:1fr 1fr}}
+.page-councils .onb .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0 0 14px}
+.page-councils .timeline-note{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--slate);margin:22px 0 0}
+/* 04 · pricing: display price beside the tiers table */
+.page-councils .fee-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(32px,4vw,56px);align-items:start}
+@media(min-width:900px){.page-councils .fee-grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}}
+.page-councils .fee .display{color:var(--green);font-size:clamp(64px,8vw,116px)}
+.page-councils .fee .l{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin-top:16px}
+.page-councils .fee p{color:var(--graphite);font-size:15.5px;max-width:40ch;margin-top:22px}
+.page-councils .tiers th:last-child,.page-councils .tiers td:last-child{text-align:right}
+.page-councils .tiers td.pop{font-weight:500}
+.page-councils .tiers td.amt.poa{font-family:var(--font-mono);font-weight:400;font-size:13px;letter-spacing:.06em;color:var(--graphite);white-space:normal}
+.page-councils .tiers-note{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.06em;color:var(--slate);margin:14px 0 0}
+/* 05 · tenders */
+.page-councils .tenders .note a{color:var(--green-3)}
+.page-councils .faq .tag{margin-left:8px;vertical-align:1px}
+</style>
+
+<!-- HERO -->
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">For councils</p>
+    <h1>Purpose-built for council recycling programs.</h1>
+    <p class="lead">Hard waste collections, kerbside recycling, transfer stations and problem streams. YES turns what your contractors collect into numbers a councillor, a resident and an auditor can all rely on.</p>
+    <div class="btn-row"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div>
+  </div>
+</section>
+
+<!-- 01 · THE REPORTING PROBLEM -->
+<section id="problem">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">01</span><p class="eyebrow">The reporting problem</p><h2>Your contractors report tonnes. Nobody reports outcomes.</h2></div><p class="lead">Most councils already receive numbers. The trouble is what those numbers can be used for once they leave the waste team.</p></div>
+    <div class="compare reveal">
+      <div class="before"><h4>What you get today</h4><ul>
+        <li>Tonnage lines on contractor invoices</li>
+        <li>A diversion percentage with no method behind it</li>
+        <li>A different definition from every contractor</li>
+        <li>Nothing that survives an audit or a council meeting</li>
+        <li>No way to show residents what their hard waste became</li>
+      </ul></div>
+      <div class="after"><h4>With YES</h4><ul>
+        <li>Every stream entered and verified by YES</li>
+        <li>One method across every contractor</li>
+        <li>A YES Certificate per program and period</li>
+        <li>A dashboard for the waste team, a page for the community</li>
+        <li>Figures cited by method version in the annual report</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 · WHAT YES REPORTS FOR A COUNCIL -->
+<section class="paper-2" id="reports">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">What YES reports</p><h2>Every stream a council handles, on one dashboard.</h2></div><p class="lead">Thirteen reporting categories, three buckets, one method. Whatever the program, the number is built the same way and traced the same way.</p></div>
+    <div class="cats reveal">
+      <p class="k">The 13 reporting categories</p>
+      <div class="chips" aria-label="The 13 YES reporting categories">
+        <span class="chip">Mattresses</span><span class="chip">Steel</span><span class="chip">Aluminium</span><span class="chip">Plain timber</span><span class="chip">Coloured / treated timber</span><span class="chip">Tyres</span><span class="chip">White goods</span><span class="chip">E-waste</span><span class="chip">Clothing &amp; textiles</span><span class="chip">Concrete, bricks &amp; rubble</span><span class="chip">Vehicles</span><span class="chip">Green waste</span><span class="chip">General rubbish</span>
+      </div>
+    </div>
+    <div class="split reveal">
+      <div class="media">
+        <div class="shot"><img src="/assets/img/product-dashboard.webp" alt="YES Dashboard for a council hard waste program, showing the YES Score, the seven headline tiles, three buckets and recovered tonnes by month (demo data)" loading="lazy" width="1600" height="1858"></div>
+      </div>
+      <div class="copy">
+        <div class="top"><p class="idx">THREE PROGRAM TYPES</p><span class="badge demo">Demo data · illustrative</span></div>
+        <ol class="steps" aria-label="The three program types YES reports for a council">
+          <li><div><h4>Hard waste program</h4><p>Per collection, per township. Properties serviced, items by category, tonnes handed over, the three-bucket split, steel recovered and CO₂-e avoided. A YES Certificate closes each program.</p><a class="more" href="/demo/">Open the live demo →</a></div></li>
+          <li><div><h4>Transfer station</h4><p>Weighbridge-fed streams. Every docket becomes a ledger entry: scrap steel, green waste, concrete, timber, tyres, mattresses. The weighbridge is the evidence, so these entries count in full from the day they are entered.</p></div></li>
+          <li><div><h4>Whole-of-council</h4><p>Everything else, once a month. Kerbside, depots, parks, an IT refresh. Report 23,000 wheelie bins collected this month and where the material went, and YES enters it, grades the evidence and moves the dashboard.</p><a class="more" href="/how-it-works/">How the data gets in →</a></div></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · SWITCHED ON IN 30 DAYS -->
+<section class="dark" id="onboarding">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">Switched on in 30 days</p><h2>Four weeks from scoping to a live dashboard.</h2></div><p class="lead">Onboarding is scoped, not open-ended. By the end of week four your first handovers are entered, the dashboard is live and the first monthly email is scheduled.</p></div>
+    <!-- Proposed onboarding schedule. The 30-day switch-on is a confirmed go-to-market line; the week-by-week split is YES's proposed plan. -->
+    <div class="onb reveal">
+      <div>
+        <p class="k">Proposed schedule</p>
+        <div class="timeline" aria-label="Proposed 30-day onboarding schedule">
+          <div><p class="w">Week 1</p><h4>Scope and streams</h4><p>Programs, sites and the reporting categories in play. Who hands over what, and where the evidence comes from.</p></div>
+          <div><p class="w">Week 2</p><h4>Baseline and method sheet</h4><p>The baseline period is set and the method sheet agreed: unit weights, pathways and factors per stream, each with its status.</p></div>
+          <div><p class="w">Week 3</p><h4>First handovers entered</h4><p>Your named YES data operator enters the first dockets and count sheets. The ledger starts.</p></div>
+          <div><p class="w">Week 4</p><h4>Dashboard live</h4><p>Every tile calculating from the ledger. The first monthly fill-in-the-gaps email is scheduled.</p></div>
+        </div>
+        <p class="timeline-note">Proposed schedule. Subscription applies from the switch-on date.</p>
+      </div>
+      <div>
+        <p class="k">What the council receives</p>
+        <ul class="feature-list">
+          <li><svg class="ic g"><use href="#i-dash"/></svg><div><strong>YES Dashboard access.</strong> For the waste team, with every program on one screen.</div></li>
+          <li><svg class="ic g"><use href="#i-mail"/></svg><div><strong>Monthly gap email.</strong> Every stream we know moved and every one we cannot yet account for.</div></li>
+          <li><svg class="ic g"><use href="#i-doc"/></svg><div><strong>YES Certificate per period.</strong> One page per program and period, with the method version and a certificate ID.</div></li>
+          <li><svg class="ic g"><use href="#i-export"/></svg><div><strong>CSV and PDF exports.</strong> The ledger, the certificate and the full YES Report.</div></li>
+          <li><svg class="ic g"><use href="#i-ledger"/></svg><div><strong>Method pack.</strong> The factor library, sources and change log, so an auditor can follow any figure back.</div></li>
+          <li><svg class="ic g"><use href="#i-verify"/></svg><div><strong>Named YES data operator.</strong> One person who enters your data and answers for it.</div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · PRICING FOR COUNCILS -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">Pricing for councils</p><h2>One monthly fee, set by population.</h2></div><p class="lead">No per-report charges. No per-certificate charges. The establishment fee is waived for Foundation Members who join in the first 12 months.</p></div>
+    <!-- Council pricing is PROPOSED. Only the up-to-50,000 tier is priced; the bands above it are not yet priced. -->
+    <div class="fee-grid reveal">
+      <div class="fee">
+        <div class="display"><span data-count="1999" data-dec="0" data-prefix="$">$0</span></div>
+        <div class="l">A month · councils up to 50,000 residents</div>
+        <p>The establishment fee is normally $5,000 to $15,000 and covers scoping, streams, the baseline, the method sheet and onboarding. Foundation Members who join in the first 12 months pay none of it. The monthly fee applies from the switch-on date.</p>
+        <div class="btn-row mt-2"><a class="btn btn-ink" href="/pricing/">See pricing {{ARROW}}</a><a class="btn btn-outline" href="/pricing/#foundation">Foundation Members</a></div>
+      </div>
+      <div>
+        <div class="table-wrap">
+          <table class="tiers" aria-label="Council pricing by resident population">
+            <thead><tr><th>Resident population</th><th>Monthly fee</th></tr></thead>
+            <tbody>
+              <tr><td class="pop">Up to 50,000</td><td class="amt">$1,999 <small>a month</small></td></tr>
+              <tr><td class="pop">50,000–100,000</td><td class="amt poa">Priced on application</td></tr>
+              <tr><td class="pop">100,000–200,000</td><td class="amt poa">Priced on application</td></tr>
+              <tr><td class="pop">200,000–300,000</td><td class="amt poa">Priced on application</td></tr>
+              <tr><td class="pop">300,000+</td><td class="amt poa">Priced on application</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="tiers-note">Proposed pricing. One tier is priced today; the bands above it are priced on application while the first council programs are scoped.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · TENDER-READY -->
+<section class="dark tenders" id="tenders">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">05</span><p class="eyebrow">Tender-ready</p><h2>A verified number for the next tender.</h2></div><p class="lead">YES data can sit inside a tender response or a contract KPI, because every figure carries its evidence grade and its method version.</p></div>
+    <!-- No existing tender or contract is claimed anywhere on this page. -->
+    <div class="grid g12 reveal">
+      <div class="span7">
+        <ul class="feature-list">
+          <li><svg class="ic g"><use href="#i-doc"/></svg><div><strong>Tender responses.</strong> Tonnes by stream and bucket, steel recovered and CO₂-e avoided for the period, each with its YES Method reference.</div></li>
+          <li><svg class="ic g"><use href="#i-scale"/></svg><div><strong>Contract KPIs.</strong> Recovery rate and evidence share per contractor, calculated the same way for every contractor.</div></li>
+          <li><svg class="ic g"><use href="#i-verify"/></svg><div><strong>Evidence grades.</strong> Grade A, B or C on every entry, so a reader can see what a figure rests on before they rely on it.</div></li>
+          <li><svg class="ic g"><use href="#i-lock"/></svg><div><strong>Method versioning.</strong> The version is printed on the certificate. The figure can be reproduced later even if the factor library has moved on.</div></li>
+          <li><svg class="ic g"><use href="#i-export"/></svg><div><strong>Exports.</strong> CSV of the ledger, PDF certificate and report, and a citable table for the annual report.</div></li>
+        </ul>
+      </div>
+      <div class="span5">
+        <p class="callout">One method across every contractor. That is what makes the numbers comparable.</p>
+        <p class="note">The YES Score and the evidence grades are YES's own published method, versioned. They are not an accredited rating. <a href="/method/">Read the YES Method →</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">06</span><p class="eyebrow">Questions councils ask</p><h2>Straight answers.</h2></div><p class="lead">The questions waste teams and finance teams ask first.</p></div>
+    <div class="faq reveal">
+      <details>
+        <summary>Do we enter the data ourselves?</summary>
+        <p>No. Only YES staff enter data. If a council typed in its own figures, no report built on them would be credible to an auditor, a councillor or a resident. Your named YES data operator enters every handover against the docket, weighbridge record or count sheet, and the entry carries an evidence reference and the operator's initials.</p>
+      </details>
+      <details>
+        <summary>What if material did not go through Recycle Group?</summary>
+        <p>It is still reported. YES is whole-of-council: kerbside, depots, parks and any contractor. Once a month the fill-in-the-gaps email lists every stream we cannot yet account for. You tell us where it went, we enter it, and the evidence you supply decides how much it counts. A contractor report counts and is flagged. A weighbridge docket counts in full.</p>
+      </details>
+      <details>
+        <summary>What is "Stored"?</summary>
+        <p>Material that has been handed over but has not yet been recycled or landfilled. Coloured timber waiting for a pathway, e-waste held for a downstream processor, textiles awaiting a textile processor. Stored is neutral: it counts neither for nor against you. When it moves, the entry moves to Recycled or Landfilled and the dashboard follows.</p>
+      </details>
+      <details>
+        <summary>Is the YES Score an accredited rating?</summary>
+        <p>No. The YES Score is YES's own published method, versioned with the YES Method and shown in full: material recovery rate, carbon performance and evidence quality, with the weights stated. It is proposed at v0.1. It is not an accredited rating and is never presented as one.</p>
+      </details>
+      <details>
+        <summary>How are CO₂-e figures calculated?</summary>
+        <p>With reference factors from NSW DECCW 2010, Environmental benefits of recycling, Table 4, applied to recovered mass. Steel uses the conservative 0.44 t CO₂-e per tonne figure, on the recovered steel only. Streams without a factor in the library are reported as recovered tonnes with no carbon claimed. Every factor, source and version is on the <a href="/method/">YES Method page</a>.</p>
+      </details>
+      <details>
+        <summary>Can we show this to residents?</summary>
+        <p>Yes. The YES Certificate can be published as issued, and the annual report can cite its figures by method version. A community view of the dashboard, so residents can see what their hard waste became, is on the roadmap. <span class="tag pending">Roadmap</span></p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band"><div class="wrap"><p class="eyebrow">Switched on in 30 days</p><h2>See your YES impact before you commit.</h2><p class="lead">Book a 30-minute walkthrough with the demo dashboard, or send us one month of data and we will show you what YES makes of it.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div></div></section>

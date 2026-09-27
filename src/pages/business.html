@@ -1,0 +1,227 @@
+<style>
+/* business refinements (scoped) */
+.page-business .hero-sub .chips{margin-top:32px}
+/* 01 · use cases: two-column hairline list, one small icon per row */
+.page-business .uses{display:grid;grid-template-columns:minmax(0,1fr);gap:0 clamp(24px,4vw,56px)}
+@media(min-width:800px){.page-business .uses{grid-template-columns:1fr 1fr}}
+.page-business .uses .feature-list li{grid-template-columns:26px minmax(0,1fr);gap:12px;padding:15px 0}
+.page-business .uses .feature-list li:last-child{border-bottom:1px solid var(--mist)}
+.page-business .uses .feature-list .ic{width:18px;height:18px;margin-top:4px;color:var(--green)}
+/* feature rows elsewhere */
+.page-business .feature-list li{grid-template-columns:30px minmax(0,1fr);gap:14px}
+.page-business .feature-list .ic{margin-top:2px}
+/* 02 · scope 3: big-stat descriptors on dark */
+.page-business .scope p{color:var(--mist);max-width:56ch}
+.page-business .scope .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--green-3);margin:0 0 12px}
+.page-business .desc .big-stat{position:relative;padding:26px 48px 26px 0;gap:8px}
+.page-business .desc .big-stat .ic{position:absolute;top:28px;right:0;color:var(--green-3);width:24px;height:24px}
+.page-business .desc .big-stat .t{font-family:var(--font-display);font-weight:700;font-size:clamp(26px,2.6vw,38px);letter-spacing:-.035em;line-height:1.02;color:var(--paper)}
+.page-business .desc .big-stat .l{order:-1}
+.page-business .desc .note{margin-top:0;max-width:none}
+/* 03 · evidence: certificate split */
+.page-business .split .media{background:var(--paper-2);min-height:520px}
+.page-business .split .media .shot{position:absolute;left:clamp(28px,4vw,56px);right:clamp(28px,4vw,56px);top:clamp(28px,4vw,56px);bottom:0;border-radius:6px 6px 0 0;border-bottom:0}
+.page-business .split .media .shot img{object-position:center top}
+@media(max-width:900px){.page-business .split .media{min-height:380px}}
+.page-business .split .copy .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.page-business .split .copy .top p{margin:0}
+.page-business .split .copy h3{max-width:18ch;margin-bottom:16px}
+.page-business .split .copy p{color:var(--graphite);max-width:46ch}
+.page-business .split .copy .line{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.06em;border-top:1px solid var(--mist);padding-top:14px;margin:22px 0 18px;color:var(--graphite);max-width:none}
+.page-business .split .more{display:inline-block;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;color:var(--green)}
+.page-business section:not(.dark) .badge.demo{border-color:var(--slate);color:var(--graphite);background:var(--white)}
+/* 04 · multi-site */
+.page-business .sites p{color:var(--mist);max-width:56ch}
+.page-business .sites .feature-list strong{color:var(--paper)}
+/* 05 · pricing: display-scale amount, icon per row */
+.page-business .buy p{color:var(--graphite);font-size:16px;max-width:40ch}
+.page-business .price .amt{display:flex;align-items:baseline;flex-wrap:wrap;font-size:clamp(56px,7vw,96px);letter-spacing:-.05em}
+.page-business .price .amt small{font-size:13px;margin-left:12px}
+.page-business .price li::before{content:none}
+.page-business .price li{grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:start}
+.page-business .price li .ic{width:18px;height:18px;margin-top:3px;color:var(--green)}
+.page-business .price .fee{font-size:14px;color:var(--graphite);border-top:1px solid var(--mist);padding-top:14px;margin:0}
+</style>
+
+<!-- HERO -->
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">For business</p>
+    <h1>Recycling data your ESG report can stand on.</h1>
+    <p class="lead">YES gives sustainability, procurement and facilities teams verified recycling outcomes with a documented method for every calculation, ready for ESG, Scope 3 and annual sustainability reporting.</p>
+    <div class="btn-row"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div>
+    <div class="chips reveal" aria-label="What YES supports for business">
+      <span class="chip">ESG reporting</span><span class="chip">Scope 3</span><span class="chip">Sustainability reporting</span><span class="chip">Procurement reporting</span><span class="chip">Supplier performance</span><span class="chip">Internal environmental KPIs</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 · WHERE THE NUMBERS GO -->
+<section id="uses">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">01</span><p class="eyebrow">Where the numbers go</p><h2>Ten places a verified recycling figure is needed.</h2></div><p class="lead">The same ledger feeds every one of them. Nothing is calculated twice and nothing is calculated differently.</p></div>
+    <div class="uses reveal">
+      <ul class="feature-list">
+        <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Environmental reporting.</strong> Tonnes recovered, steel, CO₂-e and landfill avoided, by stream and in total.</div></li>
+        <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Sustainability reporting.</strong> Period-on-period movement with the method held constant.</div></li>
+        <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>ESG reporting.</strong> Figures with a source, a factor version and an evidence reference on every line.</div></li>
+        <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Procurement reporting.</strong> What your recycling contractors delivered, measured the same way for each.</div></li>
+        <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Waste and recycling targets.</strong> Recovery rate against target, updated the day material moves.</div></li>
+      </ul>
+      <ul class="feature-list">
+        <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Circular-economy initiatives.</strong> Tonnes returned to productive use, and which streams did it.</div></li>
+        <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Internal environmental KPIs.</strong> The YES Score and the seven tiles, per site or per period.</div></li>
+        <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Customer and stakeholder reporting.</strong> A YES Certificate that can be handed over as issued.</div></li>
+        <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Annual sustainability reports.</strong> A citable table with the YES Method reference for each figure.</div></li>
+        <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Supplier performance reporting.</strong> Evidence share and recovery rate per supplier.</div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 02 · SCOPE 3, CATEGORY 5 -->
+<section class="dark" id="scope3">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">Scope 3, Category 5</p><h2>Waste generated in operations is Category 5. YES is built for it.</h2></div><p class="lead">Under the GHG Protocol Scope 3 Standard, the waste your operations generate is reported as Category 5. YES records what an assurance provider expects to see behind that line.</p></div>
+    <div class="grid g12 reveal">
+      <div class="span5 scope">
+        <p class="k">What is recorded</p>
+        <p>Every handover is recorded as mass by stream, with the pathway it took: Recycled, Stored or Landfilled. Each entry carries an evidence reference, a weighbridge docket, processor certificate, count sheet or contractor report, and the grade that evidence earns.</p>
+        <p>Carbon is calculated with published factors, and the factor version is pinned to every line. When the library moves, earlier figures stay reproducible under the version they were issued with.</p>
+        <p>The Scope 3 export is the table an assurance provider expects: mass, pathway, factor, source and version, line by line, with the evidence reference beside each.</p>
+      </div>
+      <div class="span7 desc">
+        <div class="big-stat"><svg class="ic"><use href="#i-weigh"/></svg><div class="l">Recorded</div><div class="t">Mass by stream</div><div class="s">Tonnes per category, weighed or converted with a stated unit weight.</div></div>
+        <div class="big-stat"><svg class="ic"><use href="#i-ledger"/></svg><div class="l">Recorded</div><div class="t">Pathway per handover</div><div class="s">Recycled, Stored or Landfilled, from the docket, not the default.</div></div>
+        <div class="big-stat"><svg class="ic"><use href="#i-lock"/></svg><div class="l">Applied</div><div class="t">Factor and version per line</div><div class="s">The published factor, its source and the method version it was applied under.</div></div>
+        <!-- No assurance standard is claimed as met. The wording is "designed to support". -->
+        <p class="note">Designed to support Scope 3 Category 5 reporting and third-party assurance. YES does not certify compliance with any assurance standard. It supplies the evidence, the method and the export.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · EVIDENCE-BASED -->
+<section id="evidence">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">Evidence-based</p><h2>Evidence-based, not marketing-based.</h2></div><p class="lead">A recycling figure in an ESG report will be questioned. The question is whether there is anything underneath it.</p></div>
+    <div class="split reveal">
+      <div class="media">
+        <div class="shot paper"><img src="/assets/img/product-certificate.webp" alt="YES Certificate, page one: Your Environment Score, headline outcomes, three buckets and the verification statement (demo data)" loading="lazy" width="1588" height="2470"></div>
+      </div>
+      <div class="copy">
+        <div class="top"><p class="idx">THE YES CERTIFICATE</p><span class="badge demo">Demo data · illustrative</span></div>
+        <h3>Every figure carries its factor, its source and its method version.</h3>
+        <p>Claims such as trees saved make a nice picture. They do not survive an audit. A YES Certificate states tonnes by stream and bucket, steel recovered as a measured mass, and CO₂-e with the published factor it was calculated with.</p>
+        <p>The certificate is one page. Period, streams, tonnes, steel, CO₂-e, landfill avoided, method version, verification statement and certificate ID. An assurance provider can follow any figure on it back to a docket.</p>
+        <p class="line">Verified recycling data supplied by The Mattress Recycling Company and Recycle Group.</p>
+        <a class="more" href="/certificate/">See a sample certificate →</a>
+      </div>
+    </div>
+    <div class="compare mt-3 reveal">
+      <div class="before"><h4>Marketing-based</h4><ul>
+        <li>Trees saved</li>
+        <li>Black balloons</li>
+        <li>A single diversion percentage</li>
+        <li>Self-reported by the contractor</li>
+        <li>No method</li>
+      </ul></div>
+      <div class="after"><h4>Evidence-based (YES)</h4><ul>
+        <li>Tonnes by stream and bucket</li>
+        <li>CO₂-e with a published factor and version</li>
+        <li>Steel recovered as a measured mass</li>
+        <li>Entered and verified by YES</li>
+        <li>Every line traceable to a docket</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · MULTI-SITE -->
+<section class="dark" id="sites">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">Multi-site</p><h2>Sites, regions and the portfolio, from one ledger.</h2></div><p class="lead">Every entry is tagged to a site. Roll it up by region or read the whole portfolio, with the method held constant across all of it.</p></div>
+    <!-- Multi-site is described, not shown. No screens are invented here. -->
+    <div class="grid g12 sites reveal">
+      <div class="span5">
+        <p>A national operator does not recycle in one place. A distribution centre hands over pallets and cardboard, a head office refreshes its IT, a depot clears scrap. YES holds each of them as a site with its own ledger, and reads them together as a portfolio.</p>
+        <p>The monthly fill-in-the-gaps email goes to each site, so the person who knows where the material went is the one who answers.</p>
+      </div>
+      <div class="span7">
+        <ul class="feature-list">
+          <li><svg class="ic g"><use href="#i-site"/></svg><div><strong>Per site.</strong> Its own tiles, ledger, monthly gap email and YES Certificate per period.</div></li>
+          <li><svg class="ic g"><use href="#i-dash"/></svg><div><strong>Per region.</strong> Sites grouped the way your organisation is run, with the same tiles at the regional level.</div></li>
+          <li><svg class="ic g"><use href="#i-ledger"/></svg><div><strong>Portfolio roll-up.</strong> One YES Score and one set of tiles for the whole organisation, built from the site ledgers.</div></li>
+          <li><svg class="ic g"><use href="#i-bench"/></svg><div><strong>YES Benchmark.</strong> Compares sites against each other and each site against its previous period, and shows which streams moved the number.</div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · PRICING -->
+<section class="paper-2" id="pricing">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">05</span><p class="eyebrow">Pricing for business</p><h2>One monthly fee, per organisation.</h2></div><p class="lead">No per-report charges. No per-certificate charges. The establishment fee is waived for Foundation Members who join in the first 12 months.</p></div>
+    <!-- Business pricing is PROPOSED ($999 a month). Multi-site inclusion in the fee needs confirmation: on-page wording stays "multi-site reporting" with no limit stated. -->
+    <div class="grid g12 reveal">
+      <div class="span5 buy">
+        <p>The establishment fee is normally $5,000 to $15,000 and covers scoping, sites and streams, the baseline, the method sheet and onboarding. Foundation Members who join in the first 12 months pay none of it.</p>
+        <p>The monthly fee applies from the switch-on date. Physical collection and processing are contracted separately, with Recycle Group or your existing contractors.</p>
+        <div class="btn-row mt-2"><a class="btn btn-ink" href="/pricing/">See pricing {{ARROW}}</a><a class="btn btn-outline" href="/pricing/#foundation">Foundation Members</a></div>
+      </div>
+      <div class="span7">
+        <div class="price">
+          <div class="who">Business · per organisation</div>
+          <div class="amt"><span data-count="999" data-dec="0" data-prefix="$">$0</span><small>a month</small></div>
+          <ul>
+            <li><svg class="ic"><use href="#i-dash"/></svg>YES Dashboard for your sustainability team</li>
+            <li><svg class="ic"><use href="#i-weigh"/></svg>Every stream entered and verified by YES</li>
+            <li><svg class="ic"><use href="#i-mail"/></svg>Monthly gap email per site</li>
+            <li><svg class="ic"><use href="#i-doc"/></svg>YES Certificate per site and period</li>
+            <li><svg class="ic"><use href="#i-site"/></svg>Multi-site reporting</li>
+            <li><svg class="ic"><use href="#i-co2"/></svg>Scope 3 Category 5 export</li>
+            <li><svg class="ic"><use href="#i-export"/></svg>CSV and PDF exports</li>
+            <li><svg class="ic"><use href="#i-ledger"/></svg>Method pack and version history</li>
+            <li><svg class="ic"><use href="#i-verify"/></svg>Named YES data operator</li>
+            <li><svg class="ic"><use href="#i-clock"/></svg>Switched on in 30 days</li>
+          </ul>
+          <p class="fee">Establishment fee normally $5,000–$15,000. Waived for Foundation Members in the first 12 months.</p>
+          <div class="btn-row"><a class="btn btn-primary" href="/contact/">Talk to YES {{ARROW}}</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">06</span><p class="eyebrow">Questions business asks</p><h2>What you will want to know first.</h2></div><p class="lead">The questions sustainability, procurement and finance teams ask first.</p></div>
+    <div class="faq reveal">
+      <details>
+        <summary>Can our own recycling contractors' data be included?</summary>
+        <p>Yes. YES reports all of your recycling, not only what passes through Recycle Group. Material handled by your existing contractors is entered as whole-of-organisation entries and graded by the evidence behind it. A processor certificate or weighbridge docket counts in full. A contractor report counts and is flagged. A statement with no documentation is recorded and does not count until the evidence arrives.</p>
+      </details>
+      <details>
+        <summary>Who enters the data?</summary>
+        <p>Only YES staff. Your named YES data operator enters every handover against the docket, certificate, count sheet or contractor report. Nothing is self-reported, which is what lets the figures hold up in front of an assurance provider.</p>
+      </details>
+      <details>
+        <summary>What do we receive each month?</summary>
+        <p>The fill-in-the-gaps email for each site, listing every stream we know moved and every one we cannot yet account for. Once your answers are entered, the dashboard is current and the month's figures are ready to export. A YES Certificate issues at the end of each reporting period.</p>
+      </details>
+      <details>
+        <summary>Can we get the underlying data?</summary>
+        <p>Yes. YES Data exports as CSV: every ledger entry with its date, site, stream, quantity, bucket, evidence grade, evidence reference and the operator's initials. The Scope 3 export adds the factor, source and method version for each line.</p>
+      </details>
+      <details>
+        <summary>Is this an offset?</summary>
+        <p>No. YES reports avoided emissions from recycling under a stated method. It does not issue offsets or credits, and the CO₂-e figures on a YES Certificate should not be presented as either.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band"><div class="wrap"><p class="eyebrow">Switched on in 30 days</p><h2>See your YES impact before you commit.</h2><p class="lead">Book a 30-minute walkthrough with the demo dashboard, or send us one month of data and we will show you what YES makes of it.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div></div></section>

@@ -1,0 +1,141 @@
+<style>
+/* about-only refinements (scoped) */
+.page-about .display span[data-count]{font-size:1em;color:inherit;margin:0;letter-spacing:inherit;font-weight:inherit}
+.page-about #why .span7>p{max-width:66ch}
+.page-about .layer{border-top:1px solid var(--mist);padding-top:18px}
+.page-about .layer .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0 0 10px}
+.page-about .layer h4{margin-bottom:8px}
+.page-about .layer p{color:var(--graphite);font-size:15.5px;margin:0}
+/* 02 · infrastructure: display numerals */
+.page-about .infra{gap:0 clamp(32px,5vw,80px)}
+.page-about .infra .big-stat{padding:32px 0 36px}
+.page-about .accred{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.06em;color:var(--mist);line-height:1.9;max-width:70ch}
+.page-about .site{border-top:1px solid #2A2C2A;padding-top:18px}
+.page-about .site .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--green-3);margin:0 0 10px}
+.page-about .site h4{margin-bottom:8px}
+.page-about .site p{color:var(--mist);font-size:15.5px;margin:0}
+/* 03 · leadership */
+@media(max-width:799px){.page-about .avatar{max-width:180px}}
+.page-about .person .role{font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin:0 0 10px}
+.page-about .person h3{margin-bottom:6px}
+.page-about .person p{max-width:60ch;color:var(--graphite)}
+/* 04 · principles: numbered list with an icon per rule */
+.page-about .steps li{grid-template-columns:64px 40px minmax(0,1fr);gap:20px 16px}
+.page-about .steps li .ic{margin-top:3px}
+@media(max-width:560px){.page-about .steps li{grid-template-columns:48px 34px minmax(0,1fr);gap:16px 10px}.page-about .steps li::before{font-size:28px}}
+.page-about .why{border-top:1px solid var(--mist);padding-top:22px}
+.page-about .why .callout{max-width:none}
+.page-about .why p{color:var(--graphite);max-width:40ch}
+@media(min-width:900px){.page-about .why{position:sticky;top:98px}}
+/* 05 · lockup */
+.page-about .lockup{text-align:left}
+.page-about .lockup .logo.big{display:inline-flex}
+.page-about .lockup .line{font-family:var(--font-mono);font-size:clamp(13px,1.3vw,16px);letter-spacing:.06em;color:var(--mist);margin:32px 0 0;border-top:1px solid #2A2C2A;padding-top:22px}
+.page-about .lockup .sub{font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin:8px 0 0}
+</style>
+
+<!-- HERO -->
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">About YES</p>
+    <h1>The measurement platform that proves what recycling achieved.</h1>
+    <p class="lead">YES is a Recycle Group business. It exists because the people who process the material are the only ones who can honestly say what happened to it.</p>
+    <div class="btn-row"><a class="btn btn-primary" href="/contact/">Talk to YES {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div>
+  </div>
+</section>
+
+<!-- 01 · WHY YES EXISTS -->
+<section id="why">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">01</span><p class="eyebrow">Why YES exists</p><h2>The material was always measured. The customer never saw the number.</h2></div><p class="lead">Councils and businesses hand over problem streams. Recycle Group recycles them. YES turns that into figures a board, a councillor or an auditor can rely on.</p></div>
+    <div class="grid g12 reveal">
+      <div class="span7">
+        <p>For years the group has weighed, sorted and processed what councils and businesses hand over: mattresses, steel, timber, tyres, white goods, e-waste, the lot. Every load crossed a weighbridge and every stream had a destination. The customer received an invoice and, at best, a diversion percentage.</p>
+        <p>YES is the reporting system built on top of that record. It takes what actually happened to the material and states it as real tonnes recovered, real steel, real CO₂-e avoided and real landfill volume avoided, each with the method it was calculated with. Not a claim. A measured outcome.</p>
+        <p class="callout mt-3">Recycling should be more than a collection service or a percentage. It should be a measurable outcome.</p>
+      </div>
+      <div class="span5">
+        <div class="grid" style="gap:28px">
+          <div class="layer"><p class="k">Layer 01</p><h4>YES Certificate</h4><p>A downloadable certificate for each project or reporting period: period, streams, tonnes recovered, steel recovered, CO₂-e avoided, landfill avoided, method version, verification statement and certificate ID.</p></div>
+          <div class="layer"><p class="k">Layer 02</p><h4>YES Dashboard</h4><p>A live portal that moves every time a stream is handed over, across the whole organisation, not only what passes through Recycle Group.</p></div>
+          <div class="layer"><p class="k">The principle</p><h4>Only YES enters the data.</h4><p>If customers entered their own figures the reports would not be credible. YES staff enter and verify every handover. A monthly email asks the customer to fill in the gaps; YES files the answers into Landfilled, Recycled or Stored.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 · THE INFRASTRUCTURE -->
+<section class="dark" id="infrastructure">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">The infrastructure behind the numbers</p><h2>Two operations. One record.</h2></div><p class="lead">Recycle Group runs Recycle North Geelong and The Mattress Recycling Company. The figures on a YES Certificate come from the floor that recovered the material.</p></div>
+    <div class="grid g2 infra reveal">
+      <div class="big-stat"><div class="display g"><span data-count="30000" data-dec="0">0</span></div><div class="l">Mattresses a month, upper range</div><div class="s">The Mattress Recycling Company processes between 12,000 and 30,000 a month. One mattress takes about 38 seconds.</div></div>
+      <div class="big-stat"><div class="display"><span data-count="99" data-dec="0">0</span><span class="u">%</span></div><div class="l">Of mattress steel recovered</div><div class="s">$8.5m invested to get there. Steel is roughly 30% of a mattress by mass.</div></div>
+      <div class="big-stat"><div class="display"><span data-count="90" data-dec="0">0</span><span class="u">+</span></div><div class="l">Streams separated on site</div><div class="s">Recycle North Geelong public transfer station, 116 Furner Avenue, North Geelong VIC 3215.</div></div>
+      <div class="big-stat"><div class="display"><span data-count="50" data-dec="0">0</span><span class="u">%+</span></div><div class="l">Of Victoria's discarded mattresses</div><div class="s">More than half of the state's discarded mattresses come through the group.</div></div>
+    </div>
+    <div class="grid g2 mt-4 reveal">
+      <div class="site"><p class="k">Recycle North Geelong</p><h4>Public transfer station, 116 Furner Avenue, North Geelong VIC 3215.</h4><p>Incoming material is separated into more than 90 streams on site. Recovered goods are donated to community organisations.</p></div>
+      <div class="site"><p class="k">The Mattress Recycling Company</p><h4>Per 10,000 mattresses: about 800 tonnes in, about 270 tonnes of steel out.</h4><p>Steel is roughly 30% of a mattress by mass and 99% of it is recovered. The shredded foam and fibre residual is 25% of the original volume.</p></div>
+    </div>
+    <div class="mt-4 reveal">
+      <p class="accred">EPA Victoria registration R000312600 · ISO 9001:2015 · ISO 14001:2015 · ISO 45001:2018 · AS/NZS 5377 · NIST 800-88</p>
+      <p class="note">YES reports on material processed by Recycle Group. For whole-of-organisation reporting it also records material the customer evidences went elsewhere, and marks those entries as customer-evidenced rather than YES-verified.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · LEADERSHIP -->
+<section id="leadership">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">Leadership</p><h2>Run as a business, not a side project.</h2></div><p class="lead">YES is run as a standalone business within Recycle Group, with its own leadership, its own site and its own method.</p></div>
+    <div class="person reveal">
+      <div class="avatar" aria-hidden="true">RO</div>
+      <div>
+        <p class="role">Chief Executive Officer, YES</p>
+        <h3>Ryan O'Toole</h3>
+        <p>Ryan leads high-performance and strategy at Recycle Group and heads YES as its Chief Executive Officer. His background is in information systems, and his focus is on measurable, tangible results: numbers a customer can put in front of a board and defend.</p>
+        <!-- Ryan's exact Recycle Group title to be confirmed; soft wording used deliberately. -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · PRINCIPLES -->
+<section class="paper-2" id="principles">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">Principles</p><h2>Five rules every YES number is held to.</h2></div><p class="lead">They are the reason a YES figure can go into an ESG disclosure, a Scope 3 inventory or a tender without a footnote apologising for it.</p></div>
+    <div class="grid g12 reveal">
+      <div class="span7">
+        <ol class="steps" aria-label="The five YES principles">
+          <li><svg class="ic g"><use href="#i-weigh"/></svg><div><h4>Evidence over marketing.</h4><p>No "trees saved" headlines. Equivalences appear only with their source, and a figure with no source is not a figure.</p></div></li>
+          <li><svg class="ic g"><use href="#i-lock"/></svg><div><h4>One method, versioned.</h4><p>Every calculation follows the YES Method. Each certificate states the version it was calculated with, so a number from last year can be reproduced.</p></div></li>
+          <li><svg class="ic g"><use href="#i-scale"/></svg><div><h4>Conservative by default.</h4><p>Where two published factors exist, YES uses the lower one. Where no factor exists, no carbon is claimed.</p></div></li>
+          <li><svg class="ic g"><use href="#i-site"/></svg><div><h4>Whole-of-organisation.</h4><p>All of a customer's recycling is reported, not only what passes through Recycle Group, and each entry says which it is.</p></div></li>
+          <li><svg class="ic g"><use href="#i-verify"/></svg><div><h4>Transparent limits.</h4><p>Assumptions are labelled as assumptions. Pending categories are shown as pending. Landfilled material counts against the customer, in full.</p></div></li>
+        </ol>
+      </div>
+      <div class="span5">
+        <div class="why">
+          <p class="idx" style="margin:0 0 14px">WHY IT MATTERS</p>
+          <p class="callout">Only YES enters the data. That is why the number holds.</p>
+          <p class="mt-2">A report is only as credible as the weakest entry in it. Keeping data entry with YES staff, and keeping the method public and versioned, is what lets a customer sign their name under the result.</p>
+          <div class="btn-row mt-3"><a class="btn btn-ink" href="/method/">Read the YES Method {{ARROW}}</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · LOCKUP -->
+<section class="dark" id="lockup">
+  <div class="wrap lockup reveal">
+    {{LOGO_BIG_DARK}}
+    <p class="line">{{NAME}}. {{URL}}.</p>
+    <p class="sub">{{POSITION}}</p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band"><div class="wrap"><p class="eyebrow">Switched on in 30 days</p><h2>See your YES impact before you commit.</h2><p class="lead">Book a 30-minute walkthrough with the demo dashboard, or send us one month of data and we will show you what YES makes of it.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div></div></section>

@@ -1,0 +1,387 @@
+<style>
+/* home-only refinements (scoped) */
+.page-home .hero h1{font-size:clamp(40px,5.6vw,78px)}
+.page-home .dash-top{flex-wrap:wrap}
+.page-home .kpi .v .u{font-size:.5em;color:var(--slate);margin-left:4px;font-weight:600;letter-spacing:0}
+.page-home .bar .n,.page-home .ledger div span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.page-home .dash-cap{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.08em;color:var(--slate);margin:14px 0 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.page-home .dash-cap a{color:var(--green-3)}
+.page-home .mri{border-top:1px solid #202220}
+.page-home .mri h3{font-size:clamp(38px,4.6vw,64px);letter-spacing:-.035em;line-height:1}
+.page-home .mri p.idx{margin:0 0 14px}
+.page-home .mri p.t{color:var(--mist);margin:14px 0 0;max-width:30ch;font-size:15.5px;line-height:1.55}
+.page-home .stat .v span[data-count]{font-size:1em;color:inherit;margin-left:0;letter-spacing:inherit;font-weight:inherit}
+.page-home .display span[data-count]{font-size:1em;color:inherit;margin:0;letter-spacing:inherit;font-weight:inherit}
+.page-home .more{display:inline-block;margin-top:14px;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;color:var(--green-3)}
+.page-home .attrib{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--graphite);margin:40px 0 0;line-height:1.7}
+.page-home .accred{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.06em;color:var(--mist);line-height:1.9;max-width:70ch}
+/* 02 · product spotlight */
+.page-home .spot{align-items:center}
+.page-home .spot .shot.paper{max-width:440px;justify-self:end}
+.page-home .layers{display:grid;grid-template-columns:minmax(0,1fr);gap:0 48px;margin-top:clamp(40px,6vw,80px)}
+@media(min-width:800px){.page-home .layers{grid-template-columns:1fr 1fr}}
+.page-home .layer{border-top:1px solid #262826;padding:22px 0 8px;display:grid;grid-template-columns:56px minmax(0,1fr);gap:16px}
+.page-home .layer .n{font-family:var(--font-display);font-weight:800;font-size:34px;letter-spacing:-.03em;color:var(--green-3);line-height:1}
+.page-home .layer h3{font-size:clamp(21px,1.9vw,26px);margin-bottom:8px}
+.page-home .layer p{color:var(--mist);font-size:15.5px;max-width:44ch;margin:0}
+/* 03 · worked example: gauge + tiles */
+.page-home .ex{display:grid;grid-template-columns:minmax(0,1fr);gap:40px}
+@media(min-width:900px){.page-home .ex{grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:clamp(32px,4vw,64px)}}
+.page-home .ex-score{border-top:1px solid var(--mist);padding-top:22px}
+.page-home .ex-score .gauge{margin:22px 0 18px}
+.page-home .ex-score .band{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.page-home .ex-score .band b{font-family:var(--font-display);font-weight:800;font-size:24px;letter-spacing:-.02em;color:var(--ink);text-transform:none}
+.page-home .ex-score .in{font-size:15px;color:var(--graphite);margin:16px 0 0;max-width:30ch}
+.page-home .ex-score .in b{font-family:var(--font-display);font-weight:800;font-size:20px;letter-spacing:-.02em;color:var(--ink)}
+.page-home .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px 28px;align-content:start}
+@media(max-width:1000px){.page-home .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.page-home .tiles{grid-template-columns:1fr}}
+.page-home .tiles .stat .v{font-size:clamp(36px,3.6vw,52px);padding-right:30px}
+.page-home .tiles .stat .s{max-width:24ch}
+/* 04 · verification: icon columns + three-bucket bar */
+.page-home .col .ic{margin-bottom:18px}
+.page-home .col h4{margin:12px 0 10px}
+.page-home .col p{color:var(--mist);font-size:15.5px;max-width:38ch}
+.page-home .bk{margin-top:clamp(40px,6vw,72px);border-top:1px solid #262826;padding-top:24px}
+.page-home .bk-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.page-home .bucket.big{height:22px}
+.page-home .bucket.big>div{transition:width 1.1s var(--ease)}
+.page-home .bk-nums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px 28px;margin-top:28px}
+@media(max-width:640px){.page-home .bk-nums{grid-template-columns:1fr}}
+.page-home .bk .display{font-size:clamp(44px,6.5vw,96px)}
+.page-home .bk .display.sto{color:var(--stored)}
+.page-home .bk .display.lan{color:var(--mist)}
+.page-home .bk-nums .legend{margin-top:12px}
+.page-home .bk-nums .s{font-size:14px;color:var(--slate);margin:8px 0 0;max-width:30ch}
+/* 05 · who it's for: split panels */
+.page-home .split+.split{margin-top:24px}
+.page-home .split .media{min-height:380px}
+.page-home .split .media img{object-position:center top}
+.page-home .split .copy .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.page-home .split .copy .top p{margin:0}
+@media(min-width:900px){.page-home .split.flip .media{order:2}}
+.page-home .split h3{margin:14px 0 14px;max-width:16ch}
+.page-home .split .copy p{color:var(--graphite);max-width:48ch}
+.page-home .split .line{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.06em;border-top:1px solid var(--mist);padding-top:14px;margin:22px 0 18px;max-width:none}
+.page-home .split .line b{font-family:var(--font-display);font-weight:800;font-size:28px;letter-spacing:-.03em;color:var(--ink);margin-right:8px;font-variant-numeric:tabular-nums}
+/* demo badge on paper sections needs paper contrast */
+.page-home section:not(.dark) .badge.demo{border-color:var(--slate);color:var(--graphite);background:var(--white)}
+/* 06 · built on real recovery: display numerals */
+.page-home .rec-grid{gap:0 clamp(32px,5vw,80px)}
+.page-home .rec-grid .big-stat{padding:32px 0 36px}
+/* foundation */
+.page-home .found{display:grid;grid-template-columns:minmax(0,1fr);gap:32px;align-items:center}
+@media(min-width:900px){.page-home .found{grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:clamp(32px,5vw,80px)}}
+.page-home .found .display{color:var(--green);font-size:clamp(56px,8vw,112px)}
+.page-home .found .l{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin-top:14px}
+.page-home .found h2{max-width:16ch}
+</style>
+
+<!-- 1 · HERO -->
+<section class="dark hero"><div class="hero-photo" role="img" aria-label="Baled mattress springs, strapped for recycling"></div><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">{{POSITION}}</p>
+        <h1>Measuring what recycling really achieves.</h1>
+        <p class="lead">YES is a recycling certificate and a live environmental dashboard for every council and business that recycles. Real tonnes, real steel, real CO₂-e. Entered and verified by YES, never self-reported.</p>
+        <div class="btn-row"><a class="btn btn-primary" href="/demo/">Open the live demo {{ARROW}}</a><a class="btn btn-ghost" href="/contact/">Talk to YES</a></div>
+      </div>
+      <div class="reveal">
+        <div class="dash" aria-label="YES Dashboard mock, demo data">
+          <div class="dash-top"><span>YES DASHBOARD · <b>Hepburn Shire Council</b></span><span class="badge demo">Demo data · illustrative</span></div>
+          <div class="dash-body">
+            <div class="kpis">
+              <div class="kpi"><svg class="ic"><use href="#i-loop"/></svg><div class="v green"><span id="h-rec" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">Tonnes recovered</div><div class="d" id="h-rec-d">&nbsp;</div></div>
+              <div class="kpi"><svg class="ic"><use href="#i-co2"/></svg><div class="v green"><span id="h-co2" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">CO₂-e avoided</div><div class="d">steel + reference factors</div></div>
+              <div class="kpi"><svg class="ic"><use href="#i-steel"/></svg><div class="v"><span id="h-steel" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">Steel recovered</div><div class="d" id="h-steel-d">&nbsp;</div></div>
+              <div class="kpi"><svg class="ic"><use href="#i-rate"/></svg><div class="v"><span id="h-rate" data-count="0" data-dec="0">0</span><span class="u">%</span></div><div class="l">Recovery rate</div><div class="d">recycled ÷ handed over</div></div>
+            </div>
+            <div class="bars" aria-label="Recovered tonnes by stream, top five">
+              <div class="bar" id="h-bar-0"><span class="n">&nbsp;</span><div class="track"><div class="fill" data-w="0"></div></div><span class="val"></span></div>
+              <div class="bar" id="h-bar-1"><span class="n">&nbsp;</span><div class="track"><div class="fill" data-w="0"></div></div><span class="val"></span></div>
+              <div class="bar" id="h-bar-2"><span class="n">&nbsp;</span><div class="track"><div class="fill" data-w="0"></div></div><span class="val"></span></div>
+              <div class="bar" id="h-bar-3"><span class="n">&nbsp;</span><div class="track"><div class="fill" data-w="0"></div></div><span class="val"></span></div>
+              <div class="bar" id="h-bar-4"><span class="n">&nbsp;</span><div class="track"><div class="fill" data-w="0"></div></div><span class="val"></span></div>
+            </div>
+            <div class="ledger" id="h-ledger" aria-label="Latest handovers">
+              <div><span>Date</span><span>Stream</span><span class="r">Qty</span><span class="r">Entered</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="dash-cap"><span>Live demo · illustrative data</span><a href="/demo/">Open the demo →</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 · MEASURE / REPORT / IMPROVE -->
+<section class="dark tight mri">
+  <div class="wrap">
+    <div class="grid g3 reveal">
+      <div><p class="idx">01</p><h3>Measure.</h3><p class="t">Every handover weighed, entered and verified by YES staff. Not estimated. Not self-reported.</p></div>
+      <div><p class="idx">02</p><h3>Report.</h3><p class="t">A certificate for each project or period, and a dashboard that moves the day the material moves.</p></div>
+      <div><p class="idx">03</p><h3>Improve.</h3><p class="t">Benchmark against the last period or another site, and see which streams move the number.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · THE PROBLEM -->
+<section id="problem">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">01</span><p class="eyebrow">The problem</p><h2>A percentage is not an outcome.</h2></div><p class="lead">Councils and businesses pay for recycling and receive a line on an invoice. Nobody can say what the material became.</p></div>
+    <p class="callout reveal">Recycling has been sold as a collection service and reported as a percentage. It should be a measurable outcome.</p>
+    <div class="compare mt-3 reveal">
+      <div class="before"><h4>Recycling reporting today</h4><ul>
+        <li>A tonnage line on an invoice</li>
+        <li>A diversion percentage</li>
+        <li>A claim nobody can trace</li>
+        <li>Different numbers from every contractor</li>
+        <li>Nothing a resident or a board can picture</li>
+      </ul></div>
+      <div class="after"><h4>With YES</h4><ul>
+        <li>Every handover entered and verified by YES</li>
+        <li>A certificate per project or period</li>
+        <li>A dashboard that moves the day material moves</li>
+        <li>One documented method for every calculation</li>
+        <li>Numbers that survive an audit</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · TWO LAYERS · PRODUCT SPOTLIGHT -->
+<section class="dark" id="layers">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">Two layers</p><h2>A certificate to hand over. A dashboard that keeps moving.</h2></div><p class="lead">Both are built from the same verified record, and both state the method version they were calculated with.</p></div>
+    <div class="grid g12 spot reveal">
+      <div class="span7">
+        <div class="shot tilt"><img src="/assets/img/product-dashboard.webp" alt="YES Dashboard for a council hard waste program, showing the YES Score, the seven headline tiles, three buckets and recovered tonnes by month (demo data)" loading="lazy" width="1600" height="1858"></div>
+      </div>
+      <div class="span5">
+        <div class="shot paper tilt-r"><img src="/assets/img/product-certificate.webp" alt="YES Certificate, page one: Your Environment Score, headline outcomes, three buckets and the verification statement (demo data)" loading="lazy" width="1588" height="2470"></div>
+      </div>
+    </div>
+    <div class="layers reveal">
+      <div class="layer"><span class="n">01</span><div><h3>YES Dashboard. The live layer.</h3><p>Your organisation's recycling, live. Hand over 100 mattresses, then a load of aluminium, and the dashboard moves each time. All of your recycling, not only what passes through Recycle Group, filed into three buckets.</p><a class="more" href="/demo/">Open the live demo →</a></div></div>
+      <div class="layer"><span class="n">02</span><div><h3>YES Certificate. The layer you hand over.</h3><p>Issued for each project or reporting period. One page a board, a councillor or an auditor can read in a minute: period, streams, tonnes, steel, CO₂-e, landfill avoided, method version, verification statement and certificate ID.</p><a class="more" href="/certificate/">See a sample certificate →</a></div></div>
+    </div>
+    <div class="btn-row mt-4 reveal"><a class="btn btn-ghost" href="/yes-report/">See the YES Report {{ARROW}}</a></div>
+  </div>
+</section>
+
+<!-- 5 · YOUR ENVIRONMENT SCORE · WORKED EXAMPLE -->
+<section id="impact">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">Your Environment Score</p><h2>What 1,000 mattresses become.</h2></div><p class="lead">The YES Score and the seven headline tiles from every YES Certificate, calculated live for a single stream with the YES Method.</p></div>
+    <div class="ex reveal">
+      <div class="ex-score">
+        <span class="badge demo">Worked example · illustrative</span>
+        <div class="gauge on-paper" id="ex-gauge" style="--gs:220px"></div>
+        <p class="band"><b id="ex-band">&nbsp;</b><span>YES Score · proposed v0.1</span></p>
+        <p class="in"><b>1,000 mattresses</b>, one stream, handed over to The Mattress Recycling Company. Computed in your browser with the YES Method <span id="ex-ver">v0.1 draft</span>.</p>
+      </div>
+      <div class="tiles" aria-label="Your Environment Score tiles">
+        <div class="stat green"><svg class="ic"><use href="#i-mattress"/></svg><div class="v"><span id="ex-matt" data-count="0" data-dec="0">0</span></div><div class="l">Mattresses recycled</div><div class="s">Handed over to The Mattress Recycling Company</div></div>
+        <div class="stat"><svg class="ic"><use href="#i-steel"/></svg><div class="v"><span id="ex-steelpct" data-count="0" data-dec="0">0</span><span>%</span></div><div class="l">Steel recovery</div><div class="s">Of the steel in each mattress</div></div>
+        <div class="stat green"><svg class="ic"><use href="#i-weigh"/></svg><div class="v"><span id="ex-steel" data-count="0" data-dec="1">0</span><span>t</span></div><div class="l">Steel recovered</div><div class="s">To the electric-arc-furnace route</div></div>
+        <div class="stat"><svg class="ic"><use href="#i-co2"/></svg><div class="v"><span id="ex-co2" data-count="0" data-dec="1">0</span><span>t</span></div><div class="l">CO₂-e avoided</div><div class="s">Steel factor, NSW DECCW 2010</div></div>
+        <div class="stat"><svg class="ic"><use href="#i-landfill"/></svg><div class="v"><span id="ex-vol" data-count="0" data-dec="0">0</span><span>m³</span></div><div class="l">Landfill avoided</div><div class="s">Volume that did not go in</div></div>
+        <div class="stat"><svg class="ic"><use href="#i-rate"/></svg><div class="v"><span id="ex-rate" data-count="0" data-dec="0">0</span><span>%</span></div><div class="l">Material recovery rate</div><div class="s">Recovered mass ÷ mass handed over</div></div>
+        <div class="stat green"><svg class="ic"><use href="#i-loop"/></svg><div class="v"><span id="ex-ret" data-count="0" data-dec="1">0</span><span>t</span></div><div class="l">Returned to productive use</div><div class="s">Material with a next use</div></div>
+      </div>
+    </div>
+    <p class="attrib reveal">Verified recycling data supplied by The Mattress Recycling Company and Recycle Group.</p>
+    <p class="note reveal">CO₂-e uses the conservative NSW DECCW 2010 steel factor (<span id="ex-sf">0.44</span> t CO₂-e per tonne recycled) applied to the recovered steel only. No carbon is claimed for the foam and fibre. That residual is shredded and currently landfilled at 25% of its original volume, which is why the material recovery rate for mattresses sits at about a third by mass, and why the score for a mattress-only stream sits where it does. YES reports it that way.</p>
+    <div class="btn-row mt-3 reveal"><a class="btn btn-ink" href="/calculator/">Calculate your own {{ARROW}}</a><a class="btn btn-outline" href="/method/">Read the YES Method</a></div>
+  </div>
+</section>
+
+<!-- 6 · ONLY YES ENTERS THE DATA -->
+<section class="dark" id="verification">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">Verification</p><h2>Only YES enters the data. That is why the number holds.</h2></div><p class="lead">If customers typed in their own figures, no report built on them would be credible. So they do not. YES staff enter every handover, check it against the docket or weighbridge record, and file it in one of three buckets.</p></div>
+    <div class="grid g3 reveal">
+      <div class="col">
+        <svg class="ic lg g"><use href="#i-mail"/></svg>
+        <p class="idx">THE MONTHLY EMAIL</p>
+        <h4>Fill in the gaps.</h4>
+        <p>Once a month YES sends an automated email listing every stream we know moved and every one we cannot yet account for. You tell us where it went. We enter it and mark it as verified or as customer-evidenced.</p>
+      </div>
+      <div class="col">
+        <svg class="ic lg g"><use href="#i-scale"/></svg>
+        <p class="idx">THREE BUCKETS</p>
+        <h4>Every tonne lands in one place.</h4>
+        <p>Landfilled counts against you. Recycled counts for you. Stored is neutral, parked until it moves. Nothing is averaged and nothing is netted off.</p>
+      </div>
+      <div class="col">
+        <svg class="ic lg g"><use href="#i-verify"/></svg>
+        <p class="idx">THE YES METHOD</p>
+        <h4>One documented method.</h4>
+        <p>Every factor has a source, a status and a version. Reference factors from NSW DECCW 2010. Group figures from Recycle Group's own processing records. Assumptions labelled as assumptions until measured data replaces them.</p>
+        <a class="more" href="/method/">Read the YES Method →</a>
+      </div>
+    </div>
+    <div class="bk reveal">
+      <div class="bk-top"><span class="idx">THREE BUCKETS · <span id="bk-who">HEPBURN SHIRE COUNCIL</span> · TONNES, FY TO DATE</span><span class="badge demo">Demo data · illustrative</span></div>
+      <div class="bucket big" id="bk-bar" aria-label="Three buckets for the demo program, tonnes"><div class="rec" id="bk-rec" style="width:0"></div><div class="sto" id="bk-sto" style="width:0"></div><div class="lan" id="bk-lan" style="width:0"></div></div>
+      <div class="bk-nums">
+        <div><div class="display g"><span id="bk-recn" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="legend"><span class="rec"><i></i>Recycled</span></div><p class="s">Counts for you. Material with a verified next use.</p></div>
+        <div><div class="display sto"><span id="bk-ston" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="legend"><span class="sto"><i></i>Stored</span></div><p class="s">Neutral. Parked until it moves, never counted as recycled.</p></div>
+        <div><div class="display lan"><span id="bk-lann" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="legend"><span class="lan"><i></i>Landfilled</span></div><p class="s">Counts against you, in full. Shown on the certificate.</p></div>
+      </div>
+    </div>
+    <ol class="steps mt-4 reveal" aria-label="The handover loop">
+      <li><div><h4>Hand over a stream</h4><p>A hard waste sweep, a skip of scrap, a pallet of e-waste. Any of the 13 reporting categories, to Recycle Group or evidenced elsewhere.</p></div></li>
+      <li><div><h4>YES enters and verifies</h4><p>A YES staff member records the quantity against the docket or weighbridge ticket and assigns the bucket. Nothing is self-reported.</p></div></li>
+      <li><div><h4>The dashboard moves</h4><p>Tonnes recovered, steel, CO₂-e and landfill avoided update for the stream, the program and the whole organisation.</p></div></li>
+      <li><div><h4>The certificate issues</h4><p>At the end of the project or period, a YES Certificate with the figures, the method version and a certificate ID.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 7 · WHO IT'S FOR -->
+<section id="who">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">05</span><p class="eyebrow">Who it's for</p><h2>Councils first. Business second.</h2></div><p class="lead">Built for the two organisations that carry the reporting obligation and rarely hold the evidence.</p></div>
+    <div class="split reveal">
+      <div class="media"><img src="/assets/img/product-dashboard.webp" alt="YES Dashboard for a council hard waste program (demo data)" loading="lazy" width="1600" height="1858"></div>
+      <div class="copy">
+        <div class="top"><p class="idx">COUNCILS</p><span class="badge demo">Demo data · illustrative</span></div>
+        <h3>Hard waste, kerbside and transfer stations.</h3>
+        <p>Report every program on one dashboard, issue a certificate for each period, and put a verified number in the next tender instead of a contractor's estimate.</p>
+        <p class="line"><b>$1,999</b> a month, councils up to 50,000 residents · Switched on in 30 days</p>
+        <div class="btn-row"><a class="btn btn-outline" href="/councils/">YES for councils {{ARROW}}</a></div>
+      </div>
+    </div>
+    <div class="split flip reveal">
+      <div class="media"><img src="/assets/img/product-certificate.webp" alt="YES Certificate, page one (demo data)" loading="lazy" width="1588" height="2470"></div>
+      <div class="copy">
+        <div class="top"><p class="idx">BUSINESS</p><span class="badge demo">Demo data · illustrative</span></div>
+        <h3>ESG, Scope 3 and the annual report.</h3>
+        <p>Recycling data with a documented method behind every figure, ready for ESG disclosures, GHG Protocol Scope 3 Category 5 (waste generated in operations), procurement responses and the annual sustainability report.</p>
+        <p class="line"><b>$999</b> a month · Switched on in 30 days</p>
+        <div class="btn-row"><a class="btn btn-outline" href="/business/">YES for business {{ARROW}}</a></div>
+      </div>
+    </div>
+    <div class="mt-4 reveal">
+      <p class="idx mb-2">USED FOR</p>
+      <div class="chips">
+        <span class="chip">Environmental reporting</span><span class="chip">Sustainability reporting</span><span class="chip">ESG reporting</span><span class="chip">Procurement reporting</span><span class="chip">Waste and recycling targets</span><span class="chip">Circular-economy initiatives</span><span class="chip">Internal environmental KPIs</span><span class="chip">Customer and stakeholder reporting</span><span class="chip">Annual sustainability reports</span><span class="chip">Supplier performance reporting</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 · BUILT ON REAL RECOVERY -->
+<section class="dark" id="recovery">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">06</span><p class="eyebrow">Built on real recovery</p><h2>The numbers come from a processor, not a spreadsheet.</h2></div><p class="lead">YES is a Recycle Group business. The group runs Recycle North Geelong and The Mattress Recycling Company, so the figures on a YES Certificate come from the floor that recovered the material.</p></div>
+    <div class="grid g2 rec-grid reveal">
+      <div class="big-stat"><div class="display g"><span data-count="30000" data-dec="0">0</span></div><div class="l">Mattresses a month, upper range</div><div class="s">The Mattress Recycling Company processes between 12,000 and 30,000 a month. Each one takes about 38 seconds.</div></div>
+      <div class="big-stat"><div class="display"><span data-count="99" data-dec="0">0</span><span class="u">%</span></div><div class="l">Of mattress steel recovered</div><div class="s">$8.5m invested to get there. Roughly 30% of a mattress by mass is steel, and 99% of it comes back out.</div></div>
+      <div class="big-stat"><div class="display"><span data-count="90" data-dec="0">0</span><span class="u">+</span></div><div class="l">Streams separated on site</div><div class="s">Recycle North Geelong, the group's public transfer station at 116 Furner Avenue, North Geelong.</div></div>
+      <div class="big-stat"><div class="display"><span data-count="50" data-dec="0">0</span><span class="u">%+</span></div><div class="l">Of Victoria's discarded mattresses</div><div class="s">More than half of the state's discarded mattresses come through the group.</div></div>
+    </div>
+    <div class="mt-3 reveal">
+      <p class="accred">EPA Victoria registration R000312600 · ISO 9001:2015 · ISO 14001:2015 · ISO 45001:2018 · AS/NZS 5377 · NIST 800-88</p>
+      <div class="btn-row mt-2"><a class="btn btn-ghost" href="/about/">About YES {{ARROW}}</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 · FOUNDATION MEMBERS -->
+<section class="paper-2" id="foundation">
+  <div class="wrap">
+    <div class="found reveal">
+      <div>
+        <div class="display"><span data-count="15000" data-dec="0" data-prefix="$">$0</span></div>
+        <div class="l">Maximum saving · establishment fee waived</div>
+      </div>
+      <div>
+        <p class="eyebrow">Foundation Members</p>
+        <h2>Free to join in the first 12 months.</h2>
+        <p class="lead mt-2">The YES establishment fee is normally $5,000 to $15,000. Foundation Members who join in the first 12 months pay none of it. The monthly subscription applies from the switch-on date.</p>
+        <div class="btn-row mt-3"><a class="btn btn-ink" href="/pricing/#foundation">See pricing {{ARROW}}</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · CTA -->
+<section class="cta-band"><div class="wrap"><p class="eyebrow">Switched on in 30 days</p><h2>See your YES impact before you commit.</h2><p class="lead">Book a 30-minute walkthrough with the demo dashboard, or send us one month of data and we will show you what YES makes of it.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div></div></section>
+
+<!--scripts-->
+<script src="/assets/yes-data.js"></script>
+<script>
+(function(){
+  var B=window.YES; if(!B||!B.compute||!B.DEMO) return;
+  var fmt=B.fmt||function(n,d){return n.toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d});};
+  function setCount(id,v,dec){
+    var el=document.getElementById(id); if(!el) return;
+    dec=dec||0; el.setAttribute('data-count',v); el.setAttribute('data-dec',dec);
+    // if the shared counter has already run for this element, write the value straight in
+    if(el.getAttribute('data-from')) el.textContent=(el.getAttribute('data-prefix')||'')+fmt(v,dec)+(el.getAttribute('data-suffix')||'');
+  }
+  function txt(id,s){var el=document.getElementById(id); if(el) el.textContent=s;}
+
+  // --- hero mock: same dataset and engine as /demo/ ---
+  var t=B.compute(B.DEMO.entries);
+  setCount('h-rec',t.recT,0);
+  setCount('h-co2',t.co2,0);
+  setCount('h-steel',t.steelT,0);
+  setCount('h-rate',t.recoveryRate*100,0);
+  txt('h-rec-d','of '+fmt(t.inT,0)+' t handed over');
+  var steelCats=Object.keys(t.byCat).filter(function(k){return t.byCat[k].steel>0;}).length;
+  txt('h-steel-d','from '+steelCats+' steel-bearing streams');
+
+  var cats=Object.keys(t.byCat).map(function(k){return t.byCat[k];}).filter(function(b){return b.rec>0;}).sort(function(a,b){return b.rec-a.rec;}).slice(0,5);
+  var max=cats.length?cats[0].rec:1;
+  cats.forEach(function(b,i){
+    var row=document.getElementById('h-bar-'+i); if(!row) return;
+    row.querySelector('.n').textContent=b.name;
+    row.querySelector('.fill').setAttribute('data-w',Math.max(2,Math.round(b.rec/max*100)));
+    row.querySelector('.val').textContent=fmt(b.rec,b.rec<10?1:0)+' t';
+  });
+
+  var led=document.getElementById('h-ledger');
+  if(led){
+    B.DEMO.ledger.slice(0,4).forEach(function(r){
+      var c=B.CAT[r.k]||{name:r.k,unit:'t'};
+      var q=c.unit==='count'?fmt(r.qty,0):fmt(r.qty,1)+' t';
+      var d=document.createElement('div');
+      d.innerHTML='<span>'+r.d+'</span><span>'+c.name+'</span><span class="r">'+q+'</span><span class="r">'+r.by+'</span>';
+      led.appendChild(d);
+    });
+  }
+
+  // --- 04 · three buckets, from the same demo dataset ---
+  var bar=document.getElementById('bk-bar');
+  if(bar&&t.inT>0){
+    var pr=t.recT/t.inT*100, ps=t.stoT/t.inT*100, pl=t.lanT/t.inT*100;
+    bar.setAttribute('aria-label','Three buckets for the demo program: '+fmt(t.recT,0)+' t recycled, '+fmt(t.stoT,0)+' t stored, '+fmt(t.lanT,0)+' t landfilled');
+    function paint(){document.getElementById('bk-rec').style.width=pr+'%';document.getElementById('bk-sto').style.width=ps+'%';document.getElementById('bk-lan').style.width=pl+'%';}
+    if('IntersectionObserver' in window){var iob=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){paint();iob.unobserve(e.target);}});},{threshold:.3});iob.observe(bar);} else paint();
+  }
+  setCount('bk-recn',t.recT,0);
+  setCount('bk-ston',t.stoT,0);
+  setCount('bk-lann',t.lanT,0);
+  txt('bk-who',(B.DEMO.customer||'').toUpperCase());
+
+  // --- 03 · worked example: 1,000 mattresses, with the proposed YES Score ---
+  var m=B.compute([{k:'mattresses',qty:1000}]);
+  var sc=m.score||B.score(m);
+  var g=document.getElementById('ex-gauge');
+  if(g&&B.gauge){B.gauge(g,sc,220);g.classList.add('on-paper');}
+  txt('ex-band',sc.band);
+  setCount('ex-matt',m.units.mattresses||1000,0);
+  setCount('ex-steelpct',(B.CAT.mattresses.steelRecovery||0)*100,0);
+  setCount('ex-steel',m.steelT,1);
+  setCount('ex-co2',m.co2,1);
+  setCount('ex-vol',m.volAvoided,0);
+  setCount('ex-rate',m.recoveryRate*100,0);
+  setCount('ex-ret',m.recT,1);
+  txt('ex-ver',B.METHOD_VERSION||'');
+  if(B.STEEL) txt('ex-sf',String(B.STEEL.f));
+})();
+</script>

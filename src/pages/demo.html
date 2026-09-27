@@ -1,0 +1,608 @@
+<style>
+/* live demo refinements (scoped) */
+.page-demo .hero-sub .lead{max-width:64ch}
+.page-demo .hero-meta{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;margin-top:22px;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--slate)}
+.page-demo .demo-section{padding-top:8px}
+.page-demo .demo-head h3{font-size:clamp(17px,1.6vw,20px)}
+.page-demo .demo-tabs button{transition:background .15s,color .15s,border-color .15s}
+.page-demo .demo-tabs button:hover{border-color:var(--mist)}
+.page-demo .demo-tabs button.active:hover{border-color:var(--green-3)}
+.page-demo .demo-tabs button:focus-visible,.page-demo .handover button:focus-visible,.page-demo .gap-btns button:focus-visible,.page-demo #demo-reset:focus-visible{outline:2px solid var(--green-3);outline-offset:2px}
+.page-demo .tab-panel{display:grid;gap:18px}
+.page-demo .tab-panel[hidden]{display:none}
+/* section lede above the shell */
+.page-demo .demo-lede{margin-bottom:22px}
+.page-demo .demo-lede .sec-idx{margin-bottom:10px}
+.page-demo .demo-lede .eyebrow{margin-bottom:0}
+/* score row: gauge left, band + composition right */
+.page-demo .score-row{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:center;padding:20px 22px;background:var(--ink-2);border:1px solid #262826;border-radius:10px}
+@media(min-width:800px){.page-demo .score-row{grid-template-columns:auto minmax(0,1fr);gap:32px}}
+.page-demo .score-row .gauge{margin:0}
+.page-demo .score-row .l{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-bottom:8px}
+.page-demo .score-row .band{font-family:var(--font-display);font-weight:700;font-size:clamp(26px,2.6vw,34px);letter-spacing:-.03em;line-height:1;color:var(--paper);margin:0 0 18px;min-height:1em}
+.page-demo .stack{display:flex;height:10px;border-radius:3px;overflow:hidden;background:#242624}
+.page-demo .stack i{display:block;height:100%;width:0;transition:width .9s var(--ease)}
+.page-demo .stack .p1{background:var(--green)}.page-demo .stack .p2{background:var(--green-3)}.page-demo .stack .p3{background:var(--green-4)}
+.page-demo .legend .p1 i{background:var(--green)}.page-demo .legend .p2 i{background:var(--green-3)}.page-demo .legend .p3 i{background:var(--green-4)}
+.page-demo .score-row .legend{margin-top:10px;font-size:11px}
+.page-demo .score-row .legend b{font-weight:500;color:var(--paper);margin-left:2px}
+.page-demo .score-row .m{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;color:var(--slate);margin:12px 0 0}
+/* seven tiles: four across, then three across */
+@media(min-width:900px){.page-demo .demo-kpis{grid-template-columns:repeat(12,minmax(0,1fr))}.page-demo .demo-kpis .kpi{grid-column:span 3}.page-demo .demo-kpis .kpi:nth-child(n+5){grid-column:span 4}}
+@media(max-width:899px){.page-demo .demo-kpis .kpi:nth-child(7){grid-column:span 2}}
+.page-demo .kpi{min-height:112px}
+.page-demo .kpi .v{white-space:nowrap;padding-right:34px}
+.page-demo .kpi .v .u{font-size:.5em;color:var(--slate);margin-left:4px;font-weight:600;letter-spacing:0}
+.page-demo .kpi .d{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:1.2em;transition:color .3s}
+.page-demo .kpi .d.neg{color:var(--mist)}
+.page-demo .kpi .d.src{white-space:normal;line-height:1.5;color:var(--slate)}
+@media(max-width:560px){.page-demo .demo-kpis .kpi .d{white-space:normal;line-height:1.25;height:3.75em;min-height:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}.page-demo .eq{grid-template-columns:1fr}}
+.page-demo .panel-h{flex-wrap:wrap}
+.page-demo .pending-line{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.04em;color:var(--slate);margin:-6px 0 0;line-height:1.6}
+@media(min-width:1000px){.page-demo .demo-grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}}
+/* donut */
+.page-demo .donut .c{font-family:var(--font-display);font-weight:800;font-size:28px;letter-spacing:-.04em;fill:var(--paper)}
+.page-demo .donut .cl{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.14em;fill:var(--slate)}
+.page-demo .donut circle.seg{fill:none;stroke-width:16;transition:stroke-dasharray .9s var(--ease),stroke-dashoffset .9s var(--ease)}
+.page-demo .donut .k .lbl{color:var(--mist)}
+.page-demo .donut .k .i-rec{background:var(--green-3)}.page-demo .donut .k .i-sto{background:var(--stored)}.page-demo .donut .k .i-lan{background:#5F6360;background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.25) 0 2px,transparent 2px 5px)}
+.page-demo .donut-note{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--slate);margin:14px 0 0;line-height:1.6}
+/* trend */
+.page-demo .trend .gl{stroke:#242624;stroke-width:1}
+.page-demo .trend .ax{stroke:#3A3D3A;stroke-width:1}
+.page-demo .trend .yl,.page-demo .trend .xl{font-family:var(--font-mono);font-size:11px;fill:var(--slate)}
+.page-demo .trend .ar{fill:rgba(79,193,122,.14)}
+.page-demo .trend .ln{fill:none;stroke:var(--green-3);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.page-demo .trend .dt{fill:var(--ink-2);stroke:var(--green-3);stroke-width:1.5}
+.page-demo .trend .dt.last{fill:var(--green-3)}
+.page-demo .trend .vl{font-family:var(--font-mono);font-size:11px;fill:var(--paper)}
+.page-demo .trend-note{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--slate);margin:10px 0 0}
+/* equivalences: the one filled glyph */
+.page-demo .eq .ic.fill{fill:currentColor;stroke:none}
+/* categories: stream icon before the label */
+.page-demo .cat-bar .n{display:flex;align-items:center;gap:8px;min-width:0;color:var(--mist)}
+.page-demo .cat-bar .n .ic{width:16px;height:16px;color:var(--slate)}
+.page-demo .cat-bar .n .nt{display:flex;flex-direction:column;gap:3px;min-width:0}
+@media(min-width:900px){.page-demo .cat-bar{grid-template-columns:230px minmax(0,1fr) 78px}}
+.page-demo .cat-bar .n .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:560px){.page-demo .cat-bar .n .nm{white-space:normal;line-height:1.25}}
+.page-demo .cat-bar .n .tag{align-self:flex-start}
+.page-demo .cat-bar .track>div{min-width:0}
+.page-demo .cat-legend{margin-top:16px}
+/* ledger: 12px stream icon before the description */
+@media(min-width:561px){.page-demo .demo-ledger .row{grid-template-columns:76px minmax(0,1fr) 70px 84px 92px}}
+.page-demo .demo-ledger .row span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.page-demo .demo-ledger .row .w{color:var(--mist);display:flex;align-items:center;gap:8px}
+.page-demo .demo-ledger .row .w .ic{width:12px;height:12px;color:var(--slate)}
+.page-demo .demo-ledger .row .b{color:var(--slate)}
+.page-demo .demo-ledger .row .b.rec{color:var(--green-4)}
+/* gaps */
+.page-demo .gaps-intro{font-size:15px;color:var(--mist);max-width:70ch;margin:0 0 16px;line-height:1.55}
+.page-demo .gap .w{color:var(--paper);margin-bottom:3px;display:flex;align-items:center;gap:8px}
+.page-demo .gap .w .ic{width:14px;height:14px;color:var(--slate)}
+.page-demo .gap .who{padding-left:22px}
+@media(max-width:560px){.page-demo .gap{grid-template-columns:1fr}}
+.page-demo .gap-btns button{transition:background .15s,color .15s,border-color .15s}
+.page-demo .gap-btns button:hover{border-color:var(--mist)}
+.page-demo .gaps-note{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.04em;color:var(--slate);margin:16px 0 0;line-height:1.6}
+/* handover strip */
+.page-demo .handover-strip{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px 18px;align-items:center;padding:16px 22px;border-top:1px solid #262826;background:var(--ink-2)}
+@media(max-width:900px){.page-demo .handover-strip{grid-template-columns:1fr}}
+.page-demo .handover-strip .hl{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-3);white-space:nowrap}
+.page-demo .handover button{display:inline-flex;align-items:center;gap:7px}
+.page-demo .handover button .ic{width:14px;height:14px;color:var(--green-3)}
+.page-demo .handover button.lan{border-style:dashed;color:var(--mist)}
+.page-demo .handover button.lan .ic{color:var(--mist)}
+.page-demo .handover button:active{transform:translateY(1px)}
+.page-demo .handover-strip .btn-ghost{justify-self:end}
+@media(max-width:900px){.page-demo .handover-strip .btn-ghost{justify-self:start}}
+.page-demo .demo-attrib{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--mist);margin:22px 0 0;line-height:1.7}
+.page-demo .note a{color:var(--green-3)}
+/* what you just saw: numbered editorial list */
+.page-demo .saw .steps p{max-width:62ch}
+@media(min-width:900px){.page-demo .saw .steps h4{font-size:22px;letter-spacing:-.02em}}
+</style>
+
+<!-- HERO -->
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">Live demo</p>
+    <h1>Hand over a stream. Watch the numbers move.</h1>
+    <p class="lead">This is a YES Dashboard for a council hard waste program, on illustrative data. Use the handover buttons to add material the way YES staff would, and watch every tile recalculate.</p>
+    <div class="hero-meta"><span class="badge demo">Demo data · illustrative</span><span>In production, only YES staff can do this.</span></div>
+  </div>
+</section>
+
+<!-- THE DASHBOARD -->
+<section class="dark tight demo-section" id="dashboard">
+  <div class="wrap">
+    <div class="demo-lede"><span class="sec-idx">01</span><p class="eyebrow">The dashboard</p></div>
+    <div class="demo-shell reveal" id="demo" aria-label="YES Dashboard, demo data">
+      <div class="demo-head">
+        <div><h3>Hepburn Shire Council · Hard waste program</h3><p class="sub">FY2026–27 to date · YES Method <span id="demo-ver">v0.1 draft</span> · entered by YES</p><span class="badge demo" style="margin-top:10px">Demo data · illustrative</span></div>
+        <div class="demo-tabs" role="tablist" aria-label="Dashboard views">
+          <button type="button" role="tab" id="t-overview" class="active" aria-selected="true" aria-controls="p-overview" data-tab="overview">Overview</button>
+          <button type="button" role="tab" id="t-categories" aria-selected="false" aria-controls="p-categories" data-tab="categories">Categories</button>
+          <button type="button" role="tab" id="t-ledger" aria-selected="false" aria-controls="p-ledger" data-tab="ledger">Ledger</button>
+          <button type="button" role="tab" id="t-gaps" aria-selected="false" aria-controls="p-gaps" data-tab="gaps">Gaps</button>
+        </div>
+      </div>
+
+      <div class="demo-body">
+        <!-- OVERVIEW -->
+        <div class="tab-panel" id="p-overview" role="tabpanel" aria-labelledby="t-overview" data-panel="overview">
+          <div class="score-row">
+            <div class="gauge" id="sc-gauge" style="--gs:170px"></div>
+            <div class="score-meta">
+              <div class="l">YES Score · proposed v0.1</div>
+              <div class="band" id="sc-band">&nbsp;</div>
+              <div class="l" id="sc-wl">Composition · points of 100</div>
+              <div class="stack" aria-label="YES Score composition"><i class="p1" id="sc-p1"></i><i class="p2" id="sc-p2"></i><i class="p3" id="sc-p3"></i></div>
+              <div class="legend"><span class="p1"><i></i>Recovery <b id="sc-l1"></b></span><span class="p2"><i></i>Carbon <b id="sc-l2"></b></span><span class="p3"><i></i>Evidence <b id="sc-l3"></b></span></div>
+              <p class="m">Proposed method v0.1 · not an accredited rating · Stored is neutral · Landfilled counts against</p>
+            </div>
+          </div>
+
+          <div class="demo-kpis" aria-label="Your Environment Score tiles">
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-mattress"/></svg><div class="v green"><span id="k-matt" data-count="0" data-dec="0">0</span></div><div class="l">Mattresses recycled</div><div class="d" id="k-matt-d">&nbsp;</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-rate"/></svg><div class="v"><span id="k-steelpct" data-count="0" data-dec="0">0</span><span class="u">%</span></div><div class="l">Steel recovery</div><div class="d" id="k-steelpct-d">of mattress steel</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-steel"/></svg><div class="v green"><span id="k-steel" data-count="0" data-dec="1">0</span><span class="u">t</span></div><div class="l">Steel recovered</div><div class="d" id="k-steel-d">&nbsp;</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-co2"/></svg><div class="v green"><span id="k-co2" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">CO₂-e avoided</div><div class="d" id="k-co2-d">&nbsp;</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-landfill"/></svg><div class="v"><span id="k-vol" data-count="0" data-dec="0">0</span><span class="u">m³</span></div><div class="l">Landfill avoided</div><div class="d" id="k-vol-d">&nbsp;</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-rate"/></svg><div class="v"><span id="k-rate" data-count="0" data-dec="1">0</span><span class="u">%</span></div><div class="l">Material recovery rate</div><div class="d" id="k-rate-d">&nbsp;</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-loop"/></svg><div class="v green"><span id="k-ret" data-count="0" data-dec="1">0</span><span class="u">t</span></div><div class="l">Returned to productive use</div><div class="d" id="k-ret-d">&nbsp;</div></div>
+          </div>
+          <p class="pending-line" id="pending-line">&nbsp;</p>
+
+          <div class="demo-grid">
+            <div class="panel">
+              <div class="panel-h"><h4>Three buckets</h4><span class="m">Tonnes · FY to date</span></div>
+              <div class="donut">
+                <svg viewBox="0 0 150 150" role="img" aria-label="Three-bucket split of tonnes handed over" id="dn-svg">
+                  <circle cx="75" cy="75" r="58" fill="none" stroke="#242624" stroke-width="16"></circle>
+                  <g transform="rotate(-90 75 75)">
+                    <circle class="seg" id="dn-rec" cx="75" cy="75" r="58" stroke="#4FC17A" style="stroke-dasharray:0 400;stroke-dashoffset:0"></circle>
+                    <circle class="seg" id="dn-sto" cx="75" cy="75" r="58" stroke="#A9ADA8" style="stroke-dasharray:0 400;stroke-dashoffset:0"></circle>
+                    <circle class="seg" id="dn-lan" cx="75" cy="75" r="58" stroke="#5F6360" style="stroke-dasharray:0 400;stroke-dashoffset:0"></circle>
+                  </g>
+                  <text x="75" y="80" text-anchor="middle" class="c" id="dn-c">0%</text>
+                  <text x="75" y="97" text-anchor="middle" class="cl">RECOVERED</text>
+                </svg>
+                <div class="k">
+                  <div><i class="i-rec"></i><span class="lbl">Recycled</span><span class="n" id="dn-k-rec">0 t</span></div>
+                  <div><i class="i-sto"></i><span class="lbl">Stored · neutral</span><span class="n" id="dn-k-sto">0 t</span></div>
+                  <div><i class="i-lan"></i><span class="lbl">Landfilled · counts against</span><span class="n" id="dn-k-lan">0 t</span></div>
+                  <div><i style="background:transparent;border:1px solid #3A3D3A"></i><span class="lbl">Handed over</span><span class="n" id="dn-k-in">0 t</span></div>
+                </div>
+              </div>
+              <p class="donut-note">Recovery rate = recycled ÷ handed over. Mattress foam and fibre residual is counted as landfilled while recovery trials continue.</p>
+            </div>
+            <div class="panel">
+              <div class="panel-h"><h4>Recovered tonnes by month</h4><span class="m">Oct to Sep · this month moves</span></div>
+              <svg class="trend" id="tr-svg" viewBox="0 0 600 220" role="img" aria-label="Recovered tonnes by month, October to September" preserveAspectRatio="xMidYMid meet"></svg>
+              <p class="trend-note">The September spike is the annual hard waste sweep. A handover today adds to September.</p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-h"><h4>Equivalences</h4><span class="m">Shown only with a source</span></div>
+            <div class="eq">
+              <div class="kpi"><svg class="ic fill" aria-hidden="true"><use href="#i-carsolid"/></svg><div class="v green"><span id="eq-cars" data-count="0" data-dec="0">0</span></div><div class="l">Cars permanently retired</div><div class="d src" id="eq-cars-d">&nbsp;</div></div>
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-steel"/></svg><div class="v"><span id="eq-steel">0</span><span class="u">t</span></div><div class="l">Steel back into manufacturing</div><div class="d src" id="eq-steel-d">&nbsp;</div></div>
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-landfill"/></svg><div class="v"><span id="eq-vol">0</span><span class="u">m³</span></div><div class="l">Landfill cell kept open</div><div class="d src" id="eq-vol-d">&nbsp;</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATEGORIES -->
+        <div class="tab-panel" id="p-categories" role="tabpanel" aria-labelledby="t-categories" data-panel="categories" hidden>
+          <div class="panel">
+            <div class="panel-h"><h4>Thirteen reporting categories</h4><span class="m">Share of each stream by bucket · tonnes handed over</span></div>
+            <div class="cat-bars" id="cat-bars"></div>
+            <div class="legend cat-legend"><span class="rec"><i></i>Recycled</span><span class="sto"><i></i>Stored · neutral</span><span class="lan"><i></i>Landfilled · counts against</span></div>
+            <p class="gaps-note">Splits are the default pathway for a Recycle Group handover under YES Method v0.1. Carbon pending means recovered mass is counted and no CO₂-e is claimed for that stream.</p>
+          </div>
+        </div>
+
+        <!-- LEDGER -->
+        <div class="tab-panel" id="p-ledger" role="tabpanel" aria-labelledby="t-ledger" data-panel="ledger" hidden>
+          <div class="panel">
+            <div class="panel-h"><h4>Ledger</h4><span class="m">Every handover · newest first · entered by YES</span></div>
+            <div class="demo-ledger" id="ledger" aria-label="Handover ledger">
+              <div class="row h"><span>Date</span><span>What</span><span class="r">Qty</span><span class="hide-m">Bucket</span><span class="hide-m r">Entered by</span></div>
+            </div>
+            <p class="gaps-note">Demo handovers are dated today and marked "demo". In production every row carries an evidence reference and the operator's initials.</p>
+          </div>
+        </div>
+
+        <!-- GAPS -->
+        <div class="tab-panel" id="p-gaps" role="tabpanel" aria-labelledby="t-gaps" data-panel="gaps" hidden>
+          <div class="panel">
+            <div class="panel-h"><h4>Fill in the gaps · March</h4><span class="m">Monthly email · answered by the council · entered by YES</span></div>
+            <p class="gaps-intro">Once a month YES emails the council a list of every stream it cannot yet account for. The council says where each one went. YES enters it, grades the evidence, and the dashboard moves. These four items are the kind of thing a council reports that did not go through Recycle Group. Choose a bucket for each and watch the Overview.</p>
+            <div class="gaps" id="gaps"></div>
+            <p class="gaps-note">Entries answered by email count as Grade B evidence (contractor report or signed count sheet) until a docket is supplied. Grade B counts, and is flagged on the ledger and the certificate.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- HANDOVER STRIP -->
+      <div class="handover-strip">
+        <span class="hl">Hand over a stream →</span>
+        <div class="handover" id="handover" aria-label="Add a handover to the demo">
+          <button type="button" data-k="mattresses" data-qty="100" data-what="100 mattresses"><svg class="ic" aria-hidden="true"><use href="#i-mattress"/></svg>+100 mattresses</button>
+          <button type="button" data-k="steel" data-qty="5" data-what="5 t steel"><svg class="ic" aria-hidden="true"><use href="#i-steel"/></svg>+5 t steel</button>
+          <button type="button" data-k="aluminium" data-qty="1" data-what="1 t aluminium"><svg class="ic" aria-hidden="true"><use href="#i-alu"/></svg>+1 t aluminium</button>
+          <button type="button" data-k="timber_plain" data-qty="10" data-what="10 t plain timber"><svg class="ic" aria-hidden="true"><use href="#i-timber"/></svg>+10 t plain timber</button>
+          <button type="button" data-k="tyres" data-qty="200" data-what="200 tyres"><svg class="ic" aria-hidden="true"><use href="#i-tyre"/></svg>+200 tyres</button>
+          <button type="button" data-k="whitegoods" data-qty="50" data-what="50 white goods"><svg class="ic" aria-hidden="true"><use href="#i-white"/></svg>+50 white goods</button>
+          <button type="button" data-k="ewaste" data-qty="2" data-what="2 t e-waste"><svg class="ic" aria-hidden="true"><use href="#i-ewaste"/></svg>+2 t e-waste</button>
+          <button type="button" data-k="greenwaste" data-qty="20" data-what="20 t green waste"><svg class="ic" aria-hidden="true"><use href="#i-green"/></svg>+20 t green waste</button>
+          <button type="button" class="lan" data-k="general" data-qty="10" data-what="10 t general rubbish"><svg class="ic" aria-hidden="true"><use href="#i-bin"/></svg>+10 t general rubbish (landfill)</button>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" id="demo-reset">Reset demo</button>
+      </div>
+    </div>
+
+    <p class="demo-attrib">Verified recycling data supplied by The Mattress Recycling Company and Recycle Group.</p>
+    <p class="note">Demo data is illustrative and is not Hepburn Shire Council data. Reference factors are NSW DECCW 2010, Table 4. Calculations use the YES Method v0.1 draft, including the proposed YES Score. <a href="/method/">Read the YES Method →</a></p>
+  </div>
+</section>
+
+<!-- WHAT YOU JUST SAW -->
+<section id="saw">
+  <div class="wrap saw">
+    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">What you just saw</p><h2>Three rules that make the number hold.</h2></div><p class="lead">The demo lets you press the buttons. In production, a YES operator does, against a docket.</p></div>
+    <ol class="steps reveal">
+      <li><div><h4>Only YES enters the data</h4><p>Every handover is entered and verified by YES staff against a weighbridge docket, processor certificate or signed count sheet. Customers never type in their own figures, which is why a YES Certificate can be relied on.</p></div></li>
+      <li><div><h4>Every tile has a method</h4><p>Steel recovery, CO₂-e, landfill volume and the YES Score each trace to a factor with a source, a status and a version. Where no factor exists yet, the tonnes are counted and no carbon is claimed.</p></div></li>
+      <li><div><h4>Stored is neutral, landfilled counts against</h4><p>Material parked at a depot does not move the score until it moves. Material sent to landfill pulls the recovery rate down. The general rubbish button shows exactly how much.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band"><div class="wrap"><p class="eyebrow">Switched on in 30 days</p><h2>See your YES impact before you commit.</h2><p class="lead">Book a 30-minute walkthrough with the demo dashboard, or send us one month of data and we will show you what YES makes of it.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/calculator/">Try the calculator</a></div></div></section>
+
+<!--scripts-->
+<script src="/assets/yes-data.js"></script>
+<script>
+(function(){
+  var B=window.YES; if(!B||!B.compute||!B.score||!B.DEMO||!B.CATS||!B.CAT) return;
+  var fmt=B.fmt||function(n,d){return (+n).toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d});};
+  var $=function(id){return document.getElementById(id);};
+  var txt=function(id,s){var el=$(id); if(el) el.textContent=s;};
+  var reduced=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function today(){var d=new Date();return d.getDate()+' '+MONTHS[d.getMonth()];}
+  function srcId(k){return (B.SOURCES&&B.SOURCES[k]&&B.SOURCES[k].id)||k||'';}
+  function toast(m){if(B.toast) B.toast(m);}
+  function pct(x){return Math.round(x*100)+'%';}
+  function qtyLabel(c,q){return c.unit==='count'?fmt(q,0):fmt(q,1)+' t';}
+  var PATHS={rec:{rec:1,sto:0,lan:0},sto:{rec:0,sto:1,lan:0},lan:{rec:0,sto:0,lan:1}};
+  var BUCKET={rec:'Recycled',sto:'Stored',lan:'Landfilled'};
+  // stream icon per category key (sprite ids), in YES.CATS order
+  var ICON={mattresses:'i-mattress',steel:'i-steel',aluminium:'i-alu',timber_plain:'i-timber',timber_coloured:'i-timber2',tyres:'i-tyre',whitegoods:'i-white',ewaste:'i-ewaste',clothing:'i-cloth',concrete:'i-rubble',vehicles:'i-car',greenwaste:'i-green',general:'i-bin'};
+  function icon(k){return '<svg class="ic" aria-hidden="true"><use href="#'+(ICON[k]||'i-bin')+'"/></svg>';}
+
+  // ---- state ---------------------------------------------------------------
+  var entries=B.DEMO.entries.map(function(e){return Object.assign({},e);});
+  var trend=B.DEMO.trend.map(function(m){return {m:m.m,t:m.t};});
+  var shown=trend.map(function(m){return m.t;});
+  var prev={};
+  var last=null;
+  // Gap items: streams a council might report that did not go through Recycle Group.
+  // All four are non-steel categories so a Stored or Landfilled answer is computed honestly by the engine.
+  var GAPS=[
+    {k:'greenwaste',qty:40,what:'Green waste',qlabel:'40 t',when:'March',who:'Council transfer station · contractor report'},
+    {k:'ewaste',qty:0.6,what:'Office e-waste',qlabel:'0.6 t',when:'March',who:'IT refresh · contractor collection note'},
+    {k:'timber_plain',qty:12,what:'Depot timber offcuts',qlabel:'12 t',when:'March',who:'Works depot · signed count sheet'},
+    {k:'concrete',qty:90,what:'Footpath renewal rubble',qlabel:'90 t',when:'March',who:'Concrete and bricks · works crew load count'}
+  ];
+  var gapChoice=GAPS.map(function(){return null;});
+
+  // ---- KPI tiles -------------------------------------------------------------
+  var KPI=[
+    {id:'k-matt',dec:0,unit:'',get:function(t){return t.units.mattresses||0;},note:function(){return 'to The Mattress Recycling Company';}},
+    {id:'k-steelpct',dec:0,unit:'%',get:function(){return (B.CAT.mattresses.steelRecovery||0)*100;},note:function(){return 'of mattress steel · Recycle Group';}},
+    {id:'k-steel',dec:1,unit:' t',get:function(t){return t.steelT;},note:function(t){var n=Object.keys(t.byCat).filter(function(k){return t.byCat[k].steel>0;}).length;return 'from '+n+' steel-bearing streams';}},
+    {id:'k-co2',dec:0,unit:' t',get:function(t){return t.co2;},note:function(){return 'steel + '+srcId('nsw2010')+' factors';}},
+    {id:'k-vol',dec:0,unit:' m³',get:function(t){return t.volAvoided;},note:function(){return 'volume that did not go in';}},
+    {id:'k-rate',dec:1,unit:'%',get:function(t){return t.recoveryRate*100;},note:function(){return 'recycled ÷ handed over';}},
+    {id:'k-ret',dec:1,unit:' t',get:function(t){return t.recT;},note:function(t){return 'of '+fmt(t.inT,0)+' t handed over';}}
+  ];
+  function setCounter(el,key,v,dec){
+    var pv=prev[key];
+    if(pv==null){
+      el.setAttribute('data-count',v); el.setAttribute('data-dec',dec);
+      if(el.getAttribute('data-from')) el.textContent=fmt(v,dec);   // shared counter already ran for this element
+    } else if(Math.abs(v-pv)>1e-9){
+      el.setAttribute('data-from',pv); el.setAttribute('data-count',v); el.setAttribute('data-dec',dec);
+      // 1200 ms on purpose: the shared entrance counter in site.js runs 1100 ms from whatever data-count it read when the tile
+      // first scrolled into view, so this loop must always finish after it or a stale value could win the race.
+      if(B.count) B.count(el,v,dec,1200); else el.textContent=fmt(v,dec);
+    }
+    prev[key]=v;
+  }
+
+  // ---- donut -----------------------------------------------------------------
+  var CIRC=2*Math.PI*58;
+  function drawDonut(t){
+    var tot=t.inT>0?t.inT:1;
+    var fr=[t.recT/tot,t.stoT/tot,t.lanT/tot], off=0;
+    ['dn-rec','dn-sto','dn-lan'].forEach(function(id,i){
+      var c=$(id); if(!c) return;
+      var len=Math.max(0,fr[i]*CIRC);
+      c.style.strokeDasharray=len.toFixed(2)+' '+CIRC.toFixed(2);
+      c.style.strokeDashoffset=(-off).toFixed(2);
+      off+=len;
+    });
+    txt('dn-c',fmt(t.recoveryRate*100,0)+'%');
+    txt('dn-k-rec',fmt(t.recT,0)+' t'); txt('dn-k-sto',fmt(t.stoT,0)+' t'); txt('dn-k-lan',fmt(t.lanT,0)+' t'); txt('dn-k-in',fmt(t.inT,0)+' t');
+    var svg=$('dn-svg'); if(svg) svg.setAttribute('aria-label','Three buckets: '+fmt(t.recT,0)+' t recycled, '+fmt(t.stoT,0)+' t stored, '+fmt(t.lanT,0)+' t landfilled');
+  }
+
+  // ---- trend ---------------------------------------------------------------
+  function niceStep(max){
+    var steps=[5,10,20,25,30,40,50,60,75,80,100,120,150,200,250,300,400,500,600,750,800,1000,1500,2000,2500,3000,4000,5000];
+    var need=max*1.06/3;
+    for(var i=0;i<steps.length;i++){ if(steps[i]>=need) return steps[i]; }
+    return Math.ceil(need/1000)*1000;
+  }
+  function trendDims(){
+    var svg=$('tr-svg'); var w=svg?svg.getBoundingClientRect().width:0;
+    if(w>0&&w<420) return {W:320,H:200,PL:36,PR:10,PT:16,PB:26,every:2};
+    return {W:600,H:220,PL:44,PR:14,PT:18,PB:30,every:1};
+  }
+  function drawTrend(){
+    var svg=$('tr-svg'); if(!svg) return;
+    var D=trendDims(); svg.setAttribute('viewBox','0 0 '+D.W+' '+D.H);
+    var n=shown.length; if(n<2) return;
+    var max=Math.max.apply(null,shown.concat([1]));
+    var s=niceStep(max), top=s*3;
+    var iw=D.W-D.PL-D.PR, ih=D.H-D.PT-D.PB, base=D.PT+ih;
+    function x(i){return D.PL+iw*i/(n-1);}
+    function y(v){return D.PT+ih*(1-Math.max(0,v)/top);}
+    var pts=shown.map(function(v,i){return [x(i),y(v)];});
+    var line=pts.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ');
+    var area='M'+pts[0][0].toFixed(1)+','+base.toFixed(1)+' L'+line.split(' ').join(' L')+' L'+pts[n-1][0].toFixed(1)+','+base.toFixed(1)+' Z';
+    var out='';
+    for(var k=1;k<=3;k++){ var yy=y(s*k).toFixed(1); out+='<line class="gl" x1="'+D.PL+'" x2="'+(D.W-D.PR)+'" y1="'+yy+'" y2="'+yy+'"/><text class="yl" x="'+(D.PL-8)+'" y="'+(+yy+4).toFixed(1)+'" text-anchor="end">'+fmt(s*k,0)+'</text>'; }
+    out+='<line class="ax" x1="'+D.PL+'" x2="'+(D.W-D.PR)+'" y1="'+base.toFixed(1)+'" y2="'+base.toFixed(1)+'"/>';
+    out+='<path class="ar" d="'+area+'"/><polyline class="ln" points="'+line+'"/>';
+    pts.forEach(function(p,i){ out+='<circle class="dt'+(i===n-1?' last':'')+'" cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="'+(i===n-1?4:2.5)+'"/>'; });
+    var lp=pts[n-1]; out+='<text class="vl" x="'+(lp[0]-2).toFixed(1)+'" y="'+(lp[1]-10).toFixed(1)+'" text-anchor="end">'+fmt(shown[n-1],0)+' t</text>';
+    trend.forEach(function(m,i){ if((n-1-i)%D.every===0) out+='<text class="xl" x="'+x(i).toFixed(1)+'" y="'+(D.H-8)+'" text-anchor="middle">'+m.m+'</text>'; });
+    svg.innerHTML=out;
+  }
+  var trRaf=null;
+  function tweenTrend(){
+    var to=trend.map(function(m){return m.t;});
+    if(reduced){ shown=to; drawTrend(); return; }
+    var from=shown.slice(), t0=null;
+    if(trRaf) cancelAnimationFrame(trRaf);
+    function step(ts){
+      if(!t0) t0=ts; var p=Math.min(1,(ts-t0)/800), e=1-Math.pow(1-p,3);
+      shown=from.map(function(f,i){return f+(to[i]-f)*e;}); drawTrend();
+      trRaf=p<1?requestAnimationFrame(step):null;
+    }
+    trRaf=requestAnimationFrame(step);
+  }
+
+  // ---- category bars ---------------------------------------------------------
+  var catRows={};
+  (function(){
+    var host=$('cat-bars'); if(!host) return;
+    B.CATS.forEach(function(c){
+      var row=document.createElement('div'); row.className='cat-bar';
+      row.innerHTML='<span class="n">'+icon(c.k)+'<span class="nt"><span class="nm"></span></span></span><div class="track" role="img"><div class="f-rec"></div><div class="f-sto"></div><div class="f-lan"></div></div><span class="val"></span>';
+      row.querySelector('.nm').textContent=c.name;
+      if(c.status==='pending'){ var tg=document.createElement('span'); tg.className='tag pending'; tg.textContent='Carbon pending'; row.querySelector('.nt').appendChild(tg); }
+      host.appendChild(row); catRows[c.k]=row;
+    });
+  })();
+  function drawCats(t){
+    B.CATS.forEach(function(c){
+      var row=catRows[c.k]; if(!row) return;
+      var b=t.byCat[c.k]; var mass=b?b.mass:0;
+      var fr=mass>0?[b.rec/mass,b.sto/mass,b.lan/mass]:[0,0,0];
+      row.querySelector('.f-rec').style.width=(fr[0]*100).toFixed(2)+'%';
+      row.querySelector('.f-sto').style.width=(fr[1]*100).toFixed(2)+'%';
+      row.querySelector('.f-lan').style.width=(fr[2]*100).toFixed(2)+'%';
+      row.querySelector('.val').textContent=fmt(mass,mass<10?1:0)+' t';
+      row.querySelector('.track').setAttribute('aria-label',c.name+': '+pct(fr[0])+' recycled, '+pct(fr[1])+' stored, '+pct(fr[2])+' landfilled of '+fmt(mass,1)+' t');
+    });
+  }
+
+  // ---- ledger ---------------------------------------------------------------
+  function ledgerRow(r,cls,key){
+    var d=document.createElement('div'); d.className='row'+(cls?' '+cls:''); if(key) d.setAttribute('data-key',key);
+    d.innerHTML='<span></span><span class="w">'+icon(r.k)+'<span class="wt"></span></span><span class="r"></span><span class="hide-m b"></span><span class="hide-m r"></span>';
+    var s=d.children;
+    s[0].textContent=r.d; s[1].querySelector('.wt').textContent=r.what; s[1].title=r.what; s[2].textContent=r.qty; s[3].textContent=r.bucket; s[4].textContent=r.by;
+    if(r.bucketKey) s[3].classList.add(r.bucketKey);
+    return d;
+  }
+  function bucketFor(c){return c.path.rec>0?'rec':c.path.sto>0?'sto':'lan';}
+  (function(){
+    var led=$('ledger'); if(!led) return;
+    B.DEMO.ledger.forEach(function(r){
+      var c=B.CAT[r.k]||{name:r.k,unit:'t',path:{rec:1,sto:0,lan:0}};
+      var bk=bucketFor(c);
+      led.appendChild(ledgerRow({k:r.k,d:r.d,what:r.what,qty:qtyLabel(c,r.qty),bucket:BUCKET[bk],bucketKey:bk,by:r.by}));
+    });
+  })();
+  function prependLedger(r,key){
+    var led=$('ledger'); if(!led) return;
+    var head=led.querySelector('.row.h');
+    var row=ledgerRow(r,'new',key);
+    if(head&&head.nextSibling) led.insertBefore(row,head.nextSibling); else led.appendChild(row);
+  }
+  function removeLedger(key){
+    var led=$('ledger'); if(!led) return;
+    led.querySelectorAll('.row[data-key="'+key+'"]').forEach(function(el){el.parentNode.removeChild(el);});
+  }
+  function clearDemoRows(){
+    var led=$('ledger'); if(!led) return;
+    led.querySelectorAll('.row.new').forEach(function(el){el.parentNode.removeChild(el);});
+  }
+
+  // ---- gaps ---------------------------------------------------------------
+  (function(){
+    var host=$('gaps'); if(!host) return;
+    GAPS.forEach(function(g,i){
+      var el=document.createElement('div'); el.className='gap';
+      el.innerHTML='<div><div class="w">'+icon(g.k)+'<span></span></div><div class="who"></div></div><div class="gap-btns" role="group"><button type="button" class="rec" data-b="rec" aria-pressed="false">Recycled</button><button type="button" class="sto" data-b="sto" aria-pressed="false">Stored</button><button type="button" class="lan" data-b="lan" aria-pressed="false">Landfilled</button></div>';
+      el.querySelector('.w span').textContent=g.what+' · '+g.qlabel+' · '+g.when;
+      el.querySelector('.who').textContent=g.who;
+      el.querySelector('.gap-btns').setAttribute('aria-label','Where did '+g.what.toLowerCase()+' go');
+      el.querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ setGap(i,b.getAttribute('data-b')); }); });
+      host.appendChild(el); g.el=el;
+    });
+  })();
+  function paintGaps(){
+    GAPS.forEach(function(g,i){
+      if(!g.el) return;
+      g.el.querySelectorAll('button').forEach(function(b){ var on=b.getAttribute('data-b')===gapChoice[i]; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false'); });
+    });
+  }
+  function setGap(i,b){
+    var g=GAPS[i]; if(!g||!B.CAT[g.k]) return;
+    var next=(gapChoice[i]===b)?null:b;
+    gapChoice[i]=next;
+    entries=entries.filter(function(e){return e.gap!==i;});
+    removeLedger('gap-'+i);
+    if(next) entries.push({k:g.k,qty:g.qty,ev:0.8,path:PATHS[next],gap:i});
+    var before=last;
+    render({delta:true});
+    var dRec=last.recT-before.recT;
+    if(Math.abs(dRec)>1e-9){ trend[trend.length-1].t=Math.max(0,trend[trend.length-1].t+dRec); tweenTrend(); }
+    paintGaps();
+    if(next){
+      prependLedger({k:g.k,d:today(),what:'Fill in the gaps · '+g.what+' · '+g.when+' · Grade B',qty:g.qlabel,bucket:BUCKET[next],bucketKey:next,by:'YES · demo'},'gap-'+i);
+      toast('Dashboard updated · '+g.what+' · '+g.qlabel+' · '+BUCKET[next]);
+    } else {
+      toast('Entry removed · '+g.what+' · '+g.qlabel);
+    }
+  }
+
+  // ---- gauge -----------------------------------------------------------------
+  // YES.gauge draws the arcs once; every later render calls YES.gaugeUpdate so the arcs sweep to the new score.
+  var gaugeEl=$('sc-gauge');
+  function gaugeLabel(sc){ if(gaugeEl) gaugeEl.setAttribute('aria-label','YES Score '+sc.score+' of 100, '+sc.band); }
+  function paintGauge(sc,first){
+    if(!gaugeEl||!B.gauge||!B.gaugeUpdate){ prev.score=sc.score; return; }
+    if(first){
+      if(reduced){ B.gauge(gaugeEl,sc,170); }
+      else {
+        // entrance: draw empty, then sweep to the score on the next frame (matches the counters)
+        B.gauge(gaugeEl,{score:0,parts:{recovery:0,carbon:0,evidence:0},band:sc.band},170);
+        var b0=gaugeEl.querySelector('.gv b');
+        requestAnimationFrame(function(){ B.gaugeUpdate(gaugeEl,sc); gaugeLabel(sc); if(b0&&B.count){ b0.setAttribute('data-from','0'); B.count(b0,sc.score,0,900); } });
+      }
+    } else {
+      var from=prev.score;
+      B.gaugeUpdate(gaugeEl,sc); gaugeLabel(sc);
+      var b=gaugeEl.querySelector('.gv b');
+      if(b&&B.count&&from!=null&&from!==sc.score){ b.setAttribute('data-from',from); B.count(b,sc.score,0,900); }
+    }
+    prev.score=sc.score;
+  }
+
+  // ---- render ---------------------------------------------------------------
+  function render(o){
+    o=o||{};
+    var t=B.compute(entries);
+    var sc=t.score||B.score(t);
+    KPI.forEach(function(k){
+      var el=$(k.id); if(!el) return;
+      var v=k.get(t), pv=prev[k.id];
+      setCounter(el,k.id,v,k.dec);
+      var d=$(k.id+'-d');
+      if(d){
+        var diff=(pv==null)?0:v-pv, minStep=Math.pow(10,-k.dec)/2;
+        if(o.delta&&Math.abs(diff)>=minStep){ d.textContent=(diff>0?'+':'−')+fmt(Math.abs(diff),k.dec)+k.unit+' · this handover'; d.classList.toggle('neg',diff<0); }
+        else { d.textContent=k.note(t); d.classList.remove('neg'); }
+      }
+    });
+    // score: gauge (shared component) + band + composition
+    var first=(prev.score==null);
+    paintGauge(sc,first);
+    txt('sc-band',sc.band);
+    var w=B.SCORE&&B.SCORE.weights||{recovery:60,carbon:25,evidence:15};
+    var setW=function(id,v){var el=$(id); if(el) el.style.width=Math.max(0,Math.min(100,v))+'%';};
+    if(first&&!reduced){ requestAnimationFrame(function(){ setW('sc-p1',sc.parts.recovery); setW('sc-p2',sc.parts.carbon); setW('sc-p3',sc.parts.evidence); }); }
+    else { setW('sc-p1',sc.parts.recovery); setW('sc-p2',sc.parts.carbon); setW('sc-p3',sc.parts.evidence); }
+    txt('sc-l1',fmt(sc.parts.recovery,1)+' / '+w.recovery); txt('sc-l2',fmt(sc.parts.carbon,1)+' / '+w.carbon); txt('sc-l3',fmt(sc.parts.evidence,1)+' / '+w.evidence);
+    var st=$('sc-p1'); if(st&&st.parentNode) st.parentNode.setAttribute('aria-label','YES Score '+sc.score+' of 100: recovery '+fmt(sc.parts.recovery,1)+', carbon '+fmt(sc.parts.carbon,1)+', evidence '+fmt(sc.parts.evidence,1));
+    // pending line
+    txt('pending-line', t.pendingCats.length ? 'Recovered mass counted, no CO₂-e claimed: '+t.pendingCats.join(' · ')+' · factors pending in the YES Method' : 'Every recovered tonne above carries a carbon factor with a source.');
+    // donut, categories
+    if(prev.donut==null&&!reduced){ requestAnimationFrame(function(){ drawDonut(t); }); } else drawDonut(t);
+    prev.donut=1;
+    drawCats(t);
+    // equivalences
+    var cars=$('eq-cars'); if(cars) setCounter(cars,'cars',t.cars,0);
+    txt('eq-steel',fmt(t.steelT,t.steelT<10?1:0)); txt('eq-vol',fmt(t.volAvoided,0));
+    last=t;
+  }
+  txt('eq-cars-d','CO₂-e avoided ÷ '+(B.EQUIV?B.EQUIV.carT:4.16)+' t per family vehicle lifetime · '+srcId(B.EQUIV?B.EQUIV.carSrc:'nsw2010'));
+  txt('eq-steel-d','Recovered steel to the electric-arc-furnace route · Recycle Group processing records · '+Math.round((B.CAT.mattresses.steelRecovery||0)*100)+'% of mattress steel');
+  txt('eq-vol-d','Unit volumes per stream, less what went in · YES Method '+(B.METHOD_VERSION||'')+' · mattress residual at 25% of volume');
+  txt('demo-ver',B.METHOD_VERSION||'v0.1 draft');
+  (function(){ var w=B.SCORE&&B.SCORE.weights; if(w) txt('sc-wl','Composition · points of 100 · weights '+w.recovery+' / '+w.carbon+' / '+w.evidence); })();
+
+  // ---- handovers -----------------------------------------------------------
+  function handover(k,qty,what){
+    var c=B.CAT[k]; if(!c||!(qty>0)) return;
+    entries.push({k:k,qty:qty});
+    var before=last;
+    render({delta:true});
+    var dRec=last.recT-before.recT, dLan=last.lanT-before.lanT;
+    if(dRec>1e-9){ trend[trend.length-1].t+=dRec; tweenTrend(); }
+    prependLedger({k:k,d:today(),what:'Handover · demo · '+what,qty:qtyLabel(c,qty),bucket:BUCKET[bucketFor(c)],bucketKey:bucketFor(c),by:'YES · demo'});
+    if(dRec>0.05) toast('Dashboard updated · +'+fmt(dRec,dRec<10?1:0)+' t recovered');
+    else toast('Dashboard updated · +'+fmt(dLan,dLan<10?1:0)+' t landfilled · counts against');
+  }
+  var hv=$('handover');
+  if(hv){
+    hv.addEventListener('click',function(ev){
+      var b=ev.target.closest('button[data-k]'); if(!b||!hv.contains(b)) return;
+      handover(b.getAttribute('data-k'),parseFloat(b.getAttribute('data-qty')),b.getAttribute('data-what')||'');
+    });
+  }
+  var rs=$('demo-reset');
+  if(rs){
+    rs.addEventListener('click',function(){
+      entries=B.DEMO.entries.map(function(e){return Object.assign({},e);});
+      trend=B.DEMO.trend.map(function(m){return {m:m.m,t:m.t};});
+      gapChoice=GAPS.map(function(){return null;});
+      clearDemoRows(); paintGaps();
+      render({delta:false}); tweenTrend();
+      toast('Demo reset · illustrative data restored');
+    });
+  }
+
+  // ---- tabs ---------------------------------------------------------------
+  var tabs=Array.prototype.slice.call(document.querySelectorAll('.demo-tabs [data-tab]'));
+  var panels=Array.prototype.slice.call(document.querySelectorAll('.tab-panel[data-panel]'));
+  function selectTab(name,focus){
+    tabs.forEach(function(b){ var on=b.getAttribute('data-tab')===name; b.classList.toggle('active',on); b.setAttribute('aria-selected',on?'true':'false'); if(on&&focus) b.focus(); });
+    panels.forEach(function(p){ p.hidden=p.getAttribute('data-panel')!==name; });
+    if(name==='overview') drawTrend();
+  }
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){ selectTab(b.getAttribute('data-tab')); });
+    b.addEventListener('keydown',function(ev){
+      var j=null;
+      if(ev.key==='ArrowRight') j=(i+1)%tabs.length; else if(ev.key==='ArrowLeft') j=(i-1+tabs.length)%tabs.length; else if(ev.key==='Home') j=0; else if(ev.key==='End') j=tabs.length-1;
+      if(j!==null){ ev.preventDefault(); selectTab(tabs[j].getAttribute('data-tab'),true); }
+    });
+  });
+
+  // ---- boot -----------------------------------------------------------------
+  render({delta:false});
+  drawTrend();
+  var rz=null; window.addEventListener('resize',function(){ clearTimeout(rz); rz=setTimeout(drawTrend,150); });
+})();
+</script>

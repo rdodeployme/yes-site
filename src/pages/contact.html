@@ -1,0 +1,100 @@
+<style>
+/* contact-only refinements (scoped) */
+.page-contact .hero-sub{padding-bottom:clamp(28px,4vw,48px)}
+.page-contact .form-head{margin-bottom:clamp(24px,3vw,36px)}
+.page-contact .form-head .eyebrow{margin-bottom:0}
+.page-contact .form .check{display:grid;grid-template-columns:20px minmax(0,1fr);gap:12px;align-items:start;text-transform:none;letter-spacing:0;font-family:var(--font-body);font-size:15px;color:var(--ink);padding:6px 0}
+.page-contact .form .check input{width:18px;height:18px;margin:3px 0 0;padding:0;accent-color:var(--green-2)}
+.page-contact .form .opt{color:var(--slate);letter-spacing:.06em;text-transform:none;margin-left:6px}
+.page-contact .form .hp{display:none}
+.page-contact .form textarea{min-height:140px;resize:vertical}
+.page-contact .form .btn-row{margin-top:8px}
+.page-contact .details h3{margin-bottom:6px}
+.page-contact .details .row{display:grid;grid-template-columns:30px minmax(0,1fr);gap:14px;padding:20px 0;border-top:1px solid var(--mist)}
+.page-contact .details .row:first-of-type{margin-top:18px}
+.page-contact .details .row:last-of-type{border-bottom:1px solid var(--mist)}
+.page-contact .details .row .ic{margin-top:2px}
+.page-contact .details .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0 0 8px}
+.page-contact .details .mail{font-family:var(--font-display);font-weight:800;font-size:clamp(22px,2.2vw,30px);letter-spacing:-.03em;color:var(--green);display:inline-block;word-break:break-all;line-height:1.1}
+.page-contact .details .mail:hover{color:var(--green-ink)}
+.page-contact .details .addr{margin:0;color:var(--graphite);font-size:15.5px;line-height:1.55}
+.page-contact .details ul{list-style:none;padding:0;margin:0}
+.page-contact .details li{padding:0 0 8px;font-size:15px;color:var(--graphite);margin:0}
+.page-contact .details li:last-child{padding-bottom:0}
+.page-contact .form-note{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.06em;color:var(--slate);margin:14px 0 0;line-height:1.7}
+</style>
+
+<!-- HERO -->
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">Contact</p>
+    <h1>Talk to YES.</h1>
+    <p class="lead">Book a 30-minute walkthrough of the demo dashboard, or send one month of data and we will show you what YES makes of it.</p>
+  </div>
+</section>
+
+<!-- FORM + DETAILS -->
+<section id="form">
+  <div class="wrap">
+    <div class="form-head reveal"><span class="sec-idx">01</span><p class="eyebrow">Book a walkthrough</p></div>
+    <div class="grid g12">
+      <div class="span7 reveal">
+        <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="form" action="/contact/?sent=1">
+          <input type="hidden" name="form-name" value="contact">
+          <p class="hp"><label>Leave this field empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+          <div class="row2">
+            <label>Name<input type="text" name="name" autocomplete="name" required></label>
+            <label>Organisation<input type="text" name="organisation" autocomplete="organization" required></label>
+          </div>
+          <div class="row2">
+            <label>Email<input type="email" name="email" autocomplete="email" required></label>
+            <label>Phone <span class="opt">optional</span><input type="tel" name="phone" autocomplete="tel"></label>
+          </div>
+          <div class="row2">
+            <label>I am<select name="type" required><option value="Council">Council</option><option value="Business">Business</option><option value="Other">Other</option></select></label>
+            <label>Population or number of sites <span class="opt">optional</span><input type="text" name="size" inputmode="numeric" placeholder="e.g. 48,000 residents or 12 sites"></label>
+          </div>
+          <label>What would you like to measure?<textarea name="message" rows="5" placeholder="Streams, programs, sites, reporting deadlines. One month of data is enough to start."></textarea></label>
+          <label class="check"><input type="checkbox" name="sample_certificate" value="yes"><span>Send me the sample YES Certificate</span></label>
+          <div class="btn-row"><button class="btn btn-primary" type="submit">Book a walkthrough {{ARROW}}</button></div>
+          <p class="form-note">Submitting sends your details to YES at {{EMAIL}}. Nothing else. No mailing list.</p>
+        </form>
+      </div>
+      <div class="span5 reveal">
+        <div class="card details">
+          <h3>Direct</h3>
+          <div class="row">
+            <svg class="ic g"><use href="#i-mail"/></svg>
+            <div><p class="k">Email</p><a class="mail" href="mailto:{{EMAIL}}">{{EMAIL}}</a></div>
+          </div>
+          <div class="row">
+            <svg class="ic g"><use href="#i-site"/></svg>
+            <div><p class="k">A Recycle Group business</p><p class="addr">Recycle Group<br>116 Furner Avenue<br>North Geelong VIC 3215</p></div>
+          </div>
+          <div class="row">
+            <svg class="ic g"><use href="#i-clock"/></svg>
+            <div><p class="k">What to expect</p>
+              <ul>
+                <!-- proposed: reply-time commitment not yet confirmed -->
+                <li>A reply within two working days</li>
+                <li>A 30-minute walkthrough of the demo dashboard, on a call or on site</li>
+                <li>No obligation. If YES is not a fit, we will say so</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="note mt-4 reveal">YES does not accept asbestos, prescribed waste or hazardous material for processing.</p>
+  </div>
+</section>
+
+<!--scripts-->
+<script>
+(function(){
+  if(/[?&]sent=1/.test(location.search)&&window.YES&&window.YES.toast){
+    window.YES.toast('Thanks. We will be in touch.');
+    if(history.replaceState) history.replaceState(null,'',location.pathname);
+  }
+})();
+</script>

@@ -1,0 +1,235 @@
+<style>
+/* pricing refinements (scoped) */
+/* 01 · plans: display-scale amount, one icon per row */
+.page-pricing .price .amt{display:flex;align-items:baseline;flex-wrap:wrap;font-size:clamp(56px,7vw,96px);letter-spacing:-.05em}
+.page-pricing .price .amt small{font-size:13px;margin-left:12px}
+.page-pricing .price li::before{content:none}
+.page-pricing .price li{grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:start}
+.page-pricing .price li .ic{width:18px;height:18px;margin-top:3px;color:var(--green)}
+.page-pricing .price.featured li .ic{color:var(--green-3)}
+.page-pricing .price .fee{font-size:14px;color:var(--graphite);border-top:1px solid var(--mist);padding-top:14px;margin:0}
+.page-pricing .price.featured .fee{color:var(--mist);border-color:#262826}
+.page-pricing .price .btn-row{margin-top:auto}
+/* 02 · council tiers */
+.page-pricing .tiers th:last-child,.page-pricing .tiers td:last-child{text-align:right}
+.page-pricing .tiers td.pop{font-weight:500}
+.page-pricing .tiers td.amt.poa{font-family:var(--font-mono);font-weight:400;font-size:13px;letter-spacing:.06em;color:var(--graphite);white-space:normal}
+.page-pricing .tier-side p{color:var(--graphite);font-size:15.5px;max-width:38ch}
+/* 03 · foundation: display number left, copy right */
+.page-pricing .found{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(32px,4vw,56px);align-items:start}
+@media(min-width:900px){.page-pricing .found{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}}
+.page-pricing .found .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0 0 14px}
+.page-pricing .found p{color:var(--mist);max-width:56ch}
+.page-pricing .found .display{font-size:clamp(64px,8.5vw,124px)}
+.page-pricing .found .l{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin-top:16px}
+.page-pricing .found .s{font-size:15px;color:var(--mist);max-width:34ch;margin:14px 0 0}
+/* feature rows with icons */
+.page-pricing .feature-list li{grid-template-columns:30px minmax(0,1fr);gap:14px}
+.page-pricing .feature-list .ic{margin-top:2px}
+.page-pricing .feature-list.no .ic{color:var(--slate)}
+.page-pricing .feature-list.no strong{color:var(--charcoal)}
+/* 04 · market */
+.page-pricing .market .row{grid-template-columns:240px minmax(0,1fr) 200px}
+@media(max-width:640px){.page-pricing .market .row{grid-template-columns:1fr}}
+.page-pricing .market .row > span:first-child{color:var(--charcoal)}
+.page-pricing .market .fill{width:0;transition:width 1.1s var(--ease)}
+.page-pricing .market .amt small{display:block;font-size:11.5px;color:var(--slate);letter-spacing:.04em}
+.page-pricing .market .amt.yes{color:var(--green);font-weight:500}
+.page-pricing .market-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 22px}
+.page-pricing .market-top .m{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
+/* 05 · included */
+.page-pricing .incl{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(24px,4vw,56px)}
+@media(min-width:800px){.page-pricing .incl{grid-template-columns:1fr 1fr}}
+.page-pricing .incl .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0 0 14px}
+</style>
+
+<!-- HERO -->
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">Pricing</p>
+    <h1>Simple pricing. Free to join in year one.</h1>
+    <p class="lead">One monthly fee. No per-report charges. The establishment fee is waived for Foundation Members who join in the first 12 months.</p>
+    <div class="btn-row"><a class="btn btn-primary" href="/contact/">Talk to YES {{ARROW}}</a><a class="btn btn-ghost" href="#foundation">Foundation Members</a></div>
+  </div>
+</section>
+
+<!-- 01 · PLANS -->
+<section id="plans">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">01</span><p class="eyebrow">Plans</p><h2>Councils first. Business second.</h2></div><p class="lead">Both plans carry the same two layers: the YES Certificate and the live YES Dashboard, built on the same method.</p></div>
+    <!-- Pricing is PROPOSED: councils $1,999 a month up to 50,000 residents; business $999 a month. Not yet a published price list. -->
+    <div class="grid g2 reveal">
+      <div class="price featured">
+        <div class="who">Councils · up to 50,000 residents</div>
+        <div class="amt"><span data-count="1999" data-dec="0" data-prefix="$">$0</span><small>a month</small></div>
+        <ul>
+          <li><svg class="ic"><use href="#i-dash"/></svg>YES Dashboard for the waste team</li>
+          <li><svg class="ic"><use href="#i-weigh"/></svg>Every stream entered and verified by YES</li>
+          <li><svg class="ic"><use href="#i-mail"/></svg>Monthly gap email</li>
+          <li><svg class="ic"><use href="#i-doc"/></svg>YES Certificate per program and period</li>
+          <li><svg class="ic"><use href="#i-export"/></svg>CSV and PDF exports</li>
+          <li><svg class="ic"><use href="#i-ledger"/></svg>Method pack and version history</li>
+          <li><svg class="ic"><use href="#i-verify"/></svg>Named YES data operator</li>
+          <li><svg class="ic"><use href="#i-clock"/></svg>Switched on in 30 days</li>
+        </ul>
+        <p class="fee">Larger councils are priced on application. Establishment fee waived for Foundation Members in the first 12 months.</p>
+        <div class="btn-row"><a class="btn btn-primary" href="/contact/">Talk to YES {{ARROW}}</a><a class="btn btn-ghost" href="/councils/">YES for councils</a></div>
+      </div>
+      <div class="price">
+        <div class="who">Business · per organisation</div>
+        <div class="amt"><span data-count="999" data-dec="0" data-prefix="$">$0</span><small>a month</small></div>
+        <ul>
+          <li><svg class="ic"><use href="#i-dash"/></svg>YES Dashboard for your sustainability team</li>
+          <li><svg class="ic"><use href="#i-weigh"/></svg>Every stream entered and verified by YES</li>
+          <li><svg class="ic"><use href="#i-mail"/></svg>Monthly gap email per site</li>
+          <li><svg class="ic"><use href="#i-doc"/></svg>YES Certificate per site and period</li>
+          <!-- Multi-site inclusion in the business fee needs confirmation; no site limit is stated on the page. -->
+          <li><svg class="ic"><use href="#i-site"/></svg>Multi-site reporting</li>
+          <li><svg class="ic"><use href="#i-co2"/></svg>Scope 3 Category 5 export</li>
+          <li><svg class="ic"><use href="#i-export"/></svg>CSV and PDF exports</li>
+          <li><svg class="ic"><use href="#i-ledger"/></svg>Method pack and version history</li>
+          <li><svg class="ic"><use href="#i-verify"/></svg>Named YES data operator</li>
+          <li><svg class="ic"><use href="#i-clock"/></svg>Switched on in 30 days</li>
+        </ul>
+        <p class="fee">Establishment fee waived for Foundation Members in the first 12 months.</p>
+        <div class="btn-row"><a class="btn btn-primary" href="/contact/">Talk to YES {{ARROW}}</a><a class="btn btn-outline" href="/business/">YES for business</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 · COUNCIL TIERS -->
+<section class="paper-2" id="tiers">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">Council tiers</p><h2>Set by resident population.</h2></div><p class="lead">One tier is priced today. The bands above it are priced on application while the first council programs are scoped.</p></div>
+    <!-- Only the up-to-50,000 tier is priced. The bands above it are not yet priced. -->
+    <div class="grid g12 reveal">
+      <div class="span7">
+        <div class="table-wrap">
+          <table class="tiers" aria-label="Council pricing by resident population">
+            <thead><tr><th>Resident population</th><th>Monthly fee</th></tr></thead>
+            <tbody>
+              <tr><td class="pop">Up to 50,000</td><td class="amt">$1,999 <small>a month</small></td></tr>
+              <tr><td class="pop">50,000–100,000</td><td class="amt poa">Priced on application</td></tr>
+              <tr><td class="pop">100,000–200,000</td><td class="amt poa">Priced on application</td></tr>
+              <tr><td class="pop">200,000–300,000</td><td class="amt poa">Priced on application</td></tr>
+              <tr><td class="pop">300,000+</td><td class="amt poa">Priced on application</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="span5 tier-side">
+        <p>The monthly fee covers every program the council runs: hard waste, transfer stations, kerbside and whole-of-council entries. There is no charge per program, per report or per certificate.</p>
+        <p>Larger councils: tell us your population and the programs in play, and we will price the tier with you.</p>
+        <div class="btn-row mt-2"><a class="btn btn-ink" href="/contact/">Talk to YES {{ARROW}}</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · FOUNDATION MEMBERS -->
+<section class="dark" id="foundation">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">Foundation Members</p><h2>Free to join in the first 12 months. Save up to $15,000.</h2></div><p class="lead">The establishment fee is the only up-front cost of YES. Foundation Members do not pay it.</p></div>
+    <!-- Establishment fee ($5,000–$15,000) and the waiver are PROPOSED. Foundation Member benefits beyond the waiver need confirmation (Richard). -->
+    <div class="found reveal">
+      <div>
+        <div class="display g"><span data-count="15000" data-dec="0" data-prefix="$">$0</span></div>
+        <div class="l">Maximum saving · establishment fee waived</div>
+        <p class="s">Foundation Members join in the first 12 months and pay no establishment fee, ever.</p>
+        <div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Become a Foundation Member {{ARROW}}</a></div>
+      </div>
+      <div>
+        <p class="k">What the establishment fee covers</p>
+        <p>The establishment fee is normally $5,000 to $15,000, depending on the number of programs, sites and streams. It covers scoping, the stream list, the baseline period, the method sheet and onboarding: the four weeks that get a customer from first call to live dashboard.</p>
+        <p>Foundation Members who join in the first 12 months pay none of it. The monthly fee applies from the switch-on date.</p>
+        <p class="k mt-3">What Foundation Members receive</p>
+        <ul class="feature-list">
+          <li><svg class="ic g"><use href="#i-verify"/></svg><div><strong>Establishment fee waived.</strong> Scoping, baseline, method sheet and onboarding at no charge.</div></li>
+          <!-- Locked pricing for the first term needs confirmation (Richard). -->
+          <li><svg class="ic g"><use href="#i-lock"/></svg><div><strong>Pricing held for the first term.</strong> The monthly fee you join at is the fee for the term.</div></li>
+          <li><svg class="ic g"><use href="#i-ledger"/></svg><div><strong>Input into the method roadmap.</strong> Foundation Members are consulted before a method change is published.</div></li>
+          <!-- Naming in the method change log as a founding customer is optional and needs confirmation (Richard). -->
+          <li><svg class="ic g"><use href="#i-doc"/></svg><div><strong>Named as a founding customer.</strong> Optional, in the YES Method change log.</div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · INDICATIVE MARKET COMPARISON -->
+<section id="market">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">Indicative market comparison</p><h2>Priced below comparable reporting tools.</h2></div><p class="lead">Monthly fees for sustainability and ESG reporting products, from published list prices, against the two YES plans.</p></div>
+    <!-- Market comparison is indicative research (September 2026). Competitor figures are published list prices and averages, not quotes. Bars are scaled to the enterprise average ($11,500) as 100%. -->
+    <div class="reveal">
+      <div class="market-top"><span class="m">Monthly fee · bars scaled to the enterprise average</span><span class="badge">Indicative · September 2026</span></div>
+      <div class="market" aria-label="Indicative monthly fees for reporting tools compared with YES">
+        <div class="row"><span>Entry-level sustainability / ESG reporting tools</span><div class="track"><div class="fill" data-w="17"></div></div><span class="amt">≈US$2,000 a month</span></div>
+        <div class="row"><span>Enterprise custom reporting</span><div class="track"><div class="fill" data-w="100"></div></div><span class="amt">$5,000–$15,000 a month<small>averaging ≈$11,500</small></span></div>
+        <div class="row"><span>YES for business</span><div class="track"><div class="fill big" data-w="9"></div></div><span class="amt yes">$999 a month</span></div>
+        <div class="row"><span>YES for councils</span><div class="track"><div class="fill big" data-w="17"></div></div><span class="amt yes">from $1,999 a month</span></div>
+      </div>
+      <p class="note">Indicative market research, September 2026; competitor figures are published list prices and averages, not quotes. The entry-level figure is in US dollars as published. Bars are scaled to the enterprise average.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · INCLUDED / NOT INCLUDED -->
+<section class="paper-2" id="included">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">05</span><p class="eyebrow">What is included</p><h2>Reporting is included. Collection is not.</h2></div><p class="lead">YES is the reporting layer. The physical work of collecting and processing material is a separate contract.</p></div>
+    <div class="incl reveal">
+      <div>
+        <p class="k">Included in the monthly fee</p>
+        <ul class="feature-list">
+          <li><svg class="ic g"><use href="#i-dash"/></svg><div><strong>YES Dashboard.</strong> Live, for the team that owns the reporting.</div></li>
+          <li><svg class="ic g"><use href="#i-weigh"/></svg><div><strong>Data entry and verification.</strong> Every stream entered and verified by YES staff.</div></li>
+          <li><svg class="ic g"><use href="#i-mail"/></svg><div><strong>Monthly gap email.</strong> Per council, or per site for business.</div></li>
+          <li><svg class="ic g"><use href="#i-doc"/></svg><div><strong>YES Certificate.</strong> Per program, site or period, with method version and certificate ID.</div></li>
+          <li><svg class="ic g"><use href="#i-export"/></svg><div><strong>Exports.</strong> CSV of the ledger, PDF certificate and report, Scope 3 Category 5 table for business.</div></li>
+          <li><svg class="ic g"><use href="#i-ledger"/></svg><div><strong>Method pack and version history.</strong> The factor library, sources and change log.</div></li>
+          <li><svg class="ic g"><use href="#i-verify"/></svg><div><strong>Named YES data operator.</strong> One person who enters your data and answers for it.</div></li>
+          <li><svg class="ic g"><use href="#i-clock"/></svg><div><strong>Onboarding.</strong> Switched on in 30 days, at no charge for Foundation Members.</div></li>
+        </ul>
+      </div>
+      <div>
+        <p class="k">Not included</p>
+        <ul class="feature-list no">
+          <li><svg class="ic"><use href="#i-lock"/></svg><div><strong>Physical collection and processing.</strong> Contracted separately, with Recycle Group or your existing contractors. YES reports either.</div></li>
+          <li><svg class="ic"><use href="#i-lock"/></svg><div><strong>Offsets or credits.</strong> YES reports avoided emissions under a stated method. It does not issue offsets or credits.</div></li>
+          <li><svg class="ic"><use href="#i-lock"/></svg><div><strong>Assurance.</strong> YES is designed to support third-party assurance with evidence, method and exports. It does not provide the assurance itself.</div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">06</span><p class="eyebrow">Pricing questions</p><h2>Before you sign.</h2></div><p class="lead">What finance teams ask before they sign.</p></div>
+    <div class="faq reveal">
+      <details>
+        <summary>Is there a contract term?</summary>
+        <!-- Contract term needs confirmation (Richard). No term is stated here. -->
+        <p>The subscription is a monthly fee. Ask us about terms when you book a walkthrough, and we will set them out in writing before you commit to anything.</p>
+      </details>
+      <details>
+        <summary>What happens after 12 months for Foundation Members?</summary>
+        <p>The monthly fee continues as before. No establishment fee is ever charged to a Foundation Member, in year two or later.</p>
+      </details>
+      <details>
+        <summary>Can we start with one program?</summary>
+        <p>Yes. Start with a single hard waste program or one transfer station, then add kerbside and whole-of-council entries once the first certificate has been through a council meeting. The monthly fee does not change when programs are added.</p>
+      </details>
+      <details>
+        <summary>Do you charge per certificate?</summary>
+        <p>No. Certificates, reports and exports are included in the monthly fee. There is no charge per program, per report or per certificate.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band"><div class="wrap"><p class="eyebrow">Switched on in 30 days</p><h2>See your YES impact before you commit.</h2><p class="lead">Book a 30-minute walkthrough with the demo dashboard, or send us one month of data and we will show you what YES makes of it.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div></div></section>

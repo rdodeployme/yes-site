@@ -1,0 +1,139 @@
+<style>
+/* build-notes refinements (scoped, internal page) */
+.page-build-notes .hero-sub .badge{margin-top:24px}
+.page-build-notes .block{margin-top:clamp(40px,6vw,72px)}
+.page-build-notes .block:first-child{margin-top:0}
+.page-build-notes .block-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 16px;padding-bottom:12px;border-bottom:1px solid var(--ink)}
+.page-build-notes .block-top h3{font-size:clamp(22px,2.2vw,28px)}
+.page-build-notes .block-top .m{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
+.page-build-notes .table{font-size:14.5px}
+.page-build-notes .table td.src,.page-build-notes .table td.who,.page-build-notes .table td.where{font-family:var(--font-mono);font-size:12.5px;color:var(--graphite);white-space:nowrap}
+.page-build-notes .table td.where{white-space:normal;min-width:180px}
+.page-build-notes .table td.item{min-width:260px}
+.page-build-notes .table td.tagcell{white-space:nowrap}
+.page-build-notes .status{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,28px);margin-bottom:clamp(40px,6vw,72px)}
+@media(min-width:800px){.page-build-notes .status{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.page-build-notes .status .stat .v{font-size:clamp(34px,3.6vw,52px)}
+.page-build-notes .scroll-hint{display:none;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);margin:10px 0 0}
+@media(max-width:700px){.page-build-notes .scroll-hint{display:block}}
+.page-build-notes .intro{max-width:70ch;color:var(--graphite);margin-bottom:clamp(32px,4vw,48px)}
+</style>
+
+<!-- HERO -->
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">Internal · not for customers</p>
+    <h1>Build notes.</h1>
+    <p class="lead">What is confirmed, what is proposed, and what still needs confirmation before this site goes to a customer.</p>
+    <div><span class="badge"><span class="dot"></span>Not in the nav · blocked in robots.txt · 27 September 2026</span></div>
+  </div>
+</section>
+
+<!-- NOTES -->
+<section id="notes">
+  <div class="wrap">
+    <p class="intro">Every fact on the site sits in one of three columns. Confirmed facts may be stated plainly. Proposed items are YES's offer or working method, and every page that uses one carries an HTML comment saying so. Items needing confirmation are stated softly or left out until someone named below signs them off.</p>
+
+    <div class="status reveal" aria-label="Count by status">
+      <div class="stat green"><div class="v">17</div><div class="l">Confirmed</div><div class="s">Stated plainly on the site</div></div>
+      <div class="stat"><div class="v">10</div><div class="l">Proposed</div><div class="s">YES's offer, flagged in HTML comments</div></div>
+      <div class="stat"><div class="v">9</div><div class="l">Needs confirmation</div><div class="s">Soft wording or left out</div></div>
+      <div class="stat"><div class="v">6</div><div class="l">Deliberately excluded</div><div class="s">Not on any YES page</div></div>
+    </div>
+
+    <!-- 1 · CONFIRMED -->
+    <div class="block reveal">
+      <div class="block-top"><h3>Confirmed</h3><span class="m">Fact · source</span></div>
+      <div class="table-wrap">
+        <table class="table" aria-label="Confirmed facts">
+          <thead><tr><th>Fact</th><th>Source</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="item">Recycle Group runs Recycle North Geelong (public transfer station, 116 Furner Avenue, North Geelong VIC 3215; materials separated into 90+ streams on site) and The Mattress Recycling Company</td><td class="src">Contract §3</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+            <tr><td class="item">Mattresses: 12,000–30,000 a month; 50%+ of Victoria's discarded mattresses</td><td class="src">Contract §3</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+            <tr><td class="item">Per 10,000 mattresses: ≈800 t in, ≈270 t steel out, 99% of that steel recovered; ≈30% of a mattress is steel by mass; shredded residual is 25% of original volume</td><td class="src">Contract §3</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+            <tr><td class="item">$8.5m invested to recover 99% of mattress steel; one mattress processed in ≈38 seconds</td><td class="src">Contract §3</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+            <tr><td class="item">Accreditations: EPA Victoria registration R000312600 · ISO 9001:2015 · ISO 14001:2015 · ISO 45001:2018 · AS/NZS 5377 · NIST 800-88</td><td class="src">Contract §3</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+            <tr><td class="item">Group value chain: collect, process, re-use, recover, reward, contract. Recovered goods are donated to community organisations (not listed on the site)</td><td class="src">Contract §3</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+            <tr><td class="item">Reference factors, NSW DECCW 2010, Environmental benefits of recycling, Table 4 (t CO₂-e per tonne recycled): aluminium 17.72 · steel 0.44 · timber 1.35 · tyres 1.07 · garden organics 0.32 · concrete 0.02 · glass containers 0.62 · mixed plastics 1.59 · cardboard 0.63. Car equivalence 4.16 t CO₂-e per family vehicle lifetime</td><td class="src">Contract §3 · yes-data.js</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+            <tr><td class="item">The two-layer product: a recycling certificate and a live environmental dashboard that updates with every handover</td><td class="src">Contract §2</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+            <tr><td class="item">Only YES staff enter data, because self-entered figures are not credible</td><td class="src">Contract §2</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+            <tr><td class="item">Three buckets: Landfilled (counts against) · Recycled (counts for) · Stored (neutral until it moves)</td><td class="src">Contract §2</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+            <tr><td class="item">Monthly automated fill-in-the-gaps email</td><td class="src">Contract §2</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+            <tr><td class="item">The 13 reporting categories: mattresses · steel · aluminium · plain timber · coloured/treated timber · tyres · white goods · e-waste · clothing &amp; textiles · concrete/bricks/rubble · vehicles · green waste · general rubbish</td><td class="src">Contract §2 · yes-data.js</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+            <tr><td class="item">Whole-of-organisation scope: YES reports all of a customer's recycling, not only what goes through Recycle Group (the 23,000 wheelie bins example)</td><td class="src">Contract §2</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+            <tr><td class="item">Name and domain: YES · Your Environment Score · yes.com.au. The full name always appears with the mark</td><td class="src">Contract (brand)</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+            <tr><td class="item">Positioning line: Environmental Impact Intelligence by Recycle Group. Site title: YES Environmental Impact Reporting by Recycle Group</td><td class="src">Contract §2</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+            <tr><td class="item">Product family names: YES Report · YES Dashboard · YES Certificate · YES Data · YES Carbon · YES Circularity · YES Benchmark</td><td class="src">Contract §2</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+            <tr><td class="item">Go-to-market lines: "Switched on in 30 days"; councils first, business second; run as a standalone business with its own site</td><td class="src">Contract §2</td><td class="tagcell"><span class="tag">Confirmed</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="scroll-hint">Scroll sideways for the full table</p>
+    </div>
+
+    <!-- 2 · PROPOSED -->
+    <div class="block reveal">
+      <div class="block-top"><h3>Proposed</h3><span class="m">Item · where on site</span></div>
+      <div class="table-wrap">
+        <table class="table" aria-label="Proposed items">
+          <thead><tr><th>Item</th><th>Where on site</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="item">Council pricing: $1,999 a month up to 50,000 residents; bands 50–100k, 100–200k, 200–300k, 300k+ shown as "Priced on application"</td><td class="where">/councils/ · /pricing/ · home</td><td class="tagcell"><span class="tag assume">Proposed</span></td></tr>
+            <tr><td class="item">Business pricing: $999 a month, per organisation</td><td class="where">/business/ · /pricing/ · home</td><td class="tagcell"><span class="tag assume">Proposed</span></td></tr>
+            <tr><td class="item">Establishment fee normally $5,000–$15,000, waived for Foundation Members who join in the first 12 months ("Free to join. Save up to $15,000.")</td><td class="where">/pricing/#foundation · home · /councils/ · /business/</td><td class="tagcell"><span class="tag assume">Proposed</span></td></tr>
+            <tr><td class="item">Indicative market comparison: entry-level tools ≈US$2,000 a month; enterprise custom reporting $5,000–$15,000 a month, averaging ≈$11,500 (September 2026)</td><td class="where">/pricing/</td><td class="tagcell"><span class="tag assume">Proposed</span></td></tr>
+            <tr><td class="item">YES Score v0.1: weights 60 / 25 / 15, reference intensity 0.5 t/t, bands Leading ≥80 · Strong ≥60 · Developing ≥40 · Starting. Never presented as an accredited rating</td><td class="where">/yes-report/ · /method/ · /demo/ · /certificate/ · /calculator/</td><td class="tagcell"><span class="tag assume">Proposed</span></td></tr>
+            <tr><td class="item">Evidence grades A / B / C and how each counts. The weight applied to Grade B is not fixed and is not stated</td><td class="where">/how-it-works/ · /method/ · /demo/</td><td class="tagcell"><span class="tag assume">Proposed</span></td></tr>
+            <tr><td class="item">30-day onboarding split into four weeks: scope and streams · baseline and method sheet · first handovers entered · dashboard live. The 30 days is confirmed; the week split is proposed</td><td class="where">/how-it-works/ · /councils/</td><td class="tagcell"><span class="tag assume">Proposed</span></td></tr>
+            <tr><td class="item">Certificate cadence: one YES Certificate per project or reporting period, with method version and certificate ID</td><td class="where">/yes-report/ · /certificate/ · /councils/ · /business/</td><td class="tagcell"><span class="tag assume">Proposed</span></td></tr>
+            <tr><td class="item">Ryan O'Toole title wording: "Chief Executive Officer, YES; leads high-performance and strategy at Recycle Group"</td><td class="where">/about/ · /certificate/</td><td class="tagcell"><span class="tag assume">Proposed</span></td></tr>
+            <tr><td class="item">A reply within two working days</td><td class="where">/contact/</td><td class="tagcell"><span class="tag assume">Proposed</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="scroll-hint">Scroll sideways for the full table</p>
+      <p class="note">Buckets are three (Landfilled · Recycled · Stored) and confirmed. No fourth bucket exists anywhere on the site.</p>
+    </div>
+
+    <!-- 3 · NEEDS CONFIRMATION -->
+    <div class="block reveal">
+      <div class="block-top"><h3>Needs confirmation</h3><span class="m">Item · who</span></div>
+      <div class="table-wrap">
+        <table class="table" aria-label="Items needing confirmation">
+          <thead><tr><th>Item</th><th>Who</th><th>On the site today</th></tr></thead>
+          <tbody>
+            <tr><td class="item">Ryan O'Toole's exact Recycle Group title</td><td class="who">Richard</td><td>Soft wording: "leads high-performance and strategy at Recycle Group"</td></tr>
+            <tr><td class="item">Whether Genius is the entity for the yes.com.au domain, and the domain transfer</td><td class="who">Richard</td><td>Not mentioned</td></tr>
+            <tr><td class="item">Council tier prices above 50,000 residents</td><td class="who">Richard</td><td>"Priced on application"</td></tr>
+            <tr><td class="item">Contract term, and Foundation Member benefits beyond the fee waiver (pricing held for the first term; naming in the change log)</td><td class="who">Richard</td><td>FAQ says "Ask us about terms"; the two benefits are on /pricing/#foundation with HTML comments and should be removed if not confirmed</td></tr>
+            <tr><td class="item">Measured unit weights and steel recovery by stream, for the method lock</td><td class="who">Recycle Group ops</td><td>Library carries Group and Assumption statuses; method reads "v0.1 draft"</td></tr>
+            <tr><td class="item">TMRC per-size mattress table (single 25 kg · double–queen 66 kg · king 78 kg; 70–72% steel) reconciled with the group's ≈30%-of-mass steel figure</td><td class="who">TMRC</td><td>Group figure used; TMRC table listed in sources as not used until reconciled</td></tr>
+            <tr><td class="item">Whether the Clunes / Hepburn real collection data may be shown</td><td class="who">Hepburn Shire</td><td>Demo is illustrative and badged "Demo data · illustrative" everywhere it appears</td></tr>
+            <tr><td class="item">Multi-site inclusion in the $999 business fee</td><td class="who">Richard</td><td>"Multi-site reporting" listed with no site limit stated</td></tr>
+            <tr><td class="item">Community dashboard view for residents</td><td class="who">Roadmap</td><td>Tagged "Roadmap" on /councils/ FAQ; not offered as available</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="scroll-hint">Scroll sideways for the full table</p>
+    </div>
+
+    <!-- 4 · DELIBERATELY EXCLUDED -->
+    <div class="block reveal">
+      <div class="block-top"><h3>Deliberately excluded</h3><span class="m">Item · reason</span></div>
+      <div class="table-wrap">
+        <table class="table" aria-label="Deliberately excluded items">
+          <thead><tr><th>Item</th><th>Reason</th></tr></thead>
+          <tbody>
+            <tr><td class="item">Trees-saved style equivalences (trees, black balloons, and similar)</td><td>Evidence-based, not marketing-based. The only equivalence shown is cars retired at 4.16 t CO₂-e, with its source</td></tr>
+            <tr><td class="item">Any named client, contract, testimonial, award or council relationship</td><td>None exists to state. The demo customer is illustrative</td></tr>
+            <tr><td class="item">RG Resources, RG Connect, JUNK, Trash., Nunjara, Recycle Credits and no.com naming</td><td>YES is run as a standalone business with its own site. Other group brands do not appear on a YES page</td></tr>
+            <tr><td class="item">JUNK green (#00ED00) and any non-palette colour</td><td>Recycle Group palette only: ink, charcoal, graphite, slate, mist, paper and the three greens</td></tr>
+            <tr><td class="item">Hazardous or asbestos acceptance</td><td>Not a YES reporting category and not offered. Nothing on the site suggests either is accepted</td></tr>
+            <tr><td class="item">Superlatives and quote language ("revolutionary", "industry-leading", "seamless", "get a free quote")</td><td>The CTA is Talk to YES or Book a walkthrough. Numerals and the method do the work</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="scroll-hint">Scroll sideways for the full table</p>
+    </div>
+  </div>
+</section>
