@@ -10,6 +10,9 @@
 /* feature rows elsewhere */
 .page-business .feature-list li{grid-template-columns:30px minmax(0,1fr);gap:14px}
 .page-business .feature-list .ic{margin-top:2px}
+/* 02 · scope 3: the two figures, worked */
+.page-business .b-em{margin-top:clamp(36px,5vw,56px)}
+.page-business .b-em .k2{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0 0 14px}
 /* 02 · scope 3: big-stat descriptors on dark */
 .page-business .scope p{color:var(--mist);max-width:56ch}
 .page-business .scope .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--green-3);margin:0 0 12px}
@@ -62,15 +65,15 @@
     <div class="section-head reveal"><div><span class="sec-idx">01</span><p class="eyebrow">Where the numbers go</p><h2>Ten places a verified recycling figure is needed.</h2></div><p class="lead">The same ledger feeds every one of them. Nothing is calculated twice and nothing is calculated differently.</p></div>
     <div class="uses reveal">
       <ul class="feature-list">
-        <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Environmental reporting.</strong> Tonnes recovered, steel, CO₂-e and landfill avoided, by stream and in total.</div></li>
+        <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Environmental reporting.</strong> Tonnes by fate, steel, landfill avoided and both emissions figures, by stream and in total.</div></li>
         <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Sustainability reporting.</strong> Period-on-period movement with the method held constant.</div></li>
         <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>ESG reporting.</strong> Figures with a source, a factor version and an evidence reference on every line.</div></li>
         <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Procurement reporting.</strong> What your recycling contractors delivered, measured the same way for each.</div></li>
         <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Waste and recycling targets.</strong> Recovery rate against target, updated the day material moves.</div></li>
       </ul>
       <ul class="feature-list">
-        <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Circular-economy initiatives.</strong> Tonnes returned to productive use, and which streams did it.</div></li>
-        <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Internal environmental KPIs.</strong> The YES Score and the seven tiles, per site or per period.</div></li>
+        <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Circular-economy initiatives.</strong> Tonnes delivered to licensed reprocessors, and which streams did it.</div></li>
+        <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Internal environmental KPIs.</strong> The YES Score and the headline tiles, per site or per period.</div></li>
         <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Customer and stakeholder reporting.</strong> A YES Certificate that can be handed over as issued.</div></li>
         <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Annual sustainability reports.</strong> A citable table with the YES Method reference for each figure.</div></li>
         <li><svg class="ic"><use href="#i-doc"/></svg><div><strong>Supplier performance reporting.</strong> Evidence share and recovery rate per supplier.</div></li>
@@ -87,16 +90,22 @@
       <div class="span5 scope">
         <p class="k">What is recorded</p>
         <p>Every handover is recorded as mass by stream, with the pathway it took: Recycled, Stored or Landfilled. Each entry carries an evidence reference, a weighbridge docket, processor certificate, count sheet or contractor report, and the grade that evidence earns.</p>
-        <p>Carbon is calculated with published factors, and the factor version is pinned to every line. When the library moves, earlier figures stay reproducible under the version they were issued with.</p>
-        <p>The Scope 3 export is the table an assurance provider expects: mass, pathway, factor, source and version, line by line, with the evidence reference beside each.</p>
+        <p>The Category 5 figure follows the GHG Protocol's waste-type-specific method: the processor's own energy to sort, shred and bale your material, transport where it is done for you, and landfilled tonnes at the government's NGA landfill factor for the waste type. The factor edition is pinned to every line, so earlier figures stay reproducible after the library moves.</p>
+        <p>Avoided emissions are calculated too, from published life-cycle factors, and reported beside the inventory figure, never deducted from it. That is the separation the GHG Protocol asks for, and the one an assurance provider will check first.</p>
+        <p>The Scope 3 export is the table an assurance provider expects: mass, treatment, factor, source and version, line by line, with the evidence reference beside each.</p>
       </div>
       <div class="span7 desc">
         <div class="big-stat"><svg class="ic"><use href="#i-weigh"/></svg><div class="l">Recorded</div><div class="t">Mass by stream</div><div class="s">Tonnes per category, weighed or converted with a stated unit weight.</div></div>
         <div class="big-stat"><svg class="ic"><use href="#i-ledger"/></svg><div class="l">Recorded</div><div class="t">Pathway per handover</div><div class="s">Recycled, Stored or Landfilled, from the docket, not the default.</div></div>
         <div class="big-stat"><svg class="ic"><use href="#i-lock"/></svg><div class="l">Applied</div><div class="t">Factor and version per line</div><div class="s">The published factor, its source and the method version it was applied under.</div></div>
+        <div class="big-stat"><svg class="ic"><use href="#i-co2"/></svg><div class="l">Reported</div><div class="t">Two figures, never netted</div><div class="s">A, the Category 5 figure for your inventory. B, avoided emissions, an estimate printed beside it.</div></div>
         <!-- No assurance standard is claimed as met. The wording is "designed to support". -->
-        <p class="note">Designed to support Scope 3 Category 5 reporting and third-party assurance. YES does not certify compliance with any assurance standard. It supplies the evidence, the method and the export.</p>
+        <p class="note">Designed to support Scope 3 Category 5 reporting and third-party assurance. YES does not certify compliance with any assurance standard. It supplies the evidence, the method and the export. Where the figure sits in your inventory depends on your reporting boundary.</p>
       </div>
+    </div>
+    <div class="b-em reveal">
+      <p class="k2">What the two figures look like · 1,000 mattresses, 120 km to the processor · computed by the engine</p>
+      <div class="em-host" id="b-em"></div>
     </div>
   </div>
 </section>
@@ -107,13 +116,13 @@
     <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">Evidence-based</p><h2>Evidence-based, not marketing-based.</h2></div><p class="lead">A recycling figure in an ESG report will be questioned. The question is whether there is anything underneath it.</p></div>
     <div class="split reveal">
       <div class="media">
-        <div class="shot paper"><img src="/assets/img/product-certificate.webp" alt="YES Certificate, page one: Your Environment Score, headline outcomes, three buckets and the verification statement (demo data)" loading="lazy" width="1588" height="2470"></div>
+        <div class="shot paper"><img src="/assets/img/product-certificate.webp" alt="YES Certificate, page one: Your Environment Score, headline outcomes, the two emissions figures, three buckets and the data statement (demo data)" loading="lazy" width="1588" height="2248"></div>
       </div>
       <div class="copy">
         <div class="top"><p class="idx">THE YES CERTIFICATE</p><span class="badge demo">Demo data · illustrative</span></div>
         <h3>Every figure carries its factor, its source and its method version.</h3>
-        <p>Claims such as trees saved make a nice picture. They do not survive an audit. A YES Certificate states tonnes by stream and bucket, steel recovered as a measured mass, and CO₂-e with the published factor it was calculated with.</p>
-        <p>The certificate is one page. Period, streams, tonnes, steel, CO₂-e, landfill avoided, method version, verification statement and certificate ID. An assurance provider can follow any figure on it back to a docket.</p>
+        <p>Claims such as trees saved make a nice picture. They do not survive an audit. A YES Certificate states tonnes by stream and bucket, steel recovered as a measured mass, the Category 5 figure with its NGA factors, and avoided emissions in their own box.</p>
+        <p>Two A4 pages. Period, streams, tonnes by fate, steel, both emissions figures, landfill avoided, method version, issuer and certificate ID. An assurance provider can follow any figure on it back to a docket.</p>
         <p class="line">Verified recycling data supplied by The Mattress Recycling Company and Recycle Group.</p>
         <a class="more" href="/certificate/">See a sample certificate →</a>
       </div>
@@ -128,7 +137,7 @@
       </ul></div>
       <div class="after"><h4>Evidence-based (YES)</h4><ul>
         <li>Tonnes by stream and bucket</li>
-        <li>CO₂-e with a published factor and version</li>
+        <li>Inventory and avoided emissions, kept apart</li>
         <li>Steel recovered as a measured mass</li>
         <li>Entered and verified by YES</li>
         <li>Every line traceable to a docket</li>
@@ -217,7 +226,7 @@
       </details>
       <details>
         <summary>Is this an offset?</summary>
-        <p>No. YES reports avoided emissions from recycling under a stated method. It does not issue offsets or credits, and the CO₂-e figures on a YES Certificate should not be presented as either.</p>
+        <p>No. YES reports two figures: your Category 5 inventory figure, and the emissions recycling avoided, reported separately under a stated method. It does not issue offsets or credits. The avoided figure is never deducted from your inventory and should not be presented as an offset, a credit or a carbon-neutral claim.</p>
       </details>
     </div>
   </div>
@@ -225,3 +234,13 @@
 
 <!-- CTA -->
 <section class="cta-band"><div class="wrap"><p class="eyebrow">Switched on in 30 days</p><h2>See your YES impact before you commit.</h2><p class="lead">Book a 30-minute walkthrough with the demo dashboard, or send us one month of data and we will show you what YES makes of it.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div></div></section>
+
+<!--scripts-->
+<script src="/assets/yes-data.js"></script>
+<script>
+(function(){
+  var B=window.YES; if(!B||!B.compute||!B.emPair||!B.EXAMPLE) return;
+  var el=document.getElementById('b-em'); if(!el) return;
+  el.innerHTML=B.emPair(B.compute(B.EXAMPLE.entries,{km:B.EXAMPLE.km,sector:'business'}),{rows:3});
+})();
+</script>

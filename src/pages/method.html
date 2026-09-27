@@ -8,12 +8,38 @@
 .page-method .principles h4{font-size:20px}
 .page-method .principles p{max-width:60ch}
 @media(max-width:640px){.page-method .principles li{grid-template-columns:44px 28px minmax(0,1fr);gap:12px}.page-method .principles li::before{font-size:26px}}
-/* 02 · factor library */
+/* 02 · two figures, never netted */
+.page-method .figs{display:grid;grid-template-columns:minmax(0,1fr);gap:0;border-top:1px solid #2A2C2A}
+@media(min-width:900px){.page-method .figs{grid-template-columns:repeat(3,minmax(0,1fr));gap:0 40px}}
+.page-method .fcard{padding:26px 0;border-bottom:1px solid #2A2C2A}
+@media(min-width:900px){.page-method .fcard{border-bottom:0}}
+.page-method .fcard .fl{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:5px;background:#2E302E;color:var(--paper);font-family:var(--font-mono);font-size:16px}
+.page-method .fcard.b .fl{background:#1B3A26;color:var(--green-4)}
+.page-method .fcard.c .fl{background:transparent;border:1px dashed #5F6360;color:var(--mist)}
+.page-method .fcard h4{margin:16px 0 10px;font-size:21px}
+.page-method .fcard p{color:var(--mist);font-size:15px;margin:0;max-width:42ch;line-height:1.6}
+.page-method .fcard .where{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-3);margin:14px 0 0}
+.page-method .fcard.c .where{color:var(--slate)}
+.page-method .nga-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(28px,4vw,48px);margin-top:clamp(40px,5vw,64px)}
+@media(min-width:1000px){.page-method .nga-grid{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}}
+.page-method .k2{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0 0 14px}
+.page-method .nga td.f{font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:-.02em;white-space:nowrap}
+.page-method .nga td.used{color:var(--mist);font-size:13.5px}
+.page-method .nga tr.mixed td:first-child{color:var(--mist)}
+.page-method .ill td.f{font-family:var(--font-display);font-weight:700;font-size:18px;white-space:nowrap}
+.page-method .ill td.d{color:var(--mist);font-size:13.5px;line-height:1.55}
+.page-method .worked-em{margin-top:clamp(40px,5vw,64px)}
+.page-method .worked-em .we-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.page-method .worked-em .we-top h3{font-size:clamp(20px,2vw,26px);margin:0}
+.page-method .worked-em .note{color:var(--mist)}
+/* 03 · factor library */
 .page-method .lib-stats{margin-bottom:clamp(28px,4vw,44px)}
 .page-method .lib-stats .stat .v{font-size:clamp(34px,3.6vw,52px);padding-right:34px}
 .page-method .lib-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 14px}
 .page-method .lib-top .m{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
-.page-method .factors{min-width:1100px;font-size:14px}
+.page-method .factors{min-width:1240px;font-size:14px}
+.page-method .factors td.lanf{white-space:nowrap}
+.page-method .factors td.lanf small{display:block;font-size:12px;color:var(--slate);margin-top:3px;white-space:normal;max-width:20ch}
 .page-method .factors td.cat{font-weight:600;white-space:nowrap}
 .page-method .factors td.unit{min-width:110px}
 .page-method .factors td.carbon{white-space:nowrap}
@@ -80,7 +106,7 @@
     <p class="eyebrow">The YES Method</p>
     <h1>Every number, traced to its source.</h1>
     <p class="lead">This page is the method. It is versioned, it is conservative by default, and it changes only when the change is published.</p>
-    <div><span class="badge"><span class="dot"></span>Method <span id="m-ver">v0.1 draft</span> · to be locked before first certificate</span></div>
+    <div><span class="badge"><span class="dot"></span>Method <span id="m-ver">v1.0 draft</span> · to be locked before first certificate</span></div>
     <div class="btn-row mt-3"><a class="btn btn-primary" href="/calculator/">Try the calculator {{ARROW}}</a><a class="btn btn-ghost" href="/contact/">Talk to YES</a></div>
   </div>
 </section>
@@ -91,20 +117,62 @@
     <div class="section-head reveal"><div><span class="sec-idx">01</span><p class="eyebrow">Principles</p><h2>Six rules every YES figure obeys.</h2></div><p class="lead">If a number on a certificate cannot be explained by one of these, it does not go on the certificate.</p></div>
     <ol class="steps principles reveal" aria-label="The six principles of the YES Method">
       <li><svg class="ic g"><use href="#i-weigh"/></svg><div><h4>Measured mass first</h4><p>Tonnes from a weighbridge or a processor record. Counts are converted with a stated unit weight, and the unit weight carries its own status.</p></div></li>
-      <li><svg class="ic g"><use href="#i-scale"/></svg><div><h4>Recycled, Stored, Landfilled</h4><p>Every tonne lands in one of three buckets. Recycled counts for you. Landfilled counts against you. Stored is neutral until it moves.</p></div></li>
+      <li><svg class="ic g"><use href="#i-scale"/></svg><div><h4>Recycled, Stored, Landfilled</h4><p>Every tonne lands in one of three buckets. Recycled means baled or sorted material delivered to a licensed reprocessor, with a docket, and counts for you. Landfilled counts against you. Stored is neutral until it moves, and is never counted as recycled.</p></div></li>
       <!-- Confirm weighbridge data is available per stream before this principle is stated as delivered rather than as the rule. -->
-      <li><svg class="ic g"><use href="#i-steel"/></svg><div><h4>Steel is measured, not assumed</h4><p>Steel recovered is the mass that leaves as scrap, credited only on the recycled portion of a load. Until measured figures replace them, the fractions in the library are marked group or assumption.</p></div></li>
-      <li><svg class="ic g"><use href="#i-ledger"/></svg><div><h4>Reference factors, cited and versioned</h4><p>CO₂-e uses published factors. Each carries its source and the version of the library it entered under.</p></div></li>
-      <li><svg class="ic g"><use href="#i-lock"/></svg><div><h4>Conservative by default</h4><p>Where two credible figures exist, YES uses the lower. The steel factor is the LCA net figure, not the gross.</p></div></li>
-      <li><svg class="ic g"><use href="#i-clock"/></svg><div><h4>Pending means no claim</h4><p>A stream with no factor is reported as recovered tonnes with no carbon. It is marked pending, never estimated.</p></div></li>
+      <li><svg class="ic g"><use href="#i-steel"/></svg><div><h4>Steel is measured, not assumed</h4><p>Steel recovered is the mass that leaves as scrap, credited only on the recycled portion of a load. The 99% mattress figure is Recycle Group's stated plant yield; a certificate prints the measured yield with its site and study date. Until measured figures replace them, the fractions in the library are marked group or assumption.</p></div></li>
+      <li><svg class="ic g"><use href="#i-ledger"/></svg><div><h4>Two figures, never netted</h4><p>Your Scope 3 Category 5 inventory figure and the avoided emissions are calculated on different bases and reported side by side. Avoided emissions are never deducted from the inventory, never called an offset, and never used for a carbon-neutral claim.</p></div></li>
+      <li><svg class="ic g"><use href="#i-lock"/></svg><div><h4>Conservative, cited and versioned</h4><p>Every factor carries its source, its vintage and the library version it entered under. Where two credible figures exist, the claim uses the lower: the steel factor is the LCA net figure, not the gross, and an unaudited residual takes the higher mixed-waste landfill factor.</p></div></li>
+      <li><svg class="ic g"><use href="#i-clock"/></svg><div><h4>Pending means no claim</h4><p>A stream with no avoided-emissions factor is reported as recovered tonnes with no estimate. It is marked pending, never guessed.</p></div></li>
     </ol>
   </div>
 </section>
 
-<!-- 02 · THE FACTOR LIBRARY -->
+<!-- 02 · TWO FIGURES, NEVER NETTED -->
+<section class="dark" id="figures">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">Two figures, never netted</p><h2>Your inventory figure. The avoided figure. Kept apart.</h2></div><p class="lead">The GHG Protocol's Category 5 guidance keeps avoided emissions out of the Scope 3 inventory: they may be reported, but separately, and never deducted. Every YES report carries both figures side by side, and a third, the landfill comparison, only as context.</p></div>
+    <div class="figs reveal">
+      <div class="fcard a"><span class="fl">A</span><h4>Scope 3 Category 5 inventory</h4><p>What the waste you hand over emits: the processor's energy to receive, sort, shred and bale it (supplier-specific), transport to the processor where it is done for you, and anything landfilled at the government's NGA landfill factor for its waste type. Making new product from the recovered material is the buyer's emissions, not yours.</p><p class="where">Goes in your inventory · GHG Protocol waste-type-specific method</p></div>
+      <div class="fcard b"><span class="fl">B</span><h4>Avoided emissions</h4><p>An estimate of the emissions avoided because recovered material displaces virgin production, from published life-cycle factors. Reported beside A with its source, vintage and boundary. Not deducted from A, not an offset and not a carbon-neutral claim.</p><p class="where">Reported separately · NSW DECCW 2010 factors, flagged 2010</p></div>
+      <div class="fcard c"><span class="fl">C</span><h4>Landfill comparison</h4><p>What A would have been had every tonne gone to landfill, at the same NGA factors. It shows what diversion did to your inventory. It is context only: never an inventory figure, never a saving to claim.</p><p class="where">Context only · same factors as A</p></div>
+    </div>
+    <div class="nga-grid reveal">
+      <div>
+        <p class="k2">A · NGA landfill factors · t CO₂-e per tonne landfilled</p>
+        <div class="table-wrap">
+          <table class="table nga" aria-label="NGA landfill emission factors used for the Category 5 inventory">
+            <thead><tr><th>Waste type</th><th class="n">Factor</th><th>YES categories that use it</th></tr></thead>
+            <tbody id="nga-body"></tbody>
+          </table>
+        </div>
+        <p class="note" id="nga-note">DCCEEW National Greenhouse Accounts landfill factors, as reproduced in the Commonwealth Emissions Reporting Framework 2024–25. Each certificate cites the NGA edition current at its reporting date. Mixed-stream factors apply only where composition is unknown.</p>
+      </div>
+      <div>
+        <p class="k2">A · Processing and transport · illustrative</p>
+        <div class="table-wrap">
+          <table class="table ill" aria-label="Illustrative processing and transport factors">
+            <thead><tr><th>Line</th><th class="n">Working value</th></tr></thead>
+            <tbody>
+              <tr><td class="d"><b>Processing</b>, supplier-specific. About 1,200 L of diesel a day at about 2.7 kg CO₂-e per litre, over 44 to 109 t a day, gives 0.03 to 0.07.</td><td class="n f"><span id="pf">0.05</span> <span class="muted mono small">t per t</span></td></tr>
+              <tr><td class="d"><b>Transport</b>, where it is done or paid for on the customer's behalf. Rigid truck, distance-based.</td><td class="n f">0.15 <span class="muted mono small">kg per t-km</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">Both are replaced by metered fuel and electricity, divided by weighbridge throughput each month, and by fleet fuel data before the first customer certificate. Until then they are labelled illustrative wherever they appear.</p>
+      </div>
+    </div>
+    <div class="worked-em reveal">
+      <div class="we-top"><h3>Worked example · <span id="we-label">1,000 mattresses · 120 km to the processor</span></h3><span class="badge demo">Computed by the engine</span></div>
+      <div class="em-host" id="we-em"></div>
+      <p class="note">With a one-week composition audit of the mattress residual (assumed here at 70% foam, 25% textile fibre and 5% wood), the residual factor would fall from the interim 1.3 to about 0.54, and Figure A from <span id="we-a">74.7</span> t to about 34 t. The audit is the cheapest improvement in the method.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · THE FACTOR LIBRARY -->
 <section class="paper-2" id="library">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">The factor library</p><h2>Thirteen categories. Every factor with a status.</h2></div><p class="lead">Generated from the same library the dashboard, calculator and certificate use. If it is not in this table, YES does not calculate with it.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">The factor library</p><h2>Thirteen categories. Every factor with a status.</h2></div><p class="lead">Generated from the same library the dashboard, calculator and certificate use. If it is not in this table, YES does not calculate with it.</p></div>
     <div class="grid g4 lib-stats reveal" aria-label="Factor library by status">
       <div class="stat"><svg class="ic"><use href="#i-ledger"/></svg><div class="v"><span id="c-all" data-count="13" data-dec="0">0</span></div><div class="l">Categories</div><div class="s">The 13 reporting categories</div></div>
       <div class="stat green"><svg class="ic"><use href="#i-verify"/></svg><div class="v"><span id="c-ref" data-count="0" data-dec="0">0</span></div><div class="l">Reference</div><div class="s">Published external source</div></div>
@@ -112,25 +180,25 @@
       <div class="stat"><svg class="ic"><use href="#i-clock"/></svg><div class="v"><span id="c-open" data-count="0" data-dec="0">0</span></div><div class="l">Assumption or pending</div><div class="s" id="c-open-s">Working assumptions to be replaced, and streams with no factor yet</div></div>
     </div>
     <div class="reveal">
-      <div class="lib-top"><span class="m">Factor library · <span id="lib-ver">v0.1 draft</span> · t CO₂-e per tonne recycled</span><span class="badge">Draft · to be locked</span></div>
+      <div class="lib-top"><span class="m">Factor library · <span id="lib-ver">v1.0 draft</span> · t CO₂-e per tonne</span><span class="badge">Draft · to be locked</span></div>
       <div class="table-wrap">
         <table class="table factors" id="factors" aria-label="YES factor library">
-          <thead><tr><th>Category</th><th>Unit basis</th><th class="n">Steel fraction</th><th>Carbon factor · source</th><th class="n">Default pathway<br>rec / sto / lan %</th><th class="n">m³ per t</th><th>Status</th><th>Notes</th></tr></thead>
+          <thead><tr><th>Category</th><th>Unit basis</th><th class="n">Steel fraction</th><th>A · landfill factor<br>per t landfilled</th><th>B · avoided factor<br>per t recycled · source</th><th class="n">Default pathway<br>rec / sto / lan %</th><th class="n">m³ per t</th><th>Status</th><th>Notes</th></tr></thead>
           <tbody id="f-body"></tbody>
         </table>
       </div>
       <p class="scroll-hint">Scroll sideways for the full table</p>
-      <p class="note">Steel fraction is the share of mass credited as recovered steel (steel fraction × steel recovery). The default pathway applies to a handover to Recycle Group unless the actual pathway is recorded on the docket. m³ per tonne is uncompacted volume, used for landfill volume avoided. Status: Reference is a published external source; Group is a Recycle Group or TMRC stated figure; Assumption is a YES working figure to be replaced; Pending means no factor and no carbon claimed.</p>
+      <p class="note">Steel fraction is the share of mass credited as recovered steel (steel fraction × steel recovery). The A column is the NGA landfill factor applied to any landfilled share, for the Category 5 inventory; interim means a mixed-waste factor used until a composition audit. The B column is the avoided-emissions factor, reported separately. The default pathway applies to a handover to Recycle Group unless the actual pathway is recorded on the docket. m³ per tonne is uncompacted volume, used for landfill volume avoided. Status: Reference is a published external source; Group is a Recycle Group or TMRC stated figure; Assumption is a YES working figure to be replaced; Pending means no avoided-emissions factor and no estimate.</p>
     </div>
     <div class="anchor reveal">
       <div>
-        <p class="k">The steel anchor factor</p>
+        <p class="k">The steel anchor factor · B</p>
         <div class="big"><span id="st-f">0.44</span><small>t CO₂-e per t steel</small></div>
         <p id="st-note">Steel, C&amp;I/C&amp;D. Conservative LCA net figure (includes collection and reprocessing impacts). worldsteel's gross figure of ≈1.5 t CO₂-e per tonne of scrap is higher; YES uses the conservative figure by default.</p>
         <p class="mono small" id="st-src" style="margin-top:10px;color:var(--slate)">NSW DECCW 2010</p>
       </div>
       <div>
-        <p class="k">The one equivalence YES shows</p>
+        <p class="k">The car equivalence · scale only</p>
         <div class="big"><span id="eq-t">4.16</span><small>t CO₂-e per family vehicle, lifetime</small></div>
         <p id="eq-note">A family vehicle is assumed to emit 4.16 t CO₂-e over its lifetime (NSW DECCW 2010): cars permanently retired.</p>
         <p class="mono small" id="eq-src" style="margin-top:10px;color:var(--slate)">NSW DECCW 2010</p>
@@ -142,7 +210,7 @@
 <!-- 03 · SOURCES -->
 <section class="dark" id="sources">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">Sources</p><h2>Four sources. Each one named on the line it feeds.</h2></div><p class="lead">A factor without a source is not in the library. A source without a link is a stated figure, and is labelled as one.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">Sources</p><h2>Every source, named on the line it feeds.</h2></div><p class="lead">A factor without a source is not in the library. A source without a link is a stated figure or a working value, and is labelled as one.</p></div>
     <div class="table-wrap reveal">
       <table class="table sources" id="sources-table" aria-label="Sources used by the YES Method">
         <thead><tr><th>Source</th><th>Title</th><th>Detail</th><th>Link</th></tr></thead>
@@ -156,12 +224,13 @@
 <!-- 04 · HOW A CERTIFICATE FIGURE IS BUILT -->
 <section id="build">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">How a figure is built</p><h2>From a docket to a certificate, in seven steps.</h2></div><p class="lead">The same sequence runs for every handover. The engine does the arithmetic. Nobody types a result.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">05</span><p class="eyebrow">How a figure is built</p><h2>From a docket to a certificate, in eight steps.</h2></div><p class="lead">The same sequence runs for every handover. The engine does the arithmetic. Nobody types a result.</p></div>
     <ol class="steps reveal" aria-label="How a YES certificate figure is calculated">
       <li><div><h4>Mass in</h4><p>Every handover is recorded as mass. Weighed streams arrive as tonnes from the docket. Counted streams (mattresses, tyres, white goods, vehicles) are converted with the unit weight in the library, which carries its own status.</p></div></li>
       <li><div><h4>Pathway split</h4><p>The mass is split across Recycled, Stored and Landfilled. The category's default pathway applies unless the handover's actual pathway is recorded, which it is whenever the docket says so.</p></div></li>
       <li><div><h4>Steel credited only on the recycled portion</h4><p>For steel-bearing streams, steel recovered is mass × steel fraction × steel recovery, capped at the recycled tonnes. A landfilled or stored load claims no steel.</p></div></li>
-      <li><div><h4>Carbon</h4><p>CO₂-e avoided is recovered steel × 0.44, plus non-steel recycled tonnes × the category factor. A category with no factor claims none and is marked pending on the certificate.</p></div></li>
+      <li><div><h4>A · Category 5 inventory</h4><p>Processing (tonnes handled × the processor's factor) plus transport (tonnes × km × the vehicle factor, where it is done for the customer) plus landfilled tonnes × the NGA landfill factor for the waste type. Stored material carries processing to date only. Material the customer evidences elsewhere carries no processing or transport from YES; anything of it landfilled still counts.</p></div></li>
+      <li><div><h4>B · Avoided emissions, separately</h4><p>Recovered steel × 0.44, plus non-steel recycled tonnes × the category factor. A category with no factor carries no estimate and is marked pending. B is printed beside A and is never subtracted from it.</p></div></li>
       <li><div><h4>Landfill volume avoided</h4><p>What would have gone in (mass × m³ per tonne) less what did. Mattress residual is counted at 25% of its original volume because it is shredded first.</p></div></li>
       <li><div><h4>Recovery rate</h4><p>Recycled tonnes ÷ tonnes handed over. Stored tonnes are not recycled, so they do not lift the rate until they move. Landfilled tonnes pull it down.</p></div></li>
       <li><div><h4>YES Score</h4><p>Recovery rate, carbon intensity and evidence share combine into one number out of 100 with the published weights below. Computed by the engine, never typed.</p></div></li>
@@ -172,7 +241,7 @@
 <!-- 05 · THE YES SCORE -->
 <section class="dark" id="score">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">05</span><p class="eyebrow">The YES Score</p><h2>One number. Three parts. Published weights.</h2></div><p class="lead">A score out of 100 per customer per period, always shown with the tiles beneath it. Proposed at v0.1 and published in full.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">06</span><p class="eyebrow">The YES Score</p><h2>One number. Three parts. Published weights.</h2></div><p class="lead">A score out of 100 per customer per period, always shown with the tiles beneath it. Proposed at v0.1, published in full, and self-declared: not an accredited rating, certification or third-party verification.</p></div>
     <!-- The YES Score is PROPOSED (v0.1). Weights, reference intensity and the note are read from YES.SCORE; the bands match YES.score in the engine. The gauge is the demo dataset's score, computed by the engine. -->
     <div class="score-grid reveal">
       <div class="sg">
@@ -189,12 +258,12 @@
             <thead><tr><th>Component</th><th class="n">Weight</th><th>Measured as</th></tr></thead>
             <tbody>
               <tr><td>Material recovery rate</td><td class="n w"><span id="w-rec">60</span></td><td>Recycled tonnes ÷ tonnes handed over</td></tr>
-              <tr><td>Carbon performance</td><td class="n w"><span id="w-car">25</span></td><td>t CO₂-e avoided per tonne handed over, indexed to a reference intensity of <span id="ref-int">0.5</span> t/t and capped at 100%</td></tr>
+              <tr><td>Carbon performance</td><td class="n w"><span id="w-car">25</span></td><td>Estimated avoided emissions (B) per tonne handed over, indexed to a reference intensity of <span id="ref-int">0.5</span> t/t and capped at 100%. The Category 5 inventory is never adjusted by the score.</td></tr>
               <tr><td>Evidence quality</td><td class="n w"><span id="w-ev">15</span></td><td>Mass-weighted share of tonnes backed by weighbridge dockets or processor certificates</td></tr>
             </tbody>
           </table>
         </div>
-        <p class="score-note"><span id="score-note">Material recovery rate 60% (recycled ÷ handed over) · Carbon performance 25% (t CO₂-e avoided per tonne handed over, indexed to a reference intensity of 0.5 t/t, capped at 100%) · Evidence quality 15% (mass-weighted share backed by weighbridge dockets or processor certificates). Stored is neutral; Landfilled counts against through the recovery rate.</span></p>
+        <p class="score-note"><span id="score-note">Material recovery rate 60% (recycled ÷ handed over) · Carbon performance 25% (estimated avoided emissions per tonne handed over, indexed to a reference intensity of 0.5 t/t, capped at 100%) · Evidence quality 15% (mass-weighted share backed by weighbridge dockets or processor certificates). Stored is neutral; Landfilled counts against through the recovery rate. The Category 5 inventory is never adjusted by the score.</span></p>
       </div>
       <div>
         <p class="k">Bands</p>
@@ -209,7 +278,7 @@
             </tbody>
           </table>
         </div>
-        <p class="score-note">The YES Score is YES's own published method, versioned with the YES Method. It is not an accredited rating and is never presented as one. The weights may change; when they do, the change is published in the log below and earlier certificates keep the version they were issued under.</p>
+        <p class="score-note">The YES Score is self-declared under YES's own published method, versioned with the YES Method. It is not an accredited rating, certification or third-party verification, and it is never shown with a tick, a shield or the word "certified". The weights may change; when they do, the change is published in the log below and earlier certificates keep the version they were issued under.</p>
       </div>
     </div>
   </div>
@@ -218,9 +287,9 @@
 <!-- 06 · EVIDENCE GRADES -->
 <section id="grades">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">06</span><p class="eyebrow">Evidence grades</p><h2>Evidence is graded, not assumed.</h2></div><p class="lead">A weighbridge docket and a customer's say-so are both recorded. They do not carry the same weight.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">07</span><p class="eyebrow">Evidence grades</p><h2>Evidence is graded, not assumed.</h2></div><p class="lead">A weighbridge docket and a customer's say-so are both recorded. They do not carry the same weight.</p></div>
     <div class="reveal">
-      <div class="grades-top"><h4>Grades A, B and C</h4><span class="badge">Proposed · YES Method v0.1</span></div>
+      <div class="grades-top"><h4>Grades A, B and C</h4><span class="badge">Proposed · YES Method <span class="mv">v1.0 draft</span></span></div>
       <!-- Evidence grades are PROPOSED (YES Method v0.1). The engine weights weighbridge/processor evidence at 1; the weight applied to Grade B is not yet fixed and is not stated here. -->
       <div class="grades" role="list" aria-label="Evidence grades">
         <div class="grow a" role="listitem"><b class="gl" aria-label="Grade A">A</b><div><h4>Weighbridge docket or processor certificate</h4><p>Counts in full toward the YES Score and every tile.</p></div><span class="tag">Counts in full</span></div>
@@ -235,11 +304,12 @@
 <!-- 07 · VERSIONING AND CHANGE LOG -->
 <section class="paper-2" id="versions">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">07</span><p class="eyebrow">Versioning and change log</p><h2>The method changes only when the change is published.</h2></div><p class="lead">Every certificate states the version it was calculated under. A later version never rewrites an earlier certificate.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">08</span><p class="eyebrow">Versioning and change log</p><h2>The method changes only when the change is published.</h2></div><p class="lead">Every certificate states the version it was calculated under. A later version never rewrites an earlier certificate.</p></div>
     <div class="table-wrap reveal">
       <table class="table log" aria-label="YES Method change log">
         <thead><tr><th>Version</th><th>Date</th><th>Change</th></tr></thead>
         <tbody>
+          <tr><td class="v">v1.0 draft</td><td class="v">28 September 2026</td><td>Two figures, never netted. Figure A: Scope 3 Category 5 inventory, GHG Protocol waste-type-specific method, NGA landfill factors, illustrative processing and transport values. Figure B: avoided emissions from NSW DECCW 2010 factors, reported separately and flagged 2010. Figure C: landfill comparison, context only. Recycled defined as delivered to a licensed reprocessor. The 99% steel figure treated as a stated plant yield until a dated study. YES Score unchanged at proposed v0.1, labelled self-declared.</td></tr>
           <tr><td class="v">v0.1 draft</td><td class="v">27 September 2026</td><td>Initial factor library. NSW DECCW 2010 reference factors. Recycle Group mattress figures. Working assumptions flagged as assumptions. Pending streams carry no carbon.</td></tr>
         </tbody>
       </table>
@@ -247,10 +317,14 @@
     <div class="lock reveal">
       <p class="k">Locked before the first customer certificate</p>
       <ul>
+        <li>Metered processing fuel and electricity, divided by weighbridge throughput each month, replacing the illustrative 0.05 t CO₂-e per tonne; fleet fuel data replacing the illustrative transport factor.</li>
+        <li>A composition audit of the mattress residual, replacing the interim mixed C&amp;I landfill factor.</li>
+        <li>A dated steel yield study (site, date, sample size, re-tested annually) behind the 99% figure, and steel recovery by stream from processing records.</li>
         <li>Measured unit weights from the Recycle Group weighbridge, replacing the stated averages for mattresses, tyres, white goods and vehicles.</li>
-        <li>Steel recovery by stream, from processing records rather than a fraction.</li>
-        <li>A pathway for coloured timber, e-waste and textiles, so those streams leave Pending.</li>
+        <li>A refresh of the 2010 avoided-emissions factors, from an Australian life-cycle source, before any certificate relies on them.</li>
+        <li>A pathway for coloured timber, e-waste and textiles, so those streams leave Pending, and a 12-month ageing rule for stored material.</li>
         <li>The TMRC per-size mattress table reconciled with the group's 30%-of-mass steel figure.</li>
+        <li>A decision on third-party limited assurance of the weighbridge-to-certificate chain. Until then, every certificate says it is not independently assured.</li>
       </ul>
       <p class="note">Until these are locked, the version reads "draft" on every page that uses it, and no customer certificate is issued.</p>
     </div>
@@ -281,6 +355,7 @@
   var counts={reference:0,group:0,assumption:0,pending:0};
   var ver=B.METHOD_VERSION||'';
   txt('m-ver',ver); txt('lib-ver',ver);
+  document.querySelectorAll('.page-method .mv').forEach(function(el){el.textContent=ver;});
 
   // --- 02 · factor library, generated from YES.CATS ---
   var body=document.getElementById('f-body');
@@ -297,7 +372,12 @@
       if(c.carbon!=null){ carbon=fmt(c.carbon,2)+' · '+srcId(c.carbonSrc); }
       else if(c.steelFrac>0){ carbon=fmt(B.STEEL.f,2)+' · '+srcId(B.STEEL.src); qual=c.steelFrac<1?'On recovered steel only. None on the balance.':'On recovered steel.'; }
       else if(c.path&&c.path.lan>=1){ carbon='None'; qual='Landfilled.'; }
-      else { carbon='None claimed'; qual='No factor in the library.'; }
+      else { carbon='None'; qual='No factor in the library. No estimate.'; }
+      var lt=B.lanType(c,{}), lf=B.lanFactor(c,{});
+      var la=td('lanf',(lf===0?'0':fmt(lf,1))+' · '+((B.NGA.label[lt]||lt).replace(/ \(.*\)/,'')));
+      var lq=[]; if(c.interim) lq.push('Interim, until a composition audit.'); if(c.lanTypeBusiness) lq.push('Business: '+(B.NGA.label[c.lanTypeBusiness]||'').toLowerCase()+' '+B.NGA.f[c.lanTypeBusiness]+'.');
+      if(lq.length){ var ls=document.createElement('small'); ls.textContent=lq.join(' '); la.appendChild(ls); }
+      tr.appendChild(la);
       var cc=td('carbon',carbon);
       if(qual){ var q=document.createElement('small'); q.textContent=qual; cc.appendChild(q); }
       tr.appendChild(cc);
@@ -317,6 +397,31 @@
   setCount('c-grp',counts.group,0);
   setCount('c-open',counts.assumption+counts.pending,0);
   txt('c-open-s',counts.assumption+' working assumption'+(counts.assumption===1?'':'s')+' to be replaced · '+counts.pending+' stream'+(counts.pending===1?'':'s')+' with no factor yet');
+
+  // --- 02 · NGA landfill factors, generated from YES.NGA ---
+  var nb=document.getElementById('nga-body');
+  if(nb&&B.NGA){
+    var order=['inert','wood','garden','textiles','rubber','food','paper','sludge','nappies','msw','ci','cd'];
+    var mixed={msw:1,ci:1,cd:1};
+    order.forEach(function(k){
+      if(B.NGA.f[k]==null) return;
+      var used=B.CATS.filter(function(c){return c.lanType===k;}).map(function(c){return c.name+(c.interim?' (interim)':'');});
+      B.CATS.forEach(function(c){ if(c.lanTypeBusiness===k) used.push(c.name+' (business)'); });
+      var tr=document.createElement('tr'); if(mixed[k]) tr.className='mixed';
+      tr.appendChild(td('',B.NGA.label[k]||k));
+      tr.appendChild(td('n f',B.NGA.f[k]===0?'0':fmt(B.NGA.f[k],1)));
+      tr.appendChild(td('used',used.length?used.join(' · '):'—'));
+      nb.appendChild(tr);
+    });
+  }
+  if(B.PROC) txt('pf',String(B.PROC.f));
+  // --- 02 · worked example, computed by the engine ---
+  var we=document.getElementById('we-em');
+  if(we&&B.emPair&&B.EXAMPLE){
+    var wm=B.compute(B.EXAMPLE.entries,{km:B.EXAMPLE.km});
+    we.innerHTML=B.emPair(wm,{rows:3});
+    txt('we-label',B.EXAMPLE.label||''); txt('we-a',fmt(wm.cat5,1));
+  }
 
   // --- steel anchor and equivalence ---
   if(B.STEEL){ txt('st-f',String(B.STEEL.f)); txt('st-note',B.STEEL.note||''); txt('st-src',srcId(B.STEEL.src)); }
@@ -352,7 +457,7 @@
   // --- 05 · the gauge: the demo dataset's score, computed by the engine ---
   var g=document.getElementById('m-gauge');
   if(g&&B.gauge&&B.compute&&B.DEMO){
-    var t=B.compute(B.DEMO.entries);
+    var t=B.compute(B.DEMO.entries,{km:B.DEMO.km||0,sector:B.DEMO.sector||'council'});
     var sc=t.score||B.score(t);
     B.gauge(g,sc,150);
     txt('m-band',sc.band);

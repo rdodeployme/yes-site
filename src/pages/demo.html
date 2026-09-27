@@ -27,10 +27,10 @@
 .page-demo .score-row .legend{margin-top:10px;font-size:11px}
 .page-demo .score-row .legend b{font-weight:500;color:var(--paper);margin-left:2px}
 .page-demo .score-row .m{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;color:var(--slate);margin:12px 0 0}
-/* seven tiles: four across, then three across */
-@media(min-width:900px){.page-demo .demo-kpis{grid-template-columns:repeat(12,minmax(0,1fr))}.page-demo .demo-kpis .kpi{grid-column:span 3}.page-demo .demo-kpis .kpi:nth-child(n+5){grid-column:span 4}}
-@media(max-width:899px){.page-demo .demo-kpis .kpi:nth-child(7){grid-column:span 2}}
+/* six tiles: three across, two rows */
+@media(min-width:900px){.page-demo .demo-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .page-demo .kpi{min-height:112px}
+.page-demo .kpi .l{padding-right:30px}
 .page-demo .kpi .v{white-space:nowrap;padding-right:34px}
 .page-demo .kpi .v .u{font-size:.5em;color:var(--slate);margin-left:4px;font-weight:600;letter-spacing:0}
 .page-demo .kpi .d{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:1.2em;transition:color .3s}
@@ -38,7 +38,6 @@
 .page-demo .kpi .d.src{white-space:normal;line-height:1.5;color:var(--slate)}
 @media(max-width:560px){.page-demo .demo-kpis .kpi .d{white-space:normal;line-height:1.25;height:3.75em;min-height:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}.page-demo .eq{grid-template-columns:1fr}}
 .page-demo .panel-h{flex-wrap:wrap}
-.page-demo .pending-line{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.04em;color:var(--slate);margin:-6px 0 0;line-height:1.6}
 @media(min-width:1000px){.page-demo .demo-grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}}
 /* donut */
 .page-demo .donut .c{font-family:var(--font-display);font-weight:800;font-size:28px;letter-spacing:-.04em;fill:var(--paper)}
@@ -108,7 +107,7 @@
   <div class="wrap">
     <p class="eyebrow">Live demo</p>
     <h1>Hand over a stream. Watch the numbers move.</h1>
-    <p class="lead">This is a YES Dashboard for a council hard waste program, on illustrative data. Use the handover buttons to add material the way YES staff would, and watch every tile recalculate.</p>
+    <p class="lead">This is a YES Dashboard for a council hard waste program, on illustrative data. Use the handover buttons to add material the way YES staff would, and watch every tile recalculate, including the two emissions figures: your Scope 3 Category 5 inventory and the avoided emissions reported beside it.</p>
     <div class="hero-meta"><span class="badge demo">Demo data · illustrative</span><span>In production, only YES staff can do this.</span></div>
   </div>
 </section>
@@ -119,7 +118,7 @@
     <div class="demo-lede"><span class="sec-idx">01</span><p class="eyebrow">The dashboard</p></div>
     <div class="demo-shell reveal" id="demo" aria-label="YES Dashboard, demo data">
       <div class="demo-head">
-        <div><h3>Hepburn Shire Council · Hard waste program</h3><p class="sub">FY2026–27 to date · YES Method <span id="demo-ver">v0.1 draft</span> · entered by YES</p><span class="badge demo" style="margin-top:10px">Demo data · illustrative</span></div>
+        <div><h3>Hepburn Shire Council · Hard waste program</h3><p class="sub">FY2026–27 to date · YES Method <span id="demo-ver">v1.0 draft</span> · entered by YES</p><span class="badge demo" style="margin-top:10px">Demo data · illustrative</span></div>
         <div class="demo-tabs" role="tablist" aria-label="Dashboard views">
           <button type="button" role="tab" id="t-overview" class="active" aria-selected="true" aria-controls="p-overview" data-tab="overview">Overview</button>
           <button type="button" role="tab" id="t-categories" aria-selected="false" aria-controls="p-categories" data-tab="categories">Categories</button>
@@ -134,25 +133,24 @@
           <div class="score-row">
             <div class="gauge" id="sc-gauge" style="--gs:170px"></div>
             <div class="score-meta">
-              <div class="l">YES Score · proposed v0.1</div>
+              <div class="l">YES Score · proposed <span id="sc-ver">v0.1</span> · self-declared</div>
               <div class="band" id="sc-band">&nbsp;</div>
               <div class="l" id="sc-wl">Composition · points of 100</div>
               <div class="stack" aria-label="YES Score composition"><i class="p1" id="sc-p1"></i><i class="p2" id="sc-p2"></i><i class="p3" id="sc-p3"></i></div>
               <div class="legend"><span class="p1"><i></i>Recovery <b id="sc-l1"></b></span><span class="p2"><i></i>Carbon <b id="sc-l2"></b></span><span class="p3"><i></i>Evidence <b id="sc-l3"></b></span></div>
-              <p class="m">Proposed method v0.1 · not an accredited rating · Stored is neutral · Landfilled counts against</p>
+              <p class="m">Self-declared under the published YES Method · not an accredited rating, certification or third-party verification · Stored is neutral · Landfilled counts against</p>
             </div>
           </div>
 
           <div class="demo-kpis" aria-label="Your Environment Score tiles">
-            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-mattress"/></svg><div class="v green"><span id="k-matt" data-count="0" data-dec="0">0</span></div><div class="l">Mattresses recycled</div><div class="d" id="k-matt-d">&nbsp;</div></div>
-            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-rate"/></svg><div class="v"><span id="k-steelpct" data-count="0" data-dec="0">0</span><span class="u">%</span></div><div class="l">Steel recovery</div><div class="d" id="k-steelpct-d">of mattress steel</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-mattress"/></svg><div class="v green"><span id="k-matt" data-count="0" data-dec="0">0</span></div><div class="l">Mattresses processed</div><div class="d" id="k-matt-d">&nbsp;</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-rate"/></svg><div class="v"><span id="k-steelpct" data-count="0" data-dec="0">0</span><span class="u">%</span></div><div class="l">Steel recovery · stated yield</div><div class="d" id="k-steelpct-d">&nbsp;</div></div>
             <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-steel"/></svg><div class="v green"><span id="k-steel" data-count="0" data-dec="1">0</span><span class="u">t</span></div><div class="l">Steel recovered</div><div class="d" id="k-steel-d">&nbsp;</div></div>
-            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-co2"/></svg><div class="v green"><span id="k-co2" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">CO₂-e avoided</div><div class="d" id="k-co2-d">&nbsp;</div></div>
-            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-landfill"/></svg><div class="v"><span id="k-vol" data-count="0" data-dec="0">0</span><span class="u">m³</span></div><div class="l">Landfill avoided</div><div class="d" id="k-vol-d">&nbsp;</div></div>
             <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-rate"/></svg><div class="v"><span id="k-rate" data-count="0" data-dec="1">0</span><span class="u">%</span></div><div class="l">Material recovery rate</div><div class="d" id="k-rate-d">&nbsp;</div></div>
-            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-loop"/></svg><div class="v green"><span id="k-ret" data-count="0" data-dec="1">0</span><span class="u">t</span></div><div class="l">Returned to productive use</div><div class="d" id="k-ret-d">&nbsp;</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-loop"/></svg><div class="v green"><span id="k-ret" data-count="0" data-dec="1">0</span><span class="u">t</span></div><div class="l">Delivered to licensed reprocessors</div><div class="d" id="k-ret-d">&nbsp;</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-landfill"/></svg><div class="v"><span id="k-vol" data-count="0" data-dec="0">0</span><span class="u">m³</span></div><div class="l">Landfill volume avoided</div><div class="d" id="k-vol-d">&nbsp;</div></div>
           </div>
-          <p class="pending-line" id="pending-line">&nbsp;</p>
+          <div class="em-host" id="em" aria-live="polite"></div>
 
           <div class="demo-grid">
             <div class="panel">
@@ -187,9 +185,9 @@
           <div class="panel">
             <div class="panel-h"><h4>Equivalences</h4><span class="m">Shown only with a source</span></div>
             <div class="eq">
-              <div class="kpi"><svg class="ic fill" aria-hidden="true"><use href="#i-carsolid"/></svg><div class="v green"><span id="eq-cars" data-count="0" data-dec="0">0</span></div><div class="l">Cars permanently retired</div><div class="d src" id="eq-cars-d">&nbsp;</div></div>
-              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-steel"/></svg><div class="v"><span id="eq-steel">0</span><span class="u">t</span></div><div class="l">Steel back into manufacturing</div><div class="d src" id="eq-steel-d">&nbsp;</div></div>
-              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-landfill"/></svg><div class="v"><span id="eq-vol">0</span><span class="u">m³</span></div><div class="l">Landfill cell kept open</div><div class="d src" id="eq-vol-d">&nbsp;</div></div>
+              <div class="kpi"><svg class="ic fill" aria-hidden="true"><use href="#i-carsolid"/></svg><div class="v green"><span id="eq-cars" data-count="0" data-dec="0">0</span></div><div class="l">Cars permanently retired · equivalent</div><div class="d src" id="eq-cars-d">&nbsp;</div></div>
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-steel"/></svg><div class="v"><span id="eq-steel">0</span></div><div class="l">Cars' worth of steel</div><div class="d src" id="eq-steel-d">&nbsp;</div></div>
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-landfill"/></svg><div class="v"><span id="eq-vol">0</span><span class="u">%</span></div><div class="l">Of an Olympic pool, in landfill space</div><div class="d src" id="eq-vol-d">&nbsp;</div></div>
             </div>
           </div>
         </div>
@@ -200,7 +198,7 @@
             <div class="panel-h"><h4>Thirteen reporting categories</h4><span class="m">Share of each stream by bucket · tonnes handed over</span></div>
             <div class="cat-bars" id="cat-bars"></div>
             <div class="legend cat-legend"><span class="rec"><i></i>Recycled</span><span class="sto"><i></i>Stored · neutral</span><span class="lan"><i></i>Landfilled · counts against</span></div>
-            <p class="gaps-note">Splits are the default pathway for a Recycle Group handover under YES Method v0.1. Carbon pending means recovered mass is counted and no CO₂-e is claimed for that stream.</p>
+            <p class="gaps-note">Splits are the default pathway for a Recycle Group handover under the YES Method <span class="mv">v1.0 draft</span>. Recycled means delivered to a licensed reprocessor, with a docket. Pending means recovered mass is counted and no avoided-emissions estimate is made for that stream.</p>
           </div>
         </div>
 
@@ -219,7 +217,7 @@
         <div class="tab-panel" id="p-gaps" role="tabpanel" aria-labelledby="t-gaps" data-panel="gaps" hidden>
           <div class="panel">
             <div class="panel-h"><h4>Fill in the gaps · March</h4><span class="m">Monthly email · answered by the council · entered by YES</span></div>
-            <p class="gaps-intro">Once a month YES emails the council a list of every stream it cannot yet account for. The council says where each one went. YES enters it, grades the evidence, and the dashboard moves. These four items are the kind of thing a council reports that did not go through Recycle Group. Choose a bucket for each and watch the Overview.</p>
+            <p class="gaps-intro">Once a month YES emails the council a list of every stream it cannot yet account for. The council says where each one went. YES enters it, grades the evidence, and the dashboard moves. These four items are the kind of thing a council reports that did not go through Recycle Group, so no processing or transport is attributed to them; anything landfilled still counts in the Category 5 figure at the NGA factor. Choose a bucket for each and watch the Overview.</p>
             <div class="gaps" id="gaps"></div>
             <p class="gaps-note">Entries answered by email count as Grade B evidence (contractor report or signed count sheet) until a docket is supplied. Grade B counts, and is flagged on the ledger and the certificate.</p>
           </div>
@@ -245,7 +243,7 @@
     </div>
 
     <p class="demo-attrib">Verified recycling data supplied by The Mattress Recycling Company and Recycle Group.</p>
-    <p class="note">Demo data is illustrative and is not Hepburn Shire Council data. Reference factors are NSW DECCW 2010, Table 4. Calculations use the YES Method v0.1 draft, including the proposed YES Score. <a href="/method/">Read the YES Method →</a></p>
+    <p class="note">Demo data is illustrative and is not Hepburn Shire Council data. The Category 5 inventory uses NGA landfill factors, with illustrative processing and transport values and 120 km to the processor. Avoided emissions use NSW DECCW 2010 factors and are reported separately. Calculations use the YES Method <span class="mv">v1.0 draft</span>, including the proposed YES Score, which is self-declared and not an accredited rating. Issued data would come from Recycle Group as the processing operator and is not independently assured. <a href="/method/">Read the YES Method →</a></p>
   </div>
 </section>
 
@@ -255,7 +253,7 @@
     <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">What you just saw</p><h2>Three rules that make the number hold.</h2></div><p class="lead">The demo lets you press the buttons. In production, a YES operator does, against a docket.</p></div>
     <ol class="steps reveal">
       <li><div><h4>Only YES enters the data</h4><p>Every handover is entered and verified by YES staff against a weighbridge docket, processor certificate or signed count sheet. Customers never type in their own figures, which is why a YES Certificate can be relied on.</p></div></li>
-      <li><div><h4>Every tile has a method</h4><p>Steel recovery, CO₂-e, landfill volume and the YES Score each trace to a factor with a source, a status and a version. Where no factor exists yet, the tonnes are counted and no carbon is claimed.</p></div></li>
+      <li><div><h4>Every tile has a method</h4><p>Steel recovery, landfill volume, both emissions figures and the YES Score each trace to a factor with a source, a status and a version. The Category 5 inventory and the avoided emissions are never netted. Where no factor exists yet, the tonnes are counted and no avoided emissions are claimed.</p></div></li>
       <li><div><h4>Stored is neutral, landfilled counts against</h4><p>Material parked at a depot does not move the score until it moves. Material sent to landfill pulls the recovery rate down. The general rubbish button shows exactly how much.</p></div></li>
     </ol>
   </div>
@@ -286,6 +284,7 @@
   function icon(k){return '<svg class="ic" aria-hidden="true"><use href="#'+(ICON[k]||'i-bin')+'"/></svg>';}
 
   // ---- state ---------------------------------------------------------------
+  var OPTS={km:B.DEMO.km||0,sector:B.DEMO.sector||'council'};
   var entries=B.DEMO.entries.map(function(e){return Object.assign({},e);});
   var trend=B.DEMO.trend.map(function(m){return {m:m.m,t:m.t};});
   var shown=trend.map(function(m){return m.t;});
@@ -303,13 +302,12 @@
 
   // ---- KPI tiles -------------------------------------------------------------
   var KPI=[
-    {id:'k-matt',dec:0,unit:'',get:function(t){return t.units.mattresses||0;},note:function(){return 'to The Mattress Recycling Company';}},
-    {id:'k-steelpct',dec:0,unit:'%',get:function(){return (B.CAT.mattresses.steelRecovery||0)*100;},note:function(){return 'of mattress steel · Recycle Group';}},
+    {id:'k-matt',dec:0,unit:'',get:function(t){return t.units.mattresses||0;},note:function(){return 'by The Mattress Recycling Company';}},
+    {id:'k-steelpct',dec:0,unit:'%',get:function(){return (B.CAT.mattresses.steelRecovery||0)*100;},note:function(){return 'Recycle Group stated plant yield';}},
     {id:'k-steel',dec:1,unit:' t',get:function(t){return t.steelT;},note:function(t){var n=Object.keys(t.byCat).filter(function(k){return t.byCat[k].steel>0;}).length;return 'from '+n+' steel-bearing streams';}},
-    {id:'k-co2',dec:0,unit:' t',get:function(t){return t.co2;},note:function(){return 'steel + '+srcId('nsw2010')+' factors';}},
-    {id:'k-vol',dec:0,unit:' m³',get:function(t){return t.volAvoided;},note:function(){return 'volume that did not go in';}},
     {id:'k-rate',dec:1,unit:'%',get:function(t){return t.recoveryRate*100;},note:function(){return 'recycled ÷ handed over';}},
-    {id:'k-ret',dec:1,unit:' t',get:function(t){return t.recT;},note:function(t){return 'of '+fmt(t.inT,0)+' t handed over';}}
+    {id:'k-ret',dec:1,unit:' t',get:function(t){return t.recT;},note:function(t){return 'of '+fmt(t.inT,0)+' t handed over · docketed';}},
+    {id:'k-vol',dec:0,unit:' m³',get:function(t){return t.volAvoided;},note:function(){return 'volume that did not go in';}}
   ];
   function setCounter(el,key,v,dec){
     var pv=prev[key];
@@ -397,7 +395,7 @@
       var row=document.createElement('div'); row.className='cat-bar';
       row.innerHTML='<span class="n">'+icon(c.k)+'<span class="nt"><span class="nm"></span></span></span><div class="track" role="img"><div class="f-rec"></div><div class="f-sto"></div><div class="f-lan"></div></div><span class="val"></span>';
       row.querySelector('.nm').textContent=c.name;
-      if(c.status==='pending'){ var tg=document.createElement('span'); tg.className='tag pending'; tg.textContent='Carbon pending'; row.querySelector('.nt').appendChild(tg); }
+      if(c.status==='pending'){ var tg=document.createElement('span'); tg.className='tag pending'; tg.textContent='Pending · no estimate'; row.querySelector('.nt').appendChild(tg); }
       host.appendChild(row); catRows[c.k]=row;
     });
   })();
@@ -472,7 +470,7 @@
     gapChoice[i]=next;
     entries=entries.filter(function(e){return e.gap!==i;});
     removeLedger('gap-'+i);
-    if(next) entries.push({k:g.k,qty:g.qty,ev:0.8,path:PATHS[next],gap:i});
+    if(next) entries.push({k:g.k,qty:g.qty,ev:0.8,path:PATHS[next],gap:i,sup:false});
     var before=last;
     render({delta:true});
     var dRec=last.recT-before.recT;
@@ -512,7 +510,7 @@
   // ---- render ---------------------------------------------------------------
   function render(o){
     o=o||{};
-    var t=B.compute(entries);
+    var t=B.compute(entries,OPTS);
     var sc=t.score||B.score(t);
     KPI.forEach(function(k){
       var el=$(k.id); if(!el) return;
@@ -535,21 +533,28 @@
     else { setW('sc-p1',sc.parts.recovery); setW('sc-p2',sc.parts.carbon); setW('sc-p3',sc.parts.evidence); }
     txt('sc-l1',fmt(sc.parts.recovery,1)+' / '+w.recovery); txt('sc-l2',fmt(sc.parts.carbon,1)+' / '+w.carbon); txt('sc-l3',fmt(sc.parts.evidence,1)+' / '+w.evidence);
     var st=$('sc-p1'); if(st&&st.parentNode) st.parentNode.setAttribute('aria-label','YES Score '+sc.score+' of 100: recovery '+fmt(sc.parts.recovery,1)+', carbon '+fmt(sc.parts.carbon,1)+', evidence '+fmt(sc.parts.evidence,1));
-    // pending line
-    txt('pending-line', t.pendingCats.length ? 'Recovered mass counted, no CO₂-e claimed: '+t.pendingCats.join(' · ')+' · factors pending in the YES Method' : 'Every recovered tonne above carries a carbon factor with a source.');
+    // the two emissions figures, never netted (shared component; wording from YES.CLAIMS)
+    var em=$('em');
+    if(em&&B.emPair){
+      var dl=(o.delta&&prev.cat5!=null)?{a:t.cat5-prev.cat5,b:t.avoided-prev.avoided}:{};
+      em.innerHTML=B.emPair(t,{rows:4,delta:dl});
+    }
+    prev.cat5=t.cat5; prev.avoided=t.avoided;
     // donut, categories
     if(prev.donut==null&&!reduced){ requestAnimationFrame(function(){ drawDonut(t); }); } else drawDonut(t);
     prev.donut=1;
     drawCats(t);
     // equivalences
     var cars=$('eq-cars'); if(cars) setCounter(cars,'cars',t.cars,0);
-    txt('eq-steel',fmt(t.steelT,t.steelT<10?1:0)); txt('eq-vol',fmt(t.volAvoided,0));
+    txt('eq-steel',fmt(Math.round(t.steelT/0.9),0)); txt('eq-vol',fmt(t.volAvoided/2500*100,0));
     last=t;
   }
-  txt('eq-cars-d','CO₂-e avoided ÷ '+(B.EQUIV?B.EQUIV.carT:4.16)+' t per family vehicle lifetime · '+srcId(B.EQUIV?B.EQUIV.carSrc:'nsw2010'));
-  txt('eq-steel-d','Recovered steel to the electric-arc-furnace route · Recycle Group processing records · '+Math.round((B.CAT.mattresses.steelRecovery||0)*100)+'% of mattress steel');
-  txt('eq-vol-d','Unit volumes per stream, less what went in · YES Method '+(B.METHOD_VERSION||'')+' · mattress residual at 25% of volume');
-  txt('demo-ver',B.METHOD_VERSION||'v0.1 draft');
+  txt('eq-cars-d','Avoided-emissions estimate ÷ '+(B.EQUIV?B.EQUIV.carT:4.16)+' t CO₂-e per family vehicle lifetime · '+srcId(B.EQUIV?B.EQUIV.carSrc:'nsw2010')+' indicator · shows scale only');
+  txt('eq-steel-d','Steel recovered ÷ about 900 kg of steel in an average car · WorldAutoSteel · sold to licensed metal reprocessors');
+  txt('eq-vol-d','Landfill volume avoided ÷ 2,500 m³ per Olympic-size pool · mattress residual counted at 25% of its volume');
+  txt('demo-ver',B.METHOD_VERSION||'v1.0 draft');
+  txt('sc-ver',(B.SCORE&&B.SCORE.version)||'v0.1');
+  document.querySelectorAll('.page-demo .mv').forEach(function(el){el.textContent=B.METHOD_VERSION||'';});
   (function(){ var w=B.SCORE&&B.SCORE.weights; if(w) txt('sc-wl','Composition · points of 100 · weights '+w.recovery+' / '+w.carbon+' / '+w.evidence); })();
 
   // ---- handovers -----------------------------------------------------------

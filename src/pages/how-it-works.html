@@ -55,9 +55,9 @@
       <li><div><h4>Onboard</h4><p>Thirty days. YES agrees your streams, your sites and your baseline period with you, and issues the method sheet that states how each stream will be counted. Nothing is calculated until the method sheet is agreed.</p></div></li>
       <li><div><h4>Hand over a stream</h4><p>A hard waste sweep, a skip of scrap steel, a pallet of e-waste. Every handover arrives with its evidence: a weighbridge docket, a count sheet or a processor certificate.</p></div></li>
       <li><div><h4>YES enters and verifies</h4><p>Only YES staff enter data. Every entry carries an evidence reference and the operator's initials, so any figure on your dashboard can be traced back to the document it came from.</p></div></li>
-      <li><div><h4>Your dashboard moves</h4><p>The day the material moves. Every tile recalculates: tonnes recovered, steel recovered, CO₂-e avoided, landfill avoided, the material recovery rate and the YES Score.</p></div></li>
+      <li><div><h4>Your dashboard moves</h4><p>The day the material moves. Every tile recalculates: tonnes by fate, steel recovered, landfill avoided, the material recovery rate, the YES Score, and the two emissions figures: your Category 5 figure and, beside it, the avoided emissions.</p></div></li>
       <li><div><h4>Fill in the gaps</h4><p>Once a month an automated email lists every stream we know moved and every one we cannot yet account for. You tell us where it went. YES files it as Landfilled, Recycled or Stored.</p></div></li>
-      <li><div><h4>Certificate issues</h4><p>Monthly, quarterly or annual, to suit your reporting cycle. The certificate states every figure with the method version it was calculated under, pinned so the number can be reproduced later.</p></div></li>
+      <li><div><h4>Certificate issues</h4><p>Monthly, quarterly or annual, to suit your reporting cycle. The certificate states every figure with the method version it was calculated under, pinned so the number can be reproduced later, and says who issued it: Recycle Group, as the processing operator.</p></div></li>
       <!-- [needs confirmation] certificate cadence options (monthly / quarterly / annual) as offered to customers -->
     </ol>
   </div>
@@ -75,7 +75,7 @@
           <div class="display g"><span id="bk-recn" data-count="0" data-dec="0">0</span><span class="u">t</span></div>
           <div class="legend"><span class="rec"><i></i>Recycled</span></div>
           <p class="k">Counts for you</p>
-          <p class="s">Material that reached a processor and became something with a next use: scrap to the furnace, timber to mulch, green waste to compost, goods reused.</p>
+          <p class="s">Baled or sorted material delivered to a licensed reprocessor, with a docket: scrap to a metal reprocessor, timber to mulch, green waste to a composter, goods to reuse.</p>
         </div>
         <div>
           <div class="display sto"><span id="bk-ston" data-count="0" data-dec="0">0</span><span class="u">t</span></div>
@@ -90,7 +90,7 @@
           <p class="s">Residual waste, contamination and any stream with no recovery pathway. YES reports the tonnes that went in and the volume they took up.</p>
         </div>
       </div>
-      <p class="cap">Computed in your browser from the demo dataset with the YES Method <span id="bk-ver">v0.1 draft</span>. Not a result.</p>
+      <p class="cap">Computed in your browser from the demo dataset with the YES Method <span id="bk-ver">v1.0 draft</span>. Not a result.</p>
     </div>
     <div class="grid g12 mt-4 reveal">
       <div class="span7 stored-note">
@@ -123,7 +123,7 @@
       </div>
     </div>
     <div class="mt-4 reveal">
-      <div class="grades-top"><h4>Evidence grades</h4><span class="badge">Proposed · YES Method v0.1</span></div>
+      <div class="grades-top"><h4>Evidence grades</h4><span class="badge">Proposed · YES Method <span id="gr-ver">v1.0 draft</span></span></div>
       <!-- Evidence grades are PROPOSED (YES Method v0.1). The engine weights weighbridge/processor evidence at 1; the weight applied to Grade B is not yet fixed and is not stated here. -->
       <div class="table-wrap">
         <table class="table">
@@ -199,7 +199,7 @@
   function txt(id,s){var el=document.getElementById(id); if(el) el.textContent=s;}
 
   // --- 02 · three buckets, from the demo dataset and the engine ---
-  var t=B.compute(B.DEMO.entries);
+  var t=B.compute(B.DEMO.entries,{km:B.DEMO.km||0,sector:B.DEMO.sector||'council'});
   var bar=document.getElementById('bk-bar');
   if(bar&&t.inT>0){
     var pr=t.recT/t.inT*100, ps=t.stoT/t.inT*100, pl=t.lanT/t.inT*100;
@@ -211,6 +211,6 @@
   setCount('bk-ston',t.stoT,0);
   setCount('bk-lann',t.lanT,0);
   txt('bk-who',(B.DEMO.customer||'').toUpperCase());
-  txt('bk-ver',B.METHOD_VERSION||'');
+  txt('bk-ver',B.METHOD_VERSION||''); txt('gr-ver',B.METHOD_VERSION||'');
 })();
 </script>

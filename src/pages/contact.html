@@ -22,6 +22,12 @@
 .page-contact .details li{padding:0 0 8px;font-size:15px;color:var(--graphite);margin:0}
 .page-contact .details li:last-child{padding-bottom:0}
 .page-contact .form-note{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.06em;color:var(--slate);margin:14px 0 0;line-height:1.7}
+.page-contact .f-done{margin-top:22px;border:1px solid var(--mist);border-left:3px solid var(--green-2);border-radius:8px;padding:18px 20px;background:var(--white)}
+.page-contact .f-done[hidden]{display:none}
+.page-contact .f-done .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin:0 0 8px}
+.page-contact .f-done p{margin:0 0 12px;color:var(--graphite);font-size:15px;line-height:1.55}
+.page-contact .f-done a{color:var(--green);font-weight:600}
+.page-contact .f-done pre{margin:0 0 14px;padding:12px 14px;background:var(--paper);border:1px solid var(--mist-2);border-radius:6px;font-family:var(--font-mono);font-size:12px;line-height:1.6;white-space:pre-wrap;word-break:break-word;color:var(--ink);max-height:260px;overflow:auto}
 </style>
 
 <!-- HERO -->
@@ -39,7 +45,7 @@
     <div class="form-head reveal"><span class="sec-idx">01</span><p class="eyebrow">Book a walkthrough</p></div>
     <div class="grid g12">
       <div class="span7 reveal">
-        <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="form" action="/contact/?sent=1">
+        <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="form" action="/contact/?sent=1" data-mode="{{FORM_MODE}}" data-to="{{EMAIL}}">
           <input type="hidden" name="form-name" value="contact">
           <p class="hp"><label>Leave this field empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
           <div class="row2">
@@ -57,8 +63,14 @@
           <label>What would you like to measure?<textarea name="message" rows="5" placeholder="Streams, programs, sites, reporting deadlines. One month of data is enough to start."></textarea></label>
           <label class="check"><input type="checkbox" name="sample_certificate" value="yes"><span>Send me the sample YES Certificate</span></label>
           <div class="btn-row"><button class="btn btn-primary" type="submit">Book a walkthrough {{ARROW}}</button></div>
-          <p class="form-note">Submitting sends your details to YES at {{EMAIL}}. Nothing else. No mailing list.</p>
+          <p class="form-note">{{FORM_NOTE}}</p>
         </form>
+        <div class="f-done" id="f-done" hidden role="status">
+          <p class="k">Almost there</p>
+          <p>Your email app should have opened with the request filled in. Press send and it reaches YES. If nothing opened, copy the request below and email it to <a href="mailto:{{EMAIL}}">{{EMAIL}}</a>.</p>
+          <pre></pre>
+          <button type="button" class="btn btn-outline btn-sm" id="f-copy">Copy the request</button>
+        </div>
       </div>
       <div class="span5 reveal">
         <div class="card details">
@@ -92,9 +104,42 @@
 <!--scripts-->
 <script>
 (function(){
-  if(/[?&]sent=1/.test(location.search)&&window.YES&&window.YES.toast){
-    window.YES.toast('Thanks. We will be in touch.');
+  var Y=window.YES||{};
+  if(/[?&]sent=1/.test(location.search)&&Y.toast){
+    Y.toast('Thanks. We will be in touch.');
     if(history.replaceState) history.replaceState(null,'',location.pathname);
   }
+  var form=document.querySelector('form[name="contact"]'); if(!form) return;
+  // Netlify builds post to Netlify Forms. Anywhere without a form backend (GitHub Pages, local preview) opens a pre-filled email instead.
+  var mode=form.getAttribute('data-mode')||'mailto', host=location.hostname;
+  if(/github\.io$/.test(host)||host==='localhost'||host==='127.0.0.1'||location.protocol==='file:') mode='mailto';
+  if(mode!=='mailto') return;
+  var to=form.getAttribute('data-to')||'contact@yes.com.au', done=document.getElementById('f-done');
+  function val(n){var el=form.elements[n]; return el&&el.value!=null?String(el.value).trim():'';}
+  form.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    if(form.checkValidity&&!form.checkValidity()){ if(form.reportValidity) form.reportValidity(); return; }
+    if(val('bot-field')) return;
+    var org=val('organisation');
+    var lines=['Name: '+val('name'),'Organisation: '+org,'Email: '+val('email')];
+    if(val('phone')) lines.push('Phone: '+val('phone'));
+    lines.push('I am: '+val('type'));
+    if(val('size')) lines.push('Population or sites: '+val('size'));
+    var cb=form.elements['sample_certificate'];
+    lines.push('Send the sample YES Certificate: '+(cb&&cb.checked?'Yes':'No'));
+    if(val('message')){ lines.push(''); lines.push('What we would like to measure:'); lines.push(val('message')); }
+    var subject='YES walkthrough request'+(org?' · '+org:'');
+    var body=lines.join('\r\n');
+    if(done){ done.hidden=false; var pre=done.querySelector('pre'); if(pre) pre.textContent='To: '+to+'\nSubject: '+subject+'\n\n'+lines.join('\n'); }
+    if(Y.toast) Y.toast('Opening your email app with the request filled in');
+    window.location.href='mailto:'+to+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  });
+  var cp=document.getElementById('f-copy');
+  if(cp) cp.addEventListener('click',function(){
+    var pre=done&&done.querySelector('pre'); if(!pre) return;
+    var text=pre.textContent;
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(function(){ if(Y.toast) Y.toast('Copied. Paste it into an email to '+to); },function(){ if(Y.toast) Y.toast('Select the text above and copy it'); }); }
+    else if(Y.toast) Y.toast('Select the text above and copy it');
+  });
 })();
 </script>

@@ -6,16 +6,16 @@
 .page-certificate .sheets{display:grid;gap:28px;justify-items:center}
 .page-certificate .sheet{width:794px;min-height:1123px;background:#F4F4F2;color:var(--ink);position:relative;box-shadow:0 40px 80px rgba(0,0,0,.5);overflow:hidden;font-size:12.5px;line-height:1.45}
 .page-certificate .sheet-scaler{width:794px;transform-origin:top center}
-@media(max-width:860px){.page-certificate .sheets{justify-items:start;overflow:hidden}.page-certificate .sheet-scaler{transform:scale(var(--sc,1))}.page-certificate .sheet-slot{height:calc(1123px * var(--sc,1));width:100%;overflow:hidden}}
-.page-certificate .band{background:var(--ink);color:var(--paper);padding:26px 44px 22px;position:relative}
+@media(max-width:860px){.page-certificate .sheets{justify-items:start;overflow:hidden}.page-certificate .sheet-scaler{transform:scale(var(--sc,1))}.page-certificate .sheet-slot{height:calc(var(--sh,1123px) * var(--sc,1));width:100%;overflow:hidden}}
+.page-certificate .band{background:var(--ink);color:var(--paper);padding:22px 44px 18px;position:relative}
 .page-certificate .band::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--green) 0 34%,var(--green-3) 34% 67%,var(--slate) 67%)}
 .page-certificate .band-top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px}
 .page-certificate .band .logo .logo-mark{font-size:36px;color:var(--paper)}
 .page-certificate .band .logo .logo-name{font-size:10.5px;letter-spacing:.2em;color:#C9CCC7;margin-top:6px}
 .page-certificate .band .logo .logo-url{font-size:10px}
-.page-certificate .meta{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--slate);text-align:right;line-height:1.9}
+.page-certificate .meta{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--slate);text-align:right;line-height:1.6}
 .page-certificate .meta b{color:var(--paper);font-weight:500}
-.page-certificate .band-title{margin-top:18px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px}
+.page-certificate .band-title{margin-top:10px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px}
 .page-certificate .band-title .k{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--green-3);margin-bottom:8px;white-space:nowrap}
 .page-certificate .band-title h1{font-size:30px;letter-spacing:-.03em;line-height:1;color:var(--paper);white-space:nowrap}
 .page-certificate .band-title .cust{text-align:right}
@@ -25,16 +25,17 @@
 .page-certificate .sec{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);display:flex;justify-content:space-between;gap:12px;padding-bottom:6px;border-bottom:1px solid var(--ink);margin:0 0 10px}
 .page-certificate .sec b{color:var(--ink);font-weight:500}
 /* score panel */
-.page-certificate .score{display:grid;grid-template-columns:150px minmax(0,1fr) 190px;gap:22px;align-items:center;background:var(--ink);color:var(--paper);border-radius:10px;padding:14px 22px;margin-bottom:14px}
-.page-certificate .gauge{position:relative;width:140px;height:140px}
-.page-certificate .gauge svg{width:140px;height:140px;display:block}
+.page-certificate .score{display:grid;grid-template-columns:124px minmax(0,1fr) 206px;gap:22px;align-items:center;background:var(--ink);color:var(--paper);border-radius:10px;padding:12px 22px;margin-bottom:12px}
+.page-certificate .gauge{position:relative;width:120px;height:120px}
+.page-certificate .gauge svg{width:120px;height:120px;display:block}
 .page-certificate .gauge .gv{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-.page-certificate .gauge .gv b{font-family:var(--font-display);font-weight:800;font-size:46px;letter-spacing:-.05em;line-height:.9;color:var(--green-3);font-variant-numeric:tabular-nums}
+.page-certificate .gauge .gv b{font-family:var(--font-display);font-weight:800;font-size:40px;letter-spacing:-.05em;line-height:.9;color:var(--green-3);font-variant-numeric:tabular-nums}
 .page-certificate .gauge .gv small{font-family:var(--font-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate)}
 .page-certificate .score-mid .band-name{font-family:var(--font-display);font-weight:800;font-size:26px;letter-spacing:-.03em;line-height:1}
 .page-certificate .score-mid .k{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--green-3);margin-bottom:8px}
 .page-certificate .score-mid p{font-size:10.5px;color:var(--mist);margin:8px 0 0;max-width:44ch;line-height:1.45}
-.page-certificate .parts{display:grid;gap:9px}
+.page-certificate .parts{display:grid;gap:8px}
+.page-certificate .part span:nth-child(2){white-space:nowrap}
 .page-certificate .part{display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:8px;align-items:center;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.04em;color:var(--mist)}
 .page-certificate .part i{width:10px;height:10px;border-radius:2px;display:inline-block}
 .page-certificate .part .pv{font-variant-numeric:tabular-nums;color:var(--paper)}
@@ -42,16 +43,32 @@
 .page-certificate .part .tr b{display:block;height:100%;border-radius:2px}
 /* tiles */
 .page-certificate .tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:8px}
-.page-certificate .tile{border:1px solid var(--mist);border-radius:8px;padding:10px 12px 9px;background:#fff;position:relative;min-height:84px}
+.page-certificate .tile{border:1px solid var(--mist);border-radius:8px;padding:9px 12px 8px;background:#fff;position:relative;min-height:76px}
 .page-certificate .tile svg{width:20px;height:20px;stroke:var(--green);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;position:absolute;top:12px;right:12px}
-.page-certificate .tile .v{font-family:var(--font-display);font-weight:800;font-size:24px;letter-spacing:-.04em;line-height:1;margin-top:18px;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:4px}
+.page-certificate .tile .v{font-family:var(--font-display);font-weight:800;font-size:24px;letter-spacing:-.04em;line-height:1;margin-top:10px;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:4px}
 .page-certificate .tile .v span.u{font-family:var(--font-mono);font-size:11px;letter-spacing:.02em;color:var(--slate);font-weight:400}
 .page-certificate .tile .v.g{color:var(--green)}
 .page-certificate .tile .l{font-family:var(--font-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin-top:7px}
 .page-certificate .tile .m{font-size:9.5px;color:var(--graphite);margin-top:2px;line-height:1.3}
 .page-certificate .tiles.three{grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:14px}
+/* two emissions figures on the sheet (shared component, sized for A4) */
+.page-certificate .em-host{margin-bottom:12px}
+.page-certificate .em-pair{border-radius:8px;border-color:var(--mist);background:#fff}
+.page-certificate .em{padding:10px 14px 9px}
+.page-certificate .em-k{font-size:8.5px;letter-spacing:.14em}
+.page-certificate .em-k .fig{min-width:16px;height:16px;font-size:9px;padding:0 4px}
+.page-certificate .em-t{font-size:12.5px;margin-top:6px;word-spacing:.08em}
+.page-certificate .em-v{font-size:27px;margin-top:5px}
+.page-certificate .em-v .u{font-size:10px;margin-left:5px}
+.page-certificate .em dl{font-size:9px;margin-top:7px}
+.page-certificate .em dt{padding:3px 8px 3px 0}
+.page-certificate .em dd{padding:3px 0}
+.page-certificate .em-f,.page-certificate .em-c{font-size:9px;line-height:1.4;margin-top:6px}
+.page-certificate .em-c{padding-top:6px}
+.page-certificate .em-c b{font-size:9px}
+.page-certificate .em-foot{font-size:8.5px;padding:6px 14px;line-height:1.5}
 /* buckets */
-.page-certificate .bk{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:22px;align-items:center;margin-bottom:14px}
+.page-certificate .bk{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;align-items:center;margin-bottom:12px}
 .page-certificate .bk .bar{height:18px;display:flex;border-radius:4px;overflow:hidden;background:var(--mist)}
 .page-certificate .bk .bar i{display:block;height:100%}
 .page-certificate .bk .bar .r{background:var(--green)}
@@ -80,8 +97,8 @@
 /* foot */
 .page-certificate .foot{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:20px;padding-top:12px;border-top:1px solid var(--ink);margin-top:2px}
 .page-certificate .foot p{margin:0 0 6px;font-size:10px;color:var(--graphite);line-height:1.45}
-.page-certificate .foot .attrib{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.03em;color:var(--charcoal)}
-.page-certificate .foot .sigl{border-top:1px solid var(--ink);margin-top:16px;padding-top:5px;max-width:240px}
+.page-certificate .foot .attrib{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.02em;color:var(--charcoal)}
+.page-certificate .foot .sigl{border-top:1px solid var(--ink);margin-top:10px;padding-top:5px;max-width:240px}
 .page-certificate .foot .sigl b{display:block;font-size:12px;font-weight:600}
 .page-certificate .foot .sigl span{font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;color:var(--graphite)}
 .page-certificate .foot .right{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
@@ -89,7 +106,7 @@
 .page-certificate .cid{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);text-align:right;line-height:1.8}
 .page-certificate .pgno{position:absolute;left:44px;right:44px;bottom:14px;display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate)}
 /* sheet 2 */
-.page-certificate .hdr2{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:18px 44px 12px;border-bottom:3px solid var(--ink)}
+.page-certificate .hdr2{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:14px 44px 10px;border-bottom:3px solid var(--ink)}
 .page-certificate .hdr2 .logo .logo-mark{font-size:26px;color:var(--ink)}
 .page-certificate .hdr2 .logo .logo-name{font-size:9px;color:var(--charcoal)}
 .page-certificate .hdr2 .logo .logo-url{font-size:9px}
@@ -97,12 +114,16 @@
 .page-certificate .hdr2 .t b{color:var(--ink);font-weight:500}
 .page-certificate .streams{width:100%;border-collapse:collapse;font-size:10.5px}
 .page-certificate .streams th{font-family:var(--font-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);font-weight:500;text-align:left;padding:0 8px 8px;border-bottom:1px solid var(--ink)}
-.page-certificate .streams td{padding:4px 8px;border-bottom:1px solid var(--mist);vertical-align:middle;line-height:1.3}
+.page-certificate .streams td{padding:2px 7px;border-bottom:1px solid var(--mist);vertical-align:middle;line-height:1.3}
+.page-certificate .streams th{padding-left:7px;padding-right:7px}
 .page-certificate .streams th.n,.page-certificate .streams td.n{text-align:right;font-variant-numeric:tabular-nums}
 .page-certificate .streams td.cat{white-space:nowrap;font-weight:500}
-.page-certificate .streams td.cat svg{width:16px;height:16px;stroke:var(--green);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px;margin-right:8px}
-.page-certificate .streams td .u{display:block;font-family:var(--font-mono);font-size:9.5px;color:var(--slate);letter-spacing:.02em}
-.page-certificate .streams .sb{height:8px;display:flex;border-radius:2px;overflow:hidden;background:var(--mist-2);min-width:150px}
+.page-certificate .streams td.cat svg{display:inline-block;width:15px;height:15px;stroke:var(--green);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px;margin-right:7px}
+.page-certificate .streams td .u{display:block;font-family:var(--font-mono);font-size:9px;color:var(--slate);letter-spacing:.02em;white-space:nowrap}
+.page-certificate .streams .sb{height:8px;display:flex;border-radius:2px;overflow:hidden;background:var(--mist-2);min-width:90px}
+.page-certificate .streams th.fa,.page-certificate .streams td.fa{border-left:1px solid var(--mist)}
+.page-certificate .streams th .f{display:inline-block;font-weight:500;color:var(--paper);background:var(--ink);border-radius:2px;padding:0 3px;margin-right:4px;letter-spacing:0}
+.page-certificate .streams th .f.b{background:var(--green)}
 .page-certificate .streams .sb i{display:block;height:100%}
 .page-certificate .streams .sb .r{background:var(--green)}
 .page-certificate .streams .sb .s{background:var(--stored)}
@@ -116,7 +137,8 @@
 .page-certificate .lg2{display:flex;gap:16px;font-family:var(--font-mono);font-size:9px;letter-spacing:.06em;color:var(--graphite);margin:6px 0 14px}
 .page-certificate .lg2 span{display:inline-flex;align-items:center;gap:6px}
 .page-certificate .lg2 i{width:9px;height:9px;border-radius:2px;display:inline-block}
-.page-certificate .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px}
+.page-certificate .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;margin-bottom:4px}
+.page-certificate .scale{margin-bottom:12px}
 .page-certificate .co2{display:grid;gap:5px}
 .page-certificate .co2 .row{display:grid;grid-template-columns:112px minmax(0,1fr) 46px;gap:8px;align-items:center;font-size:10px}
 .page-certificate .co2 .row .tr{height:10px;background:var(--mist-2);border-radius:2px;overflow:hidden}
@@ -158,7 +180,7 @@
 
 <section class="doc-wrap">
   <div class="wrap">
-    <div class="doc-tools"><span class="badge demo"><span class="dot"></span>Demo data · illustrative</span><span>YES-DEMO-2026-0001 · Method <span id="mv0">v0.1 draft</span> · Two pages, A4</span></div>
+    <div class="doc-tools"><span class="badge demo"><span class="dot"></span>Demo data · illustrative</span><span>YES-DEMO-2026-0001 · Method <span id="mv0">v1.0 draft</span> · Two pages, A4</span></div>
 
     <div class="sheets">
       <!-- ================= SHEET 1 ================= -->
@@ -170,8 +192,9 @@
               <div>Certificate <b>YES-DEMO-2026-0001</b></div>
               <div>Issued <b>27 September 2026</b></div>
               <div>Period <b>FY2026–27 to date</b></div>
-              <div>Method <b id="mv1">v0.1 draft</b></div>
-              <div>Verified by <b>YES · Recycle Group</b></div>
+              <div>Method <b id="mv1">v1.0 draft</b></div>
+              <div>Issued by <b>Recycle Group · processing operator</b></div>
+              <div>Assurance <b>Not independently assured</b></div>
             </div>
           </div>
           <div class="band-title">
@@ -193,27 +216,25 @@
               <div class="gv"><b id="sc">0</b><small>of 100</small></div>
             </div>
             <div class="score-mid">
-              <div class="k">YES Score · proposed method v0.1</div>
+              <div class="k">YES Score · proposed <span id="sv1">v0.1</span></div>
               <div class="band-name" id="sc-band">—</div>
-              <p>One number for the period, built from material recovery, carbon performance and the quality of the evidence behind every tonne. YES's own published method, versioned. Not an accredited rating.</p>
+              <p>Built from material recovery, carbon performance and evidence quality. Self-declared under the published YES Method: not an accredited rating, certification or third-party verification.</p>
             </div>
             <div class="parts" id="parts"></div>
           </div>
 
           <div class="sec"><span>02 · Headline outcomes</span><b>Every figure traceable to the ledger on page 2</b></div>
-          <div class="tiles">
-            <div class="tile"><svg><use href="#i-mattress"/></svg><div class="v g"><span id="t-matt">0</span></div><div class="l">Mattresses recycled</div><div class="m">Handed over to The Mattress Recycling Company</div></div>
-            <div class="tile"><svg><use href="#i-rate"/></svg><div class="v"><span id="t-srec">99</span><span class="u">%</span></div><div class="l">Steel recovery</div><div class="m">Of the steel in each mattress</div></div>
-            <div class="tile"><svg><use href="#i-steel"/></svg><div class="v g"><span id="t-steel">0</span><span class="u">t</span></div><div class="l">Steel recovered</div><div class="m">To the electric-arc-furnace route</div></div>
-            <div class="tile"><svg><use href="#i-co2"/></svg><div class="v g"><span id="t-co2">0</span><span class="u">t</span></div><div class="l">CO₂-e avoided</div><div class="m">NSW DECCW 2010 factors, conservative</div></div>
-          </div>
-          <div class="tiles three">
-            <div class="tile"><svg><use href="#i-landfill"/></svg><div class="v"><span id="t-vol">0</span><span class="u">m³</span></div><div class="l">Landfill volume avoided</div><div class="m">What would have gone in, less what did</div></div>
+          <div class="tiles" style="margin-bottom:14px">
+            <div class="tile"><svg><use href="#i-mattress"/></svg><div class="v g"><span id="t-matt">0</span></div><div class="l">Mattresses processed</div><div class="m">By The Mattress Recycling Company</div></div>
+            <div class="tile"><svg><use href="#i-rate"/></svg><div class="v"><span id="t-srec">99</span><span class="u">%</span></div><div class="l">Steel recovery</div><div class="m">Stated plant yield · dated yield study pending</div></div>
+            <div class="tile"><svg><use href="#i-steel"/></svg><div class="v g"><span id="t-steel">0</span><span class="u">t</span></div><div class="l">Steel recovered</div><div class="m">Sold to licensed metal reprocessors</div></div>
             <div class="tile"><svg><use href="#i-rate"/></svg><div class="v"><span id="t-rate">0</span><span class="u">%</span></div><div class="l">Material recovery rate</div><div class="m">Recycled mass ÷ mass handed over</div></div>
-            <div class="tile"><svg><use href="#i-loop"/></svg><div class="v g"><span id="t-ret">0</span><span class="u">t</span></div><div class="l">Returned to productive use</div><div class="m">Material with a next use, this period</div></div>
           </div>
 
-          <div class="sec"><span>03 · Three buckets</span><b>Stored is neutral · Landfilled counts against</b></div>
+          <div class="sec"><span>03 · Emissions · two figures, never netted</span><b>A for your inventory · B reported separately</b></div>
+          <div class="em-host" id="em"></div>
+
+          <div class="sec"><span>04 · Three buckets</span><b>Stored is not counted as recycled</b></div>
           <div class="bk">
             <div>
               <div class="bar" id="bk-bar"><i class="r"></i><i class="s"></i><i class="l"></i></div>
@@ -223,30 +244,16 @@
                 <div><b id="bk-l">0 t</b><span style="background:var(--charcoal)"></span>Landfilled</div>
               </div>
             </div>
-            <div class="side">Mattress foam and fibre residual is shredded and landfilled at 25% of its original volume while recovery trials continue. It is counted as landfilled here, which is why the recovery rate for mattresses sits at about a third by mass.</div>
-          </div>
-
-          <div class="sec"><span>04 · At real-world scale</span><b>Shown only with a source</b></div>
-          <div class="scale">
-            <div class="sc"><div class="k">CO₂-e avoided</div><div class="big"><span id="s-cars-n"></span><span class="u">cars permanently retired</span></div><div class="viz" id="s-cars"></div><div class="src">4.16 t CO₂-e per family vehicle lifetime · NSW DECCW 2010</div></div>
-            <div class="sc"><div class="k">Landfill volume avoided</div><div class="big"><span id="s-pool-n"></span><span class="u">of an Olympic pool</span></div><div class="viz"><div class="pool"><i id="s-pool"></i></div></div><div class="src">2,500 m³ per Olympic-size pool · unit used by NSW DECCW 2010</div></div>
-            <div class="sc"><div class="k">Steel recovered</div><div class="big"><span id="s-carsteel-n"></span><span class="u">cars' worth of steel</span></div><div class="viz"><div class="beam" id="s-beam"></div></div><div class="src">≈900 kg of steel in an average car · WorldAutoSteel</div></div>
+            <div class="side">Recycled: baled or sorted material delivered to a licensed reprocessor, with a docket. Mattress foam and fibre residual is landfilled at 25% of its volume while recovery trials continue, so mattresses recover about a third by mass.</div>
           </div>
 
           <div class="foot">
             <div>
-              <p><strong>Verification statement.</strong> The quantities on this certificate were entered by YES staff from the evidence referenced on the ledger for each handover: weighbridge dockets, count sheets and processor certificates. No figure was entered by the customer. Streams marked pending on page 2 have no carbon factor in the YES Method library; their recovered mass is counted and no CO₂-e is claimed.</p>
+              <p><strong>Data statement.</strong> Entered by YES staff from the evidence on the ledger for each handover: weighbridge dockets, count sheets and processor certificates. No figure was entered by the customer. A is calculated for the customer's Scope 3 inventory; B is a modelled estimate, reported separately and not deducted from A. Neither is an offset. <strong>Issuer.</strong> Recycle Group, as the processing operator. Not independently assured.</p>
               <p class="attrib">Verified recycling data supplied by The Mattress Recycling Company and Recycle Group.</p>
               <div class="sigl"><b>Ryan O'Toole</b><span>Chief Executive Officer · YES</span></div>
             </div>
             <div class="right">
-              <svg class="seal" viewBox="0 0 96 96" aria-label="YES verified data seal">
-                <circle cx="48" cy="48" r="45" fill="none" stroke="#166534" stroke-width="2"/>
-                <circle cx="48" cy="48" r="37" fill="none" stroke="#166534" stroke-width=".8" stroke-dasharray="2 3"/>
-                <path id="sealpath" d="M48 48 m-30 0 a30 30 0 1 1 60 0 a30 30 0 1 1 -60 0" fill="none"/>
-                <text font-family="IBM Plex Mono, monospace" font-size="7.2" letter-spacing="1.6" fill="#166534"><textPath href="#sealpath" startOffset="2%">VERIFIED DATA · YES METHOD V0.1 · RECYCLE GROUP · </textPath></text>
-                <text x="48" y="53" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="800" font-size="20" fill="#0B0B0B">YES</text>
-              </svg>
               <div class="cid">Certificate ID<br>YES-DEMO-2026-0001<br>Demo · illustrative</div>
             </div>
           </div>
@@ -258,41 +265,44 @@
       <div class="sheet-slot"><div class="sheet-scaler"><div class="sheet" id="sheet2">
         <div class="hdr2">
           {{LOGO_BIG}}
-          <div class="t"><b>Hepburn Shire Council · Hard waste program</b><br>Certificate YES-DEMO-2026-0001 · FY2026–27 to date · Method <span id="mv2">v0.1 draft</span></div>
+          <div class="t"><b>Hepburn Shire Council · Hard waste program</b><br>Certificate YES-DEMO-2026-0001 · FY2026–27 to date · Method <span id="mv2">v1.0 draft</span></div>
         </div>
         <div class="body">
-          <div class="sec"><span>05 · Streams reported</span><b id="hdr2-cats">13 of 13 categories</b></div>
+          <div class="sec"><span>06 · Streams reported</span><b id="hdr2-cats">13 of 13 categories</b></div>
           <table class="streams">
-            <thead><tr><th>Stream</th><th class="n">Handed over</th><th>Pathway split</th><th class="n">Recycled t</th><th class="n">Stored t</th><th class="n">Landfilled t</th><th class="n">CO₂-e t</th></tr></thead>
+            <thead><tr><th>Stream</th><th class="n">Handed over</th><th>Pathway split</th><th class="n">Recycled t</th><th class="n">Stored t</th><th class="n">Landfilled t</th><th class="n fa"><span class="f">A</span>Cat 5 t</th><th class="n"><span class="f b">B</span>Avoided t</th></tr></thead>
             <tbody id="rows"></tbody>
           </table>
           <div class="lg2"><span><i style="background:var(--green)"></i>Recycled</span><span><i style="background:var(--stored)"></i>Stored</span><span><i style="background:var(--charcoal)"></i>Landfilled</span><span style="margin-left:auto">Bars are proportional to each stream's mass</span></div>
 
+          <div class="sec"><span>07 · At real-world scale</span><b>Shown only with a source</b></div>
+          <div class="scale">
+            <div class="sc"><div class="k">Avoided emissions · B, as scale</div><div class="big"><span id="s-cars-n"></span><span class="u">cars permanently retired</span></div><div class="viz" id="s-cars"></div><div class="src">B ÷ 4.16 t CO₂-e per family vehicle lifetime · NSW DECCW 2010 indicator · scale only</div></div>
+            <div class="sc"><div class="k">Landfill volume avoided</div><div class="big"><span id="s-pool-n"></span><span class="u">of an Olympic pool</span></div><div class="viz"><div class="pool"><i id="s-pool"></i></div></div><div class="src"><span id="s-vol-m3"></span> m³ ÷ 2,500 m³ per Olympic-size pool · unit used by NSW DECCW 2010</div></div>
+            <div class="sc"><div class="k">Steel recovered</div><div class="big"><span id="s-carsteel-n"></span><span class="u">cars' worth of steel</span></div><div class="viz"><div class="beam" id="s-beam"></div></div><div class="src">≈900 kg of steel in an average car · WorldAutoSteel</div></div>
+          </div>
+
+          <div class="sec"><span>08 · Method and evidence</span><b>YES Method <span id="mv3">v1.0 draft</span></b></div>
           <div class="two">
-            <div>
-              <div class="sec"><span>06 · CO₂-e avoided by stream</span><b id="co2-tot">— t</b></div>
-              <div class="co2" id="co2"></div>
+            <div class="method">
+                <p><strong>A · Category 5 inventory.</strong> GHG Protocol waste-type-specific method: processing (0.05 t CO₂-e per t handled) + transport (<span id="m-km">120</span> km × 0.15 kg per t-km), both illustrative until metered, + landfilled tonnes × NGA landfill factors. C&amp;I factor on residual until a composition audit.</p>
+                <p><strong>B · Avoided emissions.</strong> Steel recovered × 0.44, plus other recycled tonnes × the stream's factor (NSW DECCW 2010, Table 4; flagged 2010). Reported separately, never deducted from A, not an offset.</p>
+                <p><strong>Recycled.</strong> Baled or sorted material delivered to a licensed reprocessor, with a docket. <strong>Mass.</strong> Weighbridge tonnes; counts at published unit weights (mattress 80 kg, tyre 9.5 kg, appliance 60 kg, vehicle 1,200 kg).</p>
             </div>
-            <div>
-              <div class="sec"><span>07 · Method and evidence</span><b>YES Method <span id="mv3">v0.1 draft</span></b></div>
-              <div class="method">
-                <p><strong>Carbon.</strong> Steel recovered × 0.44 t CO₂-e per tonne, plus the non-steel recycled fraction × the stream's reference factor. Factors from NSW DECCW 2010, <em>Environmental benefits of recycling</em>, Table 4, C&amp;I/C&amp;D pathway. Conservative by default.</p>
-                <p><strong>Mass.</strong> Weighbridge tonnes where available; count streams converted at the published unit weights (mattress 80 kg, tyre 9.5 kg, appliance 60 kg, vehicle 1,200 kg).</p>
-                <p><strong>Landfill volume avoided.</strong> Uncompacted volume that would have gone to landfill, less the residual that did.</p>
+            <div class="method">
                 <div class="mono" id="factors"></div>
                 <div class="grades">
                   <div><b>A</b><span>Weighbridge docket or processor certificate. Counts in full.</span></div>
                   <div><b>B</b><span>Signed count sheet or contractor report. Counts, flagged.</span></div>
                   <div><b>C</b><span>Customer statement without documentation. Recorded; excluded from the YES Score until evidenced.</span></div>
                 </div>
-              </div>
             </div>
           </div>
 
           <div class="foot" style="margin-top:22px">
             <div>
-              <p><strong>Scope.</strong> Material handed over to Recycle Group under this program, plus whole-of-organisation entries evidenced by the council and graded as above. Stored material is neutral until it moves, then reclassified in the period it moves.</p>
-              <p class="attrib">Questions about any line on this certificate: contact@yes.com.au · quote the certificate ID and the ledger date.</p>
+              <p><strong>Scope.</strong> Material handed over to Recycle Group under this program, plus whole-of-organisation entries evidenced by the council and graded as above, with no processing or transport attributed to them. Stored material is reclassified in the period it moves. Issued by Recycle Group as the processing operator; not independently assured.</p>
+              <p class="attrib" style="font-size:9.5px">Questions about any line: contact@yes.com.au · quote the certificate ID and the ledger date.</p>
             </div>
             <div class="right"><div class="cid">Certificate ID<br>YES-DEMO-2026-0001<br>Demo · illustrative</div></div>
           </div>
@@ -301,7 +311,7 @@
       </div></div></div>
     </div>
 
-    <div class="doc-after"><span>Illustrative data · not Hepburn Shire Council data · factors NSW DECCW 2010 Table 4</span><a href="/method/">Read the YES Method →</a></div>
+    <div class="doc-after"><span>Illustrative data · not Hepburn Shire Council data · A: NGA landfill factors · B: NSW DECCW 2010, reported separately</span><a href="/method/">Read the YES Method →</a></div>
   </div>
 </section>
 
@@ -311,53 +321,55 @@
 (function(){
   var Y=window.YES; if(!Y||!Y.compute) return;
   var f=function(n,d){return (Y.fmt||function(n,d){return n.toFixed(d||0);})(n,d||0);};
-  var t=Y.compute(Y.DEMO.entries);
+  var t=Y.compute(Y.DEMO.entries,{km:Y.DEMO.km||0,sector:Y.DEMO.sector||'council'});
   var $=function(id){return document.getElementById(id);};
   var set=function(id,v){var e=$(id); if(e) e.textContent=v;};
   ['mv0','mv1','mv2','mv3'].forEach(function(id){set(id,Y.METHOD_VERSION);});
+  set('sv1',(Y.SCORE&&Y.SCORE.version)||'v0.1'); set('m-km',f(Y.DEMO.km||0));
+  if($('em')&&Y.emPair) $('em').innerHTML=Y.emPair(t,{rows:3,foot:false,compact:true});
   set('hdr-in',f(t.inT,0)+' t handed over');
   // score + gauge (270° sweep = 330 of circumference 440)
   var s=t.score, sweep=330;
   set('sc',s.score); set('sc-band',s.band);
-  var parts=[['arc-rec',s.parts.recovery,'#166534','Material recovery',Y.SCORE.weights.recovery],['arc-car',s.parts.carbon,'#4FC17A','Carbon performance',Y.SCORE.weights.carbon],['arc-ev',s.parts.evidence,'#8EDDAA','Evidence quality',Y.SCORE.weights.evidence]];
+  var parts=[['arc-rec',s.parts.recovery,'#166534','Recovery',Y.SCORE.weights.recovery],['arc-car',s.parts.carbon,'#4FC17A','Carbon',Y.SCORE.weights.carbon],['arc-ev',s.parts.evidence,'#8EDDAA','Evidence',Y.SCORE.weights.evidence]];
   var off=0, ph='';
   parts.forEach(function(p){var len=sweep*(p[1]/100);var el=$(p[0]);if(el){el.setAttribute('stroke-dasharray',len+' 440');el.setAttribute('stroke-dashoffset',-off);}off+=len;
     ph+='<div class="part"><i style="background:'+p[2]+'"></i><span>'+p[3]+'</span><span class="pv">'+f(p[1],1)+' / '+p[4]+'</span><span class="tr"><b style="width:'+(p[1]/p[4]*100)+'%;background:'+p[2]+'"></b></span></div>';});
   if($('parts')) $('parts').innerHTML=ph;
   // tiles
-  set('t-matt',f(t.units.mattresses||0)); set('t-steel',f(t.steelT,1)); set('t-co2',f(t.co2,0)); set('t-vol',f(t.volAvoided,0)); set('t-rate',f(t.recoveryRate*100,0)); set('t-ret',f(t.recT,0));
+  set('t-matt',f(t.units.mattresses||0)); set('t-srec',f((Y.CAT.mattresses.steelRecovery||0)*100)); set('t-steel',f(t.steelT,1)); set('t-rate',f(t.recoveryRate*100,0));
   // buckets
   var tot=t.recT+t.stoT+t.lanT||1; var bb=$('bk-bar'); if(bb){var seg=bb.children; seg[0].style.width=(t.recT/tot*100)+'%'; seg[1].style.width=(t.stoT/tot*100)+'%'; seg[2].style.width=(t.lanT/tot*100)+'%';}
   set('bk-r',f(t.recT,0)+' t'); set('bk-s',f(t.stoT,0)+' t'); set('bk-l',f(t.lanT,0)+' t');
   // scale
-  var cars=t.co2/Y.EQUIV.carT; set('s-cars-n',f(Math.round(cars)));
-  var cv=$('s-cars'); if(cv){var n=Math.min(120,Math.round(cars)); var h=''; for(var i=0;i<n;i++) h+='<svg viewBox="0 0 24 24"><use href="#i-carsolid"/></svg>'; if(cars>120) h+='<span style="font-family:var(--font-mono);font-size:9px;color:var(--slate);align-self:center">+'+f(Math.round(cars)-120)+'</span>'; cv.innerHTML=h;}
+  var cars=t.avoided/Y.EQUIV.carT; set('s-cars-n',f(Math.round(cars))); set('s-vol-m3',f(t.volAvoided,0));
+  var cv=$('s-cars'); if(cv){var cap=30,n=Math.min(cap,Math.round(cars)); var h=''; for(var i=0;i<n;i++) h+='<svg viewBox="0 0 24 24"><use href="#i-carsolid"/></svg>'; if(cars>cap) h+='<span style="font-family:var(--font-mono);font-size:9px;color:var(--slate);align-self:center;margin-left:3px">+'+f(Math.round(cars)-cap)+'</span>'; cv.innerHTML=h;}
   var pool=t.volAvoided/2500; set('s-pool-n',f(pool*100,0)+'%'); if($('s-pool')) $('s-pool').style.width=Math.min(100,pool*100)+'%';
   var carsteel=t.steelT/0.9; set('s-carsteel-n',f(Math.round(carsteel)));
   var beam=$('s-beam'); if(beam){var segs=20, filled=Math.round(Math.min(1,carsteel/200)*segs); var bh=''; for(var j=0;j<segs;j++) bh+='<i class="'+(j<filled?'':'o')+'"></i>'; beam.innerHTML=bh; beam.title=f(Math.round(carsteel))+' of a 200-car scale';}
   // rows
   var icons={mattresses:'i-mattress',steel:'i-steel',aluminium:'i-alu',timber_plain:'i-timber',timber_coloured:'i-timber2',tyres:'i-tyre',whitegoods:'i-white',ewaste:'i-ewaste',clothing:'i-cloth',concrete:'i-rubble',vehicles:'i-car',greenwaste:'i-green',general:'i-bin'};
   var rows='', maxMass=0; Y.CATS.forEach(function(c){var b=t.byCat[c.k]; if(b&&b.mass>maxMass) maxMass=b.mass;});
-  var maxCo2=0; Y.CATS.forEach(function(c){var b=t.byCat[c.k]; if(b&&b.co2>maxCo2) maxCo2=b.co2;});
+  var maxCo2=0; Y.CATS.forEach(function(c){var b=t.byCat[c.k]; if(b&&b.avoided>maxCo2) maxCo2=b.avoided;});
   Y.CATS.forEach(function(c){
-    var b=t.byCat[c.k]||{qty:0,mass:0,rec:0,sto:0,lan:0,co2:0};
+    var b=t.byCat[c.k]||{qty:0,mass:0,rec:0,sto:0,lan:0,co2:0,avoided:0,cat5:0};
     var w=Math.max(8,b.mass/maxMass*100);
     var u=c.unit==='count'?'<span class="u">'+f(b.qty)+' '+c.unitLabel+'</span>':'';
-    var co=c.status==='pending'&&b.rec>0?'<span class="tag pending">Pending</span>':(b.co2>0?'<span class="cb" style="width:'+Math.max(4,b.co2/maxCo2*40)+'px"></span>'+f(b.co2,b.co2<10?1:0):'—');
-    rows+='<tr><td class="cat"><svg><use href="#'+icons[c.k]+'"/></svg>'+c.name+'</td><td class="n">'+f(b.mass,b.mass<10?1:0)+' t'+u+'</td><td><div class="sb" style="width:'+w+'%"><i class="r" style="width:'+(b.rec/b.mass*100||0)+'%"></i><i class="s" style="width:'+(b.sto/b.mass*100||0)+'%"></i><i class="l" style="width:'+(b.lan/b.mass*100||0)+'%"></i></div></td><td class="n rec">'+(b.rec>0?f(b.rec,b.rec<10?1:0):'—')+'</td><td class="n">'+(b.sto>0?f(b.sto,b.sto<10?1:0):'—')+'</td><td class="n lan">'+(b.lan>0?f(b.lan,b.lan<10?1:0):'—')+'</td><td class="n co">'+co+'</td></tr>';
+    var co=c.status==='pending'&&b.rec>0?'<span class="tag pending">Pending</span>':(b.avoided>0?'<span class="cb" style="width:'+Math.max(4,b.avoided/maxCo2*28)+'px"></span>'+f(b.avoided,b.avoided<10?1:0):'—');
+    var a5=b.mass>0?f(b.cat5,b.cat5<10?1:0):'—';
+    rows+='<tr><td class="cat"><svg><use href="#'+icons[c.k]+'"/></svg>'+c.name+'</td><td class="n">'+f(b.mass,b.mass<10?1:0)+' t'+u+'</td><td><div class="sb" style="width:'+w+'%"><i class="r" style="width:'+(b.rec/b.mass*100||0)+'%"></i><i class="s" style="width:'+(b.sto/b.mass*100||0)+'%"></i><i class="l" style="width:'+(b.lan/b.mass*100||0)+'%"></i></div></td><td class="n rec">'+(b.rec>0?f(b.rec,b.rec<10?1:0):'—')+'</td><td class="n">'+(b.sto>0?f(b.sto,b.sto<10?1:0):'—')+'</td><td class="n lan">'+(b.lan>0?f(b.lan,b.lan<10?1:0):'—')+'</td><td class="n fa">'+a5+'</td><td class="n co">'+co+'</td></tr>';
   });
-  rows+='<tr class="total"><td>Total</td><td class="n">'+f(t.inT,0)+' t</td><td></td><td class="n rec">'+f(t.recT,0)+'</td><td class="n">'+f(t.stoT,0)+'</td><td class="n lan">'+f(t.lanT,0)+'</td><td class="n">'+f(t.co2,0)+'</td></tr>';
+  rows+='<tr class="total"><td>Total</td><td class="n">'+f(t.inT,0)+' t</td><td></td><td class="n rec">'+f(t.recT,0)+'</td><td class="n">'+f(t.stoT,0)+'</td><td class="n lan">'+f(t.lanT,0)+'</td><td class="n fa">'+f(t.cat5,0)+'</td><td class="n">'+f(t.avoided,0)+'</td></tr>';
   if($('rows')) $('rows').innerHTML=rows;
-  // co2 ranked
-  var list=Y.CATS.map(function(c){var b=t.byCat[c.k]; return {name:c.name,co2:b?b.co2:0,pend:c.status==='pending'&&b&&b.rec>0,steel:c.steelFrac>0};}).filter(function(r){return r.co2>0||r.pend;}).sort(function(a,b){return b.co2-a.co2;});
-  var ch=''; list.forEach(function(r){ch+='<div class="row'+(r.pend?' pend':'')+'"><span>'+r.name+'</span><span class="tr"><b class="'+(r.steel?'st':'')+'" style="width:'+(r.co2/maxCo2*100)+'%"></b></span><span class="v">'+(r.pend?'pending':f(r.co2,r.co2<10?1:0)+' t')+'</span></div>';});
-  if($('co2')) $('co2').innerHTML=ch; set('co2-tot',f(t.co2,0)+' t CO₂-e');
   // factors line
-  var fl='Factors (t CO₂-e per t recycled): steel '+Y.STEEL.f; Y.CATS.forEach(function(c){if(c.carbon!=null) fl+=' · '+c.name.toLowerCase()+' '+c.carbon;}); fl+=' · car equivalence '+Y.EQUIV.carT+' t per vehicle lifetime · pending: '+(t.pendingCats.join(', ')||'none');
+  var fl='B · t CO₂-e per t recycled: steel '+Y.STEEL.f; Y.CATS.forEach(function(c){if(c.carbon!=null) fl+=' · '+c.name.toLowerCase()+' '+c.carbon;}); fl+=' · pending: '+(t.pendingCats.join(', ')||'none');
+  var used={}; Y.CATS.forEach(function(c){var b=t.byCat[c.k]; if(b&&b.mass>0){var lt=Y.lanType(c,{sector:Y.DEMO.sector}); used[lt]=Y.NGA.f[lt];}});
+  var SHORT={inert:'inert',wood:'wood',garden:'garden',textiles:'textiles',rubber:'rubber',food:'food',paper:'paper',msw:'MSW',ci:'C&I',cd:'C&D'};
+  fl+=' · A · NGA, t CO₂-e per t landfilled: '+Object.keys(used).map(function(k){return (SHORT[k]||k)+' '+(used[k]===0?'0':used[k].toFixed(1));}).join(' · ')+' · C&I interim on residual';
   set('factors',fl);
   // responsive scale
-  function fit(){var w=Math.min(document.documentElement.clientWidth-32,794); var sc=Math.min(1,w/794); document.querySelectorAll('.page-certificate .sheet-slot, .sheet-slot').forEach(function(s){s.style.setProperty('--sc',sc);});}
-  fit(); window.addEventListener('resize',fit);
+  function fit(){var w=Math.min(document.documentElement.clientWidth-32,794); var sc=Math.min(1,w/794); document.querySelectorAll('.page-certificate .sheet-slot, .sheet-slot').forEach(function(s){var sh=s.querySelector('.sheet'); s.style.setProperty('--sc',sc); if(sh) s.style.setProperty('--sh',Math.max(1123,sh.scrollHeight)+'px');});}
+  fit(); window.addEventListener('resize',fit); window.addEventListener('load',fit); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fit);
   // print fit: scale each sheet so it lands on one A4 page
   function pz(){document.querySelectorAll('.sheet').forEach(function(sh){sh.style.setProperty('--pz',Math.min(1,1116/sh.scrollHeight).toFixed(3));});}
   pz(); window.addEventListener('beforeprint',pz);

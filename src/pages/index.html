@@ -38,6 +38,8 @@
 @media(max-width:480px){.page-home .tiles{grid-template-columns:1fr}}
 .page-home .tiles .stat .v{font-size:clamp(36px,3.6vw,52px);padding-right:30px}
 .page-home .tiles .stat .s{max-width:24ch}
+.page-home .tiles .ex-em{grid-column:1/-1;margin-top:4px}
+.page-home .ex-score .sd-line{margin:10px 0 0;max-width:34ch}
 /* 04 · verification: icon columns + three-bucket bar */
 .page-home .col .ic{margin-bottom:18px}
 .page-home .col h4{margin:12px 0 10px}
@@ -84,7 +86,7 @@
       <div>
         <p class="eyebrow">{{POSITION}}</p>
         <h1>Measuring what recycling really achieves.</h1>
-        <p class="lead">YES is a recycling certificate and a live environmental dashboard for every council and business that recycles. Real tonnes, real steel, real CO₂-e. Entered and verified by YES, never self-reported.</p>
+        <p class="lead">YES is a recycling certificate and a live environmental dashboard for every council and business that recycles. Real tonnes and real steel, with two emissions figures kept apart: your Scope 3 inventory, and the emissions recycling avoided. Entered by YES from the docket, never self-reported.</p>
         <div class="btn-row"><a class="btn btn-primary" href="/demo/">Open the live demo {{ARROW}}</a><a class="btn btn-ghost" href="/contact/">Talk to YES</a></div>
       </div>
       <div class="reveal">
@@ -92,10 +94,10 @@
           <div class="dash-top"><span>YES DASHBOARD · <b>Hepburn Shire Council</b></span><span class="badge demo">Demo data · illustrative</span></div>
           <div class="dash-body">
             <div class="kpis">
-              <div class="kpi"><svg class="ic"><use href="#i-loop"/></svg><div class="v green"><span id="h-rec" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">Tonnes recovered</div><div class="d" id="h-rec-d">&nbsp;</div></div>
-              <div class="kpi"><svg class="ic"><use href="#i-co2"/></svg><div class="v green"><span id="h-co2" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">CO₂-e avoided</div><div class="d">steel + reference factors</div></div>
+              <div class="kpi"><svg class="ic"><use href="#i-loop"/></svg><div class="v green"><span id="h-rec" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">Tonnes recycled</div><div class="d" id="h-rec-d">&nbsp;</div></div>
               <div class="kpi"><svg class="ic"><use href="#i-steel"/></svg><div class="v"><span id="h-steel" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">Steel recovered</div><div class="d" id="h-steel-d">&nbsp;</div></div>
-              <div class="kpi"><svg class="ic"><use href="#i-rate"/></svg><div class="v"><span id="h-rate" data-count="0" data-dec="0">0</span><span class="u">%</span></div><div class="l">Recovery rate</div><div class="d">recycled ÷ handed over</div></div>
+              <div class="kpi"><svg class="ic"><use href="#i-co2"/></svg><div class="v"><span id="h-cat5" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">A · Scope 3 Cat 5</div><div class="d">inventory · t CO₂-e</div></div>
+              <div class="kpi"><svg class="ic"><use href="#i-co2"/></svg><div class="v green"><span id="h-co2" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">B · Avoided</div><div class="d">estimate · never netted</div></div>
             </div>
             <div class="bars" aria-label="Recovered tonnes by stream, top five">
               <div class="bar" id="h-bar-0"><span class="n">&nbsp;</span><div class="track"><div class="fill" data-w="0"></div></div><span class="val"></span></div>
@@ -156,15 +158,15 @@
     <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">Two layers</p><h2>A certificate to hand over. A dashboard that keeps moving.</h2></div><p class="lead">Both are built from the same verified record, and both state the method version they were calculated with.</p></div>
     <div class="grid g12 spot reveal">
       <div class="span7">
-        <div class="shot tilt"><img src="/assets/img/product-dashboard.webp" alt="YES Dashboard for a council hard waste program, showing the YES Score, the seven headline tiles, three buckets and recovered tonnes by month (demo data)" loading="lazy" width="1600" height="1858"></div>
+        <div class="shot tilt"><img src="/assets/img/product-dashboard.webp" alt="YES Dashboard for a council hard waste program, showing the YES Score, six headline tiles and the two emissions figures side by side (demo data)" loading="lazy" width="1600" height="2255"></div>
       </div>
       <div class="span5">
-        <div class="shot paper tilt-r"><img src="/assets/img/product-certificate.webp" alt="YES Certificate, page one: Your Environment Score, headline outcomes, three buckets and the verification statement (demo data)" loading="lazy" width="1588" height="2470"></div>
+        <div class="shot paper tilt-r"><img src="/assets/img/product-certificate.webp" alt="YES Certificate, page one: Your Environment Score, headline outcomes, the two emissions figures, three buckets and the data statement (demo data)" loading="lazy" width="1588" height="2248"></div>
       </div>
     </div>
     <div class="layers reveal">
       <div class="layer"><span class="n">01</span><div><h3>YES Dashboard. The live layer.</h3><p>Your organisation's recycling, live. Hand over 100 mattresses, then a load of aluminium, and the dashboard moves each time. All of your recycling, not only what passes through Recycle Group, filed into three buckets.</p><a class="more" href="/demo/">Open the live demo →</a></div></div>
-      <div class="layer"><span class="n">02</span><div><h3>YES Certificate. The layer you hand over.</h3><p>Issued for each project or reporting period. One page a board, a councillor or an auditor can read in a minute: period, streams, tonnes, steel, CO₂-e, landfill avoided, method version, verification statement and certificate ID.</p><a class="more" href="/certificate/">See a sample certificate →</a></div></div>
+      <div class="layer"><span class="n">02</span><div><h3>YES Certificate. The layer you hand over.</h3><p>Issued for each project or reporting period. One page a board, a councillor or an auditor can read in a minute: period, streams, tonnes by fate, steel, the Scope 3 Category 5 figure, avoided emissions reported separately, landfill avoided, method version, issuer and certificate ID.</p><a class="more" href="/certificate/">See a sample certificate →</a></div></div>
     </div>
     <div class="btn-row mt-4 reveal"><a class="btn btn-ghost" href="/yes-report/">See the YES Report {{ARROW}}</a></div>
   </div>
@@ -173,26 +175,27 @@
 <!-- 5 · YOUR ENVIRONMENT SCORE · WORKED EXAMPLE -->
 <section id="impact">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">Your Environment Score</p><h2>What 1,000 mattresses become.</h2></div><p class="lead">The YES Score and the seven headline tiles from every YES Certificate, calculated live for a single stream with the YES Method.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">Your Environment Score</p><h2>What 1,000 mattresses become.</h2></div><p class="lead">The YES Score, the headline tiles and the two emissions figures from every YES Certificate, calculated live for a single stream with the YES Method.</p></div>
     <div class="ex reveal">
       <div class="ex-score">
         <span class="badge demo">Worked example · illustrative</span>
         <div class="gauge on-paper" id="ex-gauge" style="--gs:220px"></div>
-        <p class="band"><b id="ex-band">&nbsp;</b><span>YES Score · proposed v0.1</span></p>
-        <p class="in"><b>1,000 mattresses</b>, one stream, handed over to The Mattress Recycling Company. Computed in your browser with the YES Method <span id="ex-ver">v0.1 draft</span>.</p>
+        <p class="band"><b id="ex-band">&nbsp;</b><span>YES Score · proposed <span id="ex-sv">v0.1</span></span></p>
+        <p class="sd-line">Self-declared under the published YES Method · not an accredited rating or certification</p>
+        <p class="in"><b>1,000 mattresses</b>, one stream, handed over to The Mattress Recycling Company, 120 km from the processor. Computed in your browser with the YES Method <span id="ex-ver">v1.0 draft</span>.</p>
       </div>
       <div class="tiles" aria-label="Your Environment Score tiles">
-        <div class="stat green"><svg class="ic"><use href="#i-mattress"/></svg><div class="v"><span id="ex-matt" data-count="0" data-dec="0">0</span></div><div class="l">Mattresses recycled</div><div class="s">Handed over to The Mattress Recycling Company</div></div>
-        <div class="stat"><svg class="ic"><use href="#i-steel"/></svg><div class="v"><span id="ex-steelpct" data-count="0" data-dec="0">0</span><span>%</span></div><div class="l">Steel recovery</div><div class="s">Of the steel in each mattress</div></div>
-        <div class="stat green"><svg class="ic"><use href="#i-weigh"/></svg><div class="v"><span id="ex-steel" data-count="0" data-dec="1">0</span><span>t</span></div><div class="l">Steel recovered</div><div class="s">To the electric-arc-furnace route</div></div>
-        <div class="stat"><svg class="ic"><use href="#i-co2"/></svg><div class="v"><span id="ex-co2" data-count="0" data-dec="1">0</span><span>t</span></div><div class="l">CO₂-e avoided</div><div class="s">Steel factor, NSW DECCW 2010</div></div>
-        <div class="stat"><svg class="ic"><use href="#i-landfill"/></svg><div class="v"><span id="ex-vol" data-count="0" data-dec="0">0</span><span>m³</span></div><div class="l">Landfill avoided</div><div class="s">Volume that did not go in</div></div>
-        <div class="stat"><svg class="ic"><use href="#i-rate"/></svg><div class="v"><span id="ex-rate" data-count="0" data-dec="0">0</span><span>%</span></div><div class="l">Material recovery rate</div><div class="s">Recovered mass ÷ mass handed over</div></div>
-        <div class="stat green"><svg class="ic"><use href="#i-loop"/></svg><div class="v"><span id="ex-ret" data-count="0" data-dec="1">0</span><span>t</span></div><div class="l">Returned to productive use</div><div class="s">Material with a next use</div></div>
+        <div class="stat green"><svg class="ic"><use href="#i-mattress"/></svg><div class="v"><span id="ex-matt" data-count="0" data-dec="0">0</span></div><div class="l">Mattresses processed</div><div class="s">By The Mattress Recycling Company</div></div>
+        <div class="stat"><svg class="ic"><use href="#i-steel"/></svg><div class="v"><span id="ex-steelpct" data-count="0" data-dec="0">0</span><span>%</span></div><div class="l">Steel recovery</div><div class="s">Recycle Group's stated plant yield</div></div>
+        <div class="stat green"><svg class="ic"><use href="#i-weigh"/></svg><div class="v"><span id="ex-steel" data-count="0" data-dec="1">0</span><span>t</span></div><div class="l">Steel recovered</div><div class="s">Sold to a licensed metal reprocessor</div></div>
+        <div class="stat"><svg class="ic"><use href="#i-rate"/></svg><div class="v"><span id="ex-rate" data-count="0" data-dec="0">0</span><span>%</span></div><div class="l">Material recovery rate</div><div class="s">Recycled mass ÷ mass handed over</div></div>
+        <div class="stat green"><svg class="ic"><use href="#i-loop"/></svg><div class="v"><span id="ex-ret" data-count="0" data-dec="1">0</span><span>t</span></div><div class="l">Delivered to licensed reprocessors</div><div class="s">Docketed, this period</div></div>
+        <div class="stat"><svg class="ic"><use href="#i-landfill"/></svg><div class="v"><span id="ex-vol" data-count="0" data-dec="0">0</span><span>m³</span></div><div class="l">Landfill volume avoided</div><div class="s">Volume that did not go in</div></div>
+        <div class="em-host ex-em" id="ex-em"></div>
       </div>
     </div>
     <p class="attrib reveal">Verified recycling data supplied by The Mattress Recycling Company and Recycle Group.</p>
-    <p class="note reveal">CO₂-e uses the conservative NSW DECCW 2010 steel factor (<span id="ex-sf">0.44</span> t CO₂-e per tonne recycled) applied to the recovered steel only. No carbon is claimed for the foam and fibre. That residual is shredded and currently landfilled at 25% of its original volume, which is why the material recovery rate for mattresses sits at about a third by mass, and why the score for a mattress-only stream sits where it does. YES reports it that way.</p>
+    <p class="note reveal">A is the figure for your inventory: processing and transport (illustrative until metered) plus the landfilled residual at the NGA landfill factor. B uses the conservative NSW DECCW 2010 steel factor (<span id="ex-sf">0.44</span> t CO₂-e per tonne recycled) on the recovered steel only, and sits beside A, never subtracted from it. The foam and fibre residual is shredded and currently landfilled at 25% of its original volume, which is why the material recovery rate for mattresses sits at about a third by mass, and why the score for a mattress-only stream sits where it does. YES reports it that way.</p>
     <div class="btn-row mt-3 reveal"><a class="btn btn-ink" href="/calculator/">Calculate your own {{ARROW}}</a><a class="btn btn-outline" href="/method/">Read the YES Method</a></div>
   </div>
 </section>
@@ -212,13 +215,13 @@
         <svg class="ic lg g"><use href="#i-scale"/></svg>
         <p class="idx">THREE BUCKETS</p>
         <h4>Every tonne lands in one place.</h4>
-        <p>Landfilled counts against you. Recycled counts for you. Stored is neutral, parked until it moves. Nothing is averaged and nothing is netted off.</p>
+        <p>Landfilled counts against you. Recycled counts for you: delivered to a licensed reprocessor, with a docket. Stored is neutral, parked until it moves. Nothing is averaged and nothing is netted off.</p>
       </div>
       <div class="col">
         <svg class="ic lg g"><use href="#i-verify"/></svg>
         <p class="idx">THE YES METHOD</p>
         <h4>One documented method.</h4>
-        <p>Every factor has a source, a status and a version. Reference factors from NSW DECCW 2010. Group figures from Recycle Group's own processing records. Assumptions labelled as assumptions until measured data replaces them.</p>
+        <p>Every factor has a source, a status and a version. The Category 5 inventory uses the government's NGA landfill factors. Avoided emissions use NSW DECCW 2010 factors, flagged for refresh and reported separately. Assumptions are labelled as assumptions until measured data replaces them.</p>
         <a class="more" href="/method/">Read the YES Method →</a>
       </div>
     </div>
@@ -226,7 +229,7 @@
       <div class="bk-top"><span class="idx">THREE BUCKETS · <span id="bk-who">HEPBURN SHIRE COUNCIL</span> · TONNES, FY TO DATE</span><span class="badge demo">Demo data · illustrative</span></div>
       <div class="bucket big" id="bk-bar" aria-label="Three buckets for the demo program, tonnes"><div class="rec" id="bk-rec" style="width:0"></div><div class="sto" id="bk-sto" style="width:0"></div><div class="lan" id="bk-lan" style="width:0"></div></div>
       <div class="bk-nums">
-        <div><div class="display g"><span id="bk-recn" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="legend"><span class="rec"><i></i>Recycled</span></div><p class="s">Counts for you. Material with a verified next use.</p></div>
+        <div><div class="display g"><span id="bk-recn" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="legend"><span class="rec"><i></i>Recycled</span></div><p class="s">Counts for you. Delivered to a licensed reprocessor, with a docket.</p></div>
         <div><div class="display sto"><span id="bk-ston" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="legend"><span class="sto"><i></i>Stored</span></div><p class="s">Neutral. Parked until it moves, never counted as recycled.</p></div>
         <div><div class="display lan"><span id="bk-lann" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="legend"><span class="lan"><i></i>Landfilled</span></div><p class="s">Counts against you, in full. Shown on the certificate.</p></div>
       </div>
@@ -234,8 +237,8 @@
     <ol class="steps mt-4 reveal" aria-label="The handover loop">
       <li><div><h4>Hand over a stream</h4><p>A hard waste sweep, a skip of scrap, a pallet of e-waste. Any of the 13 reporting categories, to Recycle Group or evidenced elsewhere.</p></div></li>
       <li><div><h4>YES enters and verifies</h4><p>A YES staff member records the quantity against the docket or weighbridge ticket and assigns the bucket. Nothing is self-reported.</p></div></li>
-      <li><div><h4>The dashboard moves</h4><p>Tonnes recovered, steel, CO₂-e and landfill avoided update for the stream, the program and the whole organisation.</p></div></li>
-      <li><div><h4>The certificate issues</h4><p>At the end of the project or period, a YES Certificate with the figures, the method version and a certificate ID.</p></div></li>
+      <li><div><h4>The dashboard moves</h4><p>Tonnes by fate, steel, landfill avoided and both emissions figures update for the stream, the program and the whole organisation.</p></div></li>
+      <li><div><h4>The certificate issues</h4><p>At the end of the project or period, a YES Certificate with the figures, the method version, the issuer and a certificate ID.</p></div></li>
     </ol>
   </div>
 </section>
@@ -245,21 +248,21 @@
   <div class="wrap">
     <div class="section-head reveal"><div><span class="sec-idx">05</span><p class="eyebrow">Who it's for</p><h2>Councils first. Business second.</h2></div><p class="lead">Built for the two organisations that carry the reporting obligation and rarely hold the evidence.</p></div>
     <div class="split reveal">
-      <div class="media"><img src="/assets/img/product-dashboard.webp" alt="YES Dashboard for a council hard waste program (demo data)" loading="lazy" width="1600" height="1858"></div>
+      <div class="media"><img src="/assets/img/product-dashboard.webp" alt="YES Dashboard for a council hard waste program (demo data)" loading="lazy" width="1600" height="2255"></div>
       <div class="copy">
         <div class="top"><p class="idx">COUNCILS</p><span class="badge demo">Demo data · illustrative</span></div>
         <h3>Hard waste, kerbside and transfer stations.</h3>
-        <p>Report every program on one dashboard, issue a certificate for each period, and put a verified number in the next tender instead of a contractor's estimate.</p>
+        <p>Report every program on one dashboard, issue a certificate for each period, and put a docket-backed number in the next tender instead of a contractor's estimate.</p>
         <p class="line"><b>$1,999</b> a month, councils up to 50,000 residents · Switched on in 30 days</p>
         <div class="btn-row"><a class="btn btn-outline" href="/councils/">YES for councils {{ARROW}}</a></div>
       </div>
     </div>
     <div class="split flip reveal">
-      <div class="media"><img src="/assets/img/product-certificate.webp" alt="YES Certificate, page one (demo data)" loading="lazy" width="1588" height="2470"></div>
+      <div class="media"><img src="/assets/img/product-certificate.webp" alt="YES Certificate, page one (demo data)" loading="lazy" width="1588" height="2248"></div>
       <div class="copy">
         <div class="top"><p class="idx">BUSINESS</p><span class="badge demo">Demo data · illustrative</span></div>
         <h3>ESG, Scope 3 and the annual report.</h3>
-        <p>Recycling data with a documented method behind every figure, ready for ESG disclosures, GHG Protocol Scope 3 Category 5 (waste generated in operations), procurement responses and the annual sustainability report.</p>
+        <p>Recycling data with a documented method behind every figure: a GHG Protocol Scope 3 Category 5 figure (waste generated in operations) for your inventory, avoided emissions reported separately, and the evidence trail an assurance reviewer will ask for.</p>
         <p class="line"><b>$999</b> a month · Switched on in 30 days</p>
         <div class="btn-row"><a class="btn btn-outline" href="/business/">YES for business {{ARROW}}</a></div>
       </div>
@@ -279,7 +282,7 @@
     <div class="section-head reveal"><div><span class="sec-idx">06</span><p class="eyebrow">Built on real recovery</p><h2>The numbers come from a processor, not a spreadsheet.</h2></div><p class="lead">YES is a Recycle Group business. The group runs Recycle North Geelong and The Mattress Recycling Company, so the figures on a YES Certificate come from the floor that recovered the material.</p></div>
     <div class="grid g2 rec-grid reveal">
       <div class="big-stat"><div class="display g"><span data-count="30000" data-dec="0">0</span></div><div class="l">Mattresses a month, upper range</div><div class="s">The Mattress Recycling Company processes between 12,000 and 30,000 a month. Each one takes about 38 seconds.</div></div>
-      <div class="big-stat"><div class="display"><span data-count="99" data-dec="0">0</span><span class="u">%</span></div><div class="l">Of mattress steel recovered</div><div class="s">$8.5m invested to get there. Roughly 30% of a mattress by mass is steel, and 99% of it comes back out.</div></div>
+      <div class="big-stat"><div class="display"><span data-count="99" data-dec="0">0</span><span class="u">%</span></div><div class="l">Steel recovery · stated plant yield</div><div class="s">$8.5m invested to get there. Roughly 30% of a mattress by mass is steel, and Recycle Group states 99% of it comes back out. Each certificate prints the measured yield with its site and study date.</div></div>
       <div class="big-stat"><div class="display"><span data-count="90" data-dec="0">0</span><span class="u">+</span></div><div class="l">Streams separated on site</div><div class="s">Recycle North Geelong, the group's public transfer station at 116 Furner Avenue, North Geelong.</div></div>
       <div class="big-stat"><div class="display"><span data-count="50" data-dec="0">0</span><span class="u">%+</span></div><div class="l">Of Victoria's discarded mattresses</div><div class="s">More than half of the state's discarded mattresses come through the group.</div></div>
     </div>
@@ -326,12 +329,12 @@
   function txt(id,s){var el=document.getElementById(id); if(el) el.textContent=s;}
 
   // --- hero mock: same dataset and engine as /demo/ ---
-  var t=B.compute(B.DEMO.entries);
+  var t=B.compute(B.DEMO.entries,{km:B.DEMO.km||0,sector:B.DEMO.sector||'council'});
   setCount('h-rec',t.recT,0);
-  setCount('h-co2',t.co2,0);
+  setCount('h-cat5',t.cat5,0);
+  setCount('h-co2',t.avoided,0);
   setCount('h-steel',t.steelT,0);
-  setCount('h-rate',t.recoveryRate*100,0);
-  txt('h-rec-d','of '+fmt(t.inT,0)+' t handed over');
+  txt('h-rec-d',fmt(t.recoveryRate*100,0)+'% of '+fmt(t.inT,0)+' t handed over');
   var steelCats=Object.keys(t.byCat).filter(function(k){return t.byCat[k].steel>0;}).length;
   txt('h-steel-d','from '+steelCats+' steel-bearing streams');
 
@@ -369,7 +372,8 @@
   txt('bk-who',(B.DEMO.customer||'').toUpperCase());
 
   // --- 03 · worked example: 1,000 mattresses, with the proposed YES Score ---
-  var m=B.compute([{k:'mattresses',qty:1000}]);
+  var X=B.EXAMPLE||{entries:[{k:'mattresses',qty:1000}],km:120};
+  var m=B.compute(X.entries,{km:X.km});
   var sc=m.score||B.score(m);
   var g=document.getElementById('ex-gauge');
   if(g&&B.gauge){B.gauge(g,sc,220);g.classList.add('on-paper');}
@@ -377,11 +381,12 @@
   setCount('ex-matt',m.units.mattresses||1000,0);
   setCount('ex-steelpct',(B.CAT.mattresses.steelRecovery||0)*100,0);
   setCount('ex-steel',m.steelT,1);
-  setCount('ex-co2',m.co2,1);
   setCount('ex-vol',m.volAvoided,0);
   setCount('ex-rate',m.recoveryRate*100,0);
   setCount('ex-ret',m.recT,1);
   txt('ex-ver',B.METHOD_VERSION||'');
+  txt('ex-sv',(B.SCORE&&B.SCORE.version)||'v0.1');
+  var exEm=document.getElementById('ex-em'); if(exEm&&B.emPair) exEm.innerHTML=B.emPair(m,{rows:3});
   if(B.STEEL) txt('ex-sf',String(B.STEEL.f));
 })();
 </script>

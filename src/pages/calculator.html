@@ -44,8 +44,14 @@
 .page-calculator .results .legend b{font-weight:500;color:var(--paper);margin-left:2px}
 .page-calculator .score-row .m{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;color:var(--slate);margin:12px 0 0}
 .page-calculator .tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
-@media(min-width:1000px){.page-calculator .tiles{grid-template-columns:repeat(3,minmax(0,1fr))}.page-calculator .tiles .kpi:nth-child(7){grid-column:span 3;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"v l" "v d";column-gap:18px;row-gap:2px;align-content:center}.page-calculator .tiles .kpi:nth-child(7) .v{grid-area:v;align-self:center}.page-calculator .tiles .kpi:nth-child(7) .l{grid-area:l;align-self:end;margin-top:0;min-height:0}.page-calculator .tiles .kpi:nth-child(7) .d{grid-area:d;align-self:start;height:auto;margin-top:2px}}
-@media(max-width:999px){.page-calculator .tiles .kpi:nth-child(7){grid-column:span 2}}
+@media(min-width:1000px){.page-calculator .tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.page-calculator .results .em-host{margin-top:12px}
+.page-calculator .results .em{padding:16px 16px 14px}
+.page-calculator .results .em-v{font-size:clamp(28px,2.6vw,38px)}
+.page-calculator .results .em-foot{padding:10px 16px}
+.page-calculator .c-set{margin-top:18px;padding-top:4px}
+.page-calculator .c-set .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin:14px 0 2px}
+.page-calculator .c-row select{padding:10px 12px;font-size:15px}
 .page-calculator .kpi{min-height:118px;padding:12px 14px}
 .page-calculator .kpi .v{font-size:clamp(22px,2vw,28px);white-space:nowrap;overflow:hidden;line-height:1.05;height:1.05em;padding-right:30px}
 .page-calculator .kpi .v.long{font-size:19px}
@@ -102,8 +108,8 @@
   <div class="wrap">
     <p class="eyebrow">YES calculator</p>
     <h1>Your recycling, measured.</h1>
-    <p class="lead">Enter what you recycled and see what YES would report: tonnes recovered, steel recovered, CO₂-e avoided, landfill avoided, and the proposed YES Score. Every figure shows its method.</p>
-    <div class="hero-meta"><span class="badge">Indicative · YES Method v0.1 draft</span><span>Computed in your browser. Nothing is sent anywhere.</span></div>
+    <p class="lead">Enter what you recycled and see what YES would report: tonnes by fate, steel recovered, landfill volume avoided, the proposed YES Score, and two emissions figures kept apart: your Scope 3 Category 5 inventory and the avoided emissions reported beside it. Every figure shows its method.</p>
+    <div class="hero-meta"><span class="badge">Indicative · YES Method <span class="mv">v1.0 draft</span></span><span>Computed in your browser. Nothing is sent anywhere.</span></div>
   </div>
 </section>
 
@@ -117,33 +123,39 @@
           <div class="calc-top"><div><h3>What you recycled</h3><p class="m">Thirteen reporting categories · one period</p></div><button type="button" class="btn btn-outline btn-sm" id="c-clear">Clear</button></div>
           <form class="form" id="c-form" novalidate autocomplete="off">
             <noscript><p class="note">The calculator needs JavaScript to run. The worked example below shows the method for 1,000 mattresses.</p></noscript>
+            <div id="c-cats"></div>
+            <div class="c-set">
+              <p class="k">For the Category 5 figure</p>
+              <div class="c-row"><label for="c-sector"><svg class="ic" aria-hidden="true"><use href="#i-site"/></svg><span class="lt"><span class="nm">Reporting as</span><span class="u">sets the general rubbish factor</span></span></label><div class="c-in"><select id="c-sector" name="sector"><option value="council">Council</option><option value="business">Business</option></select><span class="hint" id="c-sector-h">NGA mixed municipal 1.6</span></div></div>
+              <div class="c-row"><label for="c-km"><svg class="ic" aria-hidden="true"><use href="#i-car"/></svg><span class="lt"><span class="nm">Distance to the processor</span><span class="u">km, one way · 0 leaves transport out</span></span></label><div class="c-in"><input type="number" id="c-km" name="km" min="0" step="1" inputmode="numeric" value="120" aria-describedby="c-km-h"><span class="hint" id="c-km-h">0.15 kg CO₂-e per t-km · illustrative</span></div></div>
+            </div>
           </form>
           <div class="calc-foot"><p class="m">Counts are converted to tonnes with the unit weights in the YES Method.</p></div>
         </div>
       </div>
       <div class="span7">
           <div class="results dark" id="results" aria-live="polite" aria-label="Your Environment Score, indicative">
-            <div class="res-head"><div><p class="eyebrow">Your Environment Score</p><h3>What YES would report</h3></div><span class="m">Computed live · YES Method <span id="c-ver">v0.1 draft</span></span></div>
+            <div class="res-head"><div><p class="eyebrow">Your Environment Score</p><h3>What YES would report</h3></div><span class="m">Computed live · YES Method <span id="c-ver">v1.0 draft</span></span></div>
             <div class="score-row">
               <div class="gauge" id="c-gauge" style="--gs:150px"></div>
               <div class="score-meta">
-                <div class="l">YES Score · proposed v0.1</div>
+                <div class="l">YES Score · proposed <span class="sv">v0.1</span> · self-declared</div>
                 <div class="band" id="c-band">&nbsp;</div>
                 <div class="l" id="c-wl">Composition · points of 100</div>
                 <div class="stack" id="c-stack" aria-label="YES Score composition"><i class="p1" id="c-p1"></i><i class="p2" id="c-p2"></i><i class="p3" id="c-p3"></i></div>
                 <div class="legend"><span class="p1"><i></i>Recovery <b id="c-l1"></b></span><span class="p2"><i></i>Carbon <b id="c-l2"></b></span><span class="p3"><i></i>Evidence <b id="c-l3"></b></span></div>
-                <p class="m">Proposed method · not an accredited rating · evidence assumed Grade A for the calculator</p>
+                <p class="m">Self-declared under the published YES Method · not an accredited rating or certification · evidence assumed Grade A for the calculator</p>
               </div>
             </div>
             <div class="tiles" aria-label="Your Environment Score tiles">
-              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-mattress"/></svg><div class="v green"><span id="c-matt">0</span></div><div class="l">Mattresses recycled</div><div class="d" id="c-matt-d">to The Mattress Recycling Company</div></div>
-              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-rate"/></svg><div class="v"><span id="c-steelpct">0</span><span class="u">%</span></div><div class="l">Steel recovery</div><div class="d" id="c-steelpct-d">of mattress steel</div></div>
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-mattress"/></svg><div class="v green"><span id="c-matt">0</span></div><div class="l">Mattresses processed</div><div class="d" id="c-matt-d">by The Mattress Recycling Company</div></div>
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-rate"/></svg><div class="v"><span id="c-steelpct">0</span><span class="u">%</span></div><div class="l">Steel recovery · stated yield</div><div class="d" id="c-steelpct-d">Recycle Group stated plant yield</div></div>
               <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-steel"/></svg><div class="v green"><span id="c-steel">0</span><span class="u">t</span></div><div class="l">Steel recovered</div><div class="d" id="c-steel-d">&nbsp;</div></div>
-              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-co2"/></svg><div class="v green"><span id="c-co2">0</span><span class="u">t</span></div><div class="l">CO₂-e avoided</div><div class="d" id="c-co2-d">&nbsp;</div></div>
-              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-landfill"/></svg><div class="v"><span id="c-vol">0</span><span class="u">m³</span></div><div class="l">Landfill avoided</div><div class="d">volume that did not go in</div></div>
               <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-rate"/></svg><div class="v"><span id="c-rate">0</span><span class="u">%</span></div><div class="l">Material recovery rate</div><div class="d">recycled ÷ handed over</div></div>
-              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-loop"/></svg><div class="v green"><span id="c-ret">0</span><span class="u">t</span></div><div class="l">Returned to productive use</div><div class="d" id="c-ret-d">&nbsp;</div></div>
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-loop"/></svg><div class="v green"><span id="c-ret">0</span><span class="u">t</span></div><div class="l">Delivered to licensed reprocessors</div><div class="d" id="c-ret-d">&nbsp;</div></div>
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-landfill"/></svg><div class="v"><span id="c-vol">0</span><span class="u">m³</span></div><div class="l">Landfill volume avoided</div><div class="d">volume that did not go in</div></div>
             </div>
+            <div class="em-host" id="c-em"></div>
             <div class="buckets">
               <div class="l"><span>Three buckets · tonnes</span><b id="c-t-in">0 t handed over</b></div>
               <div class="bucket" id="c-bucket" aria-label="Three buckets"><div class="rec" id="c-b-rec" style="width:0"></div><div class="sto" id="c-b-sto" style="width:0"></div><div class="lan" id="c-b-lan" style="width:0"></div></div>
@@ -157,7 +169,7 @@
               </details>
             </div>
             <p class="attrib">Verified recycling data supplied by The Mattress Recycling Company and Recycle Group.</p>
-            <p class="note">Pending categories count recovered mass but claim no CO₂-e. The calculator is indicative and uses default pathways. A YES Certificate requires YES-entered, evidenced data for the period.</p>
+            <p class="note">Recycled means delivered to a licensed reprocessor, with a docket; stored material is not counted as recycled. Pending categories count recovered mass but carry no avoided-emissions estimate. The calculator is indicative: it uses default pathways and illustrative processing and transport values. A YES Certificate requires YES-entered, evidenced data for the period, and is issued by Recycle Group as the processing operator.</p>
             <div class="btn-row"><a class="btn btn-primary" href="/contact/">Talk to YES about a certificate {{ARROW}}</a><a class="btn btn-ghost" href="/method/">See the YES Method</a></div>
           </div>
       </div>
@@ -173,21 +185,23 @@
     <div class="worked-hero reveal">
       <div class="l">Steel recovered · 1,000 mattresses</div>
       <div class="display g"><span id="w-steel-big">26.7</span><span class="u">t</span></div>
-      <p class="s">From <span class="tab" id="w-mass-big">80.0</span> t handed over, to the electric-arc-furnace route. Recycle Group recovers 99% of the steel in a mattress.</p>
+      <p class="s">From <span class="tab" id="w-mass-big">80.0</span> t handed over, sold to a licensed metal reprocessor. <span id="w-sr-big">99</span>% is Recycle Group's stated plant yield; a certificate prints the measured yield and its study date.</p>
       <dl class="w-ledger" aria-label="Outcomes for 1,000 mattresses">
-        <dt>CO₂-e avoided</dt><dd><span id="w-co2-big">11.8</span><span class="u">t</span></dd>
-        <dt>Landfill avoided</dt><dd><span id="w-vol-big">583</span><span class="u">m³</span></dd>
+        <dt>A · Scope 3 Category 5</dt><dd><span id="w-cat5-big">74.7</span><span class="u">t CO₂-e</span></dd>
+        <dt>B · Avoided · separate</dt><dd><span id="w-co2-big">11.8</span><span class="u">t CO₂-e</span></dd>
+        <dt>Landfill volume avoided</dt><dd><span id="w-vol-big">583</span><span class="u">m³</span></dd>
         <dt>Recovery rate</dt><dd><span id="w-rate-big">33.4</span><span class="u">%</span></dd>
-        <dt>YES Score · proposed</dt><dd><span id="w-score-big">42</span><span class="u">of 100 · <span id="w-band-big">Developing</span></span></dd>
+        <dt>YES Score · self-declared</dt><dd><span id="w-score-big">42</span><span class="u">of 100 · <span id="w-band-big">Developing</span></span></dd>
       </dl>
     </div>
     <ol class="steps reveal" id="worked-steps">
       <li><div><h4>Mass handed over</h4><p>1,000 mattresses × <span class="tab" id="w-kg">80</span> kg average = <b id="w-mass">80.0</b> t handed over. The 80 kg average is Recycle Group's stated processing figure.</p></div></li>
-      <li><div><h4>Steel recovered</h4><p><span class="tab" id="w-mass2">80.0</span> t × <span class="tab" id="w-sf">33.75</span>% steel by mass × <span class="tab" id="w-sr">99</span>% recovered = <b id="w-steel">26.7</b> t of steel, to the electric-arc-furnace route.</p></div></li>
-      <li><div><h4>CO₂-e avoided</h4><p><span class="tab" id="w-steel2">26.7</span> t × <span class="tab" id="w-f">0.44</span> t CO₂-e per tonne recycled (steel, <span id="w-fsrc">NSW DECCW 2010</span>, Table 4) = <b id="w-co2">11.8</b> t CO₂-e. No carbon is claimed for the foam and fibre, because no factor for it is in the library yet.</p></div></li>
-      <li><div><h4>Landfill avoided</h4><p>Each mattress is <span class="tab" id="w-m3">0.7</span> m³, so <span class="tab" id="w-volin">700</span> m³ would have gone into landfill. The residual, <span class="tab" id="w-lanpct">67</span>% of the mass, is shredded to 25% of its volume, so <span class="tab" id="w-vollan">117</span> m³ did go in. <b id="w-vol">583</b> m³ avoided.</p></div></li>
-      <li><div><h4>Material recovery rate</h4><p><span class="tab" id="w-rec">26.7</span> t recovered ÷ <span class="tab" id="w-mass3">80.0</span> t handed over = <b id="w-rate">33.4</b>%.</p><p class="why">Why a third. The steel is recovered at 99%. The foam and fibre residual is shredded and landfilled while recovery trials continue, so two thirds of a mattress by mass currently counts as landfilled. YES reports it that way rather than counting the whole mattress as recycled.</p></div></li>
-      <li><div><h4>YES Score</h4><p>Recovery <span class="tab" id="w-p1">20.0</span> of <span id="w-w1">60</span> · Carbon <span class="tab" id="w-p2">7.4</span> of <span id="w-w2">25</span> (<span class="tab" id="w-int">0.15</span> t CO₂-e per tonne handed over against a reference of <span id="w-ref">0.5</span>) · Evidence <span class="tab" id="w-p3">15.0</span> of <span id="w-w3">15</span> (weighbridge docket assumed) = <b id="w-score">42</b> out of 100, <b id="w-band">Developing</b>. Proposed method v0.1, not an accredited rating.</p></div></li>
+      <li><div><h4>Steel recovered</h4><p><span class="tab" id="w-mass2">80.0</span> t × <span class="tab" id="w-sf">33.75</span>% steel by mass × <span class="tab" id="w-sr">99</span>% recovered = <b id="w-steel">26.7</b> t of steel, delivered to a licensed metal reprocessor. The 99% is Recycle Group's stated plant yield, used until a dated yield study replaces it.</p></div></li>
+      <li><div><h4>A · Scope 3 Category 5, your inventory figure</h4><p>Processing <span class="tab" id="w-mass4">80.0</span> t × <span class="tab" id="w-pf">0.05</span> = <span class="tab" id="w-proc">4.0</span> t (supplier-specific, illustrative) + transport <span class="tab" id="w-mass5">80.0</span> t × <span class="tab" id="w-km">120</span> km × 0.15 kg = <span class="tab" id="w-tr">1.4</span> t (illustrative) + landfilled residual <span class="tab" id="w-lan">53.3</span> t × <span class="tab" id="w-lf">1.3</span> (NGA mixed C&amp;I, interim) = <span class="tab" id="w-lanE">69.3</span> t. Total <b id="w-cat5">74.7</b> t CO₂-e.</p><p class="why">Had all 80 t gone to landfill, the figure would be <span class="tab" id="w-base">104</span> t. And a one-week composition audit of the residual would likely cut it further: at an assumed 70% foam, 25% textile fibre and 5% wood, the residual factor falls to about 0.54 and the total to about 34 t. That audit is the cheapest improvement in the method.</p></div></li>
+      <li><div><h4>B · Avoided emissions, reported separately</h4><p><span class="tab" id="w-steel2">26.7</span> t × <span class="tab" id="w-f">0.44</span> t CO₂-e per tonne recycled (steel, <span id="w-fsrc">NSW DECCW 2010</span>, Table 4) = <b id="w-co2">11.8</b> t CO₂-e. An estimate, shown beside A and never deducted from it. Not an offset. No estimate is made for the foam and fibre, because no factor for it is in the library.</p></div></li>
+      <li><div><h4>Landfill volume avoided</h4><p>Each mattress is <span class="tab" id="w-m3">0.7</span> m³, so <span class="tab" id="w-volin">700</span> m³ would have gone into landfill. The residual, <span class="tab" id="w-lanpct">67</span>% of the mass, is shredded to 25% of its volume, so <span class="tab" id="w-vollan">117</span> m³ did go in. <b id="w-vol">583</b> m³ avoided.</p></div></li>
+      <li><div><h4>Material recovery rate</h4><p><span class="tab" id="w-rec">26.7</span> t recycled ÷ <span class="tab" id="w-mass3">80.0</span> t handed over = <b id="w-rate">33.4</b>%.</p><p class="why">Why a third. The steel is recovered. The foam and fibre residual is shredded and landfilled while recovery trials continue, so two thirds of a mattress by mass currently counts as landfilled. YES reports it that way rather than counting the whole mattress as recycled.</p></div></li>
+      <li><div><h4>YES Score</h4><p>Recovery <span class="tab" id="w-p1">20.0</span> of <span id="w-w1">60</span> · Carbon <span class="tab" id="w-p2">7.4</span> of <span id="w-w2">25</span> (<span class="tab" id="w-int">0.15</span> t of estimated avoided emissions per tonne handed over, against a reference of <span id="w-ref">0.5</span>) · Evidence <span class="tab" id="w-p3">15.0</span> of <span id="w-w3">15</span> (weighbridge docket assumed) = <b id="w-score">42</b> out of 100, <b id="w-band">Developing</b>. Proposed v0.1: self-declared, not an accredited rating or certification.</p></div></li>
     </ol>
     </div>
     <div class="btn-row mt-3 reveal"><a class="btn btn-ghost" href="/method/">Read the YES Method {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div>
@@ -209,15 +223,17 @@
   function pct(x,d){return fmt(x*100,d||0)+'%';}
   function num(v,dec){ if(Math.abs(v)>=10000) dec=0; return fmt(v,dec); }
   var W=(B.SCORE&&B.SCORE.weights)||{recovery:60,carbon:25,evidence:15};
-  var STATUS={reference:{cls:'tag',label:'Reference'},group:{cls:'tag',label:'Group figure'},assumption:{cls:'tag assume',label:'Assumption'},pending:{cls:'tag pending',label:'Pending · no carbon'}};
+  var STATUS={reference:{cls:'tag',label:'Reference'},group:{cls:'tag',label:'Group figure'},assumption:{cls:'tag assume',label:'Assumption'},pending:{cls:'tag pending',label:'Pending · no estimate'}};
   // stream icon per category key (sprite ids), in YES.CATS order
   var ICON={mattresses:'i-mattress',steel:'i-steel',aluminium:'i-alu',timber_plain:'i-timber',timber_coloured:'i-timber2',tyres:'i-tyre',whitegoods:'i-white',ewaste:'i-ewaste',clothing:'i-cloth',concrete:'i-rubble',vehicles:'i-car',greenwaste:'i-green',general:'i-bin'};
   function icon(k){return '<svg class="ic" aria-hidden="true"><use href="#'+(ICON[k]||'i-bin')+'"/></svg>';}
-  txt('c-ver',B.METHOD_VERSION||'v0.1 draft');
+  txt('c-ver',B.METHOD_VERSION||'v1.0 draft');
+  document.querySelectorAll('.page-calculator .mv').forEach(function(el){el.textContent=B.METHOD_VERSION||'';});
+  document.querySelectorAll('.page-calculator .sv').forEach(function(el){el.textContent=(B.SCORE&&B.SCORE.version)||'v0.1';});
   txt('c-wl','Composition · weights '+W.recovery+' / '+W.carbon+' / '+W.evidence);
 
   // ---- build the input rows from the engine, in YES.CATS order -------------------
-  var form=$('c-form');
+  var form=$('c-form'), cats=$('c-cats')||form;
   if(form){
     B.CATS.forEach(function(c){
       var row=document.createElement('div'); row.className='c-row';
@@ -235,7 +251,7 @@
       hint.textContent=c.unit==='count'?('× '+kg(c.kgUnit)+' kg each'):'tonnes';
       wrap.appendChild(inp); wrap.appendChild(hint);
       row.appendChild(lab); row.appendChild(wrap);
-      form.appendChild(row);
+      cats.appendChild(row);
     });
     form.addEventListener('submit',function(ev){ev.preventDefault();});
   }
@@ -247,6 +263,13 @@
       if(q>0) out.push({k:c.k,qty:q});
     });
     return out;
+  }
+  function readOpts(){
+    var sec=$('c-sector'), km=$('c-km');
+    var k=km?parseFloat(km.value):0; if(!isFinite(k)||k<0) k=0;
+    var o={sector:sec&&sec.value==='business'?'business':'council',km:k};
+    var gc=B.CAT.general; txt('c-sector-h','NGA '+(o.sector==='business'?'mixed C&I ':'mixed municipal ')+B.lanFactor(gc,o)+' t per t');
+    return o;
   }
 
   // ---- results ---------------------------------------------------------------
@@ -265,8 +288,8 @@
     gaugeEl.setAttribute('aria-label','YES Score '+sc.score+' of 100'+(t.inT>0?', '+sc.band:', nothing entered'));
   }
 
-  function howBlock(c,e){
-    var one=B.compute([e]);
+  function howBlock(c,e,o){
+    var one=B.compute([e],o);
     var b=one.byCat[c.k]||{mass:0,rec:0,sto:0,lan:0,steel:0,co2:0};
     var st=STATUS[c.status]||STATUS.reference;
     var wrapEl=document.createElement('div'); wrapEl.className='how-cat';
@@ -284,21 +307,24 @@
       add('Steel','No steel fraction');
     }
     if(c.carbon!=null){
-      add('Carbon', c.carbon+' t CO₂-e per tonne recycled ('+srcId(c.carbonSrc)+') on the '+(c.steelFrac>0?'non-steel ':'')+'recycled mass');
+      add('Avoided · B', c.carbon+' t CO₂-e per tonne recycled ('+srcId(c.carbonSrc)+') on the '+(c.steelFrac>0?'non-steel ':'')+'recycled mass · estimate, reported separately');
     } else if(c.status==='pending'){
-      add('Carbon','No factor in the library yet · recovered mass is counted, no CO₂-e claimed');
+      add('Avoided · B','No factor in the library yet · recovered mass is counted, no estimate made');
     } else if(c.steelFrac>0){
-      add('Carbon','Steel factor only · no CO₂-e claimed for the non-steel fraction');
+      add('Avoided · B','Steel factor only · no estimate for the non-steel fraction');
     } else {
-      add('Carbon','No CO₂-e claimed');
+      add('Avoided · B','None · nothing recycled');
     }
+    var lt=B.lanType(c,o);
+    add('Category 5 · A', 'Processing '+B.PROC.f+' t per t handled (illustrative)'+(o.km>0?' · transport '+fmt(o.km,0)+' km × 0.15 kg per t-km (illustrative)':' · transport not included')+' · landfilled share × NGA '+(B.NGA.label[lt]||lt).toLowerCase()+' '+B.lanFactor(c,o)+(c.interim?' (interim, composition audit pending)':''));
     var p=c.path;
     add('Pathway', pct(p.rec)+' recycled · '+pct(p.sto)+' stored · '+pct(p.lan)+' landfilled · default for a Recycle Group handover');
     add('Landfill volume', c.m3t+' m³ per tonne'+(c.k==='mattresses'?' · residual shredded to 25% of volume':'')+(c.k==='general'?' · volume that went in, nothing avoided':''));
     if(c.notes) add('Notes', c.notes);
-    var res=[fmt(b.rec,b.rec<10?2:1)+' t recovered'];
+    var res=[fmt(b.rec,b.rec<10?2:1)+' t recycled'];
     if(b.steel>0) res.push(fmt(b.steel,b.steel<10?2:1)+' t steel');
-    res.push(b.co2>0?fmt(b.co2,b.co2<10?2:1)+' t CO₂-e':'no CO₂-e claimed');
+    res.push('A '+fmt(b.cat5,b.cat5<10?2:1)+' t CO₂-e');
+    res.push(b.avoided>0?'B '+fmt(b.avoided,b.avoided<10?2:1)+' t CO₂-e, separate':'B none');
     res.push(fmt(one.volAvoided,0)+' m³ landfill avoided');
     add('Result', res.join(' · '),'out');
     wrapEl.appendChild(dl);
@@ -306,22 +332,21 @@
   }
 
   function update(){
-    var entries=readEntries();
-    var t=B.compute(entries);
+    var entries=readEntries(), opts=readOpts();
+    var t=B.compute(entries,opts);
     var sc=t.score||B.score(t);
     var matt=t.units.mattresses||0;
     setV('c-matt',matt,0);
-    if(matt>0){ setV('c-steelpct',(B.CAT.mattresses.steelRecovery||0)*100,0); txt('c-steelpct-d','of mattress steel · Recycle Group'); }
+    if(matt>0){ setV('c-steelpct',(B.CAT.mattresses.steelRecovery||0)*100,0); txt('c-steelpct-d','Recycle Group stated plant yield'); }
     else { txt('c-steelpct','—'); txt('c-steelpct-d','no mattresses entered'); var sp=$('c-steelpct'); if(sp&&sp.parentNode) sp.parentNode.classList.remove('long'); }
     setV('c-steel',t.steelT,1);
-    setV('c-co2',t.co2,1);
     setV('c-vol',t.volAvoided,0);
     setV('c-rate',t.recoveryRate*100,1);
     setV('c-ret',t.recT,1);
     var steelCats=Object.keys(t.byCat).filter(function(k){return t.byCat[k].steel>0;}).length;
     txt('c-steel-d', steelCats?('from '+steelCats+' steel-bearing stream'+(steelCats===1?'':'s')):'no steel-bearing streams');
-    txt('c-co2-d', t.pendingCats.length?('no CO₂-e claimed for '+t.pendingCats.join(', ')):('steel + reference factors · '+srcId('nsw2010')));
-    txt('c-ret-d', t.inT>0?('of '+fmt(t.inT,t.inT<10?1:0)+' t handed over'):'nothing entered yet');
+    txt('c-ret-d', t.inT>0?('of '+fmt(t.inT,t.inT<10?1:0)+' t handed over · docketed'):'nothing entered yet');
+    var em=$('c-em'); if(em&&B.emPair) em.innerHTML=B.emPair(t,{rows:4});
     // score: gauge (shared component; arcs sweep on every recalculation) + band + composition
     paintGauge(sc,t);
     txt('c-band',t.inT>0?sc.band:'—');
@@ -339,7 +364,7 @@
     if(how){
       while(how.firstChild) how.removeChild(how.firstChild);
       if(!entries.length){ var p=document.createElement('p'); p.className='how-empty'; p.textContent='Enter a quantity in any category to see its mass basis, factors, pathway and status.'; how.appendChild(p); }
-      else entries.forEach(function(e){ var c=B.CAT[e.k]; if(c) how.appendChild(howBlock(c,e)); });
+      else entries.forEach(function(e){ var c=B.CAT[e.k]; if(c) how.appendChild(howBlock(c,e,opts)); });
     }
   }
   var timer=null;
@@ -360,7 +385,8 @@
   // ---- worked example: 1,000 mattresses, computed by the engine -----------------
   (function(){
     var c=B.CAT.mattresses; if(!c) return;
-    var m=B.compute([{k:'mattresses',qty:1000}]);
+    var X=B.EXAMPLE||{entries:[{k:'mattresses',qty:1000}],km:120};
+    var m=B.compute(X.entries,{km:X.km});
     var sc=m.score||B.score(m);
     var b=m.byCat.mattresses||{};
     txt('w-kg',fmt(c.kgUnit,0));
@@ -369,10 +395,14 @@
     txt('w-steel',fmt(m.steelT,1)); txt('w-steel2',fmt(m.steelT,1));
     // display moment + outcome ledger, from the same computation
     txt('w-steel-big',fmt(m.steelT,1)); txt('w-mass-big',fmt(m.inT,1));
-    txt('w-co2-big',fmt(m.co2,1)); txt('w-vol-big',fmt(m.volAvoided,0)); txt('w-rate-big',fmt(m.recoveryRate*100,1));
+    txt('w-co2-big',fmt(m.avoided,1)); txt('w-cat5-big',fmt(m.cat5,1)); txt('w-vol-big',fmt(m.volAvoided,0)); txt('w-rate-big',fmt(m.recoveryRate*100,1));
+    txt('w-sr-big',fitDeg(c.steelRecovery||1));
+    txt('w-mass4',fmt(m.inT,1)); txt('w-mass5',fmt(m.inT,1)); txt('w-pf',String(B.PROC.f)); txt('w-proc',fmt(m.cat5Proc,1));
+    txt('w-km',fmt(X.km,0)); txt('w-tr',fmt(m.cat5Tr,1)); txt('w-lan',fmt(m.lanT,1)); txt('w-lf',String(B.lanFactor(c,{}))); txt('w-lanE',fmt(m.cat5Lan,1));
+    txt('w-cat5',fmt(m.cat5,1)); txt('w-base',fmt(m.baseline,0));
     txt('w-score-big',String(sc.score)); txt('w-band-big',sc.band);
     txt('w-f',String(B.STEEL.f)); txt('w-fsrc',srcId(B.STEEL.src));
-    txt('w-co2',fmt(m.co2,1));
+    txt('w-co2',fmt(m.avoided,1));
     txt('w-m3',fmt(c.kgUnit/1000*c.m3t,1));
     txt('w-volin',fmt(m.inT*c.m3t,0));
     txt('w-lanpct',fmt(c.path.lan*100,0));
