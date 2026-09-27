@@ -497,3 +497,43 @@ footer{background:var(--ink);color:var(--mist);padding:64px 0 32px;border-top:1p
 /* tighter radius family */
 .card,.price,.compare,.split,.dash,.demo-shell,.panel{border-radius:10px}
 .btn{border-radius:5px}
+/* ---- two emissions figures, never netted: A = Scope 3 Category 5 inventory · B = avoided emissions (estimate) ---- */
+.em-host{container-type:inline-size;min-width:0}
+.em-pair{display:grid;grid-template-columns:minmax(0,1fr);border:1px solid var(--mist);border-radius:10px;background:var(--white);overflow:hidden;color:var(--ink)}
+@container (min-width:640px){.em-pair{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.em-pair .em+.em{border-top:0;border-left:1px dashed var(--mist)}}
+.em{padding:18px 20px 16px;min-width:0;display:flex;flex-direction:column}
+.em+.em{border-top:1px dashed var(--mist)}
+.em-k{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate)}
+.em-k>span{display:inline-flex;align-items:center;gap:8px}
+.em-k .fig{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border-radius:3px;background:var(--ink);color:var(--paper);font-weight:500;letter-spacing:0}
+.em.b .em-k .fig{background:var(--green)}
+.em-t{font-family:var(--font-display);font-weight:700;font-size:17px;letter-spacing:-.01em;word-spacing:.08em;line-height:1.2;margin:12px 0 0}
+.em-v{font-family:var(--font-display);font-weight:700;font-size:clamp(34px,3.2vw,46px);letter-spacing:-.035em;line-height:1;margin:10px 0 0;font-variant-numeric:tabular-nums;white-space:nowrap}
+.em-v .u{font-size:.36em;letter-spacing:0;color:var(--slate);margin-left:8px;font-weight:600}
+.em.b .em-v{color:var(--green)}
+.em-d{font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;color:var(--green-2);margin:6px 0 0;min-height:1.3em}
+.em-d.neg{color:var(--graphite)}
+.em dl{display:grid;grid-template-columns:minmax(0,1fr) auto;margin:12px 0 0;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.02em}
+.em dt{color:var(--graphite);padding:6px 12px 6px 0;border-top:1px solid var(--mist-2);line-height:1.35}
+.em dd{margin:0;padding:6px 0;border-top:1px solid var(--mist-2);text-align:right;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.em-f{font-size:12.5px;line-height:1.5;color:var(--graphite);margin:12px 0 0}
+.em-c{font-size:12.5px;line-height:1.5;color:var(--graphite);margin:auto 0 0;padding-top:12px}
+.em-c b{font-family:var(--font-mono);font-weight:500;color:var(--ink);font-size:12px;white-space:nowrap}
+.em-foot{grid-column:1/-1;border-top:1px solid var(--mist);padding:11px 20px;font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;line-height:1.6;color:var(--graphite);background:var(--paper)}
+.em-foot b{color:var(--ink);font-weight:500}
+.dark .em-pair{background:var(--ink-2);border-color:#262826;color:var(--paper)}
+.dark .em+.em{border-color:#3A3D3A}
+.dark .em-k .fig{background:#2E302E;color:var(--paper)}
+.dark .em.b .em-k .fig{background:#1B3A26;color:var(--green-4)}
+.dark .em.b .em-v{color:var(--green-3)}
+.dark .em-d{color:var(--green-4)}
+.dark .em-d.neg{color:var(--mist)}
+.dark .em dt{color:var(--slate);border-color:#262826}
+.dark .em dd{color:var(--mist);border-color:#262826}
+.dark .em-f,.dark .em-c{color:var(--slate)}
+.dark .em-c b{color:var(--paper)}
+.dark .em-foot{background:var(--ink-3);border-color:#262826;color:var(--slate)}
+.dark .em-foot b{color:var(--mist)}
+@container (min-width:640px){.dark .em-pair .em+.em{border-left-color:#3A3D3A}}
+/* self-declared line that sits with every YES Score */
+.sd-line{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--slate);line-height:1.6}
