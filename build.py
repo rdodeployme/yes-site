@@ -30,6 +30,7 @@ PAGES = [
     ("/demo/",            "Live demo",    "demo.html",         "Live demo — Hepburn Shire hard waste program",        "An interactive YES dashboard for a council hard waste program. Hand over a stream and watch the environmental numbers move."),
     ("/calculator/",      "Calculator",   "calculator.html",   "YES calculator — your recycling, measured",    "Enter what you recycled and see the YES impact: tonnes recovered, steel recovered, CO₂-e avoided, landfill avoided. Every figure with its method."),
     ("/councils/",        "Councils",     "councils.html",     "YES for councils — hard waste, kerbside and transfer stations", "Purpose-built reporting for council recycling programs. Switched on in 30 days."),
+    ("/climate-reporting/", None,         "climate-reporting.html", "Mandatory climate reporting — is your waste number ready?", "Australia's mandatory climate reporting is live. Scope 3 is reported from each company's second year and reviewed by an auditor. Check your group and your first Scope 3 year, and get your waste number from the processor."),
     ("/business/",        "Business",     "business.html",     "YES for business — ESG, Scope 3 and sustainability reporting", "Evidence-based recycling data with a documented method for every calculation, ready for ESG and Scope 3 reporting."),
     ("/method/",          None,           "method.html",       "The YES Method — how every number is calculated",    "Reference factors, unit-weight assumptions, evidence grades and versioning. Every YES figure can be traced to its source."),
     ("/pricing/",         "Pricing",      "pricing.html",      "YES pricing — councils and business",                 "Councils from $1,999 a month. Business $999 a month. Foundation Members join free in the first 12 months."),
@@ -59,7 +60,10 @@ def nav(current):
         cls = ' class="active"' if path == current else ''
         items.append(f'<li><a href="{path}"{cls}>{label}</a></li>')
     items.append(f'<li class="nav-cta"><a class="btn btn-primary btn-sm" href="/contact/">Talk to YES {ARROW}</a></li>')
-    return f'''<header class="nav">
+    bar = (f'<div class="ann" role="note"><div class="wrap"><span class="ann-dot" aria-hidden="true"></span>'
+           f'<span class="ann-t"><b>Mandatory climate reporting is live.</b> Scope 3 waste figures now face auditor review.</span>'
+           f'<a href="/climate-reporting/">Check your reporting year {ARROW}</a></div></div>')
+    return bar + f'''<header class="nav">
   <div class="wrap">
     {logo()}
     <button class="burger" aria-label="Menu" aria-expanded="false" onclick="document.querySelector('.nav-links').classList.toggle('open');this.setAttribute('aria-expanded',document.querySelector('.nav-links').classList.contains('open'))">MENU</button>
@@ -81,6 +85,7 @@ def footer():
         <li><a href="/how-it-works/">How it works</a></li>
         <li><a href="/demo/">Live demo</a></li>
         <li><a href="/calculator/">Impact calculator</a></li>
+        <li><a href="/climate-reporting/">Climate reporting</a></li>
         <li><a href="/method/">The YES Method</a></li>
       </ul></div>
       <div><h5>Who it's for</h5><ul>
