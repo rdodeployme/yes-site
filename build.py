@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""YES site builder — wraps page fragments in the shared layout and writes dist/.
+"""Yarta site builder — wraps page fragments in the shared layout and writes dist/.
 Usage: python3 build.py
 """
 import os, re, shutil, json, datetime
@@ -24,27 +24,27 @@ DOMAIN = "https://yes.com.au"
 
 PAGES = [
     # path, nav label (None = not in nav), fragment file, <title>, meta description
-    ("/",                 None,           "index.html",        "YES — Measuring what recycling really achieves",       "YES is the recycling report and live environmental dashboard from Recycle Group. Verified data, documented method, real environmental outcomes."),
-    ("/how-it-works/",    "How it works", "how-it-works.html", "How YES works — from handover to headline number",     "Hand over a stream, YES enters and verifies it, your dashboard moves, your report issues. Only YES staff enter data."),
-    ("/yes-report/",      "The YES Report","yes-report.html",  "The YES Report — the report, the dashboard and the data",     "The YES Report is two layers: a report for each project or period and a live environmental dashboard, backed by YES Data, YES Carbon, YES Circularity and YES Benchmark."),
-    ("/demo/",            "Live demo",    "demo.html",         "Live demo — Hepburn Shire hard waste program",        "An interactive YES dashboard for a council hard waste program. Hand over a stream and watch the environmental numbers move."),
-    ("/calculator/",      "Calculator",   "calculator.html",   "YES calculator — your recycling, measured",    "Enter what you recycled and see the YES impact: tonnes recovered, steel recovered, CO₂-e avoided, landfill avoided. Every figure with its method."),
-    ("/councils/",        "Councils",     "councils.html",     "YES for councils — hard waste, kerbside and transfer stations", "Purpose-built reporting for council recycling programs. Switched on in 30 days."),
+    ("/",                 None,           "index.html",        "Yarta — Measure. Understand. Report. Improve.",       "Yarta is an environmental sustainability report and live dashboard for councils and businesses: one score, the verified figures behind it, and a roadmap to improvement."),
+    ("/how-it-works/",    "How it works", "how-it-works.html", "How Yarta works — from your data to a headline number",     "Send the records you already hold. Yarta enters them, grades the evidence, moves your dashboard and issues your report with a roadmap to improvement."),
+    ("/yes-report/",      "The Yarta Report","yes-report.html",  "The Yarta Report — the report, the dashboard and the data",     "The Yarta Report is two layers: a report for each project or period and a live environmental dashboard, backed by Yarta Data, Yarta Carbon, Yarta Circularity and Yarta Benchmark."),
+    ("/demo/",            "Live demo",    "demo.html",         "Live demo — Hepburn Shire hard waste program",        "An interactive Yarta dashboard for a council hard waste program. Hand over a stream and watch the environmental numbers move."),
+    ("/calculator/",      "Calculator",   "calculator.html",   "Yarta calculator — your recycling, measured",    "Enter what you recycled and see the Yarta impact: tonnes recovered, steel recovered, CO₂-e avoided, landfill avoided. Every figure with its method."),
+    ("/councils/",        "Councils",     "councils.html",     "Yarta for councils — hard waste, kerbside and transfer stations", "Purpose-built reporting for council recycling programs. Switched on in 30 days."),
     ("/climate-reporting/", None,         "climate-reporting.html", "Mandatory climate reporting — is your waste number ready?", "Australia's mandatory climate reporting is live. Scope 3 is reported from each company's second year and reviewed by an auditor. Check your group and your first Scope 3 year, and get your waste number from the processor."),
-    ("/business/",        "Business",     "business.html",     "YES for business — ESG, Scope 3 and sustainability reporting", "Evidence-based recycling data with a documented method for every calculation, ready for ESG and Scope 3 reporting."),
-    ("/method/",          None,           "method.html",       "The YES Method — how every number is calculated",    "Reference factors, unit-weight assumptions, evidence grades and versioning. Every YES figure can be traced to its source."),
-    ("/pricing/",         "Pricing",      "pricing.html",      "YES pricing — councils and business",                 "Councils from $1,999 a month. Business from $999 a month, by staff numbers. Annual subscription. Foundation Members pay no establishment fee in the first 12 months."),
-    ("/about/",           "About",        "about.html",        "About YES — a Recycle Group initiative",                "Why YES exists, who runs it, and the recovery infrastructure behind the numbers."),
-    ("/contact/",         None,           "contact.html",      "Talk to YES",                                          "Book a walkthrough or ask a question. contact@yes.com.au"),
-    ("/report/",     None,           "report.html",  "Sample YES Report — Hepburn Shire Council (demo)", "A sample YES Report, print-ready: summary, figures and roadmap."),
-    ("/language/",   None,           "language.html", "Language on this site — proposed names and their status (internal)", "The First Nations words proposed for YES products, which language each comes from, the dictionary check and whether the custodians have confirmed it."),
+    ("/business/",        "Business",     "business.html",     "Yarta for business — ESG, Scope 3 and sustainability reporting", "Evidence-based recycling data with a documented method for every calculation, ready for ESG and Scope 3 reporting."),
+    ("/method/",          None,           "method.html",       "The Yarta Method — how every number is calculated",    "Reference factors, unit-weight assumptions, evidence grades and versioning. Every Yarta figure can be traced to its source."),
+    ("/pricing/",         "Pricing",      "pricing.html",      "Yarta pricing — councils and business",                 "Councils from $1,999 a month. Business from $999 a month, by staff numbers. Annual subscription. Foundation Members pay no establishment fee in the first 12 months."),
+    ("/about/",           "About",        "about.html",        "About Yarta — a Recycle Group initiative",                "Why Yarta exists, who runs it, and the recovery infrastructure behind the numbers."),
+    ("/contact/",         None,           "contact.html",      "Talk to Yarta",                                          "Book a walkthrough or ask a question. contact@yes.com.au"),
+    ("/report/",     None,           "report.html",  "Sample Yarta Report — Hepburn Shire Council (demo)", "A sample Yarta Report, print-ready: summary, figures and roadmap."),
+    ("/language/",   None,           "language.html", "Language on this site — proposed names and their status (internal)", "The First Nations words proposed for Yarta products, which language each comes from, the dictionary check and whether the custodians have confirmed it."),
 ]
 NOINDEX = {"/language/"}   # internal pages: built and linkable, not indexed
 STANDALONE = [("/yarta/", "yarta.html")]   # the Yarta sample report: its own document, not the site shell
 
-FORM_NOTE = (f"Submitting opens an email to YES at {EMAIL} with your details filled in, ready to send. Nothing is stored on this site. No mailing list."
+FORM_NOTE = (f"Submitting opens an email to Yarta at {EMAIL} with your details filled in, ready to send. Nothing is stored on this site. No mailing list."
              if FORM_MODE == "mailto" else
-             f"Submitting sends your details to YES at {EMAIL}. Nothing else. No mailing list.")
+             f"Submitting sends your details to Yarta at {EMAIL}. Nothing else. No mailing list.")
 
 ARROW = '<svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 
@@ -62,7 +62,7 @@ def nav(current):
         if not label: continue
         cls = ' class="active"' if path == current else ''
         items.append(f'<li><a href="{path}"{cls}>{label}</a></li>')
-    items.append(f'<li class="nav-cta"><a class="btn btn-primary btn-sm" href="/contact/">Talk to YES {ARROW}</a></li>')
+    items.append(f'<li class="nav-cta"><a class="btn btn-primary btn-sm" href="/contact/">Talk to Yarta {ARROW}</a></li>')
     bar = (f'<div class="ann" role="note"><div class="wrap"><span class="ann-dot" aria-hidden="true"></span>'
            f'<span class="ann-t"><b>Mandatory climate reporting is live.</b> Scope 3 waste figures now face auditor review.</span>'
            f'<a href="/climate-reporting/">Check your reporting year {ARROW}</a></div></div>')
@@ -84,12 +84,12 @@ def footer():
         <p class="foot-tag">{POSITION}. An environmental sustainability report, a live dashboard and a roadmap to improvement — verified data, documented method, real outcomes.</p>
       </div>
       <div><h5>Product</h5><ul>
-        <li><a href="/yes-report/">The YES Report</a></li>
+        <li><a href="/yes-report/">The Yarta Report</a></li>
         <li><a href="/how-it-works/">How it works</a></li>
         <li><a href="/demo/">Live demo</a></li>
         <li><a href="/calculator/">Impact calculator</a></li>
         <li><a href="/climate-reporting/">Climate reporting</a></li>
-        <li><a href="/method/">The YES Method</a></li>
+        <li><a href="/method/">The Yarta Method</a></li>
       </ul></div>
       <div><h5>Who it's for</h5><ul>
         <li><a href="/councils/">Councils</a></li>
@@ -97,14 +97,14 @@ def footer():
         <li><a href="/pricing/">Pricing</a></li>
         <li><a href="/pricing/#foundation">Foundation Members</a></li>
       </ul></div>
-      <div><h5>YES</h5><ul>
+      <div><h5>Yarta</h5><ul>
         <li><a href="/about/">About</a></li>
         <li><a href="/contact/">Contact</a></li>
         <li><a href="mailto:{EMAIL}">{EMAIL}</a></li>
         <li><a href="https://recycle.net.au" rel="noopener">Recycle Group</a></li>
       </ul></div>
     </div>
-    <div class="foot-mark" aria-hidden="true">YES</div>
+    <div class="foot-mark" aria-hidden="true">Yarta</div>
     <div class="foot-bottom">
       <span>© {year} Yarta · A Recycle Group initiative</span>
       <span>{SITE_TITLE}</span>
@@ -200,11 +200,11 @@ def build():
         with open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as f:
             f.write(rebase(open(fp, encoding="utf-8").read()))
         built.append(path)
-    # the sample moved from /certificate/ to /report/ (YES issues a report, not a certificate): keep old links working
+    # the sample moved from /certificate/ to /report/ (Yarta issues a report, not a certificate): keep old links working
     old = os.path.join(DIST, "certificate"); os.makedirs(old, exist_ok=True)
     to = (BASE_PATH or "") + "/report/"
     with open(os.path.join(old, "index.html"), "w", encoding="utf-8") as f:
-        f.write(f'<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><title>Sample YES Report</title><meta name="robots" content="noindex"><link rel="canonical" href="{DOMAIN}/report/"><meta http-equiv="refresh" content="0; url={to}"></head><body><p>The sample has moved: <a href="{to}">Sample YES Report</a>.</p></body></html>\n')
+        f.write(f'<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><title>Sample Yarta Report</title><meta name="robots" content="noindex"><link rel="canonical" href="{DOMAIN}/report/"><meta http-equiv="refresh" content="0; url={to}"></head><body><p>The sample has moved: <a href="{to}">Sample Yarta Report</a>.</p></body></html>\n')
     open(os.path.join(DIST, "robots.txt"), "w").write("User-agent: *\nAllow: /\n")
     open(os.path.join(DIST, ".nojekyll"), "w").write("")
     print("built", len(built), "pages:", ", ".join(built), "| form:", FORM_MODE, "| base:", BASE_PATH or "/")
