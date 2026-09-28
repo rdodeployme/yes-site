@@ -64,8 +64,8 @@ def nav(current):
         items.append(f'<li><a href="{path}"{cls}>{label}</a></li>')
     items.append(f'<li class="nav-cta"><a class="btn btn-primary btn-sm" href="/contact/">Talk to Yarta {ARROW}</a></li>')
     bar = (f'<div class="ann" role="note"><div class="wrap"><span class="ann-dot" aria-hidden="true"></span>'
-           f'<span class="ann-t"><b>Mandatory climate reporting is live.</b> Scope 3 waste figures now face auditor review.</span>'
-           f'<a href="/climate-reporting/">Check your reporting year {ARROW}</a></div></div>')
+           f'<span class="ann-t"><b>Measure. Understand. Report. Improve.</b> Shaping Country for tomorrow.</span>'
+           f'<a href="/about/#story">The YARTA story {ARROW}</a></div></div>')
     return bar + f'''<header class="nav">
   <div class="wrap">
     {logo()}
