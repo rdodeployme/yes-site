@@ -51,7 +51,7 @@
     if(document.querySelector('.names-bar')) return;
     var d=document.createElement('div'); d.className='names-bar';
     d.innerHTML='<b>Preview: proposed language names.</b> Not confirmed with the language custodians and not shown to the public. <a href="/language/">Glossary and status</a> · <a href="?names=off">Turn off</a>';
-    d.style.cssText='position:sticky;top:0;z-index:1000;background:#4FC17A;color:#0B0B0B;font:500 13px/1.5 Inter,system-ui,sans-serif;padding:8px 16px;text-align:center';
+    d.style.cssText='position:sticky;top:0;z-index:1000;background:#E9A860;color:#0B0B0B;font:500 13px/1.5 Inter,system-ui,sans-serif;padding:8px 16px;text-align:center';
     document.body.insertBefore(d,document.body.firstChild);
   }
   function run(){ walk(document.body); bar(); document.title=swap(document.title); }

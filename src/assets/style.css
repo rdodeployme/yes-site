@@ -1,10 +1,10 @@
-/* YES — Your Environment Score — design system v0.1 */
+/* Yarta · Environmental Sustainability (yes.com.au) — design system v0.2: earthy orange accent, Yarta mark */
 
 :root{
   --ink:#0B0B0B; --ink-2:#121312; --ink-3:#1A1B1A;
   --charcoal:#2A2A2A; --graphite:#4B4F52; --slate:#7C8184; --mist:#D6D8D3; --mist-2:#E7E8E3;
   --paper:#F4F4F2; --paper-2:#ECEDE8; --white:#FFFFFF;
-  --green:#166534; --green-2:#1F8A4C; --green-3:#4FC17A; --green-4:#8EDDAA; --green-tint:#E2F0E6; --green-ink:#0F3F22;
+  --green:#B8641F; --green-2:#CF7A2E; --green-3:#E9A860; --green-4:#F2C894; --green-tint:#FBF0E3; --green-ink:#8A4A14; /* the accent is earthy orange; the token names are kept so nothing else changes */
   --landfill:#2A2A2A; --stored:#A9ADA8;
   --font-display:"Archivo",system-ui,sans-serif;
   --font-body:"Inter",system-ui,sans-serif;
@@ -68,21 +68,18 @@ section.tight{padding:clamp(40px,6vw,80px) 0}
 /* nav */
 .nav{position:sticky;top:0;z-index:50;background:rgba(11,11,11,.92);backdrop-filter:saturate(140%) blur(10px);-webkit-backdrop-filter:saturate(140%) blur(10px);color:var(--paper);border-bottom:1px solid #202220}
 .nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;height:74px}
-.logo{display:flex;flex-direction:column;align-items:flex-start;gap:0;line-height:1;flex:none}
-.logo-top{display:flex;flex-direction:column;width:max-content}
-.logo-mark{font-family:var(--font-display);font-weight:900;font-size:24px;letter-spacing:-.01em;color:var(--paper);line-height:.9;display:block}
-.logo-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;height:3px;width:100%;margin:4px 0 5px}
-.logo-bar i{display:block;background:var(--green)}
-.logo-bar i:nth-child(2){background:var(--green-3)}
-.logo-bar i:nth-child(3){background:var(--slate)}
-.logo-name{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#C9CCC7;white-space:nowrap}
-.logo-url{font-family:var(--font-mono);font-size:9px;letter-spacing:.08em;color:var(--slate);margin-top:2px;text-transform:lowercase}
+.logo{display:flex;flex-direction:row;align-items:center;gap:10px;line-height:1;flex:none}
+.logo-img{width:44px;height:auto;flex:none;display:block}
+.logo-text{display:flex;flex-direction:column;width:max-content}
+.logo-mark{font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:.22em;color:var(--paper);line-height:1;display:block;text-transform:uppercase}
+.logo-name{font-family:var(--font-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#C9CCC7;white-space:nowrap;margin-top:5px}
+.logo-url{font-family:var(--font-mono);font-size:9px;letter-spacing:.08em;color:var(--slate);margin-top:3px;text-transform:lowercase}
 .logo.on-paper .logo-mark{color:var(--ink)}
 .logo.on-paper .logo-name{color:var(--charcoal)}
-.logo.on-paper .logo-bar i:nth-child(1){background:var(--green)}
-.logo.big .logo-mark{font-size:clamp(64px,9vw,128px);letter-spacing:-.02em}
-.logo.big .logo-bar{height:.09em;font-size:clamp(64px,9vw,128px);gap:.04em;margin:.08em 0 .12em}
-.logo.big .logo-name{font-size:clamp(13px,1.6vw,19px);letter-spacing:.24em}
+.logo.big{gap:clamp(14px,2vw,28px)}
+.logo.big .logo-img{width:clamp(84px,11vw,150px)}
+.logo.big .logo-mark{font-size:clamp(34px,5vw,68px);letter-spacing:.24em}
+.logo.big .logo-name{font-size:clamp(13px,1.6vw,19px);letter-spacing:.24em;margin-top:10px}
 .logo.big .logo-url{font-size:clamp(12px,1.3vw,15px);margin-top:6px}
 .nav-links{display:flex;align-items:center;gap:4px;list-style:none;margin:0;padding:0}
 .nav-links a{display:block;padding:10px 11px;font-size:14px;font-weight:500;color:#C9CCC7;border-radius:var(--r);transition:color .15s,background .15s;white-space:nowrap}

@@ -36,7 +36,7 @@
     if(!el) return; if(size) el.style.setProperty('--gs',size+'px');
     var sweep=330, C='<svg viewBox="0 0 170 170" aria-hidden="true">'
       +'<circle cx="85" cy="85" r="70" fill="none" stroke="#2A2C2A" stroke-width="14" stroke-dasharray="330 440" transform="rotate(135 85 85)"/>';
-    var off=0, cols={recovery:'#166534',carbon:'#4FC17A',evidence:'#8EDDAA'};
+    var off=0, cols={recovery:'#B8641F',carbon:'#E9A860',evidence:'#F2C894'};
     ['recovery','carbon','evidence'].forEach(function(k){var len=sweep*((sc.parts[k]||0)/100);C+='<circle class="ga-'+k+'" cx="85" cy="85" r="70" fill="none" stroke="'+cols[k]+'" stroke-width="14" stroke-dasharray="'+len+' 440" stroke-dashoffset="'+(-off)+'" transform="rotate(135 85 85)" style="transition:stroke-dasharray .9s cubic-bezier(.2,.7,.2,1),stroke-dashoffset .9s cubic-bezier(.2,.7,.2,1)"/>';off+=len;});
     C+='</svg><div class="gv"><b>'+sc.score+'</b><small>of 100</small></div>';
     el.innerHTML=C; el.setAttribute('role','img'); el.setAttribute('aria-label','YES Score '+sc.score+' of 100, '+sc.band);
