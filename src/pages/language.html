@@ -1,0 +1,80 @@
+<style>
+.page-language .lead{max-width:64ch}
+.page-language .status{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-ink);background:var(--green-tint);border-radius:999px;padding:6px 12px}
+.page-language .status i{width:8px;height:8px;border-radius:50%;background:var(--green-2)}
+.page-language .table td:first-child{font-family:var(--font-display);font-weight:700;letter-spacing:-.01em;white-space:nowrap}
+.page-language .table td{vertical-align:top;font-size:14.5px}
+.page-language .ok{color:var(--green-ink);font-weight:600}
+.page-language .no{color:#9B2C2C;font-weight:600}
+.page-language .rule{border-top:1px solid var(--mist);padding:18px 0 2px}
+.page-language .rule .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0 0 8px}
+.page-language .rule p{color:var(--graphite);margin:0;max-width:66ch}
+.page-language .btn-row{margin-top:22px}
+.page-language .plan{display:grid;gap:10px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:760px){.page-language .plan{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.page-language .plan div{border:1px solid var(--mist);border-radius:var(--r-lg);padding:16px 18px;background:#fff}
+.page-language .plan b{font-family:var(--font-display);font-size:19px;letter-spacing:-.02em;display:block;margin-bottom:4px}
+.page-language .plan span{color:var(--graphite);font-size:14.5px}
+</style>
+
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">Language on this site · internal</p>
+    <h1>The proposed names, and where each one stands.</h1>
+    <p class="lead">YES wants its products carried by First Nations words for what they measure: the score, the report, land, rain, trees, today and what happens next. A word goes on the public site only after the custodians of its language confirm the word, its meaning and this use, in writing. Until then the public site keeps the English labels and the names show in preview only.</p>
+    <div class="btn-row"><a class="btn btn-primary" href="/?names=on">See the site with the names on {{ARROW}}</a><a class="btn btn-ghost" href="/?names=off">Turn the preview off</a></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">01 · The words</p><h2>Eleven words, three languages, five that check out so far.</h2></div>
+    <p class="lead">The check column is against the published dictionaries, not a substitute for the custodians. A match means the word and meaning appear in the dictionary as given. "Not found" means it doesn't, which may be a spelling, a dialect, or a different source. The words came to YES as a list; the source of the list needs to be recorded before anyone is asked to confirm it.</p>
+    <p><span class="status"><i></i>Confirmed for public use: <span id="n-conf">0</span> of <span id="n-all">0</span></span></p>
+    <div class="table-wrap" style="margin-top:18px">
+      <table class="table" aria-label="Proposed language names and their status">
+        <thead><tr><th>Word</th><th>Given as</th><th>Language</th><th>Dictionary check</th><th>Proposed use</th><th>Status</th></tr></thead>
+        <tbody id="terms"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="tight" style="background:var(--paper-2)">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">02 · Getting it right</p><h2>How a word gets onto the site.</h2></div>
+    <div class="grid">
+      <div class="span6 rule"><p class="k">1 · One language, or say which</p><p>The list mixes Gamilaraay/Yuwaalaraay, Wiradjuri and Kaurna. Each is a different nation's language. Either choose one language for the product, or say plainly on the site which word comes from which language and why.</p></div>
+      <div class="span6 rule"><p class="k">2 · Record the source</p><p>Who gave YES each word, when, and in what context. A word from an Elder or a language centre is confirmed with them. A word taken from a website or a list is not a source.</p></div>
+      <div class="span6 rule"><p class="k">3 · Ask the custodians, and pay for their time</p><p>Gamilaraay/Yuwaalaraay and Wiradjuri words go to the relevant language centre or Aboriginal Language Advisory group; Kaurna names go through Kaurna Warra Karrpanthi. Ask for the spelling, the meaning, whether the word may be used commercially, and how they want to be credited.</p></div>
+      <div class="span6 rule"><p class="k">4 · Written permission on file</p><p>Permission is written, names the words and the use (a product name on a public website and in reports), and is kept with the trade mark file. Yindyamarra's permission is held for the Yindyamarra draft; it needs to say it covers this site too.</p></div>
+      <div class="span6 rule"><p class="k">5 · Credit on the site</p><p>Each word is credited on this page and in the footer in the form the custodians choose, with the language named. No word is presented as a YES invention.</p></div>
+      <div class="span6 rule"><p class="k">6 · No imitation art</p><p>Words are the language of a nation, not a style. The site uses no dot-painting or other Aboriginal art styles, symbols or AI-generated imagery. The logo is to be commissioned from an Aboriginal artist, and any Country photography supplied and approved by Traditional Owners.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">03 · Where the names would sit</p><h2>The product, in these words.</h2></div>
+    <div class="plan">
+      <div><b>Yawu Report</b><span>The whole report: the summary page, the figures behind it and the roadmap. Gamilaraay/Yuwaalaraay: yes.</span></div>
+      <div><b>Yindyamarra Score</b><span>The overall score, and the way of working behind it. Wiradjuri: respect, taking responsibility.</span></div>
+      <div><b>Yarta · what happens next</b><span>Environmental sustainability as a whole, and the roadmap: the score at the targets, the estimate with YES help, the plan by quarter. Kaurna: land, country, earth.</span></div>
+      <div><b>Yaradha · now / Yilaalua · future</b><span>The score today against the projected score. Neither word is in the dictionary as given; the closest Gamilaraay words are yilaadhu (now) and yilaa (soon).</span></div>
+      <div><b>Yurra, Yuuruu, Yamarr, Yuwalla, Yurrandaali</b><span>Renewable energy, rain and stormwater, waterways, trees, and the planting program: the environmental modules planned beyond recycling. Two of the five check out so far (Yuuruu, Yurrandaali).</span></div>
+      <div><b>Yaraandhu</b><span>Southern cross. Not assigned; proposed for YES Benchmark, your position among peers. Not found in the dictionary.</span></div>
+    </div>
+  </div>
+</section>
+
+<!--scripts-->
+<script>
+(function(){
+  var T=(window.YES&&window.YES.TERMS)||[], C=(window.YES&&window.YES.TERMS_CONFIRMED)||[];
+  var esc=function(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+  var tb=document.getElementById('terms'); if(!tb) return;
+  tb.innerHTML=T.map(function(t){ var ok=/^Matches/.test(t.check); var conf=C.indexOf(t.k)>=0; return '<tr><td>'+esc(t.word)+'</td><td>'+esc(t.given)+'</td><td>'+esc(t.lang)+'</td><td><span class="'+(ok?'ok':'no')+'">'+(ok?'Matches':'Not found')+'</span> · '+esc(t.check.replace(/^(Matches|Not found[^.]*)[:.]\s*/,''))+'</td><td>'+esc(t.use)+'</td><td>'+(conf?'<span class="ok">Confirmed</span>':'Not confirmed · preview only')+'</td></tr>'; }).join('');
+  document.getElementById('n-conf').textContent=C.length; document.getElementById('n-all').textContent=T.length;
+})();
+</script>

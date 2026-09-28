@@ -18,6 +18,16 @@
 .page-report .band-title{margin-top:10px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px}
 .page-report .band-title .k{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--green-3);margin-bottom:8px;white-space:nowrap}
 .page-report .band-title h1{font-size:30px;letter-spacing:-.03em;line-height:1;color:var(--paper);white-space:nowrap}
+.page-report .band-title .band-tag{margin:8px 0 0;font-size:11px;line-height:1.4;color:var(--mist);max-width:60ch;padding-top:6px;border-top:2px solid var(--green-3);display:inline-block;font-family:var(--font-body);text-transform:none;letter-spacing:0}
+.page-report .band-title .cust .step,.page-report .hdr2 .t .step{font-family:var(--font-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--green-2);display:block;margin-top:5px}
+.page-report .band-title .cust .step{color:var(--green-3)}
+.page-report .wyc1{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:-2px 0 14px}
+.page-report .wyc1 .n{border:1px solid var(--mist);border-radius:8px;padding:7px 11px 8px;background:#fff;display:grid;grid-template-columns:auto minmax(0,1fr);gap:0 10px;align-items:center}
+.page-report .wyc1 .n b{font-family:var(--font-display);font-weight:800;font-size:26px;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.page-report .wyc1 .n .k{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate)}
+.page-report .wyc1 .n .s{font-size:9.5px;color:var(--graphite);line-height:1.3}
+.page-report .wyc1 .n.hl{background:var(--green-tint);border-color:#9FD2B2}
+.page-report .wyc1 .n.hl b{color:var(--green-ink)}
 .page-report .band-title .cust{text-align:right}
 .page-report .band-title .cust .c{font-family:var(--font-display);font-weight:700;font-size:17px;letter-spacing:-.01em;color:var(--paper)}
 .page-report .band-title .cust .p{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--mist);margin-top:4px}
@@ -25,7 +35,7 @@
 .page-report .sec{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);display:flex;justify-content:space-between;gap:12px;padding-bottom:6px;border-bottom:1px solid var(--ink);margin:0 0 10px}
 .page-report .sec b{color:var(--ink);font-weight:500}
 /* score panel */
-.page-report .score{display:grid;grid-template-columns:124px minmax(0,1fr) 206px;gap:22px;align-items:center;background:var(--ink);color:var(--paper);border-radius:10px;padding:12px 22px;margin-bottom:12px}
+.page-report .score{display:grid;grid-template-columns:116px minmax(0,1fr) 206px;gap:20px;align-items:center;background:var(--ink);color:var(--paper);border-radius:10px;padding:8px 20px;margin-bottom:10px}
 .page-report .gauge{position:relative;width:120px;height:120px}
 .page-report .gauge svg{width:120px;height:120px;display:block}
 .page-report .gauge .gv{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
@@ -43,7 +53,7 @@
 .page-report .part .tr b{display:block;height:100%;border-radius:2px}
 /* tiles */
 .page-report .tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:8px}
-.page-report .tile{border:1px solid var(--mist);border-radius:8px;padding:9px 12px 8px;background:#fff;position:relative;min-height:76px}
+.page-report .tile{border:1px solid var(--mist);border-radius:8px;padding:8px 12px 7px;background:#fff;position:relative;min-height:68px}
 .page-report .tile svg{width:20px;height:20px;stroke:var(--green);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;position:absolute;top:12px;right:12px}
 .page-report .tile .v{font-family:var(--font-display);font-weight:800;font-size:24px;letter-spacing:-.04em;line-height:1;margin-top:10px;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:4px}
 .page-report .tile .v span.u{font-family:var(--font-mono);font-size:11px;letter-spacing:.02em;color:var(--slate);font-weight:400}
@@ -68,7 +78,7 @@
 .page-report .em-c b{font-size:9px}
 .page-report .em-foot{font-size:8.5px;padding:6px 14px;line-height:1.5}
 /* buckets */
-.page-report .bk{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;align-items:center;margin-bottom:12px}
+.page-report .bk{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;align-items:center;margin-bottom:10px}
 .page-report .bk .bar{height:18px;display:flex;border-radius:4px;overflow:hidden;background:var(--mist)}
 .page-report .bk .bar i{display:block;height:100%}
 .page-report .bk .bar .r{background:var(--green)}
@@ -82,11 +92,11 @@
 .page-report .bk .side{font-size:10px;color:var(--graphite);border-left:2px solid var(--green);padding-left:14px;line-height:1.5}
 /* scale strip */
 .page-report .scale{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
-.page-report .sc{border:1px solid var(--mist);border-radius:8px;padding:10px 12px;background:#fff;min-width:0}
+.page-report .sc{border:1px solid var(--mist);border-radius:8px;padding:8px 12px;background:#fff;min-width:0}
 .page-report .sc .k{font-family:var(--font-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate)}
 .page-report .sc .big{font-family:var(--font-display);font-weight:800;font-size:22px;letter-spacing:-.04em;line-height:1;margin:5px 0 7px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .page-report .sc .big span.u{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.02em;color:var(--graphite);font-weight:400;margin-left:2px}
-.page-report .sc .viz{min-height:26px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:2px;margin-bottom:7px}
+.page-report .sc .viz{min-height:22px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:2px;margin-bottom:5px}
 .page-report .sc .viz svg{width:9px;height:9px;fill:var(--green);flex:none}
 .page-report .sc .viz .pool{width:100%;height:18px;border:1.5px solid var(--charcoal);border-radius:3px;position:relative;overflow:hidden;background:#fff}
 .page-report .sc .viz .pool i{position:absolute;left:0;top:0;bottom:0;background:var(--green)}
@@ -227,8 +237,8 @@
             </div>
           </div>
           <div class="band-title">
-            <div><div class="k">{{POSITION}}</div><h1>Recycling Report</h1></div>
-            <div class="cust"><div class="c">Hepburn Shire Council</div><div class="p">Hard waste program · 13 streams reported</div></div>
+            <div><div class="k">Measure · Understand · Report · Improve</div><h1>Recycling Report</h1><p class="band-tag">Where Hepburn Shire Council stands, every figure traceable to the ledger, and the ways to improve.</p></div>
+            <div class="cust"><div class="c">Hepburn Shire Council</div><div class="p">Hard waste program · 13 streams reported</div><span class="step">Page 1 · Measure</span></div>
           </div>
         </div>
 
@@ -251,6 +261,8 @@
             </div>
             <div class="parts" id="parts"></div>
           </div>
+
+          <div class="wyc1" id="wyc1"></div>
 
           <div class="sec"><span>02 · Headline outcomes</span><b>Every figure traceable to the ledger on page 2</b></div>
           <div class="tiles" style="margin-bottom:14px">
@@ -298,7 +310,7 @@
       <div class="sheet-slot"><div class="sheet-scaler"><div class="sheet" id="sheet2">
         <div class="hdr2">
           {{LOGO_BIG}}
-          <div class="t"><b>Hepburn Shire Council · Hard waste program</b><br>Report YES-DEMO-2026-0001 · FY2026–27 to date · Method <span id="mv2">v1.0 draft</span></div>
+          <div class="t"><b>Hepburn Shire Council · Hard waste program</b><br>Report YES-DEMO-2026-0001 · FY2026–27 to date · Method <span id="mv2">v1.0 draft</span><span class="step">Page 2 · Understand</span></div>
         </div>
         <div class="body">
           <div class="sec"><span>05 · Streams reported</span><b id="hdr2-cats">13 of 13 categories</b></div>
@@ -343,7 +355,7 @@
       <div class="sheet-slot"><div class="sheet-scaler"><div class="sheet" id="sheet3">
         <div class="hdr2">
           {{LOGO_BIG}}
-          <div class="t"><b>Hepburn Shire Council · Roadmap</b><br>Report YES-DEMO-2026-0001 · FY2026–27 to date · Method <span id="mv4">v1.0 draft</span></div>
+          <div class="t"><b>Hepburn Shire Council · Roadmap</b><br>Report YES-DEMO-2026-0001 · FY2026–27 to date · Method <span id="mv4">v1.0 draft</span><span class="step">Page 3 · Improve</span></div>
         </div>
         <div class="body">
           <div class="sec"><span>08 · Where you could be</span><b>YES Score · proposed <span id="sv3">v0.1</span></b></div>
@@ -441,6 +453,9 @@
     var esc=function(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
     var sg=function(v,d){return (v>0?'+':v<0?'−':'±')+f(Math.abs(v),d);};
     var nAct=P.active.filter(function(it){return it.k!=='grants';}).length;
+    if($('wyc1')) $('wyc1').innerHTML='<div class="n"><b>'+P.score.score+'</b><div><div class="k">Now</div><div class="s">'+esc(P.score.band)+' · '+esc(Y.mlabel(P.now))+'</div></div></div>'
+      +'<div class="n"><b>'+P.target.score+'</b><div><div class="k">At the 2030 targets</div><div class="s">80% resource recovery, every tonne on Grade A evidence</div></div></div>'
+      +'<div class="n hl"><b>'+P.potential.score+'</b><div><div class="k">With YES help · estimate</div><div class="s">'+nAct+' recommended items · the plan is on page 3</div></div></div>';
     if($('rm3')) $('rm3').innerHTML='<div class="n"><div class="k">Now</div><b>'+P.score.score+'</b><div class="s">'+esc(P.score.band)+' · '+f(P.t.recoveryRate*100,1)+'% recovered · '+esc(Y.mlabel(P.now))+'</div></div>'
       +'<div class="n"><div class="k">At the 2030 targets</div><b>'+P.target.score+'</b><div class="s">80% resource recovery (National Waste Policy Action Plan, 2024) · every tonne on Grade A evidence</div></div>'
       +'<div class="n hl"><div class="k">With YES help · estimate</div><b>'+P.potential.score+'</b><div class="s">'+nAct+' recommended items'+(P.lanCut>=0.5?' · '+f(P.lanCut,0)+' t less to landfill for the same tonnes':'')+(P.cat5Cut>=0.5?' · Category 5 inventory '+f(P.cat5Cut,0)+' t CO₂-e lower':'')+'</div></div>';
