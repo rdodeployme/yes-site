@@ -140,8 +140,168 @@ window.YES = window.YES || {};
   /* The worked example used on every page and in the method specification: 1,000 mattresses, 120 km to the processor. */
   B.EXAMPLE = {entries:[{k:"mattresses", qty:1000}], km:120, label:"1,000 mattresses · 120 km to the processor"};
 
+  /* ---- Targets, potential and recommended help (proposed, YES Method v1.0 draft) -------------------------------
+     Three numbers on the dashboard and the certificate: the YES Score now, the score at the 2030 targets, and an
+     estimate with the recommended help done, plus the roadmap behind the estimate. Recommendations come from the
+     published rules below: the same figures give the same recommendations, any provider can do the work, and work by
+     a Recycle Group business is disclosed. Every effect is an assumption for discussion, applied to the handover
+     entries and recalculated by B.compute, so the estimate uses the same engine as the score. */
+  B.TARGETS = [
+    {k:"recovery", v:0.8, name:"Resource recovery rate 80%", src:"National Waste Policy Action Plan (2024): 80% average resource recovery rate from all waste streams by 2030"},
+    {k:"evidence", v:1, name:"Every tonne on Grade A evidence", src:"YES standard for a certificate: a weighbridge docket or processor certificate behind every tonne"}
+  ];
+  B.atTargets = function(t){
+    var x = {recoveryRate:Math.max(t.recoveryRate||0, B.TARGETS[0].v), intensity:t.intensity||0, evidenceShare:Math.max(t.evidenceShare==null?1:t.evidenceShare, B.TARGETS[1].v)};
+    return B.score(x);
+  };
+  B.rawScore = function(sc){ return sc.parts.recovery + sc.parts.carbon + sc.parts.evidence; };
+
+  // month keys, "2026-09"
+  var MS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  B.mkey = function(y,m){ return y+"-"+(m<9?"0":"")+(m+1); };
+  B.mparse = function(k){ var p=k.split("-"); return {y:+p[0], m:+p[1]-1}; };
+  B.addMonths = function(k,n){ var p=B.mparse(k), t=p.y*12+p.m+n; return B.mkey(Math.floor(t/12), t%12); };
+  B.monthsBetween = function(a,b){ var p=B.mparse(a), q=B.mparse(b); return (q.y*12+q.m)-(p.y*12+p.m); };
+  B.mlabel = function(k){ var p=B.mparse(k); return MS[p.m]+" "+p.y; };
+  B.mshort = function(k){ var p=B.mparse(k); return MS[p.m]+" "+String(p.y).slice(2); };
+  B.qLabel = function(q){ var p=B.mparse(q); return MS[p.m]+"–"+MS[p.m+2]+" "+p.y; };
+  B.HELP_RAMP = 6;      // months for a change to build up to full effect
+  B.HELP_HORIZON = 18;  // months projected
+
+  function f0(v){ return Math.round(v).toLocaleString("en-AU"); }
+  function f1(v){ return (+v).toLocaleString("en-AU",{minimumFractionDigits:1,maximumFractionDigits:1}); }
+  function pc(v){ return f1(v*100)+"%"; }
+  function list(a){ return a.length<2 ? a.join("") : a.slice(0,-1).join(", ")+" and "+a[a.length-1]; }
+  function pathOf(e){ var p=e.path||(B.CAT[e.k]&&B.CAT[e.k].path)||{rec:0,sto:0,lan:1}; return {rec:p.rec, sto:p.sto, lan:p.lan}; }
+  B.cloneEntries = function(E){ return E.map(function(e){ var c={}; for(var k in e) c[k]=e[k]; if(e.path) c.path={rec:e.path.rec,sto:e.path.sto,lan:e.path.lan}; return c; }); };
+
+  B.PROVIDERS = {
+    group:{label:"Recycle Group business", note:"Disclosed on your certificate"},
+    partner:{label:"Independent specialist", note:"Chosen by you; YES can introduce one"},
+    yes:{label:"YES analyst", note:"Not the operators who enter or verify your handovers"}
+  };
+
+  /* trigger(c) returns {why} when the figures call for it (c = {t, entries, opts}); apply(entries, f) changes the entries at strength f (0 to 1). */
+  B.HELP = [
+    { k:"hardwaste", title:"Booked hard-waste collections", area:"Landfill", prov:"group", groupNames:"JUNK",
+      what:"Residents book a pick-up instead of piling hard waste on the kerb, so items arrive intact and sorted and more of them are recovered.",
+      who:"JUNK runs the booked collections and sorts at pick-up.",
+      modes:["On site","Online"], session:"90-minute planning session",
+      rule:"General rubbish to landfill is 5% or more of the tonnes handed over.",
+      effectText:"A quarter of general rubbish is sorted out and recovered. No avoided emissions are claimed for it, because its mix is unknown.",
+      trigger:function(c){ var g=c.t.byCat.general; if(!g||!(g.lan>0)||g.lan/c.t.inT<0.05) return null;
+        return {why:f0(g.lan)+" t of general rubbish went to landfill: "+pc(g.lan/c.t.inT)+" of everything handed over, and "+pc(g.lan/c.t.lanT)+" of all landfilled tonnes."}; },
+      apply:function(E,f){ E.forEach(function(e){ if(e.k!=="general") return; var p=pathOf(e), mv=p.lan*0.25*f; e.path={rec:p.rec+mv, sto:p.sto, lan:p.lan-mv}; }); }
+    },
+    { k:"stored", title:"Clear stored stock", area:"Stored", prov:"partner",
+      what:"Move stored clothing, textiles and e-waste on to reuse and licensed recycling, so those tonnes count as recovered.",
+      who:"A textile processor and an AS/NZS 5377 e-waste recycler, arranged through Recycle Group.",
+      modes:["On site","Online"], session:"Stock review",
+      rule:"Clothing, textiles or e-waste are held as Stored.",
+      effectText:"Stored clothing, textiles and e-waste are reused or recycled. Treated timber stays stored until it has a pathway.",
+      trigger:function(c){ var a=[], tot=0; ["clothing","ewaste"].forEach(function(k){ var b=c.t.byCat[k]; if(b&&b.sto>0.05){ a.push((k==="clothing"?"clothing and textiles ":"e-waste ")+f1(b.sto)+" t"); tot+=b.sto; } });
+        if(tot<0.5) return null; return {why:f1(tot)+" t is held as Stored: "+list(a)+". Stored counts as neither recycled nor landfilled until it moves."}; },
+      apply:function(E,f){ E.forEach(function(e){ if(e.k!=="clothing"&&e.k!=="ewaste") return; var p=pathOf(e), mv=p.sto*f; e.path={rec:p.rec+mv, sto:p.sto-mv, lan:p.lan}; }); }
+    },
+    { k:"evidence", title:"Docket every load", area:"Evidence", prov:"yes",
+      what:"Set up weighbridge dockets or processor certificates for the streams still on count sheets, so every tonne is on Grade A evidence.",
+      who:"A YES analyst who does not enter or verify your handovers.",
+      modes:["Online","On site"], session:"One-hour session",
+      rule:"Less than 95% of tonnes is backed by a weighbridge docket or processor certificate.",
+      effectText:"Every tonne is backed by a docket or certificate: evidence share 100%.",
+      trigger:function(c){ if(!(c.t.evidenceShare<0.95)) return null; var names=[];
+        c.entries.forEach(function(e){ if(e.ev!=null&&e.ev<1&&B.CAT[e.k]&&!e.gap){ var n=B.CAT[e.k].name.toLowerCase(); if(names.indexOf(n)<0) names.push(n); } });
+        return {why:pc(c.t.evidenceShare)+" of tonnes is backed by a weighbridge docket or processor certificate."+(names.length?" Partly on count sheets: "+list(names)+".":"")}; },
+      apply:function(E,f){ E.forEach(function(e){ var v=e.ev==null?1:e.ev; e.ev=v+(1-v)*f; }); }
+    },
+    { k:"residual", title:"Residual composition audit", area:"Inventory", prov:"partner",
+      what:"Sample the landfilled residual from mattresses, white goods and vehicles so its landfill factor is measured, not the interim mixed figure.",
+      who:"An independent waste auditor, working with YES.",
+      modes:["On site"], session:"Scoping visit",
+      rule:"Landfilled residual is reported at the interim mixed commercial and industrial factor.",
+      effectText:"No change to the score. Your Category 5 inventory uses a measured factor for the residual instead of the interim one, which may move it up or down.",
+      trigger:function(c){ if(!(c.t.interimT>1)) return null; return {why:f1(c.t.interimT)+" t of landfilled residual is reported at the interim mixed C&I factor ("+B.NGA.f.ci+" t CO₂-e per t) until an audit measures its composition."}; },
+      apply:function(){}
+    },
+    { k:"scope3", title:"Auditor-ready Category 5 pack", area:"Inventory", prov:"yes", only:"business",
+      what:"Your Category 5 figure, factors, evidence and ledger in the order an auditor asks for them, ready for your climate report.",
+      who:"A YES analyst who does not enter or verify your handovers.",
+      modes:["Online"], session:"One-hour session",
+      rule:"Business customers, who report Scope 3 under mandatory climate reporting.",
+      effectText:"No change to the score. Prepares your Category 5 figure for an auditor's review.",
+      trigger:function(c){ if(c.opts.sector!=="business") return null; return {why:"Scope 3 is reported from each company's second year under mandatory climate reporting, and an auditor reviews it."}; },
+      apply:function(){}
+    },
+    { k:"grants", title:"Grant application pack", area:"Funding", prov:"partner",
+      what:"Match the recommended work to open state and federal funding rounds, with your YES figures as the evidence base.",
+      who:"A grants writer.",
+      modes:["Online"], session:"One-hour session",
+      rule:"Two or more other recommendations apply.",
+      effectText:"No direct change to the score. It can fund the other items.",
+      trigger:function(c,n){ if(!(n>=2)) return null; return {why:n+" other recommendations apply to you. YES figures give a funding application its evidence base."}; },
+      apply:function(){}
+    }
+  ];
+  B.HELP_BY = {}; B.HELP.forEach(function(h){ B.HELP_BY[h.k]=h; });
+
+  /* What one item changes on its own, at full effect: points on the score and on each part, and tonnes. */
+  B.helpUplift = function(h, entries, opts, t0){
+    var E2=B.cloneEntries(entries); h.apply(E2,1);
+    var t=B.compute(E2,opts), a=t0.score, b=t.score;
+    return {score:B.rawScore(b)-B.rawScore(a), recovery:b.parts.recovery-a.parts.recovery, carbon:b.parts.carbon-a.parts.carbon, evidence:b.parts.evidence-a.parts.evidence,
+      recPts:(t.recoveryRate-t0.recoveryRate)*100, lanT:t0.lanT-t.lanT, cat5:t0.cat5-t.cat5};
+  };
+  /* Recommendations, biggest estimated change first; items with no score change after; the grant pack last. */
+  B.helpFor = function(entries, opts){
+    opts=opts||{}; var t=B.compute(entries,opts), c={t:t, entries:entries, opts:opts}, out=[];
+    B.HELP.forEach(function(h){ if(h.k==="grants") return; if(h.only && h.only!==(opts.sector||"council")) return; var r=h.trigger(c); if(r) out.push({k:h.k, h:h, title:h.title, why:r.why, up:B.helpUplift(h,entries,opts,t)}); });
+    out.sort(function(x,y){ return y.up.score-x.up.score; });
+    var g=B.HELP_BY.grants.trigger(c,out.length); if(g) out.push({k:"grants", h:B.HELP_BY.grants, title:B.HELP_BY.grants.title, why:g.why, up:B.helpUplift(B.HELP_BY.grants,entries,opts,t)});
+    return out;
+  };
+  /* The roadmap. cfg: {now:"2026-09", bookings:[], off:{key:true}} */
+  B.helpPlan = function(entries, opts, cfg){
+    opts=opts||{}; cfg=cfg||{};
+    var now=cfg.now, t=B.compute(entries,opts), at=B.atTargets(t), recs=B.helpFor(entries,opts), off=cfg.off||{};
+    var live=(cfg.bookings||[]).filter(function(b){ return b.status!=="cancelled"; });
+    var booked={}; live.forEach(function(b){ if((b.status==="requested"||b.status==="confirmed") && !booked[b.svc]) booked[b.svc]=b; });
+    var done={}; live.forEach(function(b){ if(b.status==="completed" && b.doneMonth && B.monthsBetween(b.doneMonth,now)<6) done[b.svc]=b; });
+    var items=recs.filter(function(r){ return !done[r.k]; }).map(function(r){ return {k:r.k, h:r.h, title:r.title, why:r.why, up:r.up, booking:booked[r.k]||null, off:!!off[r.k]}; });
+    var anchor=B.addMonths(now,1), n=0;
+    items.forEach(function(it){
+      if(it.off){ it.start=null; return; }
+      if(it.booking && it.booking.slot){ var bm=it.booking.slot.slice(0,7); it.start=bm>now?bm:anchor; return; }
+      if(it.k==="grants"){ it.start=anchor; return; }
+      it.start=B.addMonths(anchor, Math.floor(n/2)*3); n++;
+    });
+    var act=items.filter(function(it){ return it.start; });
+    function ramp(start,m){ return Math.max(0,Math.min(1,(B.monthsBetween(start,m)+1)/B.HELP_RAMP)); }
+    var last=B.addMonths(now,B.HELP_HORIZON); act.forEach(function(it){ var full=B.addMonths(it.start,B.HELP_RAMP-1); if(full>last) last=full; });
+    var H=Math.min(24,B.monthsBetween(now,last)), proj=[];
+    for(var j=1;j<=H;j++){ var mk=B.addMonths(now,j), E2=B.cloneEntries(entries); act.forEach(function(it){ var f=ramp(it.start,mk); if(f>0) it.h.apply(E2,f); }); proj.push({month:mk, v:B.compute(E2,opts).score.score}); }
+    var Ep=B.cloneEntries(entries); act.forEach(function(it){ it.h.apply(Ep,1); }); var tp=B.compute(Ep,opts);
+    var qs=[], q=(function(k){ var p=B.mparse(k); return B.mkey(p.y,p.m-p.m%3); })(anchor), end=B.addMonths(now,H);
+    while(q<=end){ var qe=B.addMonths(q,2), em=qe<=end?qe:end, pr=proj.filter(function(p){ return p.month===em; })[0];
+      qs.push({q:q, label:B.qLabel(q), end:em, starts:act.filter(function(it){ return it.start>=q&&it.start<=qe; }), full:act.filter(function(it){ var fm=B.addMonths(it.start,B.HELP_RAMP-1); return fm>=q&&fm<=qe&&it.k!=="grants"; }), score:pr?pr.v:null});
+      q=B.addMonths(q,3); }
+    return {now:now, t:t, score:t.score, target:at, potential:tp.score, tp:tp, items:items, active:act, done:Object.keys(done).map(function(k){ return done[k]; }), proj:proj, quarters:qs,
+      recPts:(tp.recoveryRate-t.recoveryRate)*100, lanCut:Math.max(0,t.lanT-tp.lanT), cat5Cut:t.cat5-tp.cat5};
+  };
+  B.HELP_RULES = "Booked items start in the month booked. The others start from next month, two a quarter, biggest estimated change first. Each change builds up evenly over "+B.HELP_RAMP+" months, and every other stream is held at its current level. Work completed in the last six months is not recommended again.";
+  B.INDEPENDENCE = [
+    {k:"Published rules", d:"The rules and assumptions are published in the YES Method, and the same rules apply to every customer."},
+    {k:"Any provider", d:"You can use any provider. Recommendations, your YES Score and the verification of your handovers do not depend on who does the work."},
+    {k:"Disclosure", d:"Work by a Recycle Group business, such as JUNK, is disclosed on your certificate. YES is a Recycle Group business."},
+    {k:"Only through the ledger", d:"Completed work changes your score only through the handovers YES enters and verifies afterwards, like any other change."},
+    {k:"Separate people", d:"A YES analyst who runs a paid session for you does not enter or verify your handovers."},
+    {k:"Estimates", d:"The score with YES help and the projection are estimates. They are not a promise, a guarantee or a target."}
+  ];
+
   B.DEMO = {
-    customer:"Hepburn Shire Council", program:"Hard waste program · FY2026–27 to date", badge:"DEMO DATA · ILLUSTRATIVE", km:120, sector:"council",
+    customer:"Hepburn Shire Council", program:"Hard waste program · FY2026–27 to date", badge:"DEMO DATA · ILLUSTRATIVE", km:120, sector:"council", now:"2026-09",
+    bookings:[
+      {id:"bk-demo-1", svc:"hardwaste", status:"confirmed", slot:"2026-10-14T09:00", mode:"On site", location:"Hepburn Shire depot, Creswick", contact:"Council waste officer (demo)", email:"waste@hepburn.example", notes:"Plan the next hard waste sweep as booked collections.", share:true, demo:true}
+    ],
     entries:[
       {k:"mattresses", qty:1000, ev:0.8}, {k:"steel", qty:40}, {k:"aluminium", qty:3.2}, {k:"timber_plain", qty:60}, {k:"timber_coloured", qty:25},
       {k:"tyres", qty:800, ev:0.8}, {k:"whitegoods", qty:600, ev:0.8}, {k:"ewaste", qty:12}, {k:"clothing", qty:8, ev:0.8}, {k:"concrete", qty:150},
