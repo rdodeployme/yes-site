@@ -6,7 +6,7 @@
   --ink:#0B0B0B; --ink-2:#121313; --ink-3:#1A1B1B; --charcoal:#2A2A2A; --graphite:#4B4F52; --steel:#5F6467;
   --silver-5:#8E9396; --silver-4:#A7ACAF; --silver-3:#C4C8CA; --silver-2:#D9DCDD; --silver-1:#E9EBEC; --silver-0:#F2F3F3;
   --paper:#F4F4F2; --white:#FFFFFF;
-  --green:#166534; --green-2:#1D7A43; --green-3:#4FC17A; --green-4:#7FD6A0; --green-soft:#E4F1E8; --green-ink:#0E4424;
+  --green:#B8641F; --green-2:#CF7A2E; --green-3:#E9A860; --green-4:#F2C894; --green-soft:#FBF0E3; --green-ink:#8A4A14;
   --red:#9B2C2C; --red-soft:#F6E7E7;
   --font-display:"Archivo","Helvetica Neue",Arial,sans-serif;
   --font-body:"Inter","Helvetica Neue",Arial,sans-serif;
@@ -129,7 +129,7 @@ h4{font-size:17px;letter-spacing:-.01em;line-height:1.25}
 /* chips and badges */
 .chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.06em;padding:5px 10px;border-radius:999px;border:1px solid var(--silver-3);background:var(--white);color:var(--charcoal);white-space:nowrap}
 .dark .chip,.sec-dark .chip,.card-dark .chip{background:transparent;border-color:#3A3E40;color:var(--silver-3)}
-.chip.g{border-color:#9FD2B2;background:var(--green-soft);color:var(--green-ink)}
+.chip.g{border-color:#F0CFA6;background:var(--green-soft);color:var(--green-ink)}
 .dark .chip.g,.sec-dark .chip.g,.card-dark .chip.g{border-color:#2D5E40;background:rgba(79,193,122,.1);color:var(--green-4)}
 .chip.r{border-color:#E2B8B8;background:var(--red-soft);color:var(--red)}
 .chip .dot{width:7px;height:7px;border-radius:50%;background:currentColor}

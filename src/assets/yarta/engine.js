@@ -24,7 +24,7 @@ window.YESE = window.YESE || {};
     gas:{s1:51.53, s3:{VIC:4.0, TAS:4.0, NSW:13.1, ACT:13.1, QLD:8.8, SA:10.7, WA:4.1, NT:4.0}}, // kg CO2-e per GJ (metro)
     landfill:{Council:1.6, Business:1.3, "Government agency":1.3, Other:1.3}, // t CO2-e per t: MSW 1.6, C&I 1.3
     avoided:{steel:0.44, alu:17.72, timber:1.35, green:0.32, concrete:0.02, tyres:1.07}, // t CO2-e per t recycled
-    unit:{mattress:0.080, tyre:0.0095, whitegood:0.060} // tonnes per unit
+    unit:{mattress:0.080, tyre:0.0095, whitegood:0.060, pallet:0.020, oil_l:0.0009} // tonnes per unit
   };
   E.DEFAULT_TARGETS = {target_emissions:30, target_renewable:50, target_diversion:70, target_fleet_ev:30, target_trees:2000, target_rehab_ha:10, target_participants:3000, target_native_ha:6};
 
@@ -68,9 +68,11 @@ window.YESE = window.YESE || {};
     o.recovered_t = num(v.recycling_t)+num(v.organics_t)+num(v.green_t)+num(v.food_t)+num(v.paper_t)+num(v.glass_t)+num(v.steel_t)+num(v.alu_t)
       +num(v.timber_t)+num(v.timber_treated_t)+num(v.concrete_t)+num(v.rubble_t)+num(v.soil_t)+num(v.plaster_t)
       +num(v.mattress_n)*U.mattress+num(v.tyres_n)*U.tyre+num(v.ewaste_t)+num(v.whitegoods_n)*U.whitegood
-      +num(v.batteries_kg)/1000+num(v.textiles_t)+num(v.furniture_t)+num(v.problem_kg)/1000;
+      +num(v.batteries_kg)/1000+num(v.textiles_t)+num(v.furniture_t)+num(v.problem_kg)/1000
+      +num(v.film_t)+num(v.pallets_n)*U.pallet+num(v.oil_l)*U.oil_l+num(v.food_avoided_t);
+    o.treated_t = num(v.clinical_t)+num(v.sharps_kg)/1000;
     o.landfill_t = num(v.landfill_t);
-    o.waste_total_t = num(v.waste_total_t) || (o.recovered_t + o.landfill_t);
+    o.waste_total_t = num(v.waste_total_t) || (o.recovered_t + o.landfill_t + o.treated_t);
     o.recovery_pct = o.waste_total_t>0 ? Math.min(100, o.recovered_t/o.waste_total_t*100) : null;
     o.diversion_pct = o.waste_total_t>0 ? clamp((o.waste_total_t-o.landfill_t)/o.waste_total_t*100) : null;
     o.reuse_pct = o.waste_total_t>0 ? num(v.furniture_t)/o.waste_total_t*100 : null;
@@ -150,11 +152,13 @@ window.YESE = window.YESE || {};
   E.copyX = function(x){ var y={}; for(var k in x) y[k]=x[k]; y.has={}; for(var h in (x.has||{})) y.has[h]=x.has[h]; return y; };
 
   /* The score if every target in the profile were met today. Measures without a target stay as they are. */
+  /* the published eco standards: the floor for "at the eco standards"; the organisation's own target applies where it is tighter */
+  E.STANDARDS = { diversion:80, renewable:82, src:"National Waste Policy Action Plan (80% resource recovery by 2030); 82% renewable electricity by 2030" };
   E.atTarget = function(m, T){
     var x = E.copyX(m.x), p = x.part||1;
-    if(x.has.energy) x.renew_pct = Math.max(x.renew_pct||0, T.target_renewable);
+    if(x.has.energy) x.renew_pct = Math.max(x.renew_pct||0, T.target_renewable, E.STANDARDS.renewable);
     if(x.has.fleet) x.ev_pct = Math.max(x.ev_pct||0, T.target_fleet_ev);
-    if(x.diversion_pct!=null) x.diversion_pct = Math.max(x.diversion_pct, T.target_diversion);
+    if(x.diversion_pct!=null) x.diversion_pct = Math.max(x.diversion_pct, T.target_diversion, E.STANDARDS.diversion);
     if(x.has.carbon && x.total_base>0) x.total = Math.min(x.total, x.total_base*(1 - T.target_emissions/100));
     if(x.has.land) x.rehab_ha = Math.max(x.rehab_ha, T.target_rehab_ha*p);
     if(x.has.nature){ x.trees = Math.max(x.trees, T.target_trees*p); x.native_ha = Math.max(x.native_ha, T.target_native_ha*p); }
@@ -198,7 +202,7 @@ window.YESE = window.YESE || {};
         total_t: sumK(w,"total_t"), scope1_t: sumK(w,"scope1_t"), scope2_t: sumK(w,"scope2_t"), scope3_t: sumK(w,"scope3_t"), avoided_t: sumK(w,"avoided_t"),
         grid_kwh: sumK(w,"grid_kwh"), renew_kwh: sumK(w,"renew_kwh"), elec_all_kwh: sumK(w,"elec_all_kwh"), gas_gj: sumK(w,"gas_gj"),
         fuel_l: sumK(w,"fuel_l"), potable_kl: sumK(w,"potable_kl"),
-        waste_total_t: sumK(w,"waste_total_t"), landfill_t: sumK(w,"landfill_t"), recovered_t: sumK(w,"recovered_t"),
+        waste_total_t: sumK(w,"waste_total_t"), landfill_t: sumK(w,"landfill_t"), recovered_t: sumK(w,"recovered_t"), treated_t: sumK(w,"treated_t"),
         trees: w.reduce(function(s,x){return s+num(x.raw.trees);},0),
         native_ha: w.reduce(function(s,x){return s+num(x.raw.native_veg_ha)+num(x.raw.habitat_ha)+num(x.raw.wetland_ha);},0),
         rehab_ha: w.reduce(function(s,x){return s+num(x.raw.rehab_ha)+num(x.raw.remediated_ha);},0),
@@ -269,8 +273,8 @@ window.YESE = window.YESE || {};
     var red = R.base.total_t>0 ? (1 - R.total_t/R.base.total_t)*100 : null;
     return [
       {k:"emissions", name:"Emissions reduction vs baseline", actual:red, target:T.target_emissions, unit:"%", note:"Rolling 12 months against the baseline year; target by 2030"},
-      {k:"renewable", name:"Renewable electricity", actual:R.renew_pct, target:T.target_renewable, unit:"%"},
-      {k:"diversion", name:"Landfill diversion", actual:R.diversion_pct, target:T.target_diversion, unit:"%"},
+      {k:"renewable", name:"Renewable electricity", actual:R.renew_pct, target:Math.max(T.target_renewable, E.STANDARDS.renewable), unit:"%", std:"82% by 2030, national target"},
+      {k:"diversion", name:"Landfill diversion", actual:R.diversion_pct, target:Math.max(T.target_diversion, E.STANDARDS.diversion), unit:"%", std:"80% resource recovery by 2030, National Waste Policy Action Plan"},
       {k:"fleet", name:"Fleet electrification", actual:m.fleet_ev_pct, target:T.target_fleet_ev, unit:"%"}
     ];
   };

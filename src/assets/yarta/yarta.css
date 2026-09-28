@@ -52,4 +52,23 @@ body.page-yarta{background:#F3EFE9}
   .page-yarta .rp-cover .rp-h{margin:9px 0 4px}
   .page-yarta .rp-foot{margin-top:8px}
   .page-yarta .report{border:0;border-radius:0}
+  .page-yarta .rp-subs.one .rp-sub{padding:1px 0;font-size:10px}
+  .page-yarta .rp-sub .bar{height:3px}
+  .page-yarta .rp-scale,.page-yarta .rp-tgs{gap:3px}
+  .page-yarta .rp-sc{font-size:10px}
+  .page-yarta .rp-card-v{font-size:22px}
+  .page-yarta .rp-foot{font-size:9px;margin-top:6px}
+  .page-yarta .rp-score .score-ring{--size:96px!important}
 }
+
+/* sector picker under the page header (demo and sample report) */
+.sector-strip{background:#2B211A;color:#F3EFE9;border-top:1px solid #3A2D24}
+.sector-wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:10px clamp(16px,3vw,40px)}
+.sector-k{font:600 11px/1.3 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:#E9A860;white-space:nowrap}
+.sector-chips{display:flex;flex-wrap:wrap;gap:6px}
+.sector-chips button{font:500 13px/1 var(--font-body);color:#F3EFE9;background:transparent;border:1px solid #5A4531;border-radius:999px;padding:8px 13px;cursor:pointer}
+.sector-chips button:hover{border-color:#E9A860}
+.sector-chips button[aria-pressed=true]{background:#E9A860;border-color:#E9A860;color:#1E1712;font-weight:600}
+.page-demo-portal .app{min-height:calc(100vh - 130px)}
+.page-demo-portal .side .brand .mark{font-size:22px}
+@media print{.sector-strip{display:none!important}}

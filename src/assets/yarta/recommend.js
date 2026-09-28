@@ -35,10 +35,10 @@ window.YESR = window.YESR || {};
      published assumption to the score measures at strength f (0 to 1). */
   R.SERVICES = [
     { k:"hardwaste", cat:"waste", moves:["waste","circular","carbon"], prov:"group",
-      groupNames:"JUNK, The Mattress Recycling Company and Recycle Warehouse",
+      groupNames:"The Mattress Recycling Company, Recycle Warehouse and the group's collection business",
       title:function(p){ return p.org_type==="Council" ? "Hard-waste and bulky-item recovery program" : "Bulky-item clear-out and recovery"; },
       what:"Plan and run collections of mattresses, whitegoods, furniture and e-waste so more of them are recovered or reused instead of landfilled.",
-      who:"JUNK collects. The Mattress Recycling Company processes mattresses. Recycle Warehouse rehomes furniture through charities.",
+      who:"Recycle Group collections. The Mattress Recycling Company processes mattresses. Recycle Warehouse rehomes furniture through charities.",
       modes:["On site","Online"], session:"90-minute planning session",
       rule:"Landfill diversion is below your target, and bulky items (mattresses, whitegoods, furniture or e-waste) appear in your waste figures.",
       effectText:"Landfill diversion up 3 percentage points and reuse up 0.5 points. Landfill emissions fall with the tonnes diverted.",
@@ -87,10 +87,10 @@ window.YESR = window.YESR || {};
       effect:function(x,f){ x.renew_pct=cl((x.renew_pct||0)+10*f); x.grid=x.grid*(1-0.05*f); x.total=Math.max(0,x.total-0.05*f*(x.s2||0)); }
     },
     { k:"dumping", cat:"governance", moves:["governance"], prov:"group", only:["Council","Government agency"],
-      groupNames:"JUNK",
+      groupNames:"Recycle Group collections",
       title:"Illegal dumping response",
       what:"Fast removal of dumped rubbish, with a prevention plan: hot-spot mapping, cameras, signage and amnesty days.",
-      who:"JUNK removes dumped rubbish. Prevention is planned with your compliance team.",
+      who:"The group's collection business removes dumped rubbish. Prevention is planned with your compliance team.",
       modes:["On site","Online"], session:"Hot-spot review",
       rule:"Fewer than 90% of environmental complaints and incidents closed, or 24 or more in 12 months and rising on the 12 months before.",
       effectText:"The share of complaints and incidents closed rises to 100%.",
@@ -263,14 +263,14 @@ window.YESR = window.YESR || {};
   R.INDEPENDENCE = [
     {k:"Published rules", d:"The rules and assumptions are published in the Yarta method, and the same rules apply to every organisation."},
     {k:"Any provider", d:"You can use any provider. Recommendations, your score and the verification of your figures do not depend on who does the work."},
-    {k:"Disclosure", d:"Work by a Recycle Group business (JUNK, The Mattress Recycling Company or Recycle Warehouse) is disclosed on your monthly report. Yarta is part of Recycle Group."},
+    {k:"Disclosure", d:"Work by a Recycle Group business (The Mattress Recycling Company, Recycle Warehouse or the group's collection business) is disclosed on your monthly report. Yarta is part of Recycle Group."},
     {k:"Only through the figures", d:"Completed work changes your score only through the figures Yarta enters and verifies in later months, like any other change."},
     {k:"Separate people", d:"A Yarta analyst who runs a paid session for you does not enter or verify your months."},
     {k:"Estimates", d:"The score with Yarta help and the projection are estimates. They are not a promise, a guarantee or a target."}
   ];
   R.NUMBERS = [
     {k:"now", name:"Now", how:"The Yindyamarra Environmental Score for the latest verified month."},
-    {k:"target", name:"At your targets", how:"The same month's figures with each target in your profile treated as met: emissions reduction, renewable electricity, landfill diversion, fleet electrification, trees planted, hectares restored, land rehabilitated and program participants. Figures without a target stay as they are."},
+    {k:"target", name:"At the eco standards", how:"The same month's figures with each published standard, or your target where it is tighter, in your profile treated as met: emissions reduction, renewable electricity, landfill diversion, fleet electrification, trees planted, hectares restored, land rehabilitated and program participants. Figures without a target stay as they are."},
     {k:"potential", name:"With Yarta help (estimate)", how:"The same month's figures with the assumed effect of every recommended item in your plan applied in full. Items you switch off are left out."}
   ];
   R.ROADMAP_RULES = "Booked items start in the month booked. The others start from next month, two a quarter, weakest category first. Each change builds up evenly over "+R.RAMP+" months, and everything else is held at the latest 12 months. Work completed in the last "+R.RECENT+" months is not recommended again; its effect shows in your verified figures.";

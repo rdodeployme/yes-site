@@ -37,7 +37,7 @@ function field(id){ return D.FIELD[id] || (D.PROFILE.filter(function(f){return f
 
 /* ------------------------------------------------------------------ store */
 function load(){
-  try{ var s=JSON.parse(localStorage.getItem(KEY)); if(s && s.v===3 && s.orgs && s.users){ s.bookings=s.bookings||[]; return s; } }catch(e){}
+  try{ var s=JSON.parse(localStorage.getItem(KEY)); if(s && s.v===4 && s.orgs && s.users){ s.bookings=s.bookings||[]; return s; } }catch(e){}
   var fresh = X.build(); persist(fresh); return fresh;
 }
 function persist(s){
@@ -94,7 +94,7 @@ function lineChart(pts,o){
   (o.refs||[]).forEach(function(r){ if(r.v==null) return; s+='<line class="ref" x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y(r.v).toFixed(1)+'" y2="'+y(r.v).toFixed(1)+'"/><text class="ref-t" x="'+(pl+6)+'" y="'+(y(r.v)-6).toFixed(1)+'">'+esc(r.label)+'</text>'; });
   var step=Math.ceil(n/(o.maxLabels||9));
   pts.forEach(function(p,i){ if(i%step===0||i===n-1) s+='<text x="'+x(i)+'" y="'+(H-6)+'" text-anchor="middle">'+esc(p.label)+'</text>'; });
-  var col=o.color||'#4FC17A', txt=o.dark?'#FFFFFF':'#0B0B0B';
+  var col=o.color||'#E9A860', txt=o.dark?'#FFFFFF':'#0B0B0B';
   function path(from,to){ var d='', started=false; for(var i=from;i<=to;i++){ var p=pts[i]; if(p.v==null){ started=false; continue; } d+=(started?'L':'M')+x(i).toFixed(1)+' '+y(p.v).toFixed(1); started=true; } return d; }
   s+='<path d="'+path(0,split)+'" fill="none" stroke="'+col+'" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>';
   if(split<n-1){
@@ -110,7 +110,7 @@ function spark(vals,o){
   var min=o.min!=null?o.min:Math.min.apply(null,xs), max=o.max!=null?o.max:Math.max.apply(null,xs); if(max-min<1){ max+=0.5; min-=0.5; }
   var n=vals.length, d='', st=false;
   vals.forEach(function(v,i){ if(v==null){ st=false; return; } var x=i*(W-4)/(n-1)+2, y=2+(H-4)*(1-(v-min)/(max-min)); d+=(st?'L':'M')+x.toFixed(1)+' '+y.toFixed(1); st=true; });
-  return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true"><path d="'+d+'" fill="none" stroke="'+(o.color||'#1D7A43')+'" stroke-width="1.8" vector-effect="non-scaling-stroke"/></svg>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true"><path d="'+d+'" fill="none" stroke="'+(o.color||'#CF7A2E')+'" stroke-width="1.8" vector-effect="non-scaling-stroke"/></svg>';
 }
 function stackBars(rows,o){
   o=o||{}; var W=o.w||720,H=o.h||200,pl=44,pr=8,pt=10,pb=26; var n=rows.length; if(!n) return '';
@@ -220,7 +220,7 @@ function vDashboard(q){
   var P=planFor(o,S,i), help='';
   if(P){
     var top3=P.items.filter(function(it){ return it.k!=='grants' && !it.off; }).slice(0,3);
-    help='<section class="wyc no-print" aria-labelledby="wyc-h"><div class="wyc-top"><div><h2 class="sec-t" id="wyc-h">Where you could be</h2><p class="sec-s">Your score now, at your own targets, and an estimate with the recommended help done.</p></div><a class="btn btn-ghost btn-sm" href="#/roadmap" style="color:var(--ink)">See your roadmap</a></div>'+threeNums(P,m)
+    help='<section class="wyc no-print" aria-labelledby="wyc-h"><div class="wyc-top"><div><h2 class="sec-t" id="wyc-h">Where you could be</h2><p class="sec-s">Your score now, at the eco standards, and an estimate with the recommended help done.</p></div><a class="btn btn-ghost btn-sm" href="#/roadmap" style="color:var(--ink)">See your roadmap</a></div>'+threeNums(P,m)
       + (top3.length?'<h2 class="sec-t" style="margin-top:26px">Recommended for you</h2><p class="sec-s">From your figures to '+mLabel(m.month)+', by the published rules. You can use any provider.</p><div class="recs">'+top3.map(recCard).join('')+'</div>':'')+'</section>';
   }
   // tiles
@@ -234,7 +234,7 @@ function vDashboard(q){
   var emis = '<div class="panel"><div class="metric"><div class="k">Operational emissions · rolling 12 months</div><div class="v">'+fmt(tot,0)+'<span class="u">t CO₂-e</span></div><div class="s">'+(chg!=null?delta(chg,{lowerBetter:true,dp:1,unit:'%'})+' against the same months of the baseline year':'')+'</div></div>'
     + '<div class="split-bar" aria-hidden="true"><i class="s1" style="width:'+s1+'%"></i><i class="s2" style="width:'+s2+'%"></i><i class="s3" style="width:'+s3+'%"></i></div>'
     + '<div class="legend"><span><i class="s1"></i>Scope 1 · '+fmt(R12.scope1_t,0)+' t</span><span><i class="s2"></i>Scope 2 · '+fmt(R12.scope2_t,0)+' t</span><span><i class="s3"></i>Scope 3 (reported categories) · '+fmt(R12.scope3_t,0)+' t</span></div>'
-    + '<div style="margin-top:16px">'+stackBars(last13,{colors:['#0E4424','#1D7A43','#7FD6A0'],names:['Scope 1','Scope 2','Scope 3'],unit:'t CO₂-e',label:'Emissions by month',h:190})+'</div>'
+    + '<div style="margin-top:16px">'+stackBars(last13,{colors:['#8A4A14','#CF7A2E','#F2C894'],names:['Scope 1','Scope 2','Scope 3'],unit:'t CO₂-e',label:'Emissions by month',h:190})+'</div>'
     + '<p class="small muted" style="margin:10px 0 0">Avoided emissions from recycling, reported separately and never deducted: <b>'+fmt(R12.avoided_t,0)+' t CO₂-e</b> (modelled estimate). '+(R12.flights?'':'')+'Flights are recorded but not yet in the totals.</p></div>';
   // targets
   var tg = E.targets(S.months.length ? {months:S.months.slice(0,i+1), targets:T, baseline:S.baseline} : S);
@@ -453,7 +453,8 @@ function sheetCover(o,S,i,PL,k,nP,provTxt){
   if(inBaselineFY(S,p,k)) B={};
   var tg=E.targets({months:S.months.slice(0,i+1), targets:T, baseline:S.baseline});
   var divT=Math.max(0,(R12.waste_total_t||0)-(R12.landfill_t||0)), divB=Math.max(0,(B.waste_total_t||0)-(B.landfill_t||0));
-  var per = (p.org_type==='Council'&&p.residents>0) ? {n:p.residents,l:'resident'} : (p.employees>0 ? {n:p.employees,l:'employee'} : null);
+  var per = p.beds>0 ? {n:p.beds,l:'bed'} : p.students>0 ? {n:p.students,l:'student'} : p.vehicles>0 ? {n:p.vehicles,l:'vehicle'} : (p.org_type==='Council'&&p.residents>0) ? {n:p.residents,l:'resident'} : p.sites>1 ? {n:p.sites,l:'site'} : (p.employees>0 ? {n:p.employees,l:'employee'} : null);
+  var sectorName = (window.YESS && p.sector && window.YESS.BY[p.sector]) ? window.YESS.BY[p.sector].one : '';
   var win = R12.n<12 ? R12.n+' months' : '12 months';
   var cards=[
     {ic:'waste',  k:'Waste & Resource Recovery', v:fmt(divT,0), u:'tonnes diverted from landfill', s:'Diversion '+pct(R12.diversion_pct,0)+' · target '+pct(T.target_diversion,0), c:rpChg(divT,divB,false)},
@@ -468,16 +469,18 @@ function sheetCover(o,S,i,PL,k,nP,provTxt){
   if(R12.potable_kl>0){ var pools=R12.potable_kl/2500; scale.push({ic:'pool', v:fmt(pools,pools<10?1:0), t:'Olympic swimming pools of drinking water (2,500 kL each)'}); }
   if(B.total_t>0 && R12.total_t!=null){ var d=B.total_t-R12.total_t; scale.push({ic:'carbon', v:fmt(Math.abs(d),0)+' t CO₂-e', t:(d>=0?'less':'more')+' than the same months of the baseline year ('+esc(S.baseline.fy||p.baseline_fy)+')'}); }
   if(R12.trees>0||R12.native_ha>0) scale.push({ic:'leaf', v:fmt(R12.trees,0)+' trees', t:'planted, and '+fmt(R12.native_ha,1)+' ha of native vegetation, habitat or wetland restored'});
+  if(per && R12.total_t>0) scale.push({ic:'carbon', v:fmt(R12.total_t*1000/per.n,0)+' kg CO₂-e', t:'of operational emissions for every '+per.l});
   if(R12.participants>0) scale.push({ic:'people', v:fmt(R12.participants,0)+' people', t:'took part in environment programs'});
-  var scaleH=scale.slice(0,5).map(function(x){ return '<div class="rp-sc">'+rpIco(x.ic)+'<div><b>'+x.v+'</b> '+esc(x.t)+'</div></div>'; }).join('') || '<p class="rp-p muted">No figures yet.</p>';
+  if(m.r12.n && R12.treated_t>0) scale.push({ic:'scale', v:fmt(R12.treated_t,0)+' t', t:'of clinical and related waste sent for treatment, counted in the total but never as recovered'});
+  var scaleH=scale.slice(0,6).map(function(x){ return '<div class="rp-sc">'+rpIco(x.ic)+'<div><b>'+x.v+'</b> '+esc(x.t)+'</div></div>'; }).join('') || '<p class="rp-p muted">No figures yet.</p>';
   var subs=D.CATEGORIES.map(function(c){ var v=m.scores[c.k]; return '<div class="rp-sub"><span>'+esc(c.name)+(m.prov[c.k]?' <span class="muted">(P)</span>':'')+'</span><span class="v">'+(v==null?'—':Math.round(v))+'</span><span class="d">'+(v==null?'<span class="muted small">not reported</span>':delta(m.cat_yoy[c.k]))+'</span><div class="bar"><i style="width:'+(v||0)+'%"></i></div></div>'; }).join('');
   var tgH=tg.map(function(t){ var w=(t.actual==null||!(t.target>0))?0:Math.max(0,Math.min(100,t.actual/t.target*100)); var met=t.actual!=null&&t.actual>=t.target; return '<div class="rp-tg'+(met?' met':'')+'"><span class="n">'+esc(t.name)+'</span><span class="r">'+(t.actual==null?'—':pct(t.actual,0))+' <span class="muted">of '+pct(t.target,0)+'</span></span><div class="bar"><i style="width:'+w.toFixed(0)+'%"></i></div></div>'; }).join('');
   var photo = p.country_photo ? ' style="background-image:linear-gradient(90deg,rgba(11,40,24,.96) 0%,rgba(11,40,24,.78) 55%,rgba(11,40,24,.35) 100%),url('+esc(p.country_photo)+')"' : '';
-  var wyc = PL ? '<div class="rp-wyc"><div><span class="k">Now</span><b>'+(PL.now==null?'—':PL.now)+'</b></div><div><span class="k">At your targets</span><b>'+(PL.target==null?'—':PL.target)+'</b></div><div class="hl"><span class="k">With Yarta help</span><b>'+(PL.potential==null?'—':PL.potential)+'</b><span class="s">estimate · plan on page '+nP+'</span></div></div>' : '';
+  var wyc = PL ? '<div class="rp-wyc"><div><span class="k">Now</span><b>'+(PL.now==null?'—':PL.now)+'</b></div><div><span class="k">At the eco standards</span><b>'+(PL.target==null?'—':PL.target)+'</b></div><div class="hl"><span class="k">With Yarta help</span><b>'+(PL.potential==null?'—':PL.potential)+'</b><span class="s">estimate · plan on page '+nP+'</span></div></div>' : '';
   return '<section class="rp-sheet rp-cover">'
     + '<div class="rp-band"'+photo+'><div class="rp-band-l"><div class="rp-brand">'+RB.mark+'<span class="full">'+RB.full+'</span></div>'
     + '<div class="rp-ethos">Measure. Understand. Report. Improve.</div><h1 class="rp-big">'+RB.title+'</h1><p class="rp-tag">Where '+esc(p.org_name)+' stands, verified figure by figure, and the ways to improve.</p></div>'
-    + '<div class="rp-band-r"><div class="rp-kv light"><span>Organisation</span><b>'+esc(p.org_name)+'</b><span>Month</span><b>'+mLabel(k)+'</b><span>Status</span><b>'+esc(provTxt)+'</b><span>Issued</span><b>'+longDate(new Date())+'</b></div>'+(p.traditional_owners?'<div class="rp-country">On '+esc(p.traditional_owners)+' Country</div>':'')+'</div></div>'
+    + '<div class="rp-band-r"><div class="rp-kv light"><span>Organisation</span><b>'+esc(p.org_name)+'</b>'+(sectorName?'<span>Sector</span><b>'+esc(sectorName)+'</b>':'')+'<span>Month</span><b>'+mLabel(k)+'</b><span>Status</span><b>'+esc(provTxt)+'</b><span>Issued</span><b>'+longDate(new Date())+'</b></div>'+(p.traditional_owners?'<div class="rp-country">On '+esc(p.traditional_owners)+' Country</div>':'')+'</div></div>'
     + (p.country_photo?'<div class="rp-photo-credit">Photo: '+esc(p.country_photo_credit||'supplied by the organisation and approved by Traditional Owners')+'</div>':'')
     + '<div class="rp-score">'+ring(m.score,150,true)+'<div class="rp-score-t"><p class="kicker">'+RB.score+' · '+esc(mLabel(k))+'</p><div class="band">'+esc(m.band)+'</div><div class="rp-score-d">'+(m.yoy==null?'':'<span>'+delta(m.yoy,{unit:' pts'})+' year on year'+(ly?' ('+esc(mLabel(ly.month))+')':'')+'</span>')+(m.mom==null?'':'<span>'+delta(m.mom,{unit:' pts'})+' month on month</span>')+'<span>'+m.scored+' of 10 categories scored</span></div></div>'+wyc+'</div>'
     + '<div class="rp-cards">'+cardsH+'</div>'
@@ -548,7 +551,7 @@ function threeNums(P,m,cls){
   if(P.landfill.cut>=1) extra.push(fmt(P.landfill.cut,0)+' t a year less to landfill');
   return '<div class="three'+(cls?' '+cls:'')+'">'
     + '<div class="tn"><span class="k">Now</span><b>'+(P.now==null?'—':P.now)+'</b><span class="s">'+esc(E.band(P.now))+' · '+esc(mLabel(m.month))+'</span></div>'
-    + '<div class="tn"><span class="k">At your targets</span><b>'+(P.target==null?'—':P.target)+'</b><span class="s">If every target in your profile were met</span></div>'
+    + '<div class="tn"><span class="k">At the eco standards</span><b>'+(P.target==null?'—':P.target)+'</b><span class="s">The published standards, or your target where it is tighter</span></div>'
     + '<div class="tn hl"><span class="k">With Yarta help · estimate</span><b>'+(P.potential==null?'—':P.potential)+'</b><span class="s">'+n+' recommended item'+(n===1?'':'s')+(extra.length?' · '+extra.join(' · '):'')+'</span></div>'
     + '</div>';
 }
@@ -556,7 +559,7 @@ function roadChart(S,i,P,o){
   o=o||{}; var phone=!o.print && window.innerWidth<700;
   var a=S.months.slice(Math.max(0,i-11),i+1).map(function(x){ return {label:mShort(x.month), v:x.score, prov:x.status!=='verified'}; });
   var pr=P.proj.map(function(p){ return {label:mShort(p.month), v:p.v}; });
-  return lineChart(a.concat(pr),{split:a.length-1, refs:P.target!=null?[{v:P.target,label:'At your targets · '+P.target}]:[], label:'Score by month, with the projection', w:phone?420:720, h:phone?300:(o.h||230), dark:o.dark, maxLabels:phone?5:(o.maxLabels||10)});
+  return lineChart(a.concat(pr),{split:a.length-1, refs:P.target!=null?[{v:P.target,label:'At the eco standards · '+P.target}]:[], label:'Score by month, with the projection', w:phone?420:720, h:phone?300:(o.h||230), dark:o.dark, maxLabels:phone?5:(o.maxLabels||10)});
 }
 function recCard(it){
   var s=it.s, pv=provOf(s), b=it.booking, up=upText(it.uplift);
@@ -586,8 +589,8 @@ function vRoadmap(){
   var o=org(), S=seriesOf(o), m=monthOf(S);
   if(!m || !R) return shell('roadmap','<div class="pg-head"><div><p class="kicker">Roadmap and help</p><h1>Your roadmap</h1></div></div><div class="empty">Your roadmap appears once your first month is verified.</div>');
   var i=idxOf(S,m.month), P=planFor(o,S,i);
-  var head='<div class="pg-head"><div><p class="kicker">Roadmap and help</p><h1>Your roadmap</h1><p class="pg-sub">Your score now, the score at your own targets, and an estimate with the recommended help done. Based on your figures to '+mLabel(m.month)+(m.status!=='verified'?' (provisional: awaiting verification)':'')+'. The rules and assumptions are published in the <a class="link" href="../method/#help">method</a>.</p></div><div class="pg-actions"><a class="btn btn-ink btn-sm" href="#/report/'+m.month+'">Report with roadmap</a></div></div>';
-  var top='<section class="panel-dark rm-top">'+threeNums(P,m,'dark')+'<div class="rm-chart">'+roadChart(S,i,P,{dark:true})+'</div><p class="rm-leg"><span class="lg-i"><span class="lg-l solid"></span>Your score by month</span><span class="lg-i"><span class="lg-l dash"></span>Projected with the plan below (estimate)</span><span class="lg-i"><span class="lg-l dot"></span>At your targets</span></p></section>';
+  var head='<div class="pg-head"><div><p class="kicker">Roadmap and help</p><h1>Your roadmap</h1><p class="pg-sub">Your score now, the score at the eco standards, and an estimate with the recommended help done. Based on your figures to '+mLabel(m.month)+(m.status!=='verified'?' (provisional: awaiting verification)':'')+'. The rules and assumptions are published in the <a class="link" href="../method/#help">method</a>.</p></div><div class="pg-actions"><a class="btn btn-ink btn-sm" href="#/report/'+m.month+'">Report with roadmap</a></div></div>';
+  var top='<section class="panel-dark rm-top">'+threeNums(P,m,'dark')+'<div class="rm-chart">'+roadChart(S,i,P,{dark:true})+'</div><p class="rm-leg"><span class="lg-i"><span class="lg-l solid"></span>Your score by month</span><span class="lg-i"><span class="lg-l dash"></span>Projected with the plan below (estimate)</span><span class="lg-i"><span class="lg-l dot"></span>At the eco standards</span></p></section>';
   var rows=P.items.map(function(it){
     var s=it.s, b=it.booking, pv=provOf(s);
     var st = b ? bookingChip(b)+'<div class="small muted">'+esc(slotLabel(b.slot,b.other))+'</div>' : '<a class="btn btn-primary btn-sm" href="#/book/'+s.k+'">Book a session</a>';
@@ -666,7 +669,7 @@ function sheet3(o,S,i,P,k){
   var disc = nm.length ? 'Items marked ● are delivered by a Recycle Group business ('+nm.join('; ')+'). Yarta is part of Recycle Group. You can use any provider; your score and its verification do not depend on who does the work.' : 'No item in this plan is delivered by a Recycle Group business. Yarta is part of Recycle Group.';
   return '<section class="rp-sheet rp-road"><div class="rp-head"><div><div class="rp-title" style="font-size:22px">'+esc(p.org_name)+' · '+mLabel(k)+'</div>'+rpSteps(['improve'])+'</div><div class="rp-kv"><span>Report</span><b>Roadmap</b></div></div>'
     + threeNums(P,m,'rp')
-    + '<div class="rp-h">Score by month, and projected with the plan</div>'+roadChart(S,i,P,{h:190,print:true})+'<p class="rp-leg"><span class="lg-i"><span class="lg-l solid"></span>Your score by month</span><span class="lg-i"><span class="lg-l dash"></span>Projected with the plan (estimate)</span><span class="lg-i"><span class="lg-l dot"></span>At your targets</span></p>'
+    + '<div class="rp-h">Score by month, and projected with the plan</div>'+roadChart(S,i,P,{h:190,print:true})+'<p class="rp-leg"><span class="lg-i"><span class="lg-l solid"></span>Your score by month</span><span class="lg-i"><span class="lg-l dash"></span>Projected with the plan (estimate)</span><span class="lg-i"><span class="lg-l dot"></span>At the eco standards</span></p>'
     + '<div class="rp-h">Plan by quarter</div>'+(P.active.length?'<div class="rp-tw"><table class="tbl compact"><thead><tr><th>Quarter</th><th>Starts (each builds up over '+R.RAMP+' months)</th><th class="r">Projected score at quarter end</th></tr></thead><tbody>'+qrows+'</tbody></table></div>':'<p class="rp-p">No help is in the plan.</p>')
     + '<div class="rp-h">Progress so far</div>'+(prog?'<div class="rp-tw"><table class="tbl compact"><thead><tr><th>Help</th><th>Status</th><th>When</th><th>Change since</th></tr></thead><tbody>'+prog+'</tbody></table></div>':'<p class="rp-p">No help booked yet.</p>')
     + '<div class="rp-h">Disclosures and assumptions</div><p class="rp-p">'+esc(disc)+' The projection and the score with Yarta help are estimates from the published assumptions; they are not a promise or a guarantee. A change since completed work is a change in the figures, not proof that the work caused it.</p>'
@@ -922,6 +925,10 @@ document.addEventListener('click', function(e){
 });
 
 /* for pages that embed a report outside the app (the Yarta sample on the Yarta site) */
-window.YESPortal={reportSheets:reportSheets, org:org, seriesOf:seriesOf, mLabel:mLabel};
+window.YESPortal={reportSheets:reportSheets, org:org, seriesOf:seriesOf, mLabel:mLabel, state:state,
+  currentOrgId:ctxOrgId,
+  /* sign in as the customer of an organisation (the public demo and the sample report use this) */
+  signInAs:function(orgId, hash){ var u=state.users.filter(function(x){ return x.role==='customer' && x.org===orgId; })[0]; if(!u) return false; state.session={user:u.id}; ui.loginTab='customer'; save(); if(hash!==false){ if(location.hash===(hash||'#/dashboard')) render(); else location.hash=hash||'#/dashboard'; } return true; }
+};
 render();
 })();
