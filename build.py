@@ -18,8 +18,8 @@ NAME_LINES = ["Environmental", "Sustainability"]   # the full name, always shown
 NAME_FULL = "Environmental Sustainability"
 URL = "www.yes.com.au"
 EMAIL = "contact@yes.com.au"
-POSITION = "Environmental Impact Intelligence by Recycle Group"
-SITE_TITLE = "Yarta · Environmental Sustainability · by YES, a Recycle Group business"
+POSITION = "Environmental Impact Intelligence · A Recycle Group initiative"
+SITE_TITLE = "Yarta · Environmental Sustainability · A Recycle Group initiative"
 DOMAIN = "https://yes.com.au"
 
 PAGES = [
@@ -34,7 +34,7 @@ PAGES = [
     ("/business/",        "Business",     "business.html",     "YES for business — ESG, Scope 3 and sustainability reporting", "Evidence-based recycling data with a documented method for every calculation, ready for ESG and Scope 3 reporting."),
     ("/method/",          None,           "method.html",       "The YES Method — how every number is calculated",    "Reference factors, unit-weight assumptions, evidence grades and versioning. Every YES figure can be traced to its source."),
     ("/pricing/",         "Pricing",      "pricing.html",      "YES pricing — councils and business",                 "Councils from $1,999 a month. Business from $999 a month, by staff numbers. Annual subscription. Foundation Members pay no establishment fee in the first 12 months."),
-    ("/about/",           "About",        "about.html",        "About YES — a Recycle Group business",                "Why YES exists, who runs it, and the recovery infrastructure behind the numbers."),
+    ("/about/",           "About",        "about.html",        "About YES — a Recycle Group initiative",                "Why YES exists, who runs it, and the recovery infrastructure behind the numbers."),
     ("/contact/",         None,           "contact.html",      "Talk to YES",                                          "Book a walkthrough or ask a question. contact@yes.com.au"),
     ("/report/",     None,           "report.html",  "Sample YES Report — Hepburn Shire Council (demo)", "A sample YES Report, print-ready: summary, figures and roadmap."),
     ("/language/",   None,           "language.html", "Language on this site — proposed names and their status (internal)", "The First Nations words proposed for YES products, which language each comes from, the dictionary check and whether the custodians have confirmed it."),
@@ -106,7 +106,7 @@ def footer():
     </div>
     <div class="foot-mark" aria-hidden="true">YES</div>
     <div class="foot-bottom">
-      <span>© {year} YES · A Recycle Group business</span>
+      <span>© {year} Yarta · A Recycle Group initiative</span>
       <span>{SITE_TITLE}</span>
     </div>
   </div>
