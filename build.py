@@ -37,7 +37,9 @@ PAGES = [
     ("/about/",           "About",        "about.html",        "About YES — a Recycle Group business",                "Why YES exists, who runs it, and the recovery infrastructure behind the numbers."),
     ("/contact/",         None,           "contact.html",      "Talk to YES",                                          "Book a walkthrough or ask a question. contact@yes.com.au"),
     ("/report/",     None,           "report.html",  "Sample YES Report — Hepburn Shire Council (demo)", "A sample YES Report, print-ready: summary, figures and roadmap."),
+    ("/language/",   None,           "language.html", "Language on this site — proposed names and their status (internal)", "The First Nations words proposed for YES products, which language each comes from, the dictionary check and whether the custodians have confirmed it."),
 ]
+NOINDEX = {"/language/"}   # internal pages: built and linkable, not indexed
 
 FORM_NOTE = (f"Submitting opens an email to YES at {EMAIL} with your details filled in, ready to send. Nothing is stored on this site. No mailing list."
              if FORM_MODE == "mailto" else
@@ -132,6 +134,7 @@ HEAD = '''<!doctype html>
 
 TAIL = '''
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="/assets/yes-terms.js?v={v}"></script>
 <script src="/assets/site.js?v={v}"></script>
 {extra}
 </body>
@@ -179,6 +182,8 @@ def build():
         html = (HEAD.format(title=title, desc=desc, domain=DOMAIN, path=path, v=v, slug=slug)
                 + hero_fix + ICONS + nav(path) + "\n<main>\n" + body + "\n</main>\n" + footer()
                 + TAIL.format(v=v, extra=extra))
+        if path in NOINDEX:
+            html = html.replace('<meta name="theme-color"', '<meta name="robots" content="noindex">\n<meta name="theme-color"', 1)
         out_dir = os.path.join(DIST, path.strip("/"))
         os.makedirs(out_dir, exist_ok=True)
         with open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as f:
