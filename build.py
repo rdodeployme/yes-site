@@ -27,20 +27,26 @@ PAGES = [
     ("/",                 None,           "index.html",        "Yarta — Measure. Understand. Report. Improve.",       "Yarta is an environmental sustainability report and live dashboard for councils and businesses: one score, the verified figures behind it, and a roadmap to improvement."),
     ("/how-it-works/",    "How it works", "how-it-works.html", "How Yarta works — from your data to a headline number",     "Send the records you already hold. Yarta enters them, grades the evidence, moves your dashboard and issues your report with a roadmap to improvement."),
     ("/yes-report/",      "The Yarta Report","yes-report.html",  "The Yarta Report — the report, the dashboard and the data",     "The Yarta Report is two layers: a report for each project or period and a live environmental dashboard, backed by Yarta Data, Yarta Carbon, Yarta Circularity and Yarta Benchmark."),
-    ("/demo/",            "Live demo",    "demo.html",         "Live demo — Hepburn Shire hard waste program",        "An interactive Yarta dashboard for a council hard waste program. Hand over a stream and watch the environmental numbers move."),
-    ("/calculator/",      "Calculator",   "calculator.html",   "Yarta calculator — your recycling, measured",    "Enter what you recycled and see the Yarta impact: tonnes recovered, steel recovered, CO₂-e avoided, landfill avoided. Every figure with its method."),
-    ("/councils/",        "Councils",     "councils.html",     "Yarta for councils — hard waste, kerbside and transfer stations", "Purpose-built reporting for council recycling programs. Switched on in 30 days."),
+    ("/demo/",            "Live demo",    "demo.html",         "Live demo — the Yarta dashboard, by sector",           "The Yarta environmental sustainability dashboard on demo data: pick a sector, see the score, the categories, the figures and the roadmap to improvement."),
+    ("/recycling-demo/",  None,           "recycling-demo.html", "Recycling demo — Hepburn Shire hard waste program",  "The recycling dashboard for a council hard waste program on illustrative data: add a stream and watch the numbers move."),
+    ("/calculator/",      None,           "calculator.html",   "Recycling calculator — what your recycling achieves",    "Enter what you recycled and see the Yarta impact: tonnes recovered, steel recovered, CO₂-e avoided, landfill avoided. Every figure with its method."),
+    ("/councils/",        None,           "councils.html",     "Yarta for councils — whole-of-council environmental sustainability", "One score for the kerbside service, transfer stations, depots, buildings, fleet, water, Country and community programs, with a roadmap to improvement. Switched on in 30 days."),
     ("/climate-reporting/", None,         "climate-reporting.html", "Mandatory climate reporting — is your waste number ready?", "Australia's mandatory climate reporting is live. Scope 3 is reported from each company's second year and reviewed by an auditor. Check your group and your first Scope 3 year, and get your waste number from the processor."),
-    ("/business/",        "Business",     "business.html",     "Yarta for business — ESG, Scope 3 and sustainability reporting", "Evidence-based recycling data with a documented method for every calculation, ready for ESG and Scope 3 reporting."),
+    ("/sectors/",         "Sectors",      "sectors.html",      "Sectors — what councils, hospitals, universities, manufacturers, builders, retailers and transport operators report on", "The same ten categories, shaped by sector: what each kind of organisation reports on, the eco standards that apply, and a demo and sample report for each."),
+    ("/eco-standards/",   None,           "eco-standards.html", "Eco standards — the standards behind every Yarta score", "The published standard behind each Yarta category, with sources: 80% resource recovery by 2030, 43% below 2005 by 2030, 82% renewable electricity, 30 by 30, halving food waste, mandatory climate reporting."),
+    ("/business/",        None,           "business.html",     "Yarta for business — environmental sustainability reporting, Scope 3 and a roadmap", "Your data evaluated against the eco standards, with the emissions figures ready for mandatory climate reporting and a roadmap to improvement."),
     ("/method/",          None,           "method.html",       "The Yarta Method — how every number is calculated",    "Reference factors, unit-weight assumptions, evidence grades and versioning. Every Yarta figure can be traced to its source."),
     ("/pricing/",         "Pricing",      "pricing.html",      "Yarta pricing — councils and business",                 "Councils from $1,999 a month. Business from $999 a month, by staff numbers. Annual subscription. Foundation Members pay no establishment fee in the first 12 months."),
     ("/about/",           "About",        "about.html",        "About Yarta — a Recycle Group initiative",                "Why Yarta exists, who runs it, and the recovery infrastructure behind the numbers."),
     ("/contact/",         None,           "contact.html",      "Talk to Yarta",                                          "Book a walkthrough or ask a question. contact@yes.com.au"),
-    ("/report/",     None,           "report.html",  "Sample Yarta Report — Hepburn Shire Council (demo)", "A sample Yarta Report, print-ready: summary, figures and roadmap."),
+    ("/report/",     None,           "report.html",  "Sample Yarta Report — environmental sustainability, by sector (demo)", "A sample Yarta Environmental Sustainability Report for each sector, print-ready: summary, figures and the roadmap to improvement."),
+    ("/recycling-report/", None,      "recycling-report.html", "Sample recycling report — Hepburn Shire Council (demo)", "The recycling report sample, print-ready: summary, figures and roadmap."),
     ("/language/",   None,           "language.html", "Language on this site — proposed names and their status (internal)", "The First Nations words proposed for Yarta products, which language each comes from, the dictionary check and whether the custodians have confirmed it."),
 ]
 NOINDEX = {"/language/"}   # internal pages: built and linkable, not indexed
-STANDALONE = [("/yarta/", "yarta.html")]   # the Yarta sample report: its own document, not the site shell
+STANDALONE = [("/report/", "report.html"), ("/demo/", "demo.html")]   # the portal-based pages: their own document, not the site shell
+STANDALONE_FRAGS = {f for _, f in STANDALONE}
+REDIRECTS = {"/yarta/": "/report/", "/certificate/": "/recycling-report/"}   # old paths that keep working
 
 FORM_NOTE = (f"Submitting opens an email to Yarta at {EMAIL} with your details filled in, ready to send. Nothing is stored on this site. No mailing list."
              if FORM_MODE == "mailto" else
@@ -90,8 +96,10 @@ def footer():
         <li><a href="/calculator/">Impact calculator</a></li>
         <li><a href="/climate-reporting/">Climate reporting</a></li>
         <li><a href="/method/">The Yarta Method</a></li>
+        <li><a href="/eco-standards/">Eco standards</a></li>
       </ul></div>
       <div><h5>Who it's for</h5><ul>
+        <li><a href="/sectors/">Sectors</a></li>
         <li><a href="/councils/">Councils</a></li>
         <li><a href="/business/">Business</a></li>
         <li><a href="/pricing/">Pricing</a></li>
@@ -163,6 +171,7 @@ def build():
     hero_fix = "" if os.path.exists(os.path.join(SRC, "assets", "img", "hero-springs.jpg")) else "<style>.hero-photo{background-image:none}</style>\n"
     built = []
     for path, label, frag, title, desc in PAGES:
+        if frag in STANDALONE_FRAGS: continue   # built below, as a complete document
         fp = os.path.join(SRC, "pages", frag)
         if not os.path.exists(fp):
             print("MISSING", frag); continue
@@ -200,11 +209,12 @@ def build():
         with open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as f:
             f.write(rebase(open(fp, encoding="utf-8").read()))
         built.append(path)
-    # the sample moved from /certificate/ to /report/ (Yarta issues a report, not a certificate): keep old links working
-    old = os.path.join(DIST, "certificate"); os.makedirs(old, exist_ok=True)
-    to = (BASE_PATH or "") + "/report/"
-    with open(os.path.join(old, "index.html"), "w", encoding="utf-8") as f:
-        f.write(f'<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><title>Sample Yarta Report</title><meta name="robots" content="noindex"><link rel="canonical" href="{DOMAIN}/report/"><meta http-equiv="refresh" content="0; url={to}"></head><body><p>The sample has moved: <a href="{to}">Sample Yarta Report</a>.</p></body></html>\n')
+    # old paths keep working
+    for old_path, new_path in REDIRECTS.items():
+        old = os.path.join(DIST, old_path.strip("/")); os.makedirs(old, exist_ok=True)
+        to = (BASE_PATH or "") + new_path
+        with open(os.path.join(old, "index.html"), "w", encoding="utf-8") as f:
+            f.write(f'<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><title>Moved</title><meta name="robots" content="noindex"><link rel="canonical" href="{DOMAIN}{new_path}"><meta http-equiv="refresh" content="0; url={to}"></head><body><p>This page has moved: <a href="{to}">{DOMAIN}{new_path}</a>.</p></body></html>\n')
     open(os.path.join(DIST, "robots.txt"), "w").write("User-agent: *\nAllow: /\n")
     open(os.path.join(DIST, ".nojekyll"), "w").write("")
     print("built", len(built), "pages:", ", ".join(built), "| form:", FORM_MODE, "| base:", BASE_PATH or "/")
