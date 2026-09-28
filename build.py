@@ -24,19 +24,19 @@ DOMAIN = "https://yes.com.au"
 
 PAGES = [
     # path, nav label (None = not in nav), fragment file, <title>, meta description
-    ("/",                 None,           "index.html",        "YES — Measuring what recycling really achieves",       "YES is the recycling certificate and live environmental dashboard from Recycle Group. Verified data, documented method, real environmental outcomes."),
-    ("/how-it-works/",    "How it works", "how-it-works.html", "How YES works — from handover to headline number",     "Hand over a stream, YES enters and verifies it, your dashboard moves, your certificate issues. Only YES staff enter data."),
-    ("/yes-report/",      "The YES Report","yes-report.html",  "The YES Report — certificate, dashboard and data",     "The YES Report is two layers: a recycling certificate and a live environmental dashboard, backed by YES Data, YES Carbon, YES Circularity and YES Benchmark."),
+    ("/",                 None,           "index.html",        "YES — Measuring what recycling really achieves",       "YES is the recycling report and live environmental dashboard from Recycle Group. Verified data, documented method, real environmental outcomes."),
+    ("/how-it-works/",    "How it works", "how-it-works.html", "How YES works — from handover to headline number",     "Hand over a stream, YES enters and verifies it, your dashboard moves, your report issues. Only YES staff enter data."),
+    ("/yes-report/",      "The YES Report","yes-report.html",  "The YES Report — the report, the dashboard and the data",     "The YES Report is two layers: a report for each project or period and a live environmental dashboard, backed by YES Data, YES Carbon, YES Circularity and YES Benchmark."),
     ("/demo/",            "Live demo",    "demo.html",         "Live demo — Hepburn Shire hard waste program",        "An interactive YES dashboard for a council hard waste program. Hand over a stream and watch the environmental numbers move."),
     ("/calculator/",      "Calculator",   "calculator.html",   "YES calculator — your recycling, measured",    "Enter what you recycled and see the YES impact: tonnes recovered, steel recovered, CO₂-e avoided, landfill avoided. Every figure with its method."),
     ("/councils/",        "Councils",     "councils.html",     "YES for councils — hard waste, kerbside and transfer stations", "Purpose-built reporting for council recycling programs. Switched on in 30 days."),
     ("/climate-reporting/", None,         "climate-reporting.html", "Mandatory climate reporting — is your waste number ready?", "Australia's mandatory climate reporting is live. Scope 3 is reported from each company's second year and reviewed by an auditor. Check your group and your first Scope 3 year, and get your waste number from the processor."),
     ("/business/",        "Business",     "business.html",     "YES for business — ESG, Scope 3 and sustainability reporting", "Evidence-based recycling data with a documented method for every calculation, ready for ESG and Scope 3 reporting."),
     ("/method/",          None,           "method.html",       "The YES Method — how every number is calculated",    "Reference factors, unit-weight assumptions, evidence grades and versioning. Every YES figure can be traced to its source."),
-    ("/pricing/",         "Pricing",      "pricing.html",      "YES pricing — councils and business",                 "Councils from $1,999 a month. Business $999 a month. Foundation Members join free in the first 12 months."),
+    ("/pricing/",         "Pricing",      "pricing.html",      "YES pricing — councils and business",                 "Councils from $1,999 a month. Business from $999 a month, by staff numbers. Annual subscription. Foundation Members pay no establishment fee in the first 12 months."),
     ("/about/",           "About",        "about.html",        "About YES — a Recycle Group business",                "Why YES exists, who runs it, and the recovery infrastructure behind the numbers."),
     ("/contact/",         None,           "contact.html",      "Talk to YES",                                          "Book a walkthrough or ask a question. contact@yes.com.au"),
-    ("/certificate/",     None,           "certificate.html",  "Sample YES Certificate — Hepburn Shire Council (demo)", "A sample YES Recycling Certificate, print-ready."),
+    ("/report/",     None,           "report.html",  "Sample YES Report — Hepburn Shire Council (demo)", "A sample YES Report, print-ready: summary, figures and roadmap."),
 ]
 
 FORM_NOTE = (f"Submitting opens an email to YES at {EMAIL} with your details filled in, ready to send. Nothing is stored on this site. No mailing list."
@@ -78,7 +78,7 @@ def footer():
     <div class="foot-grid">
       <div>
         {logo()}
-        <p class="foot-tag">{POSITION}. A recycling certificate and a live environmental dashboard — verified data, documented method, real outcomes.</p>
+        <p class="foot-tag">{POSITION}. A recycling report and a live environmental dashboard — verified data, documented method, real outcomes.</p>
       </div>
       <div><h5>Product</h5><ul>
         <li><a href="/yes-report/">The YES Report</a></li>
@@ -184,6 +184,11 @@ def build():
         with open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as f:
             f.write(rebase(html))
         built.append(path)
+    # the sample moved from /certificate/ to /report/ (YES issues a report, not a certificate): keep old links working
+    old = os.path.join(DIST, "certificate"); os.makedirs(old, exist_ok=True)
+    to = (BASE_PATH or "") + "/report/"
+    with open(os.path.join(old, "index.html"), "w", encoding="utf-8") as f:
+        f.write(f'<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><title>Sample YES Report</title><meta name="robots" content="noindex"><link rel="canonical" href="{DOMAIN}/report/"><meta http-equiv="refresh" content="0; url={to}"></head><body><p>The sample has moved: <a href="{to}">Sample YES Report</a>.</p></body></html>\n')
     open(os.path.join(DIST, "robots.txt"), "w").write("User-agent: *\nAllow: /\n")
     open(os.path.join(DIST, ".nojekyll"), "w").write("")
     print("built", len(built), "pages:", ", ".join(built), "| form:", FORM_MODE, "| base:", BASE_PATH or "/")
