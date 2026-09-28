@@ -10,7 +10,9 @@
 .page-report .band{background:var(--ink);color:var(--paper);padding:22px 44px 18px;position:relative}
 .page-report .band::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--green) 0 34%,var(--green-3) 34% 67%,var(--slate) 67%)}
 .page-report .band-top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px}
-.page-report .band .logo .logo-mark{font-size:36px;color:var(--paper)}
+.page-report .band .logo{gap:12px}
+.page-report .band .logo .logo-img{width:62px}
+.page-report .band .logo .logo-mark{font-size:24px;color:var(--paper)}
 .page-report .band .logo .logo-name{font-size:10.5px;letter-spacing:.2em;color:#C9CCC7;margin-top:6px}
 .page-report .band .logo .logo-url{font-size:10px}
 .page-report .meta{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--slate);text-align:right;line-height:1.6}
@@ -26,7 +28,7 @@
 .page-report .wyc1 .n b{font-family:var(--font-display);font-weight:800;font-size:26px;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
 .page-report .wyc1 .n .k{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate)}
 .page-report .wyc1 .n .s{font-size:9.5px;color:var(--graphite);line-height:1.3}
-.page-report .wyc1 .n.hl{background:var(--green-tint);border-color:#9FD2B2}
+.page-report .wyc1 .n.hl{background:var(--green-tint);border-color:#F0CFA6}
 .page-report .wyc1 .n.hl b{color:var(--green-ink)}
 .page-report .band-title .cust{text-align:right}
 .page-report .band-title .cust .c{font-family:var(--font-display);font-weight:700;font-size:17px;letter-spacing:-.01em;color:var(--paper)}
@@ -117,7 +119,8 @@
 .page-report .pgno{position:absolute;left:44px;right:44px;bottom:14px;display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate)}
 /* sheet 2 */
 .page-report .hdr2{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:14px 44px 10px;border-bottom:3px solid var(--ink)}
-.page-report .hdr2 .logo .logo-mark{font-size:26px;color:var(--ink)}
+.page-report .hdr2 .logo .logo-img{width:40px}
+.page-report .hdr2 .logo .logo-mark{font-size:18px;color:var(--ink)}
 .page-report .hdr2 .logo .logo-name{font-size:9px;color:var(--charcoal)}
 .page-report .hdr2 .logo .logo-url{font-size:9px}
 .page-report .hdr2 .t{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);text-align:right;line-height:1.8}
@@ -243,14 +246,14 @@
         </div>
 
         <div class="body">
-          <div class="sec"><span>01 · Your Environment Score</span><b id="hdr-in">— t handed over</b></div>
+          <div class="sec"><span>01 · The score</span><b id="hdr-in">— t handed over</b></div>
           <div class="score">
             <div class="gauge">
               <svg viewBox="0 0 170 170" aria-hidden="true">
                 <circle cx="85" cy="85" r="70" fill="none" stroke="#2A2C2A" stroke-width="14" stroke-dasharray="330 440" stroke-dashoffset="0" transform="rotate(135 85 85)" stroke-linecap="butt"/>
-                <circle id="arc-rec" cx="85" cy="85" r="70" fill="none" stroke="#166534" stroke-width="14" stroke-dasharray="0 440" transform="rotate(135 85 85)"/>
-                <circle id="arc-car" cx="85" cy="85" r="70" fill="none" stroke="#4FC17A" stroke-width="14" stroke-dasharray="0 440" transform="rotate(135 85 85)"/>
-                <circle id="arc-ev" cx="85" cy="85" r="70" fill="none" stroke="#8EDDAA" stroke-width="14" stroke-dasharray="0 440" transform="rotate(135 85 85)"/>
+                <circle id="arc-rec" cx="85" cy="85" r="70" fill="none" stroke="#B8641F" stroke-width="14" stroke-dasharray="0 440" transform="rotate(135 85 85)"/>
+                <circle id="arc-car" cx="85" cy="85" r="70" fill="none" stroke="#E9A860" stroke-width="14" stroke-dasharray="0 440" transform="rotate(135 85 85)"/>
+                <circle id="arc-ev" cx="85" cy="85" r="70" fill="none" stroke="#F2C894" stroke-width="14" stroke-dasharray="0 440" transform="rotate(135 85 85)"/>
               </svg>
               <div class="gv"><b id="sc">0</b><small>of 100</small></div>
             </div>
@@ -302,7 +305,7 @@
               <div class="cid">Report ID<br>YES-DEMO-2026-0001<br>Demo · illustrative</div>
             </div>
           </div>
-          <div class="pgno"><span>YES · Your Environment Score · www.yes.com.au</span><span>Page 1 of 3</span></div>
+          <div class="pgno"><span>Yarta · Environmental Sustainability · www.yes.com.au</span><span>Page 1 of 3</span></div>
         </div>
       </div></div></div>
 
@@ -347,7 +350,7 @@
             </div>
             <div class="right"><div class="cid">Report ID<br>YES-DEMO-2026-0001<br>Demo · illustrative</div></div>
           </div>
-          <div class="pgno"><span>YES · Your Environment Score · www.yes.com.au</span><span>Page 2 of 3</span></div>
+          <div class="pgno"><span>Yarta · Environmental Sustainability · www.yes.com.au</span><span>Page 2 of 3</span></div>
         </div>
       </div></div></div>
 
@@ -385,7 +388,7 @@
             </div>
             <div class="right"><div class="cid">Report ID<br>YES-DEMO-2026-0001<br>Demo · illustrative</div></div>
           </div>
-          <div class="pgno"><span>YES · Your Environment Score · www.yes.com.au</span><span>Page 3 of 3</span></div>
+          <div class="pgno"><span>Yarta · Environmental Sustainability · www.yes.com.au</span><span>Page 3 of 3</span></div>
         </div>
       </div></div></div>
     </div>
@@ -410,7 +413,7 @@
   // score + gauge (270° sweep = 330 of circumference 440)
   var s=t.score, sweep=330;
   set('sc',s.score); set('sc-band',s.band);
-  var parts=[['arc-rec',s.parts.recovery,'#166534','Recovery',Y.SCORE.weights.recovery],['arc-car',s.parts.carbon,'#4FC17A','Carbon',Y.SCORE.weights.carbon],['arc-ev',s.parts.evidence,'#8EDDAA','Evidence',Y.SCORE.weights.evidence]];
+  var parts=[['arc-rec',s.parts.recovery,'#B8641F','Recovery',Y.SCORE.weights.recovery],['arc-car',s.parts.carbon,'#E9A860','Carbon',Y.SCORE.weights.carbon],['arc-ev',s.parts.evidence,'#F2C894','Evidence',Y.SCORE.weights.evidence]];
   var off=0, ph='';
   parts.forEach(function(p){var len=sweep*(p[1]/100);var el=$(p[0]);if(el){el.setAttribute('stroke-dasharray',len+' 440');el.setAttribute('stroke-dashoffset',-off);}off+=len;
     ph+='<div class="part"><i style="background:'+p[2]+'"></i><span>'+p[3]+'</span><span class="pv">'+f(p[1],1)+' / '+p[4]+'</span><span class="tr"><b style="width:'+(p[1]/p[4]*100)+'%;background:'+p[2]+'"></b></span></div>';});
