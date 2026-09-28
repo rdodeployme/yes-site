@@ -40,6 +40,7 @@ PAGES = [
     ("/language/",   None,           "language.html", "Language on this site — proposed names and their status (internal)", "The First Nations words proposed for YES products, which language each comes from, the dictionary check and whether the custodians have confirmed it."),
 ]
 NOINDEX = {"/language/"}   # internal pages: built and linkable, not indexed
+STANDALONE = [("/yarta/", "yarta.html")]   # the Yarta sample report: its own document, not the site shell
 
 FORM_NOTE = (f"Submitting opens an email to YES at {EMAIL} with your details filled in, ready to send. Nothing is stored on this site. No mailing list."
              if FORM_MODE == "mailto" else
@@ -188,6 +189,15 @@ def build():
         os.makedirs(out_dir, exist_ok=True)
         with open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as f:
             f.write(rebase(html))
+        built.append(path)
+    # standalone pages: complete documents with their own head and styles, written as-is (paths rebased)
+    for path, frag in STANDALONE:
+        fp = os.path.join(SRC, "pages", frag)
+        if not os.path.exists(fp):
+            print("MISSING", frag); continue
+        out_dir = os.path.join(DIST, path.strip("/")); os.makedirs(out_dir, exist_ok=True)
+        with open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as f:
+            f.write(rebase(open(fp, encoding="utf-8").read()))
         built.append(path)
     # the sample moved from /certificate/ to /report/ (YES issues a report, not a certificate): keep old links working
     old = os.path.join(DIST, "certificate"); os.makedirs(old, exist_ok=True)
