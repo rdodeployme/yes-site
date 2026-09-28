@@ -567,3 +567,19 @@ footer{background:var(--ink);color:var(--mist);padding:64px 0 32px;border-top:1p
 .vid-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,11,11,.94) 0%,rgba(11,11,11,.62) 32%,rgba(11,11,11,.62) 70%,rgba(11,11,11,.96) 100%),linear-gradient(90deg,rgba(11,11,11,.55),rgba(11,11,11,0) 60%)}
 @media(max-width:720px){.vid-bg .bgv{opacity:.3}}
 @media print{.bgv,.vid-bg{display:none!important}}
+
+/* the YARTA story */
+.story{background:var(--paper)}
+.story-lead{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;align-items:center}
+.story-mark{width:clamp(72px,8vw,120px);height:auto;flex:none}
+.story-grid h4{margin-bottom:10px;padding-top:14px;border-top:2px solid var(--green-3)}
+.story-grid p{color:var(--graphite);font-size:15.5px;margin:0 0 .8em}
+.story-grid p:last-child{margin-bottom:0}
+.story-foot{margin:clamp(28px,4vw,48px) 0 0;font-family:var(--font-display);font-weight:600;font-size:clamp(17px,1.6vw,21px);letter-spacing:-.01em;max-width:70ch;line-height:1.45}
+.story-foot .more{display:inline-block;margin-left:6px;color:var(--green)}
+.story-close{margin-top:clamp(36px,5vw,64px);padding-top:clamp(24px,3vw,36px);border-top:1px solid var(--mist);max-width:72ch}
+.story-close h3{margin-bottom:14px}
+.story-close p{color:var(--graphite);font-size:17px}
+.story-final{font-family:var(--font-display);font-size:clamp(20px,2vw,26px);color:var(--ink);letter-spacing:-.015em;line-height:1.35;margin-top:1.2em}
+@media(max-width:900px){.story-grid.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.story-grid.g4,.story-grid.g2{grid-template-columns:minmax(0,1fr)}.story-lead{grid-template-columns:minmax(0,1fr)}}
