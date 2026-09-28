@@ -1,5 +1,5 @@
-/* YES calculation engine v0.1 (draft)
-   Customers supply raw numbers; YES calculates emissions, intensities, rates, trends and scores.
+/* Yarta calculation engine v0.1 (draft)
+   Customers supply raw numbers; Yarta calculates emissions, intensities, rates, trends and scores.
    Depends on dictionary.js (window.YESD). Exposes window.YESE.
 */
 window.YESE = window.YESE || {};
@@ -29,7 +29,7 @@ window.YESE = window.YESE || {};
   E.DEFAULT_TARGETS = {target_emissions:30, target_renewable:50, target_diversion:70, target_fleet_ev:30, target_trees:2000, target_rehab_ha:10, target_participants:3000, target_native_ha:6};
 
   E.CLAIMS = {
-    score:"Self-declared under the published YES method. Not an accredited rating, certification or third-party verification.",
+    score:"Self-declared under the published Yarta method. Not an accredited rating, certification or third-party verification.",
     avoided:"Avoided emissions are a modelled estimate (NSW DECCW 2010 factors), reported separately. Never deducted from your emissions and never an offset.",
     flights:"Flights are recorded; their emissions factor is pending, so they are not yet in the totals."
   };
@@ -116,7 +116,7 @@ window.YESE = window.YESE || {};
     var supplied = due.filter(function(f){ return has(v,f.id) || (f.kind==="text"&&v[f.id]); });
     var reqSupplied = reqDue.filter(function(f){ return has(v,f.id); });
     var ev = rec.evidence||{};
-    // graded A or B counts as evidenced; a document attached but not yet graded by YES counts provisionally
+    // graded A or B counts as evidenced; a document attached but not yet graded by Yarta counts provisionally
     var evidenced = supplied.filter(function(f){ var e=ev[f.cat]; return e && (e.grade==="A"||e.grade==="B"||(!e.grade&&(e.pending||e.name))); });
     var pending = supplied.filter(function(f){ var e=ev[f.cat]; return e && !e.grade && (e.pending||e.name); });
     return {
@@ -243,7 +243,7 @@ window.YESE = window.YESE || {};
       };
       m.x = x;
       var S = E.scoreParts(x, T), P = {};
-      // provisional: target-based scores before a full year of data, and any month not yet verified by YES
+      // provisional: target-based scores before a full year of data, and any month not yet verified by Yarta
       if(R.n<12){ ["land","nature","community"].forEach(function(c){ if(S[c]!=null) P[c]=true; }); }
       var vals = []; D.CATEGORIES.forEach(function(c){ if(S[c.k]!=null) vals.push(S[c.k]); });
       m.scores = S; m.prov = P; m.scored = vals.length;

@@ -1,12 +1,12 @@
-/* YES Data Dictionary v0.1 (draft)
-   Every field a customer reports, and every figure YES calculates from them.
-   Collect operational data once; YES calculates everything else.
+/* Yarta Data Dictionary v0.1 (draft)
+   Every field a customer reports, and every figure Yarta calculates from them.
+   Collect operational data once; Yarta calculates everything else.
 
    freq: M monthly · Q quarterly (reported in Sep, Dec, Mar, Jun) · A annual (reported in June) · S static (confirm when it changes)
-   type: input = entered by YES from the customer’s source documents · calc = calculated by YES, never typed
+   type: input = entered by Yarta from the customer’s source documents · calc = calculated by Yarta, never typed
    req:  true = mandatory for a complete month · false = optional
    kind: number · count · currency · percent · text · select
-   score: which YES category score the field feeds
+   score: which Yarta category score the field feeds
 */
 window.YESD = window.YESD || {};
 (function(D){
@@ -50,7 +50,7 @@ window.YESD = window.YESD || {};
   ];
 
   function F(id,name,cat,unit,freq,req,kind,src,def,extra){ var f={id:id,name:name,cat:cat,unit:unit,freq:freq,req:req,kind:kind,type:"input",src:src,def:def,score:[cat]}; if(extra){ for(var k in extra) f[k]=extra[k]; } return f; }
-  function C(id,name,cat,unit,calc,def,extra){ var f={id:id,name:name,cat:cat,unit:unit,freq:"M",req:false,kind:"number",type:"calc",src:"Calculated by YES",calc:calc,def:def,score:[cat]}; if(extra){ for(var k in extra) f[k]=extra[k]; } return f; }
+  function C(id,name,cat,unit,calc,def,extra){ var f={id:id,name:name,cat:cat,unit:unit,freq:"M",req:false,kind:"number",type:"calc",src:"Calculated by Yarta",calc:calc,def:def,score:[cat]}; if(extra){ for(var k in extra) f[k]=extra[k]; } return f; }
 
   D.FIELDS = [
     // ---- Fleet & Transport -------------------------------------------------------

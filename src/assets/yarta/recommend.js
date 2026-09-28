@@ -1,4 +1,4 @@
-/* YES recommendations and roadmap v0.1 (draft)
+/* Yarta recommendations and roadmap v0.1 (draft)
    Published rules that turn an organisation's verified figures into "Recommended for you" help,
    and three numbers: the score now, the score at the organisation's own targets, and an estimated
    score with the recommended work done. Also the month-by-month roadmap behind the estimate.
@@ -27,8 +27,8 @@ window.YESR = window.YESR || {};
 
   R.PROVIDERS = {
     group:{label:"Recycle Group business", note:"Disclosed on your monthly report"},
-    partner:{label:"Independent specialist", note:"Chosen by you; YES can introduce one"},
-    yes:{label:"YES analyst", note:"Not the analysts who enter or verify your months"}
+    partner:{label:"Independent specialist", note:"Chosen by you; Yarta can introduce one"},
+    yes:{label:"Yarta analyst", note:"Not the analysts who enter or verify your months"}
   };
 
   /* The ten services. trigger(c) returns {why} when the figures call for it; effect(x, f, c) applies the
@@ -114,7 +114,7 @@ window.YESR = window.YESR || {};
     { k:"evidence", cat:"governance", moves:["governance"], prov:"yes",
       title:function(p){ return p.org_type==="Business" ? "Auditor-ready Scope 3 review" : "Evidence upgrade session"; },
       what:"Swap estimates for primary documents: which bills, dockets and registers to send, and who in your organisation holds them. For businesses, a check that the Scope 3 categories you report are backed by evidence an auditor can follow.",
-      who:"A YES analyst who does not enter or verify your months.",
+      who:"A Yarta analyst who does not enter or verify your months.",
       modes:["Online","On site"], session:"One-hour session",
       rule:"Any category graded C in the last three months, or less than 80% of figures backed by A or B evidence.",
       effectText:"Figures backed by A or B evidence, and data completeness, both rise to 100%.",
@@ -153,12 +153,12 @@ window.YESR = window.YESR || {};
     },
     { k:"grants", cat:null, moves:[], prov:"partner",
       title:"Grant application pack",
-      what:"Match your recommended work to open state and federal funding rounds, and prepare the application with your verified YES figures as the evidence base.",
+      what:"Match your recommended work to open state and federal funding rounds, and prepare the application with your verified Yarta figures as the evidence base.",
       who:"A grants writer.",
       modes:["Online"], session:"One-hour session",
       rule:"Two or more other recommendations apply.",
       effectText:"No direct change to the score. It can fund the other items.",
-      trigger:function(c, n){ if(!(n>=2)) return null; return {why:n+" other recommendations apply to you. Verified YES figures give a funding application its evidence base."}; },
+      trigger:function(c, n){ if(!(n>=2)) return null; return {why:n+" other recommendations apply to you. Verified Yarta figures give a funding application its evidence base."}; },
       effect:function(){}
     }
   ];
@@ -261,17 +261,17 @@ window.YESR = window.YESR || {};
 
   /* Published on the method page and summarised on the report. */
   R.INDEPENDENCE = [
-    {k:"Published rules", d:"The rules and assumptions are published in the YES method, and the same rules apply to every organisation."},
+    {k:"Published rules", d:"The rules and assumptions are published in the Yarta method, and the same rules apply to every organisation."},
     {k:"Any provider", d:"You can use any provider. Recommendations, your score and the verification of your figures do not depend on who does the work."},
-    {k:"Disclosure", d:"Work by a Recycle Group business (JUNK, The Mattress Recycling Company or Recycle Warehouse) is disclosed on your monthly report. YES is part of Recycle Group."},
-    {k:"Only through the figures", d:"Completed work changes your score only through the figures YES enters and verifies in later months, like any other change."},
-    {k:"Separate people", d:"A YES analyst who runs a paid session for you does not enter or verify your months."},
-    {k:"Estimates", d:"The score with YES help and the projection are estimates. They are not a promise, a guarantee or a target."}
+    {k:"Disclosure", d:"Work by a Recycle Group business (JUNK, The Mattress Recycling Company or Recycle Warehouse) is disclosed on your monthly report. Yarta is part of Recycle Group."},
+    {k:"Only through the figures", d:"Completed work changes your score only through the figures Yarta enters and verifies in later months, like any other change."},
+    {k:"Separate people", d:"A Yarta analyst who runs a paid session for you does not enter or verify your months."},
+    {k:"Estimates", d:"The score with Yarta help and the projection are estimates. They are not a promise, a guarantee or a target."}
   ];
   R.NUMBERS = [
     {k:"now", name:"Now", how:"The Yindyamarra Environmental Score for the latest verified month."},
     {k:"target", name:"At your targets", how:"The same month's figures with each target in your profile treated as met: emissions reduction, renewable electricity, landfill diversion, fleet electrification, trees planted, hectares restored, land rehabilitated and program participants. Figures without a target stay as they are."},
-    {k:"potential", name:"With YES help (estimate)", how:"The same month's figures with the assumed effect of every recommended item in your plan applied in full. Items you switch off are left out."}
+    {k:"potential", name:"With Yarta help (estimate)", how:"The same month's figures with the assumed effect of every recommended item in your plan applied in full. Items you switch off are left out."}
   ];
   R.ROADMAP_RULES = "Booked items start in the month booked. The others start from next month, two a quarter, weakest category first. Each change builds up evenly over "+R.RAMP+" months, and everything else is held at the latest 12 months. Work completed in the last "+R.RECENT+" months is not recommended again; its effect shows in your verified figures.";
 })(window.YESR, window.YESD, window.YESE);

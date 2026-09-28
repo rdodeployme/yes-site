@@ -1,4 +1,4 @@
-/* YES demo data v0.1: fictional organisations for the unlisted prototype.
+/* Yarta demo data v0.1: fictional organisations for the unlisted prototype.
    Seeded, so every visitor sees the same numbers. None of these organisations is real.
    Depends on dictionary.js (window.YESD) and engine.js (window.YESE). Exposes window.YESDEMO. */
 window.YESDEMO = window.YESDEMO || {};
@@ -153,7 +153,7 @@ window.YESDEMO = window.YESDEMO || {};
 
   var ENTRY = "Morgan Lee", VERIFY = "Chris Walker";
   function finish(recs, opt){
-    // statuses: verified up to verifiedTo; later months entered by YES and waiting for a second analyst to verify
+    // statuses: verified up to verifiedTo; later months entered by Yarta and waiting for a second analyst to verify
     recs.forEach(function(r){
       r.enteredAt = isoDay(r.month, 9); r.enteredBy = ENTRY; r.submittedAt = r.enteredAt;
       if(r.month <= opt.verifiedTo){ r.status="verified"; r.verifiedAt = isoDay(r.month, 16); r.verifiedBy = VERIFY; }
@@ -161,7 +161,7 @@ window.YESDEMO = window.YESDEMO || {};
       r.inbox = Object.keys(r.evidence).map(function(c){ return {name:r.evidence[c].name, cat:c, at:isoDay(r.month, 4), by:opt.contact, demo:true}; });
     });
     if(opt.draft){
-      // the month YES is keying now: the customer's documents are in, fuel and energy are entered, the rest is still to do
+      // the month Yarta is keying now: the customer's documents are in, fuel and energy are entered, the rest is still to do
       var last = recs[recs.length-1];
       var dk = E.addMonths(last.month,1);
       var dv = {};

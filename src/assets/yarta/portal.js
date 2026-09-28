@@ -1,8 +1,8 @@
-/* YES customer portal prototype v0.1 (unlisted draft)
-   A working static app: demo sign-in, monthly entry of raw figures, evidence, YES calculations,
-   the Yindyamarra Environmental Score, printable monthly reports, export and import, and a YES
+/* Yarta customer portal prototype v0.1 (unlisted draft)
+   A working static app: demo sign-in, monthly entry of raw figures, evidence, Yarta calculations,
+   the Yindyamarra Environmental Score, printable monthly reports, export and import, and a Yarta
    operator view for review and verification, recommended help with bookings, and a roadmap with
-   the score now, at the organisation's targets and with YES help. All data stays in this browser
+   the score now, at the organisation's targets and with Yarta help. All data stays in this browser
    (localStorage for figures and bookings, IndexedDB for evidence files).
    Depends on dictionary.js, engine.js, demo-data.js and recommend.js. */
 (function(){
@@ -55,7 +55,7 @@ function sorted(o){ return o.records.slice().sort(function(a,b){ return a.month<
 function log(action, detail, orgId){ var u=me(); state.audit=state.audit||[]; state.audit.unshift({at:isoNow(), by:u?u.name:'', role:u?u.role:'', org:orgId||ctxOrgId(), action:action, detail:detail||''}); state.audit=state.audit.slice(0,400); }
 function flash(m,t){ ui.flash={m:m,t:t||'ok'}; clearTimeout(ui.flashT); ui.flashT=setTimeout(function(){ ui.flash=null; var f=$('.flash'); if(f) f.remove(); },3200); var f=$('.flash'); if(f) f.remove(); var el=document.createElement('div'); el.className='flash'+(t==='err'?' err':''); el.setAttribute('role','status'); el.textContent=m; document.body.appendChild(el); }
 
-/* series: customers see verified months only; the YES team also sees months entered and waiting for verification (provisional) */
+/* series: customers see verified months only; the Yarta team also sees months entered and waiting for verification (provisional) */
 function seriesOf(o){ var op=isOp(); return E.series(o.records.filter(function(r){ return r.status==='verified' || (op && r.status==='submitted'); }), o.profile); }
 function monthOf(S,k){ var ms=S.months; if(!ms.length) return null; if(!k) return ms[ms.length-1]; for(var i=0;i<ms.length;i++) if(ms[i].month===k) return ms[i]; return ms[ms.length-1]; }
 function idxOf(S,k){ for(var i=0;i<S.months.length;i++) if(S.months[i].month===k) return i; return -1; }
@@ -134,7 +134,7 @@ function queue(){ var q=[]; Object.keys(state.orgs).forEach(function(id){ state.
 function shell(active, body){
   var u=me(), o=org(), op=isOp();
   var links = op ? [
-      ['grp','YES team'],
+      ['grp','Yarta team'],
       ['#/ops/entry','Data entry','entry', entryQueue().length||''],
       ['#/ops','Verification','ops', queue().length||''],
       ['#/ops/bookings','Bookings','bookings', (state.bookings||[]).filter(function(b){ return b.status==='requested'; }).length||''],
@@ -159,15 +159,15 @@ function shell(active, body){
       ['#/data','Data and export','data']
     ];
   var nav = links.map(function(l){ if(l[0]==='grp') return '<div class="grp">'+esc(l[1])+'</div>'; return '<a href="'+l[0]+'"'+(l[2]===active?' aria-current="page"':'')+'><span>'+esc(l[1])+'</span>'+(l[3]?'<span class="cnt">'+l[3]+'</span>':'')+'</a>'; }).join('');
-  return '<div class="mtop"><a class="brand" href="#/dashboard"><span class="mark silver">YES</span></a><span class="o">'+esc(o?o.profile.org_name:'')+'</span><button class="menu-btn" type="button" data-act="side-open" style="display:block">MENU</button></div>'
+  return '<div class="mtop"><a class="brand" href="#/dashboard"><span class="mark silver">Yarta</span></a><span class="o">'+esc(o?o.profile.org_name:'')+'</span><button class="menu-btn" type="button" data-act="side-open" style="display:block">MENU</button></div>'
    + '<div class="app"><aside class="side" id="side" aria-label="Portal navigation">'
    + '<button class="menu-btn side-close" type="button" data-act="side-close">CLOSE</button>'
-   + '<a class="brand" href="../"><span class="mark silver">YES</span><span class="full">Yindyamarra<br>Environmental Sustainability</span></a>'
-   + '<div class="who"><div class="o">'+esc(op?'YES operator':(o?o.profile.org_name:''))+'</div><div class="u">'+esc(u.name)+' · '+esc(u.title)+'</div><div class="role"><span class="chip">'+(op?'YES team':'Customer')+'</span></div></div>'
+   + '<a class="brand" href="../"><span class="mark silver">Yarta</span><span class="full">Yindyamarra<br>Environmental Sustainability</span></a>'
+   + '<div class="who"><div class="o">'+esc(op?'Yarta operator':(o?o.profile.org_name:''))+'</div><div class="u">'+esc(u.name)+' · '+esc(u.title)+'</div><div class="role"><span class="chip">'+(op?'Yarta team':'Customer')+'</span></div></div>'
    + '<nav class="snav">'+nav+'</nav>'
    + '<div class="foot">Prototype. Your data stays in this browser.<br><button class="btn btn-ghost btn-sm" type="button" data-act="signout" style="color:var(--silver-2)">Sign out</button></div>'
    + '</aside><main class="main" id="main"><div class="content">'
-   + (op && ['dashboard','reports','roadmap','documents','organisation','category','report','data'].indexOf(active)>=0 ? '<div class="banner grey no-print"><span>Viewing <b>'+esc(o.profile.org_name)+'</b> as the YES team. The customer sees verified months only; months waiting for verification show here as provisional.</span><a class="btn btn-ghost btn-sm" href="#/ops/customers">Switch customer</a></div>' : '')
+   + (op && ['dashboard','reports','roadmap','documents','organisation','category','report','data'].indexOf(active)>=0 ? '<div class="banner grey no-print"><span>Viewing <b>'+esc(o.profile.org_name)+'</b> as the Yarta team. The customer sees verified months only; months waiting for verification show here as provisional.</span><a class="btn btn-ghost btn-sm" href="#/ops/customers">Switch customer</a></div>' : '')
    + body + '</div></main></div>';
 }
 
@@ -176,11 +176,11 @@ function vLogin(){
   var accts = state.users.filter(function(u){ return ui.loginTab==='operator' ? u.role==='operator' : u.role==='customer'; });
   var list = accts.map(function(u){ var o=u.org?state.orgs[u.org]:null; return '<button class="acct" type="button" data-act="login" data-user="'+esc(u.id)+'"><span class="av">'+esc(initials(u.name))+'</span><span class="nm">'+esc(u.name)+'</span><span class="go" aria-hidden="true">→</span><span class="ds">'+esc(u.title)+(o?' · '+esc(o.profile.org_name):'')+'</span></button>'; }).join('');
   return '<div class="login"><div class="l"><div class="bg" aria-hidden="true"><video data-bgv muted loop playsinline preload="none" poster="../assets/video/silver-720.webp"><source data-src="../assets/video/silver-720.mp4" type="video/mp4"></video></div>'
-   + '<a class="brand" href="../"><span class="mark silver" style="font-size:30px">YES</span><span class="full">Yindyamarra<br>Environmental Sustainability</span></a>'
-   + '<div><p class="eyebrow">Customer portal</p><h1><span class="silver">Send the paperwork once a month.</span> YES does the rest.</h1><p class="lead" style="margin-top:20px;color:var(--silver-2)">Upload your bills, dockets and registers. YES enters every figure, grades the evidence and has a second analyst verify the month, then calculates the emissions, the rates, the trends and your Yindyamarra Environmental Score.</p></div>'
-   + '<p class="small" style="color:var(--silver-4);max-width:52ch">Prototype with fictional demo organisations. There are no passwords here: in production each customer signs in with their own account, and YES staff sign in separately. Customers see their verified reports and send documents; YES staff enter and verify the figures.</p></div>'
+   + '<a class="brand" href="../"><span class="mark silver" style="font-size:30px">Yarta</span><span class="full">Yindyamarra<br>Environmental Sustainability</span></a>'
+   + '<div><p class="eyebrow">Customer portal</p><h1><span class="silver">Send the paperwork once a month.</span> Yarta does the rest.</h1><p class="lead" style="margin-top:20px;color:var(--silver-2)">Upload your bills, dockets and registers. Yarta enters every figure, grades the evidence and has a second analyst verify the month, then calculates the emissions, the rates, the trends and your Yindyamarra Environmental Score.</p></div>'
+   + '<p class="small" style="color:var(--silver-4);max-width:52ch">Prototype with fictional demo organisations. There are no passwords here: in production each customer signs in with their own account, and Yarta staff sign in separately. Customers see their verified reports and send documents; Yarta staff enter and verify the figures.</p></div>'
    + '<div class="r"><div class="box"><p class="kicker">Sign in</p><h2 style="font-size:30px;margin:8px 0 18px">Choose a demo account</h2>'
-   + '<div class="tabs" role="tablist" style="margin-bottom:18px"><button type="button" role="tab" data-act="ltab" data-tab="customer" aria-selected="'+(ui.loginTab==='customer')+'">Council or business</button><button type="button" role="tab" data-act="ltab" data-tab="operator" aria-selected="'+(ui.loginTab==='operator')+'">YES team</button></div>'
+   + '<div class="tabs" role="tablist" style="margin-bottom:18px"><button type="button" role="tab" data-act="ltab" data-tab="customer" aria-selected="'+(ui.loginTab==='customer')+'">Council or business</button><button type="button" role="tab" data-act="ltab" data-tab="operator" aria-selected="'+(ui.loginTab==='operator')+'">Yarta team</button></div>'
    + list
    + '<p class="small muted" style="margin-top:22px">Everything you enter stays in this browser. <button class="link" type="button" data-act="reset-demo" style="background:none;border:0;padding:0;font:inherit;cursor:pointer">Reset the demo data</button></p>'
    + '</div></div></div>';
@@ -189,7 +189,7 @@ function vLogin(){
 /* ------------------------------------------------------------------ dashboard */
 function vDashboard(q){
   var o=org(), S=seriesOf(o), m=monthOf(S,q.m);
-  if(!m) return shell('dashboard','<div class="pg-head"><div><h1>'+esc(o.profile.org_name)+'</h1></div></div><div class="empty">'+(isOp()?'No month has been verified or entered yet. <a class="link" href="#/ops/entry">Open data entry</a>.':'Your first verified month will appear here. <a class="link" href="#/documents">Send your documents</a> and YES will enter them.')+'</div>');
+  if(!m) return shell('dashboard','<div class="pg-head"><div><h1>'+esc(o.profile.org_name)+'</h1></div></div><div class="empty">'+(isOp()?'No month has been verified or entered yet. <a class="link" href="#/ops/entry">Open data entry</a>.':'Your first verified month will appear here. <a class="link" href="#/documents">Send your documents</a> and Yarta will enter them.')+'</div>');
   var i=idxOf(S,m.month), R12=m.r12, T=S.targets, p=o.profile;
   var opts = S.months.slice().reverse().map(function(x){ return '<option value="'+x.month+'"'+(x.month===m.month?' selected':'')+'>'+mLabel(x.month)+(x.status!=='verified'?' · provisional':'')+'</option>'; }).join('');
   var head = '<div class="pg-head"><div><p class="kicker">Dashboard</p><h1>'+esc(p.org_name)+'</h1><p class="pg-sub">'+esc(p.org_type)+' · '+esc(p.state)+(p.residents?' · '+fmt(p.residents)+' residents':'')+' · '+fmt(p.employees)+' FTE · baseline '+esc(p.baseline_fy)+'</p></div>'
@@ -202,19 +202,19 @@ function vDashboard(q){
     if(om.length){ var r0=om[om.length-1], prog=progressOf(o,r0); banner='<div class="banner no-print"><span><b>'+mLabel(r0.month)+' is open for data entry.</b> '+prog.req+' of '+prog.reqDue+' required figures entered · '+((r0.inbox||[]).length)+' documents from the customer'+(r0.status==='returned'?' · <b>returned by verification with a note</b>':'')+'</span><a class="btn btn-primary btn-sm" href="#/entry/'+o.id+'/'+r0.month+'">Enter figures</a></div>'; }
   } else {
     var lastP=pend[pend.length-1];
-    if(lastP && lastP.status==='submitted') banner='<div class="banner grey no-print"><span><b>'+mLabel(lastP.month)+' is entered and with YES for verification.</b> Its report appears here once a second analyst has verified it.</span><a class="btn btn-ghost btn-sm" href="#/documents" style="color:var(--ink)">Send documents</a></div>';
-    else if(lastP) banner='<div class="banner grey no-print"><span><b>YES is entering '+mLabel(lastP.month)+'</b> from the '+((lastP.inbox||[]).length)+' document'+(((lastP.inbox||[]).length)===1?'':'s')+' you sent.</span><a class="btn btn-ghost btn-sm" href="#/documents" style="color:var(--ink)">Send documents</a></div>';
+    if(lastP && lastP.status==='submitted') banner='<div class="banner grey no-print"><span><b>'+mLabel(lastP.month)+' is entered and with Yarta for verification.</b> Its report appears here once a second analyst has verified it.</span><a class="btn btn-ghost btn-sm" href="#/documents" style="color:var(--ink)">Send documents</a></div>';
+    else if(lastP) banner='<div class="banner grey no-print"><span><b>Yarta is entering '+mLabel(lastP.month)+'</b> from the '+((lastP.inbox||[]).length)+' document'+(((lastP.inbox||[]).length)===1?'':'s')+' you sent.</span><a class="btn btn-ghost btn-sm" href="#/documents" style="color:var(--ink)">Send documents</a></div>';
     var rsAll=sorted(o), dueK=rsAll.length?E.addMonths(rsAll[rsAll.length-1].month,1):E.addMonths(nowKey(),-1); if(dueK<=nowKey() && !rec(o,dueK)) banner+='<div class="banner no-print"><span><b>Documents for '+mLabel(dueK)+' are due '+longDate(dueDate(dueK))+'.</b> Fuel card statements, energy and water bills, waste dockets and registers.</span><a class="btn btn-primary btn-sm" href="#/documents">Send documents</a></div>';
   }
   // hero
   var yoyTxt = m.yoy!=null ? delta(m.yoy)+' <span>on '+mLabel(S.months[i-12].month)+'</span>' : '<span class="muted">Year-on-year change after 12 months</span>';
   var momTxt = m.mom!=null ? delta(m.mom)+' <span>on '+mLabel(S.months[i-1].month)+'</span>' : '';
-  var stTxt = m.status==='verified' ? 'Verified by YES'+(rec(o,m.month).verifiedAt?' on '+longDate(rec(o,m.month).verifiedAt):'') : 'Provisional: awaiting YES verification';
+  var stTxt = m.status==='verified' ? 'Verified by Yarta'+(rec(o,m.month).verifiedAt?' on '+longDate(rec(o,m.month).verifiedAt):'') : 'Provisional: awaiting Yarta verification';
   var basePts = S.months.map(function(x){ return {label:mShort(x.month), v:x.score, prov:x.status!=='verified'}; });
   var bIdx=[]; S.months.forEach(function(x,j){ if(E.fyOf(x.month)===S.baseline.fy) bIdx.push(j); });
   var hero = '<section class="panel-dark"><div class="dhero"><div class="dh-score">'+ring(m.score,176)+'<div class="dh-meta"><div class="lbl">Yindyamarra Environmental Score · '+mLabel(m.month)+'</div><div class="band">'+esc(m.band)+'</div>'
     + '<div class="dl"><span>Year on year</span><b>'+yoyTxt+'</b><span>Month on month</span><b>'+(momTxt||'—')+'</b><span>Status</span><b>'+statusChip(m.status)+'</b><span>Coverage</span><b>'+m.scored+' of 10 categories</b></div>'
-    + '<p class="small" style="color:var(--silver-5);margin:14px 0 0;max-width:40ch">'+esc(stTxt)+'. Self-declared under the published YES method; not an accredited rating.</p></div></div>'
+    + '<p class="small" style="color:var(--silver-5);margin:14px 0 0;max-width:40ch">'+esc(stTxt)+'. Self-declared under the published Yarta method; not an accredited rating.</p></div></div>'
     + '<div class="dh-chart">'+lineChart(basePts,{dark:true,label:'Score by month',band:bIdx.length?[bIdx[0],bIdx[bIdx.length-1]]:null,bandLabel:bIdx.length?'Baseline '+S.baseline.fy:'',h:230})+'</div></div></section>';
   // where you could be, and recommended help
   var P=planFor(o,S,i), help='';
@@ -246,7 +246,7 @@ function vDashboard(q){
   var fuelChg = R12.base.fuel_l>0 ? (R12.fuel_l-R12.base.fuel_l)/R12.base.fuel_l*100 : null;
   var elecChg = R12.base.grid_kwh>0 ? (R12.grid_kwh-R12.base.grid_kwh)/R12.base.grid_kwh*100 : null;
   var watChg = R12.base.potable_kl>0 ? (R12.potable_kl-R12.base.potable_kl)/R12.base.potable_kl*100 : null;
-  var metrics = '<section><h2 class="sec-t" style="margin-top:28px">Key figures</h2><p class="sec-s">Rolling 12 months to '+mLabel(m.month)+', calculated by YES from the figures you entered.</p><div class="row3">'
+  var metrics = '<section><h2 class="sec-t" style="margin-top:28px">Key figures</h2><p class="sec-s">Rolling 12 months to '+mLabel(m.month)+', calculated by Yarta from the figures you entered.</p><div class="row3">'
     + mc('Renewable electricity',pct(R12.renew_pct,1),'','Target '+fmt(T.target_renewable,0)+'% · purchased renewables and solar used on site')
     + mc('Fleet electrification',pct(m.fleet_ev_pct,1),'',fmt(m.fleet_n,0)+' vehicles · target '+fmt(T.target_fleet_ev,0)+'%')
     + mc('Landfill diversion',pct(R12.diversion_pct,1),'','Recovery rate '+pct(R12.recovery_pct,1)+' · target '+fmt(T.target_diversion,0)+'%')
@@ -268,9 +268,9 @@ function vDashboard(q){
     + '<div class="legend"><span><i class="lg-diesel"></i>Diesel</span><span><i class="lg-petrol"></i>Petrol</span><span><i class="lg-other"></i>LPG and biodiesel</span></div></div>';
   // quality
   var r=rec(o,m.month), ev=r.evidence||{};
-  var qual = '<div class="panel"><h3>Data quality · '+mLabel(m.month)+'</h3><dl class="kv" style="margin-top:14px"><dt>Required figures supplied</dt><dd>'+pct(m.complete_pct,0)+'</dd><dt>Figures backed by evidence</dt><dd>'+pct(m.evidence_pct,0)+'</dd><dt>Entered by YES</dt><dd>'+longDate(r.enteredAt||r.submittedAt)+'</dd><dt>Verified by YES</dt><dd>'+(r.verifiedAt?longDate(r.verifiedAt):'Not yet')+'</dd></dl>'
+  var qual = '<div class="panel"><h3>Data quality · '+mLabel(m.month)+'</h3><dl class="kv" style="margin-top:14px"><dt>Required figures supplied</dt><dd>'+pct(m.complete_pct,0)+'</dd><dt>Figures backed by evidence</dt><dd>'+pct(m.evidence_pct,0)+'</dd><dt>Entered by Yarta</dt><dd>'+longDate(r.enteredAt||r.submittedAt)+'</dd><dt>Verified by Yarta</dt><dd>'+(r.verifiedAt?longDate(r.verifiedAt):'Not yet')+'</dd></dl>'
     + '<div class="pill-row" style="margin-top:16px">'+D.CATEGORIES.filter(function(c){ return c.k!=='carbon'; }).map(function(c){ var e=ev[c.k]; var g=e&&e.grade?e.grade:(e?'…':'—'); return '<span class="chip" title="'+esc(e?(e.name||''):'No evidence attached')+'"><span class="grade '+(e&&e.grade?e.grade:'none')+'" style="width:20px;height:20px;font-size:11px">'+g+'</span>'+esc(c.short)+'</span>'; }).join('')+'</div>'
-    + '<p class="small muted" style="margin:12px 0 0">Evidence grades: A primary document (bill, docket, certificate) · B system extract or reconciled record · C estimate or unsupported · … awaiting YES.</p></div>';
+    + '<p class="small muted" style="margin:12px 0 0">Evidence grades: A primary document (bill, docket, certificate) · B system extract or reconciled record · C estimate or unsupported · … awaiting Yarta.</p></div>';
   return shell('dashboard', head + banner + hero + help + tiles + '<div class="row2" style="margin-top:28px">'+emis+targ+'</div>' + metrics + '<div class="row2" style="margin-top:22px">'+fleetP+qual+'</div>');
 }
 
@@ -291,7 +291,7 @@ function vCategory(cat,q){
     + '<div class="row2 w37"><div class="panel-dark"><div class="dh-meta"><div class="lbl">Category score</div></div>'+ring(m.scores[cat]==null?null:Math.round(m.scores[cat]),150)+'<div class="dh-meta" style="margin-top:16px"><div class="dl"><span>Year on year</span><b>'+delta(m.cat_yoy[cat])+'</b><span>Band</span><b>'+esc(E.band(m.scores[cat]==null?null:Math.round(m.scores[cat])))+'</b></div></div>'+(m.prov[cat]?'<p class="small" style="color:var(--silver-4);margin:14px 0 0">Provisional until 12 months of data.</p>':'')+'</div>'
     + '<div class="panel"><h3>Score by month</h3><p class="sec-s" style="margin-top:4px">How it is scored: '+esc(how)+'</p>'+lineChart(pts,{label:c.name+' score by month',h:200})+'</div></div>'
     + (inputs.length?'<h2 class="sec-t" style="margin-top:28px">Figures entered</h2><p class="sec-s">Rows more than 35% away from the same month last year are shaded for a second look.</p><div class="tbl-wrap"><table class="tbl compact">'+th+'<tbody>'+inputs.map(row).join('')+'</tbody></table></div>':'')
-    + (calcs.length?'<h2 class="sec-t" style="margin-top:28px">Calculated by YES</h2><p class="sec-s">Never typed. Recalculated whenever a figure changes.</p><div class="tbl-wrap"><table class="tbl compact">'+th+'<tbody>'+calcs.map(crow).join('')+'</tbody></table></div>':'');
+    + (calcs.length?'<h2 class="sec-t" style="margin-top:28px">Calculated by Yarta</h2><p class="sec-s">Never typed. Recalculated whenever a figure changes.</p><div class="tbl-wrap"><table class="tbl compact">'+th+'<tbody>'+calcs.map(crow).join('')+'</tbody></table></div>':'');
   return shell('category', body);
 }
 
@@ -312,13 +312,13 @@ function inboxList(r,opts){
     + '</tbody></table></div>';
 }
 
-/* YES data entry: every open month across customers */
+/* Yarta data entry: every open month across customers */
 function vEntryQueue(){
   var q=entryQueue();
   var starts=Object.keys(state.orgs).map(function(id){ var o=state.orgs[id], ns=nextStartable(o); return ns?{org:id,month:ns}:null; }).filter(Boolean);
   function tr(x){ var o=state.orgs[x.org], r=x.rec, pr=progressOf(o,r); return '<tr><td><b>'+esc(o.profile.org_name)+'</b><div class="small muted">'+esc(o.profile.org_type)+' · '+esc(o.profile.state)+'</div></td><td>'+mLabel(r.month)+'</td><td>'+statusChip(r.status)+'</td><td class="num">'+((r.inbox||[]).length)+'</td><td class="num">'+pr.req+' / '+pr.reqDue+'</td><td>'+longDate(dueDate(r.month))+'</td><td><a class="btn btn-primary btn-sm" href="#/entry/'+x.org+'/'+r.month+'">Enter figures</a></td></tr>'; }
   var sent=[]; Object.keys(state.orgs).forEach(function(id){ state.orgs[id].records.forEach(function(r){ if(r.status==='submitted') sent.push({org:id,rec:r}); }); });
-  var body='<div class="pg-head"><div><p class="kicker">YES team</p><h1>Data entry</h1><p class="pg-sub">Customers send their bills, dockets and registers. YES keys every figure from them, attaches the evidence and sends the month to a second analyst to verify. Documents are due by the 15th of the following month.</p></div></div>'
+  var body='<div class="pg-head"><div><p class="kicker">Yarta team</p><h1>Data entry</h1><p class="pg-sub">Customers send their bills, dockets and registers. Yarta keys every figure from them, attaches the evidence and sends the month to a second analyst to verify. Documents are due by the 15th of the following month.</p></div></div>'
     + (q.length?'<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Organisation</th><th>Month</th><th>Status</th><th class="r">Documents</th><th class="r">Required figures</th><th>Documents due</th><th></th></tr></thead><tbody>'+q.map(tr).join('')+'</tbody></table></div>':'<div class="empty">No months are open for data entry.</div>')
     + (starts.length?'<h2 class="sec-t" style="margin-top:28px">Start a month</h2><p class="sec-s">Open the next month for a customer when their documents arrive by email or they upload them.</p><div class="pill-row">'+starts.map(function(x){ return '<button class="btn btn-ghost btn-sm" type="button" data-act="start-month" data-org="'+x.org+'" data-month="'+x.month+'" style="color:var(--ink)">'+esc(state.orgs[x.org].profile.org_name)+' · '+mLabel(x.month)+'</button>'; }).join('')+'</div>':'')
     + (sent.length?'<h2 class="sec-t" style="margin-top:28px">With verification</h2><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Organisation</th><th>Month</th><th>Entered by</th><th>Entered</th></tr></thead><tbody>'+sent.map(function(x){ return '<tr><td>'+esc(state.orgs[x.org].profile.org_name)+'</td><td>'+mLabel(x.rec.month)+'</td><td>'+esc(x.rec.enteredBy||'')+'</td><td>'+longDate(x.rec.enteredAt||x.rec.submittedAt)+'</td></tr>'; }).join('')+'</tbody></table></div>':'');
@@ -365,7 +365,7 @@ function vSubmit(k,q){
   return shell('entry', body);
 }
 
-/* customer: send documents to YES */
+/* customer: send documents to Yarta */
 function vDocuments(){
   var o=org(), now=nowKey();
   var rsD=sorted(o), nextK=rsD.length?E.addMonths(rsD[rsD.length-1].month,1):E.addMonths(now,-1), openD=rsD.filter(function(r){ return r.status==='draft'||r.status==='returned'; });
@@ -374,8 +374,8 @@ function vDocuments(){
   var opts=months.map(function(k){ var r=rec(o,k); return '<option value="'+k+'">'+mLabel(k)+(r&&r.status==='verified'?' · already verified':r&&r.status==='submitted'?' · already entered':'')+'</option>'; }).join('');
   var cats='<option value="">Not sure</option>'+D.CATEGORIES.filter(function(c){ return c.k!=='carbon'; }).map(function(c){ return '<option value="'+c.k+'">'+esc(c.name)+'</option>'; }).join('');
   var withDocsAll=sorted(o).slice().reverse().filter(function(r){ return (r.inbox||[]).length; }), withDocs=withDocsAll.slice(0,3);
-  var list=withDocs.map(function(r){ var st=r.status==='verified'?'Entered and verified by YES':r.status==='submitted'?'Entered by YES, awaiting verification':'With YES for entry'; return '<div class="panel" style="margin-top:14px"><div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:center"><h3>'+mLabel(r.month)+'</h3>'+statusChip(r.status)+'</div><p class="sec-s" style="margin:6px 0 0">'+st+'</p>'+inboxList(r)+'</div>'; }).join('');
-  var intro = isOp() ? 'Documents '+esc(o.profile.org_name)+' has sent. Upload anything that arrived by email so it sits with the month for data entry.' : 'Send the month\'s bills, dockets, statements and registers. YES enters every figure from them; you never key numbers yourself. Documents are due by the 15th of the following month. You can also email them to <a class="link" href="mailto:contact@yes.com.au">contact@yes.com.au</a>.';
+  var list=withDocs.map(function(r){ var st=r.status==='verified'?'Entered and verified by Yarta':r.status==='submitted'?'Entered by Yarta, awaiting verification':'With Yarta for entry'; return '<div class="panel" style="margin-top:14px"><div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:center"><h3>'+mLabel(r.month)+'</h3>'+statusChip(r.status)+'</div><p class="sec-s" style="margin:6px 0 0">'+st+'</p>'+inboxList(r)+'</div>'; }).join('');
+  var intro = isOp() ? 'Documents '+esc(o.profile.org_name)+' has sent. Upload anything that arrived by email so it sits with the month for data entry.' : 'Send the month\'s bills, dockets, statements and registers. Yarta enters every figure from them; you never key numbers yourself. Documents are due by the 15th of the following month. You can also email them to <a class="link" href="mailto:contact@yes.com.au">contact@yes.com.au</a>.';
   var body='<div class="pg-head"><div><p class="kicker">Documents</p><h1>'+(isOp()?'Customer documents':'Send documents')+'</h1><p class="pg-sub">'+intro+'</p></div></div>'
     + '<div class="panel"><h3>Upload</h3><div class="inline-form" style="margin-top:14px"><div class="field"><label for="up-m">Month</label><select id="up-m">'+opts+'</select></div><div class="field"><label for="up-c">What is it about?</label><select id="up-c">'+cats+'</select></div><label class="btn btn-primary">Choose files<input type="file" data-act="inbox-file" multiple accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx,.xls,.doc,.docx,.txt" style="display:none"></label></div><p class="small muted" style="margin:12px 0 0">PDF, images, spreadsheets or documents, up to 15 MB each. In this prototype files stay in this browser.</p></div>'
     + '<h2 class="sec-t" style="margin-top:28px">Sent so far</h2>'+(list||'<div class="empty">Nothing sent yet.</div>')+(withDocsAll.length>3?'<p class="small muted" style="margin-top:14px">Showing the latest three months. Every earlier document is kept with its month.</p>':'');
@@ -398,7 +398,7 @@ function calcPanel(o,r,k){
   var v=withCarry(o,k,r.values||{}); var m=E.month(v,o.profile);
   function ln(l,val){ return '<div class="ln"><span>'+l+'</span><b>'+val+'</b></div>'; }
   var prev=null; var S=seriesOf(o); var pm=monthOf(S,E.addMonths(k,-1)); if(pm&&pm.month===E.addMonths(k,-1)) prev=pm;
-  return '<p class="kicker">YES calculates · '+mShort(k)+'</p><div class="big">'+fmt(m.total_t,1)+'</div><div class="small" style="color:var(--silver-4)">t CO₂-e this month'+(prev?' · '+mShort(prev.month)+': '+fmt(prev.total_t,1):'')+'</div><div style="margin-top:14px">'
+  return '<p class="kicker">Yarta calculates · '+mShort(k)+'</p><div class="big">'+fmt(m.total_t,1)+'</div><div class="small" style="color:var(--silver-4)">t CO₂-e this month'+(prev?' · '+mShort(prev.month)+': '+fmt(prev.total_t,1):'')+'</div><div style="margin-top:14px">'
     + ln('Scope 1 · fuel and gas',fmt(m.scope1_t,1)+' t')
     + ln('Scope 2 · grid electricity',fmt(m.scope2_t,1)+' t')
     + ln('Scope 3 · landfill and upstream',fmt(m.scope3_t,1)+' t')
@@ -447,7 +447,7 @@ function rpChg(cur,base,lowerBetter){
 /* true while the report month still sits inside the baseline financial year (July to June): there is nothing earlier to compare with */
 function inBaselineFY(S,p,k){ var fy=String(S.baseline.fy||p.baseline_fy||''), y0=parseInt(fy.slice(0,4),10); if(!y0) return false; var d=E.parse(k), n=d.y*12+d.m; return n>=y0*12+6 && n<=(y0+1)*12+5; }
 /* the brand on the report cover: a page can override window.REPORT_BRAND before portal.js loads */
-var RB=window.REPORT_BRAND||{mark:'<span class="mark">YES</span>', full:'Yindyamarra Environmental Sustainability', score:'Yindyamarra Environmental Score', title:'Environmental<br>Sustainability Report'};
+var RB=window.REPORT_BRAND||{mark:'<span class="mark">Yarta</span>', full:'Yindyamarra Environmental Sustainability', score:'Yindyamarra Environmental Score', title:'Environmental<br>Sustainability Report'};
 function sheetCover(o,S,i,PL,k,nP,provTxt){
   var m=S.months[i], R12=m.r12, B=R12.base||{}, p=o.profile, T=S.targets, ly=S.months[i-12]||null;
   if(inBaselineFY(S,p,k)) B={};
@@ -473,7 +473,7 @@ function sheetCover(o,S,i,PL,k,nP,provTxt){
   var subs=D.CATEGORIES.map(function(c){ var v=m.scores[c.k]; return '<div class="rp-sub"><span>'+esc(c.name)+(m.prov[c.k]?' <span class="muted">(P)</span>':'')+'</span><span class="v">'+(v==null?'—':Math.round(v))+'</span><span class="d">'+(v==null?'<span class="muted small">not reported</span>':delta(m.cat_yoy[c.k]))+'</span><div class="bar"><i style="width:'+(v||0)+'%"></i></div></div>'; }).join('');
   var tgH=tg.map(function(t){ var w=(t.actual==null||!(t.target>0))?0:Math.max(0,Math.min(100,t.actual/t.target*100)); var met=t.actual!=null&&t.actual>=t.target; return '<div class="rp-tg'+(met?' met':'')+'"><span class="n">'+esc(t.name)+'</span><span class="r">'+(t.actual==null?'—':pct(t.actual,0))+' <span class="muted">of '+pct(t.target,0)+'</span></span><div class="bar"><i style="width:'+w.toFixed(0)+'%"></i></div></div>'; }).join('');
   var photo = p.country_photo ? ' style="background-image:linear-gradient(90deg,rgba(11,40,24,.96) 0%,rgba(11,40,24,.78) 55%,rgba(11,40,24,.35) 100%),url('+esc(p.country_photo)+')"' : '';
-  var wyc = PL ? '<div class="rp-wyc"><div><span class="k">Now</span><b>'+(PL.now==null?'—':PL.now)+'</b></div><div><span class="k">At your targets</span><b>'+(PL.target==null?'—':PL.target)+'</b></div><div class="hl"><span class="k">With YES help</span><b>'+(PL.potential==null?'—':PL.potential)+'</b><span class="s">estimate · plan on page '+nP+'</span></div></div>' : '';
+  var wyc = PL ? '<div class="rp-wyc"><div><span class="k">Now</span><b>'+(PL.now==null?'—':PL.now)+'</b></div><div><span class="k">At your targets</span><b>'+(PL.target==null?'—':PL.target)+'</b></div><div class="hl"><span class="k">With Yarta help</span><b>'+(PL.potential==null?'—':PL.potential)+'</b><span class="s">estimate · plan on page '+nP+'</span></div></div>' : '';
   return '<section class="rp-sheet rp-cover">'
     + '<div class="rp-band"'+photo+'><div class="rp-band-l"><div class="rp-brand">'+RB.mark+'<span class="full">'+RB.full+'</span></div>'
     + '<div class="rp-ethos">Measure. Understand. Report. Improve.</div><h1 class="rp-big">'+RB.title+'</h1><p class="rp-tag">Where '+esc(p.org_name)+' stands, verified figure by figure, and the ways to improve.</p></div>'
@@ -483,7 +483,7 @@ function sheetCover(o,S,i,PL,k,nP,provTxt){
     + '<div class="rp-cards">'+cardsH+'</div>'
     + '<div class="rp-cols"><div><div class="rp-h">Category scores · change on last year</div><div class="rp-subs one">'+subs+'</div></div>'
     + '<div><div class="rp-h">At real-world scale · rolling '+win+'</div><div class="rp-scale">'+scaleH+'</div><div class="rp-h">Progress towards targets · rolling '+win+'</div><div class="rp-tgs">'+tgH+'</div></div></div>'
-    + '<div class="rp-foot">Headline figures are rolling '+win+' totals; the change is against the same calendar months of the baseline year'+(inBaselineFY(S,p,k)?' ('+esc(S.baseline.fy||p.baseline_fy)+' is the baseline year, so there is no earlier year to compare with yet)':'')+'. (P) provisional: a target-based category with less than 12 months of data. The score is self-declared under the published YES method v0.1 (draft); it is not an accredited rating, certification or offset. Page 1 of '+nP+'.</div></section>';
+    + '<div class="rp-foot">Headline figures are rolling '+win+' totals; the change is against the same calendar months of the baseline year'+(inBaselineFY(S,p,k)?' ('+esc(S.baseline.fy||p.baseline_fy)+' is the baseline year, so there is no earlier year to compare with yet)':'')+'. (P) provisional: a target-based category with less than 12 months of data. The score is self-declared under the published Yarta method v0.1 (draft); it is not an accredited rating, certification or offset. Page 1 of '+nP+'.</div></section>';
 }
 
 function vReport(k){
@@ -499,7 +499,7 @@ function reportSheets(o,S,k){
   var PL=planFor(o,S,i), nP=PL?3:2;
   var ly=S.months[i-12]||null, pm=S.months[i-1]||null;
   var pts=S.months.slice(Math.max(0,i-12),i+1).map(function(x){ return {label:mShort(x.month), v:x.score, prov:x.status!=='verified'}; });
-  var provTxt = m.status==='verified' ? 'Verified by YES on '+longDate(r.verifiedAt) : 'Provisional · awaiting YES verification';
+  var provTxt = m.status==='verified' ? 'Verified by Yarta on '+longDate(r.verifiedAt) : 'Provisional · awaiting Yarta verification';
   var tg=E.targets({months:S.months.slice(0,i+1), targets:T, baseline:S.baseline});
   var subs=D.CATEGORIES.map(function(c){ var v=m.scores[c.k]; return '<div class="rp-sub"><span>'+esc(c.name)+(m.prov[c.k]?' <span class="muted">(P)</span>':'')+'</span><span class="v">'+(v==null?'—':Math.round(v))+'</span><span class="d">'+(v==null?'<span class="muted small">not reported</span>':delta(m.cat_yoy[c.k]))+'</span><div class="bar"><i style="width:'+(v||0)+'%"></i></div></div>'; }).join('');
   function kvrow(l,a,u,note){ return '<tr><td>'+esc(l)+'</td><td class="num">'+a+'</td><td>'+esc(u||'')+'</td><td class="small muted">'+(note||'')+'</td></tr>'; }
@@ -519,7 +519,7 @@ function reportSheets(o,S,k){
     + kvrow('Trees planted',fmt(v.trees),'trees') + kvrow('Program participants',fmt(v.participants),'people')
     + '</tbody></table></div>'
     + '<div class="rp-h">Data quality and evidence</div><div class="rp-tw"><table class="tbl compact"><tbody><tr><td>Required figures supplied</td><td class="num">'+pct(m.complete_pct)+'</td></tr><tr><td>Figures backed by evidence</td><td class="num">'+pct(m.evidence_pct)+'</td></tr><tr><td>Evidence grades</td><td>'+D.CATEGORIES.filter(function(c){return c.k!=='carbon';}).map(function(c){ var e=(r.evidence||{})[c.k]; return esc(c.short)+' '+(e?(e.grade||'…'):'—'); }).join(' · ')+'</td></tr></tbody></table></div>'
-    + '<div class="rp-foot">Method: emissions use the National Greenhouse Accounts Factors 2024 (DCCEEW), location-based electricity for '+esc(p.state)+'. Scope 3 covers waste to landfill and upstream fuel and electricity only. Flights are recorded but not yet converted. Avoided emissions use NSW DECCW (2010) factors, flagged as dated, and are never netted against emissions. Comparisons with the baseline use the same calendar months of '+esc(S.baseline.fy||p.baseline_fy)+'. Figures are entered by YES from the organisation\'s source documents and verified by a second YES analyst. Full method: yes.com.au/method. Page 2 of '+nP+'.</div></section>';
+    + '<div class="rp-foot">Method: emissions use the National Greenhouse Accounts Factors 2024 (DCCEEW), location-based electricity for '+esc(p.state)+'. Scope 3 covers waste to landfill and upstream fuel and electricity only. Flights are recorded but not yet converted. Avoided emissions use NSW DECCW (2010) factors, flagged as dated, and are never netted against emissions. Comparisons with the baseline use the same calendar months of '+esc(S.baseline.fy||p.baseline_fy)+'. Figures are entered by Yarta from the organisation\'s source documents and verified by a second Yarta analyst. Full method: yes.com.au/method. Page 2 of '+nP+'.</div></section>';
   return sheet1+sheet2+(PL?sheet3(o,S,i,PL,k):'');
 }
 
@@ -549,7 +549,7 @@ function threeNums(P,m,cls){
   return '<div class="three'+(cls?' '+cls:'')+'">'
     + '<div class="tn"><span class="k">Now</span><b>'+(P.now==null?'—':P.now)+'</b><span class="s">'+esc(E.band(P.now))+' · '+esc(mLabel(m.month))+'</span></div>'
     + '<div class="tn"><span class="k">At your targets</span><b>'+(P.target==null?'—':P.target)+'</b><span class="s">If every target in your profile were met</span></div>'
-    + '<div class="tn hl"><span class="k">With YES help · estimate</span><b>'+(P.potential==null?'—':P.potential)+'</b><span class="s">'+n+' recommended item'+(n===1?'':'s')+(extra.length?' · '+extra.join(' · '):'')+'</span></div>'
+    + '<div class="tn hl"><span class="k">With Yarta help · estimate</span><b>'+(P.potential==null?'—':P.potential)+'</b><span class="s">'+n+' recommended item'+(n===1?'':'s')+(extra.length?' · '+extra.join(' · '):'')+'</span></div>'
     + '</div>';
 }
 function roadChart(S,i,P,o){
@@ -627,13 +627,13 @@ function vBook(key){
     + '<div class="field"><label for="bk-loc">Where, for an on-site session</label><input type="text" id="bk-loc" value="'+esc(o.profile.org_name)+'"></div>'
     + '<div class="row2"><div class="field"><label for="bk-name">Contact name</label><input type="text" id="bk-name" value="'+esc(contact.name||'')+'" autocomplete="name"></div><div class="field"><label for="bk-email">Contact email</label><input type="email" id="bk-email" value="'+esc(contact.email||'')+'" autocomplete="email"></div></div>'
     + '<div class="field"><label for="bk-notes">Notes</label><textarea id="bk-notes" rows="3" placeholder="Anything the specialist should know, or a time that suits you if none above does."></textarea></div>'
-    + '<label class="check"><input type="checkbox" id="bk-share" checked> <span>Share the YES figures behind this recommendation with the provider, so they arrive prepared.</span></label>'
-    + '<div class="note-box grey">Prototype: nothing is sent. In production, YES would confirm the time with you by email.</div>'
+    + '<label class="check"><input type="checkbox" id="bk-share" checked> <span>Share the Yarta figures behind this recommendation with the provider, so they arrive prepared.</span></label>'
+    + '<div class="note-box grey">Prototype: nothing is sent. In production, Yarta would confirm the time with you by email.</div>'
     + '<div class="btn-row"><button class="btn btn-primary" type="button" data-act="book-submit" data-svc="'+s.k+'">Request this booking</button><a class="btn btn-ghost" href="#/roadmap" style="color:var(--ink)">Back to the roadmap</a></div>'
     + '</div></div>'
     + '<aside class="panel bk-side"><h3>Why it is recommended</h3><p class="small" style="margin-top:8px">'+esc(r?r.why:'Your current figures do not call for this, but you can still book it.')+'</p>'
     + '<dl class="rec-dl" style="margin-top:14px"><dt>Estimated change</dt><dd>'+(r?(upText(r.uplift)||esc(s.effectText)):'—')+'</dd></dl><p class="small muted" style="margin:8px 0 0">Assumed effect: '+esc(s.effectText)+'</p>'
-    + '<h3 style="margin-top:22px">Who delivers it</h3><p class="small" style="margin-top:8px">'+esc(s.who)+'</p>'+(s.prov==='group'?'<p class="small muted">'+esc(s.groupNames)+(s.groupNames.indexOf(' and ')>0?' are':' is')+' part of Recycle Group, like YES. Disclosed on your monthly report.</p>':s.prov==='partner'?'<p class="small muted">Independent specialist: chosen by you, and YES can introduce one.</p>':'')
+    + '<h3 style="margin-top:22px">Who delivers it</h3><p class="small" style="margin-top:8px">'+esc(s.who)+'</p>'+(s.prov==='group'?'<p class="small muted">'+esc(s.groupNames)+(s.groupNames.indexOf(' and ')>0?' are':' is')+' part of Recycle Group, like Yarta. Disclosed on your monthly report.</p>':s.prov==='partner'?'<p class="small muted">Independent specialist: chosen by you, and Yarta can introduce one.</p>':'')
     + '<p class="small muted" style="margin-top:10px">You can use any provider. Your score and the verification of your figures do not depend on who does the work.</p></aside></div>';
   return shell('roadmap', body);
 }
@@ -650,7 +650,7 @@ function vBookings(){
     return '<tr><td><b>'+esc(o.profile.org_name)+'</b><div class="small muted">'+esc(b.contact||'')+(b.email?' · '+esc(b.email):'')+'</div></td>'
       + '<td><b>'+esc(R.title(s,o.profile))+'</b>'+grpDot(s)+'<div class="small muted">'+esc(provOf(s).label)+'</div>'+(b.notes?'<div class="small">'+esc(b.notes)+'</div>':'')+(b.share&&(b.why||liveWhy(b))?'<div class="small muted">Figures shared: '+esc(b.why||liveWhy(b))+'</div>':'')+'</td>'
       + '<td>'+esc(slotLabel(b.slot,b.other))+'<div class="small muted">'+esc(b.mode||'')+(b.location?' · '+esc(b.location):'')+'</div></td><td>'+bookingChip(b)+'</td><td><div class="pill-row">'+acts+'</div></td></tr>'; }).join('');
-  var body='<div class="pg-head"><div><p class="kicker">YES team</p><h1>Bookings</h1><p class="pg-sub">Help requested from customers\' roadmaps. Confirm the time with the customer and the provider, then mark it done when the work is complete so the customer can follow the change in later months. Work by a Recycle Group business (●) is disclosed on the customer\'s report.</p></div></div>'
+  var body='<div class="pg-head"><div><p class="kicker">Yarta team</p><h1>Bookings</h1><p class="pg-sub">Help requested from customers\' roadmaps. Confirm the time with the customer and the provider, then mark it done when the work is complete so the customer can follow the change in later months. Work by a Recycle Group business (●) is disclosed on the customer\'s report.</p></div></div>'
     + (rows?'<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Organisation</th><th>Help</th><th>When</th><th>Status</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<div class="empty">No bookings yet.</div>');
   return shell('bookings', body);
 }
@@ -663,13 +663,13 @@ function sheet3(o,S,i,P,k){
   var prog=bl.map(function(b){ var s=R.byKey[b.svc]; return '<tr><td>'+itemName({title:R.title(s,p), s:s})+'</td><td>'+esc(BK_L[b.status])+'</td><td>'+esc(b.status==='completed'&&b.completedMonth?mLabel(b.completedMonth):slotLabel(b.slot,b.other))+'</td><td>'+(b.status==='completed'?sinceText(S,b,i):'—')+'</td></tr>'; }).join('');
   var names={}; P.items.concat(bl.map(function(b){ return {s:R.byKey[b.svc]}; })).forEach(function(it){ if(it.s && it.s.prov==='group') names[it.s.groupNames]=1; });
   var nm=Object.keys(names);
-  var disc = nm.length ? 'Items marked ● are delivered by a Recycle Group business ('+nm.join('; ')+'). YES is part of Recycle Group. You can use any provider; your score and its verification do not depend on who does the work.' : 'No item in this plan is delivered by a Recycle Group business. YES is part of Recycle Group.';
+  var disc = nm.length ? 'Items marked ● are delivered by a Recycle Group business ('+nm.join('; ')+'). Yarta is part of Recycle Group. You can use any provider; your score and its verification do not depend on who does the work.' : 'No item in this plan is delivered by a Recycle Group business. Yarta is part of Recycle Group.';
   return '<section class="rp-sheet rp-road"><div class="rp-head"><div><div class="rp-title" style="font-size:22px">'+esc(p.org_name)+' · '+mLabel(k)+'</div>'+rpSteps(['improve'])+'</div><div class="rp-kv"><span>Report</span><b>Roadmap</b></div></div>'
     + threeNums(P,m,'rp')
     + '<div class="rp-h">Score by month, and projected with the plan</div>'+roadChart(S,i,P,{h:190,print:true})+'<p class="rp-leg"><span class="lg-i"><span class="lg-l solid"></span>Your score by month</span><span class="lg-i"><span class="lg-l dash"></span>Projected with the plan (estimate)</span><span class="lg-i"><span class="lg-l dot"></span>At your targets</span></p>'
     + '<div class="rp-h">Plan by quarter</div>'+(P.active.length?'<div class="rp-tw"><table class="tbl compact"><thead><tr><th>Quarter</th><th>Starts (each builds up over '+R.RAMP+' months)</th><th class="r">Projected score at quarter end</th></tr></thead><tbody>'+qrows+'</tbody></table></div>':'<p class="rp-p">No help is in the plan.</p>')
     + '<div class="rp-h">Progress so far</div>'+(prog?'<div class="rp-tw"><table class="tbl compact"><thead><tr><th>Help</th><th>Status</th><th>When</th><th>Change since</th></tr></thead><tbody>'+prog+'</tbody></table></div>':'<p class="rp-p">No help booked yet.</p>')
-    + '<div class="rp-h">Disclosures and assumptions</div><p class="rp-p">'+esc(disc)+' The projection and the score with YES help are estimates from the published assumptions; they are not a promise or a guarantee. A change since completed work is a change in the figures, not proof that the work caused it.</p>'
+    + '<div class="rp-h">Disclosures and assumptions</div><p class="rp-p">'+esc(disc)+' The projection and the score with Yarta help are estimates from the published assumptions; they are not a promise or a guarantee. A change since completed work is a change in the figures, not proof that the work caused it.</p>'
     + '<div class="rp-foot">'+esc(R.ROADMAP_RULES)+' Rules and assumptions: yes.com.au/method. Page 3 of 3.</div></section>';
 }
 
@@ -685,7 +685,7 @@ function vOrganisation(){
     return '<div class="field"><label for="p-'+f.id+'">'+esc(f.name)+(f.req?' <span class="req">*</span>':'')+'</label>'+input+'<span class="hint">'+esc(f.def)+'</span></div>';
   });
   var users=state.users.filter(function(u){ return u.org===o.id; }).map(function(u){ return '<tr><td>'+esc(u.name)+'</td><td>'+esc(u.title)+'</td><td class="mono small">'+esc(u.email)+'</td></tr>'; }).join('');
-  var body='<div class="pg-head"><div><p class="kicker">Organisation</p><h1>'+esc(p.org_name)+'</h1><p class="pg-sub">Details used for intensities, the baseline and targets. Changing them recalculates every month.'+(ro?' YES keeps these up to date: to change anything, email <a class="link" href="mailto:contact@yes.com.au">contact@yes.com.au</a>.':'')+'</p></div>'+(ro?'':'<div class="pg-actions"><button class="btn btn-primary btn-sm" type="button" data-act="save-profile">Save changes</button></div>')+'</div>'
+  var body='<div class="pg-head"><div><p class="kicker">Organisation</p><h1>'+esc(p.org_name)+'</h1><p class="pg-sub">Details used for intensities, the baseline and targets. Changing them recalculates every month.'+(ro?' Yarta keeps these up to date: to change anything, email <a class="link" href="mailto:contact@yes.com.au">contact@yes.com.au</a>.':'')+'</p></div>'+(ro?'':'<div class="pg-actions"><button class="btn btn-primary btn-sm" type="button" data-act="save-profile">Save changes</button></div>')+'</div>'
     + '<div class="row2"><div class="panel"><h3>Profile</h3><div class="stack" style="margin-top:16px">'+fields.slice(0,8).join('')+'</div></div><div class="panel"><h3>Targets</h3><div class="stack" style="margin-top:16px">'+fields.slice(8).join('')+'</div></div></div>'
     + '<h2 class="sec-t" style="margin-top:28px">People with access</h2><p class="sec-s">In production each person has their own sign-in. Demo accounts only here.</p><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Name</th><th>Role</th><th>Email</th></tr></thead><tbody>'+(users||'<tr><td colspan="3" class="muted">No demo users for this organisation.</td></tr>')+'</tbody></table></div>';
   return shell('organisation', body);
@@ -704,22 +704,22 @@ function vData(){
     + '<div class="row2"><div class="panel"><h3>Download</h3><p class="sec-s" style="margin-top:6px">'+n+' months · '+ev+' evidence records.</p><div class="stack" style="margin-top:8px">'
     + '<button class="btn btn-ink" type="button" data-act="csv-all">Monthly figures (CSV, one row per figure)</button>'
     + '<button class="btn btn-ghost" type="button" data-act="json-all" style="color:var(--ink)">Everything for this organisation (JSON)</button>'
-    + '<button class="btn btn-ghost" type="button" data-act="csv-dict" style="color:var(--ink)">The YES data dictionary (CSV)</button></div></div>'
+    + '<button class="btn btn-ghost" type="button" data-act="csv-dict" style="color:var(--ink)">The Yarta data dictionary (CSV)</button></div></div>'
     + (isOp()?'<div class="panel"><h3>Import figures</h3><p class="sec-s" style="margin-top:6px">A CSV in the same shape as the download (month, field_id, value), or a JSON export. Figures go into draft months only; submitted and verified months are never overwritten.</p>'
     + '<label class="btn btn-ghost" style="color:var(--ink)">Choose a CSV or JSON file<input type="file" data-act="import-file" accept=".csv,.json,text/csv,application/json" style="display:none"></label>'
     + (pv?'<div class="callout" style="margin-top:14px"><b>'+esc(pv.name)+'</b>: '+pv.ok+' figures across '+pv.months.length+' month'+(pv.months.length===1?'':'s')+' ready'+(pv.skip?' · '+pv.skip+' skipped (locked months or unknown fields)':'')+'.<div class="btn-row" style="margin-top:12px"><button class="btn btn-primary btn-sm" type="button" data-act="import-go">Import into drafts</button><button class="btn btn-ghost btn-sm" type="button" data-act="import-cancel" style="color:var(--ink)">Cancel</button></div></div>':'')
-    + '</div>':'<div class="panel"><h3>Your figures are entered by YES</h3><p class="sec-s" style="margin-top:6px">Send your documents and YES keys every figure. Download everything here whenever you need it: for your annual report, an auditor or your own systems.</p><a class="btn btn-ink" href="#/documents">Send documents</a></div>')+'</div>'
+    + '</div>':'<div class="panel"><h3>Your figures are entered by Yarta</h3><p class="sec-s" style="margin-top:6px">Send your documents and Yarta keys every figure. Download everything here whenever you need it: for your annual report, an auditor or your own systems.</p><a class="btn btn-ink" href="#/documents">Send documents</a></div>')+'</div>'
     + '<div class="panel" style="margin-top:22px"><h3>Start the demo again</h3><p class="sec-s" style="margin-top:6px">Replaces everything in this browser with the original demo organisations and removes attached files.</p>'
     + (ui.confirmReset?'<div class="btn-row"><button class="btn btn-ink" type="button" data-act="reset-go">Yes, reset the demo</button><button class="btn btn-ghost" type="button" data-act="reset-cancel" style="color:var(--ink)">Keep my changes</button></div>':'<button class="btn btn-ghost" type="button" data-act="reset-ask" style="color:var(--ink)">Reset demo data</button>')+'</div>';
   return shell('data', body);
 }
 
-/* ------------------------------------------------------------------ YES operator */
+/* ------------------------------------------------------------------ Yarta operator */
 function flagsFor(o,r){ var n=0; Object.keys(r.values||{}).forEach(function(id){ var f=field(id); if(!f||f.freq==='S'||!isNum(r.values[id])) return; if(warnFor(o,r.month,id,r.values[id])) n++; }); return n; }
 function vQueue(){
   var q=queue(), ret=[]; Object.keys(state.orgs).forEach(function(id){ state.orgs[id].records.forEach(function(r){ if(r.status==='returned') ret.push({org:id,rec:r}); }); });
   function tr(x){ var o=state.orgs[x.org], r=x.rec, pr=progressOf(o,r), ev=Object.keys(r.evidence||{}).length; return '<tr><td><b>'+esc(o.profile.org_name)+'</b><div class="small muted">'+esc(o.profile.org_type)+' · '+esc(o.profile.state)+'</div></td><td>'+mLabel(r.month)+'</td><td>'+longDate(r.submittedAt)+'</td><td class="num">'+pr.req+' / '+pr.reqDue+'</td><td class="num">'+ev+' / 9</td><td class="num">'+flagsFor(o,r)+'</td><td>'+esc(r.enteredBy||'')+'</td><td><a class="btn btn-primary btn-sm" href="#/ops/review/'+x.org+'/'+r.month+'">Review</a></td></tr>'; }
-  var body='<div class="pg-head"><div><p class="kicker">YES team</p><h1>Verification</h1><p class="pg-sub">Months entered by YES and waiting for a second analyst. Check every figure against its document, grade the evidence, then verify the month or return it to data entry with a note. Nobody verifies a month they entered.</p></div></div>'
+  var body='<div class="pg-head"><div><p class="kicker">Yarta team</p><h1>Verification</h1><p class="pg-sub">Months entered by Yarta and waiting for a second analyst. Check every figure against its document, grade the evidence, then verify the month or return it to data entry with a note. Nobody verifies a month they entered.</p></div></div>'
     + (q.length?'<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Organisation</th><th>Month</th><th>Entered</th><th class="r">Required</th><th class="r">Evidence</th><th class="r">Flags</th><th>Entered by</th><th></th></tr></thead><tbody>'+q.map(tr).join('')+'</tbody></table></div>':'<div class="empty">Nothing waiting. Every entered month has been verified.</div>')
     + (ret.length?'<h2 class="sec-t" style="margin-top:28px">Returned to data entry</h2><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Organisation</th><th>Month</th><th>Note</th></tr></thead><tbody>'+ret.map(function(x){ var n=(x.rec.notes||[]).slice(-1)[0]; return '<tr><td>'+esc(state.orgs[x.org].profile.org_name)+'</td><td>'+mLabel(x.rec.month)+'</td><td class="small">'+esc(n?n.text:'')+'</td></tr>'; }).join('')+'</tbody></table></div>':'');
   return shell('ops', body);
@@ -727,7 +727,7 @@ function vQueue(){
 function vCustomers(){
   var rows=Object.keys(state.orgs).map(function(id){ var o=state.orgs[id], S=seriesOf(o), m=monthOf(S), rs=sorted(o), last=rs[rs.length-1]; var waiting=o.records.filter(function(r){ return r.status==='submitted'; }).length;
     return '<tr><td><b>'+esc(o.profile.org_name)+'</b><div class="small muted">'+esc(o.profile.org_type)+' · '+esc(o.profile.state)+'</div></td><td class="num">'+o.records.length+'</td><td>'+(last?mLabel(last.month)+' '+statusChip(last.status):'—')+'</td><td class="num"><b>'+(m&&m.score!=null?m.score:'—')+'</b></td><td>'+(m?esc(m.band):'—')+'</td><td class="num">'+(m&&m.yoy!=null?sgn(m.yoy):'—')+'</td><td class="num">'+waiting+'</td><td><div class="pill-row"><button class="btn btn-ghost btn-sm" type="button" data-act="view-org" data-org="'+id+'" style="color:var(--ink)">Dashboard</button>'+(openMonths(o).length?'<a class="btn btn-primary btn-sm" href="#/entry/'+id+'/'+openMonths(o)[openMonths(o).length-1].month+'">Enter figures</a>':'')+'</div></td></tr>'; }).join('');
-  var body='<div class="pg-head"><div><p class="kicker">YES team</p><h1>Customers</h1><p class="pg-sub">Fictional demo organisations.</p></div></div><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Organisation</th><th class="r">Months</th><th>Latest month</th><th class="r">Score</th><th>Band</th><th class="r">Year on year</th><th class="r">Waiting</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  var body='<div class="pg-head"><div><p class="kicker">Yarta team</p><h1>Customers</h1><p class="pg-sub">Fictional demo organisations.</p></div></div><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Organisation</th><th class="r">Months</th><th>Latest month</th><th class="r">Score</th><th>Band</th><th class="r">Year on year</th><th class="r">Waiting</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
   return shell('customers', body);
 }
 function vReview(orgId,k){
@@ -743,7 +743,7 @@ function vReview(orgId,k){
       + (fs.length?'<div class="tbl-wrap" style="margin-top:12px"><table class="tbl compact"><thead><tr><th>Figure</th><th class="r">'+mShort(k)+'</th><th>Unit</th><th class="r">'+mShort(E.addMonths(k,-1))+'</th><th class="r">'+mShort(E.addMonths(k,-12))+'</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<p class="sec-s" style="margin-top:8px">No figures entered in this category.</p>')+'</div>';
   }).join('');
   var canAct = r.status==='submitted', mine = !!(r.enteredBy && r.enteredBy===me().name);
-  var decision = canAct ? '<div class="panel" style="margin-top:22px"><h3>Decision</h3><p class="sec-s" style="margin-top:6px">Verify once every attached document has a grade. Return the month to data entry if a figure needs correcting; your note goes with it. The customer sees the month once it is verified.</p><div class="field" style="margin:12px 0 14px"><label for="rv-note">Note to data entry (required to return)</label><textarea id="rv-note" rows="3" placeholder="For example: diesel is 40% above August last year. Please recheck the fuel card statement."></textarea></div>'+(mine?'<div class="note-box" style="margin-bottom:12px">You entered this month, so a different analyst must verify it. Sign in as another YES team member to verify.</div>':'')+'<div class="btn-row"><button class="btn btn-primary'+(mine?' is-disabled':'')+'" type="button" data-act="verify" data-org="'+orgId+'" data-month="'+k+'"'+(mine?' aria-disabled="true"':'')+'>Verify '+mShort(k)+'</button><button class="btn btn-ghost" type="button" data-act="return" data-org="'+orgId+'" data-month="'+k+'" style="color:var(--ink)">Return to data entry</button></div></div>'
+  var decision = canAct ? '<div class="panel" style="margin-top:22px"><h3>Decision</h3><p class="sec-s" style="margin-top:6px">Verify once every attached document has a grade. Return the month to data entry if a figure needs correcting; your note goes with it. The customer sees the month once it is verified.</p><div class="field" style="margin:12px 0 14px"><label for="rv-note">Note to data entry (required to return)</label><textarea id="rv-note" rows="3" placeholder="For example: diesel is 40% above August last year. Please recheck the fuel card statement."></textarea></div>'+(mine?'<div class="note-box" style="margin-bottom:12px">You entered this month, so a different analyst must verify it. Sign in as another Yarta team member to verify.</div>':'')+'<div class="btn-row"><button class="btn btn-primary'+(mine?' is-disabled':'')+'" type="button" data-act="verify" data-org="'+orgId+'" data-month="'+k+'"'+(mine?' aria-disabled="true"':'')+'>Verify '+mShort(k)+'</button><button class="btn btn-ghost" type="button" data-act="return" data-org="'+orgId+'" data-month="'+k+'" style="color:var(--ink)">Return to data entry</button></div></div>'
     : '<div class="banner grey" style="margin-top:22px"><span>This month is '+esc(r.status)+'. '+(r.verifiedAt?'Verified '+longDate(r.verifiedAt)+(r.verifiedBy?' by '+esc(r.verifiedBy):'')+'.':'')+'</span></div>';
   var body='<div class="pg-head"><div><p class="kicker"><a class="link" href="#/ops">Review queue</a> · '+statusChip(r.status)+'</p><h1>'+esc(o.profile.org_name)+' · '+mLabel(k)+'</h1><p class="pg-sub">Entered '+longDate(r.enteredAt||r.submittedAt)+(r.enteredBy?' by '+esc(r.enteredBy):'')+' · '+pr.req+' of '+pr.reqDue+' required figures · '+flagsFor(o,r)+' figures flagged for a second look</p></div></div>'
     + '<div class="row3"><div class="panel metric"><div class="k">Emissions this month</div><div class="v">'+fmt(calc.total_t,1)+'<span class="u">t CO₂-e</span></div><div class="s">Scope 1 '+fmt(calc.scope1_t,1)+' · Scope 2 '+fmt(calc.scope2_t,1)+' · Scope 3 '+fmt(calc.scope3_t,1)+'</div></div><div class="panel metric"><div class="k">Renewable · fleet electric</div><div class="v">'+pct(calc.renew_pct)+'<span class="u">·</span> '+pct(calc.fleet_ev_pct)+'</div><div class="s">Grid '+fmt(calc.grid_kwh)+' kWh</div></div><div class="panel metric"><div class="k">Landfill diversion</div><div class="v">'+pct(calc.diversion_pct,1)+'</div><div class="s">'+fmt(calc.waste_total_t,1)+' t total · '+fmt(calc.landfill_t,1)+' t landfill</div></div></div>'
@@ -755,7 +755,7 @@ function vFactors(){
   var el=Object.keys(F.elec).map(function(s){ return '<tr><td>'+s+'</td><td class="num">'+F.elec[s].s2.toFixed(2)+'</td><td class="num">'+F.elec[s].s3.toFixed(2)+'</td><td class="num">'+(F.gas.s3[s]!=null?F.gas.s3[s].toFixed(1):'—')+'</td></tr>'; }).join('');
   var fu=Object.keys(F.fuel).map(function(k){ var f=F.fuel[k]; return '<tr><td>'+k.charAt(0).toUpperCase()+k.slice(1)+'</td><td class="num">'+f.gj+'</td><td class="num">'+f.s1+'</td><td class="num">'+f.s3+'</td></tr>'; }).join('');
   var av=Object.keys(F.avoided).map(function(k){ return '<tr><td>'+k+'</td><td class="num">'+F.avoided[k]+'</td></tr>'; }).join('');
-  var body='<div class="pg-head"><div><p class="kicker">YES team</p><h1>Factor library</h1><p class="pg-sub">'+esc(F.edition)+'. Changing a factor is a method change: it is versioned and every affected month is recalculated.</p></div></div>'
+  var body='<div class="pg-head"><div><p class="kicker">Yarta team</p><h1>Factor library</h1><p class="pg-sub">'+esc(F.edition)+'. Changing a factor is a method change: it is versioned and every affected month is recalculated.</p></div></div>'
     + '<div class="row2"><div class="panel"><h3>Electricity and gas by state</h3><div class="tbl-wrap" style="margin-top:12px"><table class="tbl compact"><thead><tr><th>State</th><th class="r">Scope 2 kg/kWh</th><th class="r">Scope 3 kg/kWh</th><th class="r">Gas Scope 3 kg/GJ</th></tr></thead><tbody>'+el+'</tbody></table></div><p class="small muted" style="margin:10px 0 0">Natural gas Scope 1: '+F.gas.s1+' kg CO₂-e per GJ. Location-based electricity.</p></div>'
     + '<div class="panel"><h3>Transport fuels</h3><div class="tbl-wrap" style="margin-top:12px"><table class="tbl compact"><thead><tr><th>Fuel</th><th class="r">GJ per kL</th><th class="r">Scope 1 kg/GJ</th><th class="r">Scope 3 kg/GJ</th></tr></thead><tbody>'+fu+'</tbody></table></div><h3 style="margin-top:22px">Landfill · t CO₂-e per t</h3><p class="small" style="margin-top:8px">Council (mixed municipal) '+F.landfill.Council+' · Business, government and other (commercial and industrial) '+F.landfill.Business+'</p></div></div>'
     + '<div class="row2" style="margin-top:22px"><div class="panel"><h3>Avoided emissions · t CO₂-e per t recycled</h3><p class="small muted" style="margin-top:6px">NSW DECCW (2010). Flagged as dated; reported separately and never deducted.</p><div class="tbl-wrap" style="margin-top:10px"><table class="tbl compact"><tbody>'+av+'</tbody></table></div></div>'
@@ -764,7 +764,7 @@ function vFactors(){
 }
 function vActivity(){
   var rows=(state.audit||[]).slice(0,120).map(function(a){ return '<tr><td class="small mono">'+esc(new Date(a.at).toLocaleString('en-AU'))+'</td><td>'+esc(a.by)+'</td><td>'+esc(a.org&&state.orgs[a.org]?state.orgs[a.org].profile.org_name:'')+'</td><td>'+esc(a.action)+'</td><td class="small">'+esc(a.detail)+'</td></tr>'; }).join('');
-  var body='<div class="pg-head"><div><p class="kicker">YES team</p><h1>Activity</h1><p class="pg-sub">Every submission, verification, return and profile change made in this browser.</p></div></div>'
+  var body='<div class="pg-head"><div><p class="kicker">Yarta team</p><h1>Activity</h1><p class="pg-sub">Every submission, verification, return and profile change made in this browser.</p></div></div>'
     + (rows?'<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>When</th><th>Who</th><th>Organisation</th><th>Action</th><th>Detail</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<div class="empty">No activity yet in this browser. Submit or verify a month and it will appear here.</div>');
   return shell('activity', body);
 }
@@ -793,7 +793,7 @@ function render(){
     else html=vNotFound();
   }
   app.innerHTML=html;
-  document.title = (u?(isOp()?'YES team':org().profile.org_name)+' · ':'')+'YES portal (prototype)';
+  document.title = (u?(isOp()?'Yarta team':org().profile.org_name)+' · ':'')+'Yarta portal (prototype)';
   bindMedia();
 }
 function bindMedia(){ // ambient video on the sign-in screen
@@ -847,7 +847,7 @@ function sendDocs(files){
   var big=files.filter(function(f){ return f.size>15*1024*1024; }); if(big.length){ flash(big[0].name+' is over 15 MB. Send a smaller copy.','err'); return; }
   var r=rec(o,k); var created=false; if(!r){ r={month:k, values:{}, evidence:{}, status:'draft', inbox:[]}; o.records.push(r); created=true; } r.inbox=r.inbox||[];
   var jobs=files.map(function(f,i){ var key='inbox/'+o.id+'/'+k+'/'+Date.now()+'-'+i; return putFile(key,f).then(function(){ r.inbox.push({key:key,name:f.name,size:f.size,type:f.type,cat:cat,at:isoNow(),by:me().name}); }); });
-  Promise.all(jobs).then(function(){ log('Documents received',files.length+' for '+mLabel(k)+(created?' · month opened for data entry':''),o.id); save(); render(); flash(files.length+' document'+(files.length===1?'':'s')+' sent to YES for '+mLabel(k)+'.'); }).catch(function(){ flash('This browser would not store the files.','err'); });
+  Promise.all(jobs).then(function(){ log('Documents received',files.length+' for '+mLabel(k)+(created?' · month opened for data entry':''),o.id); save(); render(); flash(files.length+' document'+(files.length===1?'':'s')+' sent to Yarta for '+mLabel(k)+'.'); }).catch(function(){ flash('This browser would not store the files.','err'); });
 }
 function previewImport(file){
   var rd=new FileReader(); rd.onload=function(){
@@ -906,7 +906,7 @@ document.addEventListener('click', function(e){
     case 'csv-all': o=org(); download(o.id+'-monthly-figures.csv', longRows(o), 'text/csv'); break;
     case 'csv-month': o=org(); var mk=t.getAttribute('data-month'); download(o.id+'-'+mk+'.csv', longRows(o,[mk]), 'text/csv'); break;
     case 'json-all': o=org(); download(o.id+'-yes-export.json', JSON.stringify({exported:isoNow(), method:E.VERSION, dictionary:D.VERSION, profile:o.profile, records:o.records},null,2), 'application/json'); break;
-    case 'csv-dict': var rows=[['id','name','category','type','unit','frequency','mandatory','kind','source','definition','calculation','scores']].concat(D.FIELDS.map(function(f){ return [f.id,f.name,D.CAT[f.cat].name,f.type==='calc'?'Calculated by YES':'Entered by customer',f.unit,D.FREQ[f.freq],f.type==='calc'?'n/a':(f.req?'yes':'no'),f.kind,f.src,f.def,f.calc||'',(f.score||[]).map(function(s){ return D.CAT[s]?D.CAT[s].name:s; }).join('; ')]; })); download('yes-data-dictionary.csv', rows.map(function(r){ return r.map(csvCell).join(','); }).join('\n'), 'text/csv'); break;
+    case 'csv-dict': var rows=[['id','name','category','type','unit','frequency','mandatory','kind','source','definition','calculation','scores']].concat(D.FIELDS.map(function(f){ return [f.id,f.name,D.CAT[f.cat].name,f.type==='calc'?'Calculated by Yarta':'Entered by customer',f.unit,D.FREQ[f.freq],f.type==='calc'?'n/a':(f.req?'yes':'no'),f.kind,f.src,f.def,f.calc||'',(f.score||[]).map(function(s){ return D.CAT[s]?D.CAT[s].name:s; }).join('; ')]; })); download('yes-data-dictionary.csv', rows.map(function(r){ return r.map(csvCell).join(','); }).join('\n'), 'text/csv'); break;
     case 'import-cancel': ui.importPreview=null; render(); break;
     case 'import-go': o=org(); var pv=ui.importPreview; if(!pv) return; pv.items.forEach(function(it){ var r=rec(o,it[0]); if(!r){ r={month:it[0],values:{},evidence:{},status:'draft'}; o.records.push(r); } if(r.status==='submitted'||r.status==='verified') return; var f=D.FIELD[it[1]]; var v=it[2]; if(f.kind==='text'||f.kind==='select'){ if(v!=='') r.values[it[1]]=v; } else if(v!==''&&isFinite(+v)) r.values[it[1]]=+v; }); log('Figures imported',pv.ok+' figures from '+pv.name); save(); ui.importPreview=null; flash('Imported '+pv.ok+' figures into months open for data entry.'); go('#/ops/entry'); break;
     case 'verify': var ov=state.orgs[t.getAttribute('data-org')], rv=rec(ov,t.getAttribute('data-month')); if(rv.enteredBy && rv.enteredBy===me().name){ flash('You entered this month, so a different analyst must verify it.','err'); return; } var ungraded=Object.keys(rv.evidence||{}).filter(function(cat){ return !rv.evidence[cat].grade; }); if(ungraded.length){ flash('Grade every attached document first ('+ungraded.map(function(c){ return D.CAT[c].short; }).join(', ')+').','err'); return; } rv.status='verified'; rv.verifiedAt=isoNow().slice(0,10); rv.verifiedBy=me().name; var note=($('#rv-note')||{}).value; if(note){ rv.notes=rv.notes||[]; rv.notes.push({by:me().name,at:isoNow(),text:note}); } log('Month verified',mLabel(rv.month),ov.id); save(); flash(ov.profile.org_name+' · '+mLabel(rv.month)+' verified.'); go('#/ops'); break;
@@ -921,7 +921,7 @@ document.addEventListener('click', function(e){
   }
 });
 
-/* for pages that embed a report outside the app (the Yarta sample on the YES site) */
+/* for pages that embed a report outside the app (the Yarta sample on the Yarta site) */
 window.YESPortal={reportSheets:reportSheets, org:org, seriesOf:seriesOf, mLabel:mLabel};
 render();
 })();
