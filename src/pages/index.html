@@ -152,7 +152,7 @@
         <div class="shot tilt"><img src="/assets/img/product-dashboard.webp" alt="Yarta Dashboard for a council hard waste program, showing the Yarta Score, six headline tiles and the two emissions figures side by side (demo data)" loading="lazy" width="1600" height="2176"></div>
       </div>
       <div class="span5">
-        <div class="shot paper tilt-r"><img src="/assets/img/product-report.webp" alt="Yarta Report, page one: the score, headline outcomes, the two emissions figures, three buckets and the data statement (demo data)" loading="lazy" width="1588" height="2296"></div>
+        <div class="shot paper tilt-r"><img src="/assets/img/product-report.webp" alt="Yarta Report, page one: the score, headline outcomes, the two emissions figures, three buckets and the data statement (demo data)" loading="lazy" width="1588" height="2699"></div>
       </div>
     </div>
     <div class="layers reveal">
@@ -177,7 +177,7 @@
 <!-- 3 · THE PROBLEM -->
 <section id="problem">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">The problem</p><h2>A percentage is not an outcome.</h2></div><p class="lead">Councils and businesses pay for recycling and receive a line on an invoice. Nobody can say what the material became.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">The problem</p><h2>The data is scattered. The score doesn't exist. The plan is a guess.</h2></div><p class="lead">Bills, fuel cards, contractor reports, fleet registers, planting records. Every organisation holds the data and almost none can say where it stands against the eco standards, what would move the number, or what to do first.</p></div>
     <p class="callout reveal">Recycling has been sold as a collection service and reported as a percentage. It should be a measurable outcome.</p>
     <div class="compare mt-3 reveal">
       <div class="before"><h4>Recycling reporting today</h4><ul>
@@ -198,38 +198,62 @@
   </div>
 </section>
 
-<!-- 5 · YOUR ENVIRONMENT SCORE · WORKED EXAMPLE -->
-<section id="impact">
+<!-- UNDERSTAND · THE TEN CATEGORIES -->
+<section id="understand">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">The score</p><h2>What 1,000 mattresses become.</h2></div><p class="lead">The Yarta Score, the headline tiles and the two emissions figures from every Yarta Report, calculated live for a single stream with the Yarta Method.</p></div>
-    <div class="ex reveal">
-      <div class="ex-score">
-        <span class="badge demo">Worked example · illustrative</span>
-        <div class="gauge on-paper" id="ex-gauge" style="--gs:220px"></div>
-        <p class="band"><b id="ex-band">&nbsp;</b><span>Yarta Score · proposed <span id="ex-sv">v0.1</span></span></p>
-        <p class="sd-line">Self-declared under the published Yarta Method · not an accredited rating or certification</p>
-        <p class="in"><b>1,000 mattresses</b>, one stream, handed over to The Mattress Recycling Company, 120 km from the processor. Computed in your browser with the Yarta Method <span id="ex-ver">v1.0 draft</span>.</p>
+    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">Understand</p><h2>Ten categories. One score.</h2></div><p class="lead">The Yindyamarra Score is the average of the categories you report. Each one is scored 0 to 100 against the eco standard or your own target, from the figures behind it. A category you don't report is left out, not scored zero.</p></div>
+    <div class="cats-grid reveal">
+      <div class="cat"><b>Energy &amp; Renewables</b><p>Electricity, gas, solar and batteries. Renewable share and use against your baseline.</p></div>
+      <div class="cat"><b>Fleet &amp; Transport</b><p>Fuel, kilometres, electrification, charging and flights.</p></div>
+      <div class="cat"><b>Carbon &amp; Emissions</b><p>Scope 1, 2 and reported Scope 3 with NGA factors. Avoided emissions shown separately, never netted.</p></div>
+      <div class="cat"><b>Water</b><p>Potable use per bed, student, site or resident, and the share from recycled, rain and stormwater.</p></div>
+      <div class="cat"><b>Waste &amp; Resource Recovery</b><p>Every stream, from kerbside to clinical: recovered, landfilled or treated. Diversion and contamination.</p></div>
+      <div class="cat"><b>Circular Economy</b><p>Recycled-content procurement, reuse, packaging and take-back programs.</p></div>
+      <div class="cat"><b>Land &amp; Soil</b><p>Land rehabilitated, contaminated land remediated, soil reused.</p></div>
+      <div class="cat"><b>Biodiversity &amp; Nature</b><p>Trees planted and native vegetation, habitat and wetland restored or protected.</p></div>
+      <div class="cat"><b>Community &amp; Participation</b><p>Programs, events and the people who take part.</p></div>
+      <div class="cat"><b>Governance &amp; Improvement</b><p>Data completeness, evidence behind each figure, complaints closed, projects delivered.</p></div>
+    </div>
+    <div class="btn-row mt-3 reveal"><a class="btn btn-outline" href="/eco-standards/">The eco standards behind each category {{ARROW}}</a></div>
+  </div>
+</section>
+
+<!-- ROADMAP TO IMPROVEMENT -->
+<section class="dark" id="roadmap">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">Roadmap to improvement</p><h2>Where you are. Where the standards would put you. What to do first.</h2></div><p class="lead">Every report closes with three numbers and a plan by quarter. The suggestions come from published rules applied to your own figures, ranked by what would move the number most, and each one can be booked. The next report shows what changed.</p></div>
+    <div class="rm-home reveal">
+      <div class="rm-nums" aria-label="Demo Shire Council, from the sample report">
+        <div class="n"><span class="k">Now</span><b>69</b><span class="s">Strong · July 2026</span></div>
+        <div class="n"><span class="k">At the eco standards</span><b>80</b><span class="s">80% recovery, 82% renewables, or your tighter targets</span></div>
+        <div class="n hl"><span class="k">With Yarta help · estimate</span><b>76</b><span class="s">About 2,470 t CO₂-e a year less and 1,350 t less to landfill</span></div>
       </div>
-      <div class="tiles" aria-label="Score tiles">
-        <div class="stat green"><svg class="ic"><use href="#i-mattress"/></svg><div class="v"><span id="ex-matt" data-count="0" data-dec="0">0</span></div><div class="l">Mattresses processed</div><div class="s">By The Mattress Recycling Company</div></div>
-        <div class="stat"><svg class="ic"><use href="#i-steel"/></svg><div class="v"><span id="ex-steelpct" data-count="0" data-dec="0">0</span><span>%</span></div><div class="l">Steel recovery</div><div class="s">Recycle Group's stated plant yield</div></div>
-        <div class="stat green"><svg class="ic"><use href="#i-weigh"/></svg><div class="v"><span id="ex-steel" data-count="0" data-dec="1">0</span><span>t</span></div><div class="l">Steel recovered</div><div class="s">Sold to a licensed metal reprocessor</div></div>
-        <div class="stat"><svg class="ic"><use href="#i-rate"/></svg><div class="v"><span id="ex-rate" data-count="0" data-dec="0">0</span><span>%</span></div><div class="l">Material recovery rate</div><div class="s">Recycled mass ÷ mass handed over</div></div>
-        <div class="stat green"><svg class="ic"><use href="#i-loop"/></svg><div class="v"><span id="ex-ret" data-count="0" data-dec="1">0</span><span>t</span></div><div class="l">Delivered to licensed reprocessors</div><div class="s">Docketed, this period</div></div>
-        <div class="stat"><svg class="ic"><use href="#i-landfill"/></svg><div class="v"><span id="ex-vol" data-count="0" data-dec="0">0</span><span>m³</span></div><div class="l">Landfill volume avoided</div><div class="s">Volume that did not go in</div></div>
-        <div class="em-host ex-em" id="ex-em"></div>
+      <div class="rm-sugs">
+        <div class="sug"><span class="k">Suggestion 1 · Fleet +13</span><b>Fleet transition plan</b><p>Electrification is 15.8% against a 30% target. A replacement plan for the vehicles due in 2027 lifts the Fleet score and the Carbon score with it.</p></div>
+        <div class="sug"><span class="k">Suggestion 2 · Water +14</span><b>Water efficiency and leak hunt</b><p>Potable water is only 1.6% below the baseline. Alternative water is 24.7% of use; the score gives full marks at 50%.</p></div>
+        <div class="sug"><span class="k">Suggestion 3 · Carbon +9</span><b>Hard-waste and bulky-item recovery</b><p>Diversion is 64% against a 70% target with 16,140 t to landfill. The mattresses, whitegoods and furniture in the figures are the first tonnes to move.</p></div>
       </div>
     </div>
-    <p class="attrib reveal">Verified recycling data supplied by The Mattress Recycling Company and Recycle Group.</p>
-    <p class="note reveal">A is the figure for your inventory: processing and transport (illustrative until metered) plus the landfilled residual at the NGA landfill factor. B uses the conservative NSW DECCW 2010 steel factor (<span id="ex-sf">0.44</span> t CO₂-e per tonne recycled) on the recovered steel only, and sits beside A, never subtracted from it. The foam and fibre residual is shredded and currently landfilled at 25% of its original volume, which is why the material recovery rate for mattresses sits at about a third by mass, and why the score for a mattress-only stream sits where it does. Yarta reports it that way.</p>
-    <div class="btn-row mt-3 reveal"><a class="btn btn-ink" href="/calculator/">Calculate your own {{ARROW}}</a><a class="btn btn-outline" href="/method/">Read the Yarta Method</a></div>
+    <p class="rm-note reveal">Demo Shire Council is fictional. The estimates come from the published assumptions on the <a href="/method/">method page</a>; they are not a promise. Any work delivered by a Recycle Group business is disclosed on the report.</p>
+    <div class="btn-row mt-3 reveal"><a class="btn btn-primary" href="/report/">See the roadmap on the sample report {{ARROW}}</a><a class="btn btn-ghost" href="/demo/#/roadmap">Try it in the demo</a></div>
+  </div>
+</section>
+
+<!-- SECTORS -->
+<section id="sectors-teaser">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">05</span><p class="eyebrow">Sectors</p><h2>The same ten categories, shaped by what your sector reports.</h2></div><p class="lead">A hospital leads with energy per bed and clinical waste. A transport operator with litres per 100 km and tyres. A council with the kerbside service and Country. Pick a sector and the demo and the sample report change with it.</p></div>
+    <div class="sector-teaser reveal">
+      <a href="/demo/?sector=council">Councils</a><a href="/demo/?sector=business">Business and offices</a><a href="/demo/?sector=health">Hospitals and aged care</a><a href="/demo/?sector=education">Universities and schools</a><a href="/demo/?sector=manufacturing">Manufacturing</a><a href="/demo/?sector=construction">Construction and property</a><a href="/demo/?sector=retail">Retail and hospitality</a><a href="/demo/?sector=logistics">Logistics and transport</a>
+    </div>
+    <div class="btn-row mt-3 reveal"><a class="btn btn-outline" href="/sectors/">What each sector reports on {{ARROW}}</a></div>
   </div>
 </section>
 
 <!-- 6 · ONLY Yarta ENTERS THE DATA -->
 <section class="dark" id="verification">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">Your data</p><h2>Your data in. Your results out. Then the roadmap.</h2></div><p class="lead">You send what you already hold. Yarta enters it, grades the evidence behind each figure and calculates the score, the figures and the two emissions figures with one documented method. Then it shows where your targets would put you and what to do next.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">06</span><p class="eyebrow">Your data</p><h2>Your data in. Your results out. Then the roadmap.</h2></div><p class="lead">You send what you already hold. Yarta enters it, grades the evidence behind each figure and calculates the score, the figures and the two emissions figures with one documented method. Then it shows where your targets would put you and what to do next.</p></div>
     <div class="grid g3 reveal">
       <div class="col">
         <svg class="ic lg g"><use href="#i-mail"/></svg>
@@ -239,9 +263,9 @@
       </div>
       <div class="col">
         <svg class="ic lg g"><use href="#i-scale"/></svg>
-        <p class="idx">THREE BUCKETS</p>
-        <h4>Every tonne lands in one place.</h4>
-        <p>Landfilled counts against you. Recycled counts for you: delivered to a licensed reprocessor, with a record to show it. Stored is neutral, parked until it moves. Nothing is averaged and nothing is netted off.</p>
+        <p class="idx">EVIDENCE GRADES</p>
+        <h4>Every figure carries its record.</h4>
+        <p>A bill, a docket, a certificate or a contractor report is Grade A. A statement or an extract is Grade B. An estimate is Grade C and says so. Nothing is averaged and nothing is netted off.</p>
       </div>
       <div class="col">
         <svg class="ic lg g"><use href="#i-verify"/></svg>
@@ -249,15 +273,6 @@
         <h4>One documented method.</h4>
         <p>Every factor has a source, a status and a version. The Category 5 inventory uses the government's NGA landfill factors. Avoided emissions use NSW DECCW 2010 factors, flagged for refresh and reported separately. Assumptions are labelled as assumptions until measured data replaces them.</p>
         <a class="more" href="/method/">Read the Yarta Method →</a>
-      </div>
-    </div>
-    <div class="bk reveal">
-      <div class="bk-top"><span class="idx">THREE BUCKETS · <span id="bk-who">HEPBURN SHIRE COUNCIL</span> · TONNES, FY TO DATE</span><span class="badge demo">Demo data · illustrative</span></div>
-      <div class="bucket big" id="bk-bar" aria-label="Three buckets for the demo program, tonnes"><div class="rec" id="bk-rec" style="width:0"></div><div class="sto" id="bk-sto" style="width:0"></div><div class="lan" id="bk-lan" style="width:0"></div></div>
-      <div class="bk-nums">
-        <div><div class="display g"><span id="bk-recn" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="legend"><span class="rec"><i></i>Recycled</span></div><p class="s">Counts for you. Delivered to a licensed reprocessor, with a record to show it.</p></div>
-        <div><div class="display sto"><span id="bk-ston" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="legend"><span class="sto"><i></i>Stored</span></div><p class="s">Neutral. Parked until it moves, never counted as recycled.</p></div>
-        <div><div class="display lan"><span id="bk-lann" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="legend"><span class="lan"><i></i>Landfilled</span></div><p class="s">Counts against you, in full. Shown on the report.</p></div>
       </div>
     </div>
     <ol class="steps mt-4 reveal" aria-label="The loop">
@@ -272,7 +287,7 @@
 <!-- 7 · WHO IT'S FOR -->
 <section id="who">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">05</span><p class="eyebrow">Who it's for</p><h2>Councils and businesses. One standard.</h2></div><p class="lead">Built for the organisations that carry the reporting obligation and rarely hold the evidence, whichever sector they sit in.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">07</span><p class="eyebrow">Who it's for</p><h2>Councils and businesses. One standard.</h2></div><p class="lead">Built for the organisations that carry the reporting obligation and rarely hold the evidence, whichever sector they sit in.</p></div>
     <div class="split reveal">
       <div class="media"><img src="/assets/img/product-dashboard.webp" alt="Yarta Dashboard for a council hard waste program (demo data)" loading="lazy" width="1600" height="2176"></div>
       <div class="copy">
@@ -284,7 +299,7 @@
       </div>
     </div>
     <div class="split flip reveal">
-      <div class="media"><img src="/assets/img/product-report.webp" alt="Yarta Report, page one (demo data)" loading="lazy" width="1588" height="2296"></div>
+      <div class="media"><img src="/assets/img/product-report.webp" alt="Yarta Report, page one (demo data)" loading="lazy" width="1588" height="2699"></div>
       <div class="copy">
         <div class="top"><p class="idx">BUSINESS</p><span class="badge demo">Demo data · illustrative</span></div>
         <h3>ESG, Scope 3 and the annual report.</h3>
@@ -324,7 +339,7 @@
 <!-- 8 · BUILT ON REAL RECOVERY -->
 <section class="dark vid-sec" id="recovery"><div class="vid-bg" aria-hidden="true"><video class="bgv" data-bgv muted loop playsinline preload="none" poster="/assets/video/metal-720.webp"><source data-src="/assets/video/metal-720.mp4" type="video/mp4"></video></div>
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">06</span><p class="eyebrow">Built on real recovery</p><h2>The numbers come from a processor, not a spreadsheet.</h2></div><p class="lead">Yarta is a Recycle Group initiative. The group runs the recovery operations, including The Mattress Recycling Company, so the figures on a Yarta Report come from the floor that recovered the material.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">08</span><p class="eyebrow">Built on real recovery</p><h2>The numbers come from a processor, not a spreadsheet.</h2></div><p class="lead">Yarta is a Recycle Group initiative. The group runs the recovery operations, including The Mattress Recycling Company, so the figures on a Yarta Report come from the floor that recovered the material.</p></div>
     <div class="grid g2 rec-grid reveal">
       <div class="big-stat"><div class="display g"><span data-count="30000" data-dec="0">0</span></div><div class="l">Mattresses a month, upper range</div><div class="s">The Mattress Recycling Company processes between 12,000 and 30,000 a month. Each one takes about 38 seconds.</div></div>
       <div class="big-stat"><div class="display"><span data-count="99" data-dec="0">0</span><span class="u">%</span></div><div class="l">Steel recovery · stated plant yield</div><div class="s">$8.5m invested to get there. Roughly 30% of a mattress by mass is steel, and Recycle Group states 99% of it comes back out. Each report prints the measured yield with its site and study date.</div></div>

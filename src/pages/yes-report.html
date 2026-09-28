@@ -53,14 +53,22 @@
 .page-yes-report .feature-list li{grid-template-columns:34px minmax(0,1fr)}
 .page-yes-report .feature-list .ic{margin-top:2px}
 .page-yes-report .roadmap{margin-left:10px}
+.page-yes-report .score-bands .band-card{border:1px solid #2A2C2A;border-radius:12px;padding:16px 18px;background:rgba(255,255,255,.03)}
+.page-yes-report .score-bands b{display:block;font-family:var(--font-display);font-size:26px;letter-spacing:-.03em;color:var(--green-3)}
+.page-yes-report .score-bands span{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mist)}
+.page-yes-report .score-how .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin:0 0 8px}
+.page-yes-report .score-how ul{margin:0;padding-left:1.1em;color:var(--mist);font-size:15px}
+.page-yes-report .score-how li{margin-bottom:.5em}
+.page-yes-report .score-how b{color:var(--paper);font-weight:600}
+.page-yes-report .score-note a{color:var(--green-3)}
 </style>
 
 <!-- HERO -->
 <section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
   <div class="wrap">
     <p class="eyebrow">The Yarta Report</p>
-    <h1>Two layers. One method. Every number traceable.</h1>
-    <p class="lead">The Yarta Report is a report for each project or period and a live environmental dashboard, built on the Yarta Method and delivered as a family of products.</p>
+    <h1>One score. Ten categories. A roadmap to improvement.</h1>
+    <p class="lead">The Yarta Report is an environmental sustainability report for each period and a live dashboard, built on the Yarta Method: your data evaluated against the eco standards, benchmarked, compared with your targets and your last period, and closed with the suggestions and the plan by quarter.</p>
     <div class="btn-row"><a class="btn btn-primary" href="/demo/">Open the live demo {{ARROW}}</a><a class="btn btn-ghost" href="/report/">View a sample report</a></div>
   </div>
 </section>
@@ -68,53 +76,55 @@
 <!-- 01 · THE PRODUCT FAMILY -->
 <section id="family">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">01</span><p class="eyebrow">The product family</p><h2>One report. Six ways to read it.</h2></div><p class="lead">Every product below is a view of the same verified ledger. Nothing is calculated twice and nothing is calculated differently.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">01</span><p class="eyebrow">The product family</p><h2>One report. Six ways to read it.</h2></div><p class="lead">Every product below is a view of the same record. Nothing is calculated twice and nothing is calculated differently.</p></div>
     <ol class="fam reveal" aria-label="The Yarta product family">
-      <li class="full"><span class="sec-idx">01</span><div><div class="h"><svg class="ic g"><use href="#i-doc"/></svg><h3>Yarta Report</h3></div><p class="k">The report you receive for each project or period</p><p>Contains the period, the streams, tonnes by fate with the three-bucket split for every stream, steel recovered, landfill avoided, the self-declared Yarta Score, the roadmap, both emissions figures, the method version, the issuer and a report ID. The five products below are its parts.</p><a class="more" href="/report/">Sample report →</a></div></li>
-      <li><span class="sec-idx">02</span><div><div class="h"><svg class="ic g"><use href="#i-dash"/></svg><h3>Yarta Dashboard</h3></div><p class="k">Live reporting portal</p><p>Contains the score tiles, recovered tonnes by stream, the roadmap and recommended help, the ledger of every handover, the monthly gap summary and both emissions figures, updated the day material moves.</p></div></li>
-      <li><span class="sec-idx">03</span><div><div class="h"><svg class="ic g"><use href="#i-ledger"/></svg><h3>Yarta Data</h3></div><p class="k">Underlying recovery and recycling data</p><p>Contains every ledger entry with its date, quantity, bucket, evidence grade and evidence reference, exportable as CSV.</p></div></li>
-      <li><span class="sec-idx">04</span><div><div class="h"><svg class="ic g"><use href="#i-loop"/></svg><h3>Yarta Circularity</h3></div><p class="k">Material recovery and circular-economy outcomes</p><p>Contains the material recovery rate, tonnes delivered to licensed reprocessors and landfill volume avoided, by stream and in total.</p></div></li>
-      <li><span class="sec-idx">05</span><div><div class="h"><svg class="ic g"><use href="#i-co2"/></svg><h3>Yarta Carbon</h3></div><p class="k">Emissions · two figures, never netted</p><p>Contains the Scope 3 Category 5 inventory figure (processing, transport and landfilled tonnes at NGA factors) and, separately, the avoided-emissions estimate per stream, each with its factor and source. Streams with no avoided-emissions factor are marked pending.</p></div></li>
-      <li><span class="sec-idx">06</span><div><div class="h"><svg class="ic g"><use href="#i-bench"/></svg><h3>Yarta Benchmark</h3></div><p class="k">Comparison against previous periods or sites</p><p>Contains period-on-period and site-on-site movement in every tile, and which streams moved the number.</p></div></li>
+      <li class="full"><span class="sec-idx">01</span><div><div class="h"><svg class="ic g"><use href="#i-doc"/></svg><h3>Yarta Report</h3></div><p class="k">Three A4 pages for each period</p><p>Page one measures: the Yindyamarra Score with its band and the change on last year, where you could be, four headline figures against the baseline, the ten category scores, real-world scale and progress towards the eco standards. Page two is the figures behind the score, with the evidence grade for each. Page three is the roadmap to improvement. The products below are its parts.</p><a class="more" href="/report/">Sample report →</a></div></li>
+      <li><span class="sec-idx">02</span><div><div class="h"><svg class="ic g"><use href="#i-dash"/></svg><h3>Yarta Dashboard</h3></div><p class="k">Live reporting portal</p><p>The score, where you could be, the suggestions, the ten category tiles with drill-downs, emissions by scope, targets against actuals, the documents you sent and what Yarta still needs for the month.</p></div></li>
+      <li><span class="sec-idx">03</span><div><div class="h"><svg class="ic g"><use href="#i-loop"/></svg><h3>Yarta Roadmap</h3></div><p class="k">Roadmap to improvement</p><p>The score now, at the eco standards and with Yarta help; suggestions ranked by what would move the number, each bookable; the plan by quarter; and the change since work was done, shown as a change, not a cause.</p></div></li>
+      <li><span class="sec-idx">04</span><div><div class="h"><svg class="ic g"><use href="#i-ledger"/></svg><h3>Yarta Data</h3></div><p class="k">The figures behind every number</p><p>Every figure with its month, source document, evidence grade and the analyst who entered it, exportable as CSV or JSON. The data dictionary lists every field Yarta enters and every figure it calculates.</p></div></li>
+      <li><span class="sec-idx">05</span><div><div class="h"><svg class="ic g"><use href="#i-co2"/></svg><h3>Yarta Carbon</h3></div><p class="k">Scope 1, 2 and 3 · avoided emissions separate</p><p>Operational emissions with the National Greenhouse Accounts factors, by scope and by month, ready for mandatory climate reporting. Avoided emissions from recovered material are estimated with their own factors, reported separately and never netted.</p></div></li>
+      <li><span class="sec-idx">06</span><div><div class="h"><svg class="ic g"><use href="#i-bench"/></svg><h3>Yarta Benchmark</h3></div><p class="k">Compare</p><p>Your score against the eco standards, your own targets and your last period, category by category. Comparison with organisations like yours follows once enough organisations report on the same method; until then the report says so.</p></div></li>
     </ol>
   </div>
 </section>
 
-<!-- 02 · THE Yarta SCORE -->
+<!-- 02 · THE SCORE -->
 <section class="dark" id="score">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">The Yarta Score</p><h2>One number a board can read. Three parts an auditor can check.</h2></div><p class="lead">The headline number on every dashboard and report: a score out of 100 per customer per period, always shown with the tiles beneath it. Proposed, versioned, published in full, and self-declared: not an accredited rating or certification. Beside it sit the score at the 2030 targets and an estimate with the recommended help done.</p></div>
-    <!-- The Yarta Score is PROPOSED (v0.1). Weights and the reference intensity come from YES.SCORE in the engine; the score is computed with YES.score and drawn with YES.gauge, never hand-typed. -->
-    <div class="score reveal">
-      <div class="score-big">
-        <div class="gauge" id="s-gauge" style="--gs:260px"></div>
-        <div class="band"><b id="s-band">&nbsp;</b><span>Yarta Score · out of 100 · self-declared</span></div>
-        <div class="s"><span id="s-who">Hepburn Shire Council</span> · <span id="s-prog">Hard waste program · FY2026–27 to date</span></div>
-        <div class="mt-2"><span class="badge demo">Demo data · illustrative</span></div>
-      </div>
-      <div>
-        <div class="parts-top"><span class="m">How the score is built</span><span class="badge">Proposed · v0.1</span></div>
-        <div class="stack" aria-label="Yarta Score composition, points earned of 100"><i class="p1" id="s-p1" data-w="0"></i><i class="p2" id="s-p2" data-w="0"></i><i class="p3" id="s-p3" data-w="0"></i></div>
-        <div class="legend mt-1"><span class="p1"><i></i>Material recovery</span><span class="p2"><i></i>Carbon performance</span><span class="p3"><i></i>Evidence quality</span><span class="p0"><i></i>Not earned</span></div>
-        <div class="parts">
-          <div class="stat"><div class="v"><span id="s-rec" data-count="0" data-dec="1">0</span><span class="of">of 60</span></div><div class="l">Material recovery rate</div><div class="s">Recycled ÷ handed over. 60% of the score.</div></div>
-          <div class="stat"><div class="v"><span id="s-car" data-count="0" data-dec="1">0</span><span class="of">of 25</span></div><div class="l">Carbon performance</div><div class="s">Estimated avoided emissions per tonne handed over, indexed to a published reference intensity. 25%. Never adjusts the inventory figure.</div></div>
-          <div class="stat"><div class="v"><span id="s-ev" data-count="0" data-dec="1">0</span><span class="of">of 15</span></div><div class="l">Evidence quality</div><div class="s">Share of tonnes backed by weighbridge dockets or processor certificates. 15%.</div></div>
-        </div>
-        <p class="score-note"><span id="s-note"></span><span class="mono">Stored material is neutral. Landfilled material counts against you. The Yarta Score is self-declared under Yarta's own published method, versioned with the Yarta Method. It is not an accredited rating, certification or third-party verification.</span></p>
-      </div>
+    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">The Yindyamarra Score</p><h2>One number a board can read. Ten categories an auditor can check.</h2></div><p class="lead">A score out of 100 for each month, the average of the categories you report. Each category is scored 0 to 100 from its own figures against the eco standard or your target. A category you don't report is left out, not scored zero. Self-declared under the published method, versioned, and never an accredited rating or certification.</p></div>
+    <div class="grid g4 reveal score-bands">
+      <div class="band-card"><b>80 to 100</b><span>Leading</span></div>
+      <div class="band-card"><b>65 to 79</b><span>Strong</span></div>
+      <div class="band-card"><b>50 to 64</b><span>Developing</span></div>
+      <div class="band-card"><b>Under 50</b><span>Starting</span></div>
     </div>
+    <div class="grid g2 mt-3 reveal">
+      <div class="score-how"><p class="k">How a category is scored</p><ul>
+        <li><b>Energy:</b> 60% renewable share, 40% grid electricity against your baseline.</li>
+        <li><b>Fleet:</b> 60% electrification (full marks at 50% of the fleet), 40% fuel against your baseline.</li>
+        <li><b>Carbon:</b> rolling 12-month emissions against the same months of the baseline year, towards your reduction target.</li>
+        <li><b>Water:</b> 50% alternative water share (full marks at 50%), 50% potable use against your baseline.</li>
+        <li><b>Waste:</b> 70% landfill diversion, 30% contamination.</li>
+      </ul></div>
+      <div class="score-how"><p class="k">&nbsp;</p><ul>
+        <li><b>Circularity:</b> 50% recycled-content procurement share (full marks at 30%), 30% reuse, 20% stewardship programs.</li>
+        <li><b>Land:</b> hectares rehabilitated against your annual target.</li>
+        <li><b>Nature:</b> 50% trees planted, 50% hectares restored, each against your target.</li>
+        <li><b>Community:</b> participants against your annual target.</li>
+        <li><b>Governance:</b> 50% data completeness, 30% evidence share, 20% complaints closed.</li>
+      </ul></div>
+    </div>
+    <p class="score-note mt-2 reveal"><span class="mono">Beside the score sit two more numbers: the score at the eco standards, and an estimate with the suggested help done. Both are calculated with the same function as the score itself, so they can never disagree with it. The rules and weights are on the <a href="/method/">method page</a> and the standards on the <a href="/eco-standards/">eco standards page</a>.</span></p>
   </div>
 </section>
 
 <!-- 03 · THE DASHBOARD -->
 <section id="dashboard">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">The dashboard</p><h2>Environmental Sustainability, live.</h2></div><p class="lead">The Yarta Score, six headline tiles, the two emissions figures, recovered tonnes by stream and month, and the ledger behind them, recalculated every time a Yarta operator enters a handover.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">The dashboard</p><h2>Environmental sustainability, live.</h2></div><p class="lead">The Yindyamarra Score, where you could be, the suggestions, the ten category tiles, emissions by scope and targets against actuals, recalculated as Yarta enters each month from the records you send.</p></div>
     <div class="reveal">
       <div class="shot"><img src="/assets/img/product-dashboard.webp" alt="Yarta Dashboard for a council hard waste program: Yarta Score with its composition, six score tiles, the Scope 3 Category 5 figure beside the avoided-emissions estimate, three buckets and recovered tonnes by month (demo data)" loading="lazy" width="1600" height="2176"></div>
-      <div class="cap"><span><b id="c-who">Hepburn Shire Council</b> · <span id="c-prog">Hard waste program · FY2026–27 to date</span></span><span>Yarta Method <span id="c-ver">v1.0 draft</span> · entered by Yarta</span><span class="badge demo">Demo data · illustrative</span></div>
-      <p class="attrib">Verified recycling data supplied by The Mattress Recycling Company and Recycle Group.</p>
+      <div class="cap"><span><b>Demo Shire Council</b> · <span>July 2026 · a fictional council</span></span><span>Yarta Method v0.1 draft · entered by Yarta</span><span class="badge demo">Demo data · illustrative</span></div>
     </div>
     <div class="btn-row mt-3 reveal"><a class="btn btn-ink" href="/demo/">Open the live demo {{ARROW}}</a><a class="btn btn-outline" href="/how-it-works/">How the data gets in</a></div>
   </div>
@@ -123,29 +133,27 @@
 <!-- 04 · THE REPORT -->
 <section class="dark" id="report">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">The report</p><h2>A summary page. Every figure with its method.</h2></div><p class="lead">Issued for each project or reporting period. A board, a councillor or an auditor can read it in a minute and trace any number on it back to the ledger.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">The report</p><h2>A summary page. Every figure with its method.</h2></div><p class="lead">Issued for each reporting period. A board, a councillor or an auditor can read page one in a minute and trace any number on it to the figures on page two.</p></div>
     <div class="split reveal">
-      <div class="media"><img src="/assets/img/product-report.webp" alt="Yarta Report, page one: the score, headline outcomes, the two emissions figures, three buckets, real-world scale and the data statement (demo data)" loading="lazy" width="1588" height="2296"></div>
+      <div class="media"><img src="/assets/img/product-report.webp" alt="Yarta Report, page one: the score, where you could be, four headline figures, the ten categories, real-world scale and progress towards the eco standards (demo data)" loading="lazy" width="1588" height="2699"></div>
       <div class="copy">
         <div class="top"><p class="idx">WHAT IS ON THE REPORT</p><span class="badge demo">Demo data · illustrative</span></div>
-        <p>The downloadable layer. It states what was handed over, what was delivered to reprocessors, what was stored and what went to landfill, then the outcomes those tonnes produced, each with the factor version it was calculated under. The Category 5 figure and the avoided emissions sit in separate boxes and are never netted. A report ID and the method version mean the figures can be reproduced later, even if the factor library has moved on.</p>
+        <p>The downloadable layer. Three A4 pages: the score and what sits behind it, the figures with an evidence grade for each, and the roadmap to improvement. Every figure carries the method version it was calculated under, so it can be reproduced later.</p>
         <ul class="spec" aria-label="What is on a Yarta Report">
-          <li data-n="01">Period</li>
-          <li data-n="02">Streams reported</li>
-          <li data-n="03">Tonnes handed over</li>
-          <li data-n="04">Tonnes recycled · to licensed reprocessors</li>
-          <li data-n="05">Tonnes stored</li>
-          <li data-n="06">Tonnes landfilled</li>
-          <li data-n="07">Steel recovered</li>
-          <li data-n="08">A · Scope 3 Category 5, with factor edition</li>
-          <li data-n="09">B · Avoided emissions, separately</li>
-          <li data-n="10">Landfill volume avoided</li>
-          <li data-n="11">Material recovery rate</li>
-          <li data-n="12">Yarta Score, self-declared</li>
-          <li data-n="13">Method version</li>
-          <li data-n="14">Data statement and issuer</li>
-          <li data-n="15">Report ID</li>
-          <li data-n="16">Roadmap · the score at the 2030 targets, an estimate with Yarta help, and the plan by quarter</li>
+          <li data-n="01">Period, organisation and sector</li>
+          <li data-n="02">Yindyamarra Score, band, and change on last year and last month</li>
+          <li data-n="03">Where you could be: now, at the eco standards, with Yarta help</li>
+          <li data-n="04">Four headline figures against the baseline months</li>
+          <li data-n="05">Ten category scores with change on last year</li>
+          <li data-n="06">Real-world scale: per bed, student, resident, site or employee</li>
+          <li data-n="07">Progress towards the eco standards</li>
+          <li data-n="08">Emissions by scope · avoided emissions reported separately</li>
+          <li data-n="09">Key figures by category with unit and note</li>
+          <li data-n="10">Data completeness, evidence share and evidence grades</li>
+          <li data-n="11">Projected score with the plan</li>
+          <li data-n="12">Suggestions, ranked, with provider disclosed</li>
+          <li data-n="13">Plan by quarter and progress so far</li>
+          <li data-n="14">Method version, assumptions and disclosures</li>
         </ul>
         <div class="btn-row mt-3"><a class="btn btn-primary" href="/report/">View a sample report {{ARROW}}</a></div>
       </div>

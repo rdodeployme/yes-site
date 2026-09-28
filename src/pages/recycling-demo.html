@@ -1,0 +1,843 @@
+<style>
+/* live demo refinements (scoped) */
+.page-demo .hero-sub .lead{max-width:64ch}
+.page-demo .hero-meta{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;margin-top:22px;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--slate)}
+.page-demo .demo-section{padding-top:8px}
+.page-demo .demo-head h3{font-size:clamp(17px,1.6vw,20px)}
+.page-demo .demo-tabs button{transition:background .15s,color .15s,border-color .15s}
+.page-demo .demo-tabs button:hover{border-color:var(--mist)}
+.page-demo .demo-tabs button.active:hover{border-color:var(--green-3)}
+.page-demo .demo-tabs button:focus-visible,.page-demo .handover button:focus-visible,.page-demo .gap-btns button:focus-visible,.page-demo #demo-reset:focus-visible{outline:2px solid var(--green-3);outline-offset:2px}
+.page-demo .tab-panel{display:grid;gap:18px}
+.page-demo .tab-panel[hidden]{display:none}
+/* section lede above the shell */
+.page-demo .demo-lede{margin-bottom:22px}
+.page-demo .demo-lede .sec-idx{margin-bottom:10px}
+.page-demo .demo-lede .eyebrow{margin-bottom:0}
+/* score row: gauge left, band + composition right */
+.page-demo .score-row{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:center;padding:20px 22px;background:var(--ink-2);border:1px solid #262826;border-radius:10px}
+@media(min-width:800px){.page-demo .score-row{grid-template-columns:auto minmax(0,1fr);gap:32px}}
+.page-demo .score-row .gauge{margin:0}
+.page-demo .score-row .l{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-bottom:8px}
+.page-demo .score-row .band{font-family:var(--font-display);font-weight:700;font-size:clamp(26px,2.6vw,34px);letter-spacing:-.03em;line-height:1;color:var(--paper);margin:0 0 18px;min-height:1em}
+.page-demo .stack{display:flex;height:10px;border-radius:3px;overflow:hidden;background:#242624}
+.page-demo .stack i{display:block;height:100%;width:0;transition:width .9s var(--ease)}
+.page-demo .stack .p1{background:var(--green)}.page-demo .stack .p2{background:var(--green-3)}.page-demo .stack .p3{background:var(--green-4)}
+.page-demo .legend .p1 i{background:var(--green)}.page-demo .legend .p2 i{background:var(--green-3)}.page-demo .legend .p3 i{background:var(--green-4)}
+.page-demo .score-row .legend{margin-top:10px;font-size:11px}
+.page-demo .score-row .legend b{font-weight:500;color:var(--paper);margin-left:2px}
+.page-demo .score-row .m{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;color:var(--slate);margin:12px 0 0}
+/* six tiles: three across, two rows */
+@media(min-width:900px){.page-demo .demo-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.page-demo .kpi{min-height:112px}
+.page-demo .kpi .l{padding-right:30px}
+.page-demo .kpi .v{white-space:nowrap;padding-right:34px}
+.page-demo .kpi .v .u{font-size:.5em;color:var(--slate);margin-left:4px;font-weight:600;letter-spacing:0}
+.page-demo .kpi .d{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:1.2em;transition:color .3s}
+.page-demo .kpi .d.neg{color:var(--mist)}
+.page-demo .kpi .d.src{white-space:normal;line-height:1.5;color:var(--slate)}
+@media(max-width:560px){.page-demo .demo-kpis .kpi .d{white-space:normal;line-height:1.25;height:3.75em;min-height:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}.page-demo .eq{grid-template-columns:1fr}}
+.page-demo .panel-h{flex-wrap:wrap}
+@media(min-width:1000px){.page-demo .demo-grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}}
+/* donut */
+.page-demo .donut .c{font-family:var(--font-display);font-weight:800;font-size:28px;letter-spacing:-.04em;fill:var(--paper)}
+.page-demo .donut .cl{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.14em;fill:var(--slate)}
+.page-demo .donut circle.seg{fill:none;stroke-width:16;transition:stroke-dasharray .9s var(--ease),stroke-dashoffset .9s var(--ease)}
+.page-demo .donut .k .lbl{color:var(--mist)}
+.page-demo .donut .k .i-rec{background:var(--green-3)}.page-demo .donut .k .i-sto{background:var(--stored)}.page-demo .donut .k .i-lan{background:#5F6360;background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.25) 0 2px,transparent 2px 5px)}
+.page-demo .donut-note{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--slate);margin:14px 0 0;line-height:1.6}
+/* trend */
+.page-demo .trend .gl{stroke:#242624;stroke-width:1}
+.page-demo .trend .ax{stroke:#3A3D3A;stroke-width:1}
+.page-demo .trend .yl,.page-demo .trend .xl{font-family:var(--font-mono);font-size:11px;fill:var(--slate)}
+.page-demo .trend .ar{fill:rgba(79,193,122,.14)}
+.page-demo .trend .ln{fill:none;stroke:var(--green-3);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.page-demo .trend .dt{fill:var(--ink-2);stroke:var(--green-3);stroke-width:1.5}
+.page-demo .trend .dt.last{fill:var(--green-3)}
+.page-demo .trend .vl{font-family:var(--font-mono);font-size:11px;fill:var(--paper)}
+.page-demo .trend-note{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--slate);margin:10px 0 0}
+/* equivalences: the one filled glyph */
+.page-demo .eq .ic.fill{fill:currentColor;stroke:none}
+/* categories: stream icon before the label */
+.page-demo .cat-bar .n{display:flex;align-items:center;gap:8px;min-width:0;color:var(--mist)}
+.page-demo .cat-bar .n .ic{width:16px;height:16px;color:var(--slate)}
+.page-demo .cat-bar .n .nt{display:flex;flex-direction:column;gap:3px;min-width:0}
+@media(min-width:900px){.page-demo .cat-bar{grid-template-columns:230px minmax(0,1fr) 78px}}
+.page-demo .cat-bar .n .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:560px){.page-demo .cat-bar .n .nm{white-space:normal;line-height:1.25}}
+.page-demo .cat-bar .n .tag{align-self:flex-start}
+.page-demo .cat-bar .track>div{min-width:0}
+.page-demo .cat-legend{margin-top:16px}
+/* ledger: 12px stream icon before the description */
+@media(min-width:561px){.page-demo .demo-ledger .row{grid-template-columns:76px minmax(0,1fr) 70px 84px 92px}}
+.page-demo .demo-ledger .row span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.page-demo .demo-ledger .row .w{color:var(--mist);display:flex;align-items:center;gap:8px}
+.page-demo .demo-ledger .row .w .ic{width:12px;height:12px;color:var(--slate)}
+.page-demo .demo-ledger .row .b{color:var(--slate)}
+.page-demo .demo-ledger .row .b.rec{color:var(--green-4)}
+/* gaps */
+.page-demo .gaps-intro{font-size:15px;color:var(--mist);max-width:70ch;margin:0 0 16px;line-height:1.55}
+.page-demo .gap .w{color:var(--paper);margin-bottom:3px;display:flex;align-items:center;gap:8px}
+.page-demo .gap .w .ic{width:14px;height:14px;color:var(--slate)}
+.page-demo .gap .who{padding-left:22px}
+@media(max-width:560px){.page-demo .gap{grid-template-columns:1fr}}
+.page-demo .gap-btns button{transition:background .15s,color .15s,border-color .15s}
+.page-demo .gap-btns button:hover{border-color:var(--mist)}
+.page-demo .gaps-note{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.04em;color:var(--slate);margin:16px 0 0;line-height:1.6}
+/* handover strip */
+.page-demo .handover-strip{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px 18px;align-items:center;padding:16px 22px;border-top:1px solid #262826;background:var(--ink-2)}
+@media(max-width:900px){.page-demo .handover-strip{grid-template-columns:1fr}}
+.page-demo .handover-strip .hl{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-3);white-space:nowrap}
+.page-demo .handover button{display:inline-flex;align-items:center;gap:7px}
+.page-demo .handover button .ic{width:14px;height:14px;color:var(--green-3)}
+.page-demo .handover button.lan{border-style:dashed;color:var(--mist)}
+.page-demo .handover button.lan .ic{color:var(--mist)}
+.page-demo .handover button:active{transform:translateY(1px)}
+.page-demo .handover-strip .btn-ghost{justify-self:end}
+@media(max-width:900px){.page-demo .handover-strip .btn-ghost{justify-self:start}}
+.page-demo .demo-attrib{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--mist);margin:22px 0 0;line-height:1.7}
+.page-demo .note a{color:var(--green-3)}
+/* what you just saw: numbered editorial list */
+.page-demo .saw .steps p{max-width:62ch}
+@media(min-width:900px){.page-demo .saw .steps h4{font-size:22px;letter-spacing:-.02em}}
+/* where you could be · roadmap · recommended help · booking */
+.page-demo .wyc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:12px;align-items:stretch}
+@media(max-width:900px){.page-demo .wyc{grid-template-columns:repeat(3,minmax(0,1fr))}.page-demo .wyc .btn{grid-column:1/-1;justify-self:start}}
+@media(max-width:560px){.page-demo .wyc{grid-template-columns:1fr}}
+.page-demo .wyc-n{background:var(--ink-2);border:1px solid #262826;border-radius:10px;padding:14px 16px;display:grid;gap:6px;align-content:start}
+.page-demo .wyc-n .l{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
+.page-demo .wyc-n b{font-family:var(--font-display);font-weight:700;font-size:clamp(30px,3vw,40px);letter-spacing:-.03em;line-height:1;color:var(--paper);font-variant-numeric:tabular-nums}
+.page-demo .wyc-n .s{font-size:12.5px;color:var(--mist);line-height:1.45}
+.page-demo .wyc-n.hl{border-color:#2D5E40;background:linear-gradient(180deg,rgba(79,193,122,.08),rgba(79,193,122,.02))}
+.page-demo .wyc-n.hl b{color:var(--green-3)}
+.page-demo .wyc .btn{align-self:center;white-space:nowrap}
+.page-demo .rm-three{margin-bottom:16px}
+.page-demo .rm-three .wyc-n b{font-size:clamp(34px,3.4vw,48px)}
+.page-demo .rm-chart .tl{stroke:#8E938E;stroke-width:1.3;stroke-dasharray:2 4}
+.page-demo .rm-chart .tt{font-family:var(--font-mono);font-size:11px;fill:var(--mist)}
+.page-demo .rm-chart .pj{fill:none;stroke:var(--green-3);stroke-width:2;stroke-dasharray:6 5;stroke-linecap:round}
+.page-demo .rm-leg{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}
+.page-demo .rm-leg span{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.page-demo .rm-leg i{display:inline-block;width:20px;height:0;border-top:2px solid var(--green-3)}
+.page-demo .rm-leg i.d{border-top-style:dashed}
+.page-demo .rm-leg i.o{width:9px;height:9px;border:0;border-radius:50%;background:var(--green-3)}.page-demo .rm-leg i.t{border-top:2px dotted #8E938E}
+.page-demo .recs{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:760px){.page-demo .recs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1100px){.page-demo .recs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.page-demo .rec{background:var(--ink-3);border:1px solid #262826;border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.page-demo .rec .a{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
+.page-demo .rec h5{font-family:var(--font-display);font-weight:700;font-size:17px;letter-spacing:-.01em;line-height:1.2;margin:0;color:var(--paper)}
+.page-demo .rec .why{font-size:13.5px;color:var(--mist);line-height:1.5;margin:0}
+.page-demo .rec dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0;font-size:12.5px}
+.page-demo .rec dt{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);padding-top:2px}
+.page-demo .rec dd{margin:0;color:var(--paper)}
+.page-demo .rec dd .up{color:var(--green-3);font-weight:600}
+.page-demo .rec .f{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding-top:4px}
+.page-demo .rec .f .when{font-family:var(--font-mono);font-size:11.5px;color:var(--mist)}
+.page-demo .grp-dot{color:var(--green-3);font-size:10px;margin-left:4px;vertical-align:1px}
+.page-demo .bkst{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.page-demo .bkst::before{content:"";width:8px;height:8px;border-radius:50%;border:1.5px solid currentColor}
+.page-demo .bkst.requested{color:var(--mist)}.page-demo .bkst.confirmed{color:var(--green-3)}.page-demo .bkst.confirmed::before{background:var(--green-3)}
+.page-demo .bkst.cancelled{color:var(--slate);text-decoration:line-through}
+.page-demo .bk-panel{border-color:#2D5E40}
+.page-demo .bk-panel[hidden]{display:none}
+.page-demo .slots{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));margin-top:6px}
+.page-demo .sday{display:grid;gap:6px;align-content:start}
+.page-demo .sday .sd{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--slate)}
+.page-demo .slot{background:transparent;border:1px solid #3A3D3A;color:var(--paper);font:500 13px var(--font-body);padding:9px 10px;border-radius:6px;cursor:pointer;text-align:left}
+.page-demo .slot:hover{border-color:var(--mist)}
+.page-demo .slot[aria-pressed=true]{background:var(--green-3);border-color:var(--green-3);color:var(--ink)}
+.page-demo .bk-form{display:grid;gap:14px;margin-top:18px}
+@media(min-width:760px){.page-demo .bk-form .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}}
+.page-demo .bk-form label.f{display:grid;gap:6px;font-size:13px;color:var(--mist)}
+.page-demo .bk-form input[type=text],.page-demo .bk-form input[type=email],.page-demo .bk-form textarea{width:100%;background:var(--ink-3);border:1px solid #3A3D3A;border-radius:6px;color:var(--paper);font:14px var(--font-body);padding:10px 12px}
+.page-demo .bk-form input:focus,.page-demo .bk-form textarea:focus{outline:2px solid var(--green-3);outline-offset:1px}
+.page-demo .bk-form .modes{display:flex;flex-wrap:wrap;gap:8px}
+.page-demo .bk-form .modes label,.page-demo .bk-form .chk{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--paper);cursor:pointer}
+.page-demo .bk-form .modes label{border:1px solid #3A3D3A;border-radius:6px;padding:8px 12px}
+.page-demo .bk-form input[type=radio],.page-demo .bk-form input[type=checkbox]{accent-color:var(--green-3)}
+.page-demo .bk-side{font-size:13px;color:var(--mist);line-height:1.55;border-left:2px solid var(--green-3);padding-left:14px}
+.page-demo .bk-grid{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:1000px){.page-demo .bk-grid{grid-template-columns:minmax(0,8fr) minmax(0,4fr)}}
+.page-demo .rm-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.page-demo .rm-tbl th{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);font-weight:500;text-align:left;padding:0 10px 8px;border-bottom:1px solid #3A3D3A}
+.page-demo .rm-tbl td{padding:10px;border-bottom:1px solid #262826;vertical-align:top;color:var(--mist)}
+.page-demo .rm-tbl td b{color:var(--paper);font-weight:600}
+.page-demo .rm-tbl td.n,.page-demo .rm-tbl th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.page-demo .rm-tbl td.n b{font-family:var(--font-display);font-size:16px}
+.page-demo .rm-tbl tr.off td{opacity:.5}
+.page-demo .rm-tbl input[type=checkbox]{width:16px;height:16px;accent-color:var(--green-3)}
+.page-demo .rm-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;min-width:0}
+.page-demo #p-roadmap{grid-template-columns:minmax(0,1fr)}
+.page-demo #p-roadmap .panel{min-width:0}
+.page-demo .ind{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:6px;font-size:13px;color:var(--mist)}
+.page-demo .ind b{color:var(--paper);font-weight:600}
+.page-demo .vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media(max-width:640px){.page-demo .rm-tbl.plan thead{display:none}.page-demo .rm-tbl.plan tr{display:grid;grid-template-columns:26px minmax(0,1fr);gap:4px 10px;padding:12px 0;border-bottom:1px solid #262826}.page-demo .rm-tbl.plan td{display:block;padding:0;border:0}.page-demo .rm-tbl.plan td:first-child{grid-row:span 4}.page-demo .rm-tbl.plan td.n{text-align:left}}
+</style>
+
+<!-- HERO -->
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">Live demo</p>
+    <h1>Add a stream. Watch the numbers move.</h1>
+    <p class="lead">This is a Yarta Dashboard for a council hard waste program, on illustrative data. Use the buttons to add material the way Yarta staff would, and watch every tile recalculate, down to the two emissions figures at the foot of the Overview. Then open the Roadmap: the score at the 2030 targets, an estimate with Yarta help, and the help you can book.</p>
+    <div class="hero-meta"><span class="badge demo">Demo data · illustrative</span><span>In production, Yarta enters your figures from the records you send.</span></div>
+  </div>
+</section>
+
+<!-- THE DASHBOARD -->
+<section class="dark tight demo-section" id="dashboard">
+  <div class="wrap">
+    <div class="demo-lede"><span class="sec-idx">01</span><p class="eyebrow">The dashboard</p></div>
+    <div class="demo-shell reveal" id="demo" aria-label="Yarta Dashboard, demo data">
+      <div class="demo-head">
+        <div><h3>Hepburn Shire Council · Hard waste program</h3><p class="sub">FY2026–27 to date · Yarta Method <span id="demo-ver">v1.0 draft</span> · entered by Yarta</p><span class="badge demo" style="margin-top:10px">Demo data · illustrative</span></div>
+        <div class="demo-tabs" role="tablist" aria-label="Dashboard views">
+          <button type="button" role="tab" id="t-overview" class="active" aria-selected="true" aria-controls="p-overview" data-tab="overview">Overview</button>
+          <button type="button" role="tab" id="t-categories" aria-selected="false" aria-controls="p-categories" data-tab="categories">Categories</button>
+          <button type="button" role="tab" id="t-ledger" aria-selected="false" aria-controls="p-ledger" data-tab="ledger">Ledger</button>
+          <button type="button" role="tab" id="t-gaps" aria-selected="false" aria-controls="p-gaps" data-tab="gaps">Gaps</button>
+          <button type="button" role="tab" id="t-roadmap" aria-selected="false" aria-controls="p-roadmap" data-tab="roadmap">Roadmap to improvement</button>
+        </div>
+      </div>
+
+      <div class="demo-body">
+        <!-- OVERVIEW -->
+        <div class="tab-panel" id="p-overview" role="tabpanel" aria-labelledby="t-overview" data-panel="overview">
+          <div class="score-row">
+            <div class="gauge" id="sc-gauge" style="--gs:170px"></div>
+            <div class="score-meta">
+              <div class="l">Yarta Score · proposed <span id="sc-ver">v0.1</span> · self-declared</div>
+              <div class="band" id="sc-band">&nbsp;</div>
+              <div class="l" id="sc-wl">Composition · points of 100</div>
+              <div class="stack" aria-label="Yarta Score composition"><i class="p1" id="sc-p1"></i><i class="p2" id="sc-p2"></i><i class="p3" id="sc-p3"></i></div>
+              <div class="legend"><span class="p1"><i></i>Recovery <b id="sc-l1"></b></span><span class="p2"><i></i>Carbon <b id="sc-l2"></b></span><span class="p3"><i></i>Evidence <b id="sc-l3"></b></span></div>
+              <p class="m">Self-declared under the published Yarta Method · not an accredited rating, certification or third-party verification · Stored is neutral · Landfilled counts against</p>
+            </div>
+          </div>
+
+          <div class="wyc" aria-label="Where you could be">
+            <div class="wyc-n"><span class="l">Now</span><b id="wyc-now">—</b><span class="s" id="wyc-now-s">&nbsp;</span></div>
+            <div class="wyc-n"><span class="l">At the eco standards · 2030 targets</span><b id="wyc-tgt">—</b><span class="s">80% resource recovery · every tonne on a docket</span></div>
+            <div class="wyc-n hl"><span class="l">With Yarta help · estimate</span><b id="wyc-pot">—</b><span class="s" id="wyc-pot-s">&nbsp;</span></div>
+            <button type="button" class="btn btn-ghost btn-sm" data-goto="roadmap">See the roadmap</button>
+          </div>
+
+          <div class="demo-kpis" aria-label="Score tiles">
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-mattress"/></svg><div class="v green"><span id="k-matt" data-count="0" data-dec="0">0</span></div><div class="l">Mattresses processed</div><div class="d" id="k-matt-d">&nbsp;</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-rate"/></svg><div class="v"><span id="k-steelpct" data-count="0" data-dec="0">0</span><span class="u">%</span></div><div class="l">Steel recovery · stated yield</div><div class="d" id="k-steelpct-d">&nbsp;</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-steel"/></svg><div class="v green"><span id="k-steel" data-count="0" data-dec="1">0</span><span class="u">t</span></div><div class="l">Steel recovered</div><div class="d" id="k-steel-d">&nbsp;</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-rate"/></svg><div class="v"><span id="k-rate" data-count="0" data-dec="1">0</span><span class="u">%</span></div><div class="l">Material recovery rate</div><div class="d" id="k-rate-d">&nbsp;</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-loop"/></svg><div class="v green"><span id="k-ret" data-count="0" data-dec="1">0</span><span class="u">t</span></div><div class="l">Delivered to licensed reprocessors</div><div class="d" id="k-ret-d">&nbsp;</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-landfill"/></svg><div class="v"><span id="k-vol" data-count="0" data-dec="0">0</span><span class="u">m³</span></div><div class="l">Landfill volume avoided</div><div class="d" id="k-vol-d">&nbsp;</div></div>
+          </div>
+
+          <div class="demo-grid">
+            <div class="panel">
+              <div class="panel-h"><h4>Three buckets</h4><span class="m">Tonnes · FY to date</span></div>
+              <div class="donut">
+                <svg viewBox="0 0 150 150" role="img" aria-label="Three-bucket split of tonnes handed over" id="dn-svg">
+                  <circle cx="75" cy="75" r="58" fill="none" stroke="#242624" stroke-width="16"></circle>
+                  <g transform="rotate(-90 75 75)">
+                    <circle class="seg" id="dn-rec" cx="75" cy="75" r="58" stroke="#E9A860" style="stroke-dasharray:0 400;stroke-dashoffset:0"></circle>
+                    <circle class="seg" id="dn-sto" cx="75" cy="75" r="58" stroke="#A9ADA8" style="stroke-dasharray:0 400;stroke-dashoffset:0"></circle>
+                    <circle class="seg" id="dn-lan" cx="75" cy="75" r="58" stroke="#5F6360" style="stroke-dasharray:0 400;stroke-dashoffset:0"></circle>
+                  </g>
+                  <text x="75" y="80" text-anchor="middle" class="c" id="dn-c">0%</text>
+                  <text x="75" y="97" text-anchor="middle" class="cl">RECOVERED</text>
+                </svg>
+                <div class="k">
+                  <div><i class="i-rec"></i><span class="lbl">Recycled</span><span class="n" id="dn-k-rec">0 t</span></div>
+                  <div><i class="i-sto"></i><span class="lbl">Stored · neutral</span><span class="n" id="dn-k-sto">0 t</span></div>
+                  <div><i class="i-lan"></i><span class="lbl">Landfilled · counts against</span><span class="n" id="dn-k-lan">0 t</span></div>
+                  <div><i style="background:transparent;border:1px solid #3A3D3A"></i><span class="lbl">Handed over</span><span class="n" id="dn-k-in">0 t</span></div>
+                </div>
+              </div>
+              <p class="donut-note">Recovery rate = recycled ÷ handed over. Mattress foam and fibre residual is counted as landfilled while recovery trials continue.</p>
+            </div>
+            <div class="panel">
+              <div class="panel-h"><h4>Recovered tonnes by month</h4><span class="m">Oct to Sep · this month moves</span></div>
+              <svg class="trend" id="tr-svg" viewBox="0 0 600 220" role="img" aria-label="Recovered tonnes by month, October to September" preserveAspectRatio="xMidYMid meet"></svg>
+              <p class="trend-note">The September spike is the annual hard waste sweep. A handover today adds to September.</p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-h"><h4>Equivalences</h4><span class="m">Shown only with a source</span></div>
+            <div class="eq">
+              <div class="kpi"><svg class="ic fill" aria-hidden="true"><use href="#i-carsolid"/></svg><div class="v green"><span id="eq-cars" data-count="0" data-dec="0">0</span></div><div class="l">Cars permanently retired · equivalent</div><div class="d src" id="eq-cars-d">&nbsp;</div></div>
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-steel"/></svg><div class="v"><span id="eq-steel">0</span></div><div class="l">Cars' worth of steel</div><div class="d src" id="eq-steel-d">&nbsp;</div></div>
+              <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-landfill"/></svg><div class="v"><span id="eq-vol">0</span><span class="u">%</span></div><div class="l">Of an Olympic pool, in landfill space</div><div class="d src" id="eq-vol-d">&nbsp;</div></div>
+            </div>
+          </div>
+          <div class="em-host" id="em" aria-live="polite"></div>
+        </div>
+
+        <!-- CATEGORIES -->
+        <div class="tab-panel" id="p-categories" role="tabpanel" aria-labelledby="t-categories" data-panel="categories" hidden>
+          <div class="panel">
+            <div class="panel-h"><h4>Thirteen reporting categories</h4><span class="m">Share of each stream by bucket · tonnes handed over</span></div>
+            <div class="cat-bars" id="cat-bars"></div>
+            <div class="legend cat-legend"><span class="rec"><i></i>Recycled</span><span class="sto"><i></i>Stored · neutral</span><span class="lan"><i></i>Landfilled · counts against</span></div>
+            <p class="gaps-note">Splits are the default pathway for a Recycle Group handover under the Yarta Method <span class="mv">v1.0 draft</span>. Recycled means delivered to a licensed reprocessor, with a docket. Pending means recovered mass is counted and no avoided-emissions estimate is made for that stream.</p>
+          </div>
+        </div>
+
+        <!-- LEDGER -->
+        <div class="tab-panel" id="p-ledger" role="tabpanel" aria-labelledby="t-ledger" data-panel="ledger" hidden>
+          <div class="panel">
+            <div class="panel-h"><h4>Ledger</h4><span class="m">Every entry · newest first · entered by Yarta</span></div>
+            <div class="demo-ledger" id="ledger" aria-label="Handover ledger">
+              <div class="row h"><span>Date</span><span>What</span><span class="r">Qty</span><span class="hide-m">Bucket</span><span class="hide-m r">Entered by</span></div>
+            </div>
+            <p class="gaps-note">Demo handovers are dated today and marked "demo". In production every row carries an evidence reference and the operator's initials.</p>
+          </div>
+        </div>
+
+        <!-- GAPS -->
+        <div class="tab-panel" id="p-gaps" role="tabpanel" aria-labelledby="t-gaps" data-panel="gaps" hidden>
+          <div class="panel">
+            <div class="panel-h"><h4>Fill in the gaps · March</h4><span class="m">Monthly email · answered by the council · entered by Yarta</span></div>
+            <p class="gaps-intro">Once a month Yarta emails the council a list of every stream it cannot yet account for. The council says where each one went. Yarta enters it, grades the evidence, and the dashboard moves. These four items are the kind of thing a council reports that did not go through Recycle Group, so no processing or transport is attributed to them; anything landfilled still counts in the Category 5 figure at the NGA factor. Choose a bucket for each and watch the Overview.</p>
+            <div class="gaps" id="gaps"></div>
+            <p class="gaps-note">Entries answered by email count as Grade B evidence (contractor report or signed count sheet) until a docket is supplied. Grade B counts, and is flagged on the ledger and the report.</p>
+          </div>
+        </div>
+
+        <!-- ROADMAP -->
+        <div class="tab-panel" id="p-roadmap" role="tabpanel" aria-labelledby="t-roadmap" data-panel="roadmap" hidden>
+          <div class="panel">
+            <div class="panel-h"><h4>Benchmark · where you could be</h4><span class="m">Yarta Score · proposed <span class="sv">v0.1</span> · estimates</span></div>
+            <div class="wyc rm-three" id="rm-three"></div>
+            <svg class="trend rm-chart" id="rm-svg" viewBox="0 0 600 220" role="img" aria-label="Yarta Score now, and projected with the plan"></svg>
+            <p class="trend-note rm-leg"><span><i class="o"></i>Now</span><span><i class="d"></i>Projected with the plan (estimate)</span><span><i class="t"></i>At the eco standards (2030 targets)</span></p>
+          </div>
+          <div class="panel">
+            <div class="panel-h"><h4>Suggestions</h4><span class="m">Published rules · ranked by effect · any provider</span></div>
+            <div class="recs" id="recs"></div>
+          </div>
+          <div class="panel bk-panel" id="bk-panel" hidden></div>
+          <div class="panel">
+            <div class="panel-h"><h4>Plan by quarter</h4><span class="m">Untick an item to see the estimate without it</span></div>
+            <div class="rm-wrap"><table class="rm-tbl plan" id="rm-items"></table></div>
+            <div class="rm-wrap" style="margin-top:18px"><table class="rm-tbl" id="rm-quarters"></table></div>
+            <p class="gaps-note" id="rm-rules"></p>
+          </div>
+          <div class="panel">
+            <div class="panel-h"><h4>Bookings</h4><span class="m">Demo · nothing is sent</span></div>
+            <div class="rm-wrap"><table class="rm-tbl" id="rm-bookings"></table></div>
+            <p class="gaps-note">Yarta confirms the time with you and the provider. Once the work is done, the change shows only as Yarta enters and verifies the handovers that follow.</p>
+            <ul class="ind" id="rm-ind"></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- HANDOVER STRIP -->
+      <div class="handover-strip">
+        <span class="hl">Add a stream →</span>
+        <div class="handover" id="handover" aria-label="Add a handover to the demo">
+          <button type="button" data-k="mattresses" data-qty="100" data-what="100 mattresses"><svg class="ic" aria-hidden="true"><use href="#i-mattress"/></svg>+100 mattresses</button>
+          <button type="button" data-k="steel" data-qty="5" data-what="5 t steel"><svg class="ic" aria-hidden="true"><use href="#i-steel"/></svg>+5 t steel</button>
+          <button type="button" data-k="aluminium" data-qty="1" data-what="1 t aluminium"><svg class="ic" aria-hidden="true"><use href="#i-alu"/></svg>+1 t aluminium</button>
+          <button type="button" data-k="timber_plain" data-qty="10" data-what="10 t plain timber"><svg class="ic" aria-hidden="true"><use href="#i-timber"/></svg>+10 t plain timber</button>
+          <button type="button" data-k="tyres" data-qty="200" data-what="200 tyres"><svg class="ic" aria-hidden="true"><use href="#i-tyre"/></svg>+200 tyres</button>
+          <button type="button" data-k="whitegoods" data-qty="50" data-what="50 white goods"><svg class="ic" aria-hidden="true"><use href="#i-white"/></svg>+50 white goods</button>
+          <button type="button" data-k="ewaste" data-qty="2" data-what="2 t e-waste"><svg class="ic" aria-hidden="true"><use href="#i-ewaste"/></svg>+2 t e-waste</button>
+          <button type="button" data-k="greenwaste" data-qty="20" data-what="20 t green waste"><svg class="ic" aria-hidden="true"><use href="#i-green"/></svg>+20 t green waste</button>
+          <button type="button" class="lan" data-k="general" data-qty="10" data-what="10 t general rubbish"><svg class="ic" aria-hidden="true"><use href="#i-bin"/></svg>+10 t general rubbish (landfill)</button>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" id="demo-reset">Reset demo</button>
+      </div>
+    </div>
+
+    <p class="demo-attrib">Verified recycling data supplied by The Mattress Recycling Company and Recycle Group.</p>
+    <p class="note">Demo data is illustrative and is not Hepburn Shire Council data. The Category 5 inventory uses NGA landfill factors, with illustrative processing and transport values and 120 km to the processor. Avoided emissions use NSW DECCW 2010 factors and are reported separately. Calculations use the Yarta Method <span class="mv">v1.0 draft</span>, including the proposed Yarta Score, which is self-declared and not an accredited rating. Issued data would come from Recycle Group as the processing operator and is not independently assured. <a href="/method/">Read the Yarta Method →</a></p>
+  </div>
+</section>
+
+<!-- WHAT YOU JUST SAW -->
+<section id="saw">
+  <div class="wrap saw">
+    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">What you just saw</p><h2>Three rules that make the number hold.</h2></div><p class="lead">The demo lets you press the buttons. In production, a Yarta operator does, against a docket.</p></div>
+    <ol class="steps reveal">
+      <li><div><h4>Yarta enters your data</h4><p>Every figure is entered by Yarta from the records you send: a waste report, a weighbridge docket, a processor certificate, a utility bill or an invoice. Each carries an evidence grade, which is what lets a Yarta Report be relied on. The result is a report and a roadmap, not a form you fill in.</p></div></li>
+      <li><div><h4>Every tile has a method</h4><p>Steel recovery, landfill volume, both emissions figures and the Yarta Score each trace to a factor with a source, a status and a version. The Category 5 inventory and the avoided emissions are never netted. Where no factor exists yet, the tonnes are counted and no avoided emissions are claimed.</p></div></li>
+      <li><div><h4>Stored is neutral, landfilled counts against</h4><p>Material parked at a depot does not move the score until it moves. Material sent to landfill pulls the recovery rate down. The general rubbish button shows exactly how much.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band"><div class="wrap"><p class="eyebrow">Switched on in 30 days</p><h2>See your Yarta impact before you commit.</h2><p class="lead">Book a 30-minute walkthrough with the demo dashboard, or send us one month of data and we will show you what Yarta makes of it.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/calculator/">Try the calculator</a></div></div></section>
+
+<!--scripts-->
+<script src="/assets/yes-data.js"></script>
+<script>
+(function(){
+  var B=window.YES; if(!B||!B.compute||!B.score||!B.DEMO||!B.CATS||!B.CAT) return;
+  var fmt=B.fmt||function(n,d){return (+n).toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d});};
+  var $=function(id){return document.getElementById(id);};
+  var txt=function(id,s){var el=$(id); if(el) el.textContent=s;};
+  var reduced=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function today(){var d=new Date();return d.getDate()+' '+MONTHS[d.getMonth()];}
+  function srcId(k){return (B.SOURCES&&B.SOURCES[k]&&B.SOURCES[k].id)||k||'';}
+  function toast(m){if(B.toast) B.toast(m);}
+  function pct(x){return Math.round(x*100)+'%';}
+  function qtyLabel(c,q){return c.unit==='count'?fmt(q,0):fmt(q,1)+' t';}
+  var PATHS={rec:{rec:1,sto:0,lan:0},sto:{rec:0,sto:1,lan:0},lan:{rec:0,sto:0,lan:1}};
+  var BUCKET={rec:'Recycled',sto:'Stored',lan:'Landfilled'};
+  // stream icon per category key (sprite ids), in YES.CATS order
+  var ICON={mattresses:'i-mattress',steel:'i-steel',aluminium:'i-alu',timber_plain:'i-timber',timber_coloured:'i-timber2',tyres:'i-tyre',whitegoods:'i-white',ewaste:'i-ewaste',clothing:'i-cloth',concrete:'i-rubble',vehicles:'i-car',greenwaste:'i-green',general:'i-bin'};
+  function icon(k){return '<svg class="ic" aria-hidden="true"><use href="#'+(ICON[k]||'i-bin')+'"/></svg>';}
+
+  // ---- state ---------------------------------------------------------------
+  var OPTS={km:B.DEMO.km||0,sector:B.DEMO.sector||'council'};
+  var entries=B.DEMO.entries.map(function(e){return Object.assign({},e);});
+  var trend=B.DEMO.trend.map(function(m){return {m:m.m,t:m.t};});
+  var shown=trend.map(function(m){return m.t;});
+  var prev={};
+  var last=null;
+  // Gap items: streams a council might report that did not go through Recycle Group.
+  // All four are non-steel categories so a Stored or Landfilled answer is computed honestly by the engine.
+  var GAPS=[
+    {k:'greenwaste',qty:40,what:'Green waste',qlabel:'40 t',when:'March',who:'Council transfer station · contractor report'},
+    {k:'ewaste',qty:0.6,what:'Office e-waste',qlabel:'0.6 t',when:'March',who:'IT refresh · contractor collection note'},
+    {k:'timber_plain',qty:12,what:'Depot timber offcuts',qlabel:'12 t',when:'March',who:'Works depot · signed count sheet'},
+    {k:'concrete',qty:90,what:'Footpath renewal rubble',qlabel:'90 t',when:'March',who:'Concrete and bricks · works crew load count'}
+  ];
+  var gapChoice=GAPS.map(function(){return null;});
+
+  // ---- KPI tiles -------------------------------------------------------------
+  var KPI=[
+    {id:'k-matt',dec:0,unit:'',get:function(t){return t.units.mattresses||0;},note:function(){return 'by The Mattress Recycling Company';}},
+    {id:'k-steelpct',dec:0,unit:'%',get:function(){return (B.CAT.mattresses.steelRecovery||0)*100;},note:function(){return 'Recycle Group stated plant yield';}},
+    {id:'k-steel',dec:1,unit:' t',get:function(t){return t.steelT;},note:function(t){var n=Object.keys(t.byCat).filter(function(k){return t.byCat[k].steel>0;}).length;return 'from '+n+' steel-bearing streams';}},
+    {id:'k-rate',dec:1,unit:'%',get:function(t){return t.recoveryRate*100;},note:function(){return 'recycled ÷ handed over';}},
+    {id:'k-ret',dec:1,unit:' t',get:function(t){return t.recT;},note:function(t){return 'of '+fmt(t.inT,0)+' t handed over · docketed';}},
+    {id:'k-vol',dec:0,unit:' m³',get:function(t){return t.volAvoided;},note:function(){return 'volume that did not go in';}}
+  ];
+  function setCounter(el,key,v,dec){
+    var pv=prev[key];
+    if(pv==null){
+      el.setAttribute('data-count',v); el.setAttribute('data-dec',dec);
+      if(el.getAttribute('data-from')) el.textContent=fmt(v,dec);   // shared counter already ran for this element
+    } else if(Math.abs(v-pv)>1e-9){
+      el.setAttribute('data-from',pv); el.setAttribute('data-count',v); el.setAttribute('data-dec',dec);
+      // 1200 ms on purpose: the shared entrance counter in site.js runs 1100 ms from whatever data-count it read when the tile
+      // first scrolled into view, so this loop must always finish after it or a stale value could win the race.
+      if(B.count) B.count(el,v,dec,1200); else el.textContent=fmt(v,dec);
+    }
+    prev[key]=v;
+  }
+
+  // ---- donut -----------------------------------------------------------------
+  var CIRC=2*Math.PI*58;
+  function drawDonut(t){
+    var tot=t.inT>0?t.inT:1;
+    var fr=[t.recT/tot,t.stoT/tot,t.lanT/tot], off=0;
+    ['dn-rec','dn-sto','dn-lan'].forEach(function(id,i){
+      var c=$(id); if(!c) return;
+      var len=Math.max(0,fr[i]*CIRC);
+      c.style.strokeDasharray=len.toFixed(2)+' '+CIRC.toFixed(2);
+      c.style.strokeDashoffset=(-off).toFixed(2);
+      off+=len;
+    });
+    txt('dn-c',fmt(t.recoveryRate*100,0)+'%');
+    txt('dn-k-rec',fmt(t.recT,0)+' t'); txt('dn-k-sto',fmt(t.stoT,0)+' t'); txt('dn-k-lan',fmt(t.lanT,0)+' t'); txt('dn-k-in',fmt(t.inT,0)+' t');
+    var svg=$('dn-svg'); if(svg) svg.setAttribute('aria-label','Three buckets: '+fmt(t.recT,0)+' t recycled, '+fmt(t.stoT,0)+' t stored, '+fmt(t.lanT,0)+' t landfilled');
+  }
+
+  // ---- trend ---------------------------------------------------------------
+  function niceStep(max){
+    var steps=[5,10,20,25,30,40,50,60,75,80,100,120,150,200,250,300,400,500,600,750,800,1000,1500,2000,2500,3000,4000,5000];
+    var need=max*1.06/3;
+    for(var i=0;i<steps.length;i++){ if(steps[i]>=need) return steps[i]; }
+    return Math.ceil(need/1000)*1000;
+  }
+  function trendDims(){
+    var svg=$('tr-svg'); var w=svg?svg.getBoundingClientRect().width:0;
+    if(w>0&&w<420) return {W:320,H:200,PL:36,PR:10,PT:16,PB:26,every:2};
+    return {W:600,H:220,PL:44,PR:14,PT:18,PB:30,every:1};
+  }
+  function drawTrend(){
+    var svg=$('tr-svg'); if(!svg) return;
+    var D=trendDims(); svg.setAttribute('viewBox','0 0 '+D.W+' '+D.H);
+    var n=shown.length; if(n<2) return;
+    var max=Math.max.apply(null,shown.concat([1]));
+    var s=niceStep(max), top=s*3;
+    var iw=D.W-D.PL-D.PR, ih=D.H-D.PT-D.PB, base=D.PT+ih;
+    function x(i){return D.PL+iw*i/(n-1);}
+    function y(v){return D.PT+ih*(1-Math.max(0,v)/top);}
+    var pts=shown.map(function(v,i){return [x(i),y(v)];});
+    var line=pts.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ');
+    var area='M'+pts[0][0].toFixed(1)+','+base.toFixed(1)+' L'+line.split(' ').join(' L')+' L'+pts[n-1][0].toFixed(1)+','+base.toFixed(1)+' Z';
+    var out='';
+    for(var k=1;k<=3;k++){ var yy=y(s*k).toFixed(1); out+='<line class="gl" x1="'+D.PL+'" x2="'+(D.W-D.PR)+'" y1="'+yy+'" y2="'+yy+'"/><text class="yl" x="'+(D.PL-8)+'" y="'+(+yy+4).toFixed(1)+'" text-anchor="end">'+fmt(s*k,0)+'</text>'; }
+    out+='<line class="ax" x1="'+D.PL+'" x2="'+(D.W-D.PR)+'" y1="'+base.toFixed(1)+'" y2="'+base.toFixed(1)+'"/>';
+    out+='<path class="ar" d="'+area+'"/><polyline class="ln" points="'+line+'"/>';
+    pts.forEach(function(p,i){ out+='<circle class="dt'+(i===n-1?' last':'')+'" cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="'+(i===n-1?4:2.5)+'"/>'; });
+    var lp=pts[n-1]; out+='<text class="vl" x="'+(lp[0]-2).toFixed(1)+'" y="'+(lp[1]-10).toFixed(1)+'" text-anchor="end">'+fmt(shown[n-1],0)+' t</text>';
+    trend.forEach(function(m,i){ if((n-1-i)%D.every===0) out+='<text class="xl" x="'+x(i).toFixed(1)+'" y="'+(D.H-8)+'" text-anchor="middle">'+m.m+'</text>'; });
+    svg.innerHTML=out;
+  }
+  var trRaf=null;
+  function tweenTrend(){
+    var to=trend.map(function(m){return m.t;});
+    if(reduced){ shown=to; drawTrend(); return; }
+    var from=shown.slice(), t0=null;
+    if(trRaf) cancelAnimationFrame(trRaf);
+    function step(ts){
+      if(!t0) t0=ts; var p=Math.min(1,(ts-t0)/800), e=1-Math.pow(1-p,3);
+      shown=from.map(function(f,i){return f+(to[i]-f)*e;}); drawTrend();
+      trRaf=p<1?requestAnimationFrame(step):null;
+    }
+    trRaf=requestAnimationFrame(step);
+  }
+
+  // ---- category bars ---------------------------------------------------------
+  var catRows={};
+  (function(){
+    var host=$('cat-bars'); if(!host) return;
+    B.CATS.forEach(function(c){
+      var row=document.createElement('div'); row.className='cat-bar';
+      row.innerHTML='<span class="n">'+icon(c.k)+'<span class="nt"><span class="nm"></span></span></span><div class="track" role="img"><div class="f-rec"></div><div class="f-sto"></div><div class="f-lan"></div></div><span class="val"></span>';
+      row.querySelector('.nm').textContent=c.name;
+      if(c.status==='pending'){ var tg=document.createElement('span'); tg.className='tag pending'; tg.textContent='Pending · no estimate'; row.querySelector('.nt').appendChild(tg); }
+      host.appendChild(row); catRows[c.k]=row;
+    });
+  })();
+  function drawCats(t){
+    B.CATS.forEach(function(c){
+      var row=catRows[c.k]; if(!row) return;
+      var b=t.byCat[c.k]; var mass=b?b.mass:0;
+      var fr=mass>0?[b.rec/mass,b.sto/mass,b.lan/mass]:[0,0,0];
+      row.querySelector('.f-rec').style.width=(fr[0]*100).toFixed(2)+'%';
+      row.querySelector('.f-sto').style.width=(fr[1]*100).toFixed(2)+'%';
+      row.querySelector('.f-lan').style.width=(fr[2]*100).toFixed(2)+'%';
+      row.querySelector('.val').textContent=fmt(mass,mass<10?1:0)+' t';
+      row.querySelector('.track').setAttribute('aria-label',c.name+': '+pct(fr[0])+' recycled, '+pct(fr[1])+' stored, '+pct(fr[2])+' landfilled of '+fmt(mass,1)+' t');
+    });
+  }
+
+  // ---- ledger ---------------------------------------------------------------
+  function ledgerRow(r,cls,key){
+    var d=document.createElement('div'); d.className='row'+(cls?' '+cls:''); if(key) d.setAttribute('data-key',key);
+    d.innerHTML='<span></span><span class="w">'+icon(r.k)+'<span class="wt"></span></span><span class="r"></span><span class="hide-m b"></span><span class="hide-m r"></span>';
+    var s=d.children;
+    s[0].textContent=r.d; s[1].querySelector('.wt').textContent=r.what; s[1].title=r.what; s[2].textContent=r.qty; s[3].textContent=r.bucket; s[4].textContent=r.by;
+    if(r.bucketKey) s[3].classList.add(r.bucketKey);
+    return d;
+  }
+  function bucketFor(c){return c.path.rec>0?'rec':c.path.sto>0?'sto':'lan';}
+  (function(){
+    var led=$('ledger'); if(!led) return;
+    B.DEMO.ledger.forEach(function(r){
+      var c=B.CAT[r.k]||{name:r.k,unit:'t',path:{rec:1,sto:0,lan:0}};
+      var bk=bucketFor(c);
+      led.appendChild(ledgerRow({k:r.k,d:r.d,what:r.what,qty:qtyLabel(c,r.qty),bucket:BUCKET[bk],bucketKey:bk,by:r.by}));
+    });
+  })();
+  function prependLedger(r,key){
+    var led=$('ledger'); if(!led) return;
+    var head=led.querySelector('.row.h');
+    var row=ledgerRow(r,'new',key);
+    if(head&&head.nextSibling) led.insertBefore(row,head.nextSibling); else led.appendChild(row);
+  }
+  function removeLedger(key){
+    var led=$('ledger'); if(!led) return;
+    led.querySelectorAll('.row[data-key="'+key+'"]').forEach(function(el){el.parentNode.removeChild(el);});
+  }
+  function clearDemoRows(){
+    var led=$('ledger'); if(!led) return;
+    led.querySelectorAll('.row.new').forEach(function(el){el.parentNode.removeChild(el);});
+  }
+
+  // ---- gaps ---------------------------------------------------------------
+  (function(){
+    var host=$('gaps'); if(!host) return;
+    GAPS.forEach(function(g,i){
+      var el=document.createElement('div'); el.className='gap';
+      el.innerHTML='<div><div class="w">'+icon(g.k)+'<span></span></div><div class="who"></div></div><div class="gap-btns" role="group"><button type="button" class="rec" data-b="rec" aria-pressed="false">Recycled</button><button type="button" class="sto" data-b="sto" aria-pressed="false">Stored</button><button type="button" class="lan" data-b="lan" aria-pressed="false">Landfilled</button></div>';
+      el.querySelector('.w span').textContent=g.what+' · '+g.qlabel+' · '+g.when;
+      el.querySelector('.who').textContent=g.who;
+      el.querySelector('.gap-btns').setAttribute('aria-label','Where did '+g.what.toLowerCase()+' go');
+      el.querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ setGap(i,b.getAttribute('data-b')); }); });
+      host.appendChild(el); g.el=el;
+    });
+  })();
+  function paintGaps(){
+    GAPS.forEach(function(g,i){
+      if(!g.el) return;
+      g.el.querySelectorAll('button').forEach(function(b){ var on=b.getAttribute('data-b')===gapChoice[i]; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false'); });
+    });
+  }
+  function setGap(i,b){
+    var g=GAPS[i]; if(!g||!B.CAT[g.k]) return;
+    var next=(gapChoice[i]===b)?null:b;
+    gapChoice[i]=next;
+    entries=entries.filter(function(e){return e.gap!==i;});
+    removeLedger('gap-'+i);
+    if(next) entries.push({k:g.k,qty:g.qty,ev:0.8,path:PATHS[next],gap:i,sup:false});
+    var before=last;
+    render({delta:true});
+    var dRec=last.recT-before.recT;
+    if(Math.abs(dRec)>1e-9){ trend[trend.length-1].t=Math.max(0,trend[trend.length-1].t+dRec); tweenTrend(); }
+    paintGaps();
+    if(next){
+      prependLedger({k:g.k,d:today(),what:'Fill in the gaps · '+g.what+' · '+g.when+' · Grade B',qty:g.qlabel,bucket:BUCKET[next],bucketKey:next,by:'Yarta · demo'},'gap-'+i);
+      toast('Dashboard updated · '+g.what+' · '+g.qlabel+' · '+BUCKET[next]);
+    } else {
+      toast('Entry removed · '+g.what+' · '+g.qlabel);
+    }
+  }
+
+  // ---- gauge -----------------------------------------------------------------
+  // YES.gauge draws the arcs once; every later render calls YES.gaugeUpdate so the arcs sweep to the new score.
+  var gaugeEl=$('sc-gauge');
+  function gaugeLabel(sc){ if(gaugeEl) gaugeEl.setAttribute('aria-label','Yarta Score '+sc.score+' of 100, '+sc.band); }
+  function paintGauge(sc,first){
+    if(!gaugeEl||!B.gauge||!B.gaugeUpdate){ prev.score=sc.score; return; }
+    if(first){
+      if(reduced){ B.gauge(gaugeEl,sc,170); }
+      else {
+        // entrance: draw empty, then sweep to the score on the next frame (matches the counters)
+        B.gauge(gaugeEl,{score:0,parts:{recovery:0,carbon:0,evidence:0},band:sc.band},170);
+        var b0=gaugeEl.querySelector('.gv b');
+        requestAnimationFrame(function(){ B.gaugeUpdate(gaugeEl,sc); gaugeLabel(sc); if(b0&&B.count){ b0.setAttribute('data-from','0'); B.count(b0,sc.score,0,900); } });
+      }
+    } else {
+      var from=prev.score;
+      B.gaugeUpdate(gaugeEl,sc); gaugeLabel(sc);
+      var b=gaugeEl.querySelector('.gv b');
+      if(b&&B.count&&from!=null&&from!==sc.score){ b.setAttribute('data-from',from); B.count(b,sc.score,0,900); }
+    }
+    prev.score=sc.score;
+  }
+
+  // ---- render ---------------------------------------------------------------
+  function render(o){
+    o=o||{};
+    var t=B.compute(entries,OPTS);
+    var sc=t.score||B.score(t);
+    KPI.forEach(function(k){
+      var el=$(k.id); if(!el) return;
+      var v=k.get(t), pv=prev[k.id];
+      setCounter(el,k.id,v,k.dec);
+      var d=$(k.id+'-d');
+      if(d){
+        var diff=(pv==null)?0:v-pv, minStep=Math.pow(10,-k.dec)/2;
+        if(o.delta&&Math.abs(diff)>=minStep){ d.textContent=(diff>0?'+':'−')+fmt(Math.abs(diff),k.dec)+k.unit+' · this handover'; d.classList.toggle('neg',diff<0); }
+        else { d.textContent=k.note(t); d.classList.remove('neg'); }
+      }
+    });
+    // score: gauge (shared component) + band + composition
+    var first=(prev.score==null);
+    paintGauge(sc,first);
+    txt('sc-band',sc.band);
+    var w=B.SCORE&&B.SCORE.weights||{recovery:60,carbon:25,evidence:15};
+    var setW=function(id,v){var el=$(id); if(el) el.style.width=Math.max(0,Math.min(100,v))+'%';};
+    if(first&&!reduced){ requestAnimationFrame(function(){ setW('sc-p1',sc.parts.recovery); setW('sc-p2',sc.parts.carbon); setW('sc-p3',sc.parts.evidence); }); }
+    else { setW('sc-p1',sc.parts.recovery); setW('sc-p2',sc.parts.carbon); setW('sc-p3',sc.parts.evidence); }
+    txt('sc-l1',fmt(sc.parts.recovery,1)+' / '+w.recovery); txt('sc-l2',fmt(sc.parts.carbon,1)+' / '+w.carbon); txt('sc-l3',fmt(sc.parts.evidence,1)+' / '+w.evidence);
+    var st=$('sc-p1'); if(st&&st.parentNode) st.parentNode.setAttribute('aria-label','Yarta Score '+sc.score+' of 100: recovery '+fmt(sc.parts.recovery,1)+', carbon '+fmt(sc.parts.carbon,1)+', evidence '+fmt(sc.parts.evidence,1));
+    // the two emissions figures, never netted (shared component; wording from YES.CLAIMS)
+    var em=$('em');
+    if(em&&B.emPair){
+      var dl=(o.delta&&prev.cat5!=null)?{a:t.cat5-prev.cat5,b:t.avoided-prev.avoided}:{};
+      em.innerHTML=B.emPair(t,{rows:4,delta:dl});
+    }
+    prev.cat5=t.cat5; prev.avoided=t.avoided;
+    // donut, categories
+    if(prev.donut==null&&!reduced){ requestAnimationFrame(function(){ drawDonut(t); }); } else drawDonut(t);
+    prev.donut=1;
+    drawCats(t);
+    // equivalences
+    var cars=$('eq-cars'); if(cars) setCounter(cars,'cars',t.cars,0);
+    txt('eq-steel',fmt(Math.round(t.steelT/0.9),0)); txt('eq-vol',fmt(t.volAvoided/2500*100,0));
+    last=t;
+    renderRoadmap();
+  }
+  txt('eq-cars-d','Avoided-emissions estimate ÷ '+(B.EQUIV?B.EQUIV.carT:4.16)+' t CO₂-e per family vehicle lifetime · '+srcId(B.EQUIV?B.EQUIV.carSrc:'nsw2010')+' indicator · shows scale only');
+  txt('eq-steel-d','Steel recovered ÷ about 900 kg of steel in an average car · WorldAutoSteel · sold to licensed metal reprocessors');
+  txt('eq-vol-d','Landfill volume avoided ÷ 2,500 m³ per Olympic-size pool · mattress residual counted at 25% of its volume');
+  txt('demo-ver',B.METHOD_VERSION||'v1.0 draft');
+  txt('sc-ver',(B.SCORE&&B.SCORE.version)||'v0.1');
+  document.querySelectorAll('.page-demo .sv').forEach(function(el){el.textContent=(B.SCORE&&B.SCORE.version)||'v0.1';});
+  document.querySelectorAll('.page-demo .mv').forEach(function(el){el.textContent=B.METHOD_VERSION||'';});
+  (function(){ var w=B.SCORE&&B.SCORE.weights; if(w) txt('sc-wl','Composition · points of 100 · weights '+w.recovery+' / '+w.carbon+' / '+w.evidence); })();
+
+  // ---- handovers -----------------------------------------------------------
+  function handover(k,qty,what){
+    var c=B.CAT[k]; if(!c||!(qty>0)) return;
+    entries.push({k:k,qty:qty});
+    var before=last;
+    render({delta:true});
+    var dRec=last.recT-before.recT, dLan=last.lanT-before.lanT;
+    if(dRec>1e-9){ trend[trend.length-1].t+=dRec; tweenTrend(); }
+    prependLedger({k:k,d:today(),what:'Handover · demo · '+what,qty:qtyLabel(c,qty),bucket:BUCKET[bucketFor(c)],bucketKey:bucketFor(c),by:'Yarta · demo'});
+    if(dRec>0.05) toast('Dashboard updated · +'+fmt(dRec,dRec<10?1:0)+' t recovered');
+    else toast('Dashboard updated · +'+fmt(dLan,dLan<10?1:0)+' t landfilled · counts against');
+  }
+  var hv=$('handover');
+  if(hv){
+    hv.addEventListener('click',function(ev){
+      var b=ev.target.closest('button[data-k]'); if(!b||!hv.contains(b)) return;
+      handover(b.getAttribute('data-k'),parseFloat(b.getAttribute('data-qty')),b.getAttribute('data-what')||'');
+    });
+  }
+  var rs=$('demo-reset');
+  if(rs){
+    rs.addEventListener('click',function(){
+      entries=B.DEMO.entries.map(function(e){return Object.assign({},e);});
+      trend=B.DEMO.trend.map(function(m){return {m:m.m,t:m.t};});
+      gapChoice=GAPS.map(function(){return null;});
+      bookings=(B.DEMO.bookings||[]).map(function(b){return Object.assign({},b);}); planOff={}; closeBooking();
+      clearDemoRows(); paintGaps();
+      render({delta:false}); tweenTrend();
+      toast('Demo reset · illustrative data restored');
+    });
+  }
+
+  // ---- roadmap: the score now, at the 2030 targets and with Yarta help; recommended help and bookings ----
+  var bookings=(B.DEMO.bookings||[]).map(function(b){return Object.assign({},b);});
+  var planOff={}, bookFor=null, bookSlot=null, plan=null;
+  var DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  function esc(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function pad2(n){return (n<10?'0':'')+n;}
+  function slotDate(v){var p=v.split('T'),d=p[0].split('-'),tm=(p[1]||'09:00').split(':');return new Date(+d[0],+d[1]-1,+d[2],+tm[0],+tm[1]);}
+  function timeLabel(d){var h=d.getHours(),mi=d.getMinutes();return (h%12||12)+':'+pad2(mi)+' '+(h<12?'am':'pm');}
+  function slotLabel(v){if(!v) return 'Time to be arranged'; var d=slotDate(v); return DOW[d.getDay()]+' '+d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear()+', '+timeLabel(d);}
+  function sgn(v,d){return (v>0?'+':v<0?'−':'±')+fmt(Math.abs(v),d);}
+  function upText(u,t){
+    if(!u) return ''; var a=[];
+    if(u.recPts>=0.05) a.push('Recovery '+fmt(t.recoveryRate*100,1)+'% → '+fmt(t.recoveryRate*100+u.recPts,1)+'%');
+    if(u.evidence>=0.05) a.push('Evidence '+fmt(t.evidenceShare*100,1)+'% → 100%');
+    if(u.lanT>=0.5) a.push(fmt(u.lanT,0)+' t less to landfill');
+    if(u.score>=0.05) a.push('<span class="up">Score '+sgn(u.score,1)+'</span>');
+    return a.join(' · ');
+  }
+  var BKL={requested:'Requested',confirmed:'Confirmed',cancelled:'Cancelled'};
+  function bkChip(b){return '<span class="bkst '+esc(b.status)+'">'+(BKL[b.status]||esc(b.status))+'</span>';}
+  function dot(h){return h.prov==='group'?'<span class="grp-dot" title="Delivered by a Recycle Group business">●</span>':'';}
+  function nextSlots(){
+    var out=[], d=new Date(); d.setHours(0,0,0,0);
+    while(out.length<20){ d.setDate(d.getDate()+1); var w=d.getDay(); if(w===0||w===6) continue; var ds=d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate()); out.push(ds+'T09:00'); out.push(ds+'T13:30'); }
+    return out.filter(function(v){ return !bookings.some(function(b){ return b.status!=='cancelled'&&b.slot===v; }); });
+  }
+  function card(it){
+    var h=it.h, pv=B.PROVIDERS[h.prov]||{label:''}, b=it.booking, up=upText(it.up,plan.t);
+    return '<article class="rec"><span class="a">'+esc(h.area)+'</span><h5>'+esc(it.title)+dot(h)+'</h5><p class="why">'+esc(it.why)+'</p>'
+      +'<dl><dt>Change</dt><dd>'+(up||esc(h.effectText))+'</dd><dt>Who</dt><dd>'+esc(pv.label)+(h.groupNames?' · '+esc(h.groupNames):'')+'</dd></dl>'
+      +'<div class="f">'+(b?bkChip(b)+'<span class="when">'+esc(slotLabel(b.slot))+'</span>':'<button type="button" class="btn btn-primary btn-sm" data-book="'+h.k+'">Book a session</button>')+'</div></article>';
+  }
+  function drawRoadmap(){
+    var svg=$('rm-svg'); if(!svg||!plan) return;
+    var w=svg.getBoundingClientRect().width, sm=w>0&&w<420;
+    var W=sm?320:600, H=sm?210:220, PL=sm?30:36, PR=sm?14:20, PT=16, PB=28;
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    var pts=[{m:plan.now,v:plan.score.score}].concat(plan.proj.map(function(p){return {m:p.month,v:p.v};}));
+    var n=pts.length, iw=W-PL-PR, ih=H-PT-PB;
+    function x(i){return PL+iw*i/Math.max(1,n-1);} function y(v){return PT+ih*(1-v/100);}
+    var out='';
+    [0,25,50,75,100].forEach(function(g){ out+='<line class="gl" x1="'+PL+'" x2="'+(W-PR)+'" y1="'+y(g).toFixed(1)+'" y2="'+y(g).toFixed(1)+'"/><text class="yl" x="'+(PL-8)+'" y="'+(y(g)+4).toFixed(1)+'" text-anchor="end">'+g+'</text>'; });
+    var ty=y(plan.target.score); out+='<line class="tl" x1="'+PL+'" x2="'+(W-PR)+'" y1="'+ty.toFixed(1)+'" y2="'+ty.toFixed(1)+'"/><text class="tt" x="'+(PL+6)+'" y="'+(ty-7).toFixed(1)+'">At the eco standards (2030 targets) · '+plan.target.score+'</text>';
+    out+='<path class="pj" d="'+pts.map(function(p,i){return (i?'L':'M')+x(i).toFixed(1)+' '+y(p.v).toFixed(1);}).join('')+'"/>';
+    out+='<circle class="dt last" cx="'+x(0).toFixed(1)+'" cy="'+y(pts[0].v).toFixed(1)+'" r="5"/><text class="vl" x="'+(x(0)+8).toFixed(1)+'" y="'+(y(pts[0].v)+18).toFixed(1)+'">Now · '+pts[0].v+'</text>';
+    var lp=pts[n-1]; out+='<circle class="dt" cx="'+x(n-1).toFixed(1)+'" cy="'+y(lp.v).toFixed(1)+'" r="4"/><text class="vl" x="'+(x(n-1)-2).toFixed(1)+'" y="'+(y(lp.v)+18).toFixed(1)+'" text-anchor="end">'+lp.v+' · estimate</text>';
+    var every=sm?6:3; pts.forEach(function(p,i){ if(i%every===0||i===n-1) out+='<text class="xl" x="'+x(i).toFixed(1)+'" y="'+(H-8)+'" text-anchor="'+(i===0?'start':i===n-1?'end':'middle')+'">'+(i===0?'Now':B.mshort(p.m))+'</text>'; });
+    svg.innerHTML=out;
+    svg.setAttribute('aria-label','Yarta Score now '+pts[0].v+'; projected with the plan '+lp.v+' by '+B.mlabel(lp.m)+' (estimate); at the 2030 targets '+plan.target.score);
+  }
+  function renderRoadmap(){
+    if(!B.helpPlan) return;
+    plan=B.helpPlan(entries,OPTS,{now:B.DEMO.now,bookings:bookings,off:planOff});
+    var P=plan, n=P.active.filter(function(it){return it.k!=='grants';}).length;
+    var nowS=P.score.band+' · '+fmt(P.t.recoveryRate*100,1)+'% recovered · '+B.mlabel(P.now);
+    var potS=n+' recommended item'+(n===1?'':'s')+(P.lanCut>=0.5?' · '+fmt(P.lanCut,0)+' t less to landfill for the same tonnes':'');
+    var tgtS=B.TARGETS.map(function(x){return x.name;}).join(' · ');
+    txt('wyc-now',P.score.score); txt('wyc-now-s',nowS); txt('wyc-tgt',P.target.score); txt('wyc-pot',P.potential.score); txt('wyc-pot-s',potS);
+    var three=$('rm-three'); if(three) three.innerHTML='<div class="wyc-n"><span class="l">Now</span><b>'+P.score.score+'</b><span class="s">'+esc(nowS)+'</span></div><div class="wyc-n"><span class="l">At the eco standards · 2030 targets</span><b>'+P.target.score+'</b><span class="s">'+esc(tgtS)+'</span></div><div class="wyc-n hl"><span class="l">With Yarta help · estimate</span><b>'+P.potential.score+'</b><span class="s">'+esc(potS)+'</span></div>';
+    drawRoadmap();
+    var recs=$('recs'); if(recs) recs.innerHTML=P.items.length?P.items.map(card).join(''):'<p class="gaps-intro">Nothing is recommended from the current figures.</p>';
+    var it=$('rm-items'); if(it) it.innerHTML='<thead><tr><th><span class="vh">Include</span></th><th>Help</th><th>Estimated change</th><th>Starts</th><th>Booking</th></tr></thead><tbody>'+P.items.map(function(x){ var h=x.h;
+      return '<tr'+(x.off?' class="off"':'')+'><td><input type="checkbox" data-plan="'+h.k+'"'+(x.off?'':' checked')+(x.booking?' disabled title="Booked items stay in the plan"':'')+' aria-label="Include '+esc(x.title)+' in the plan"></td><td><b>'+esc(x.title)+'</b>'+dot(h)+'<div>'+esc((B.PROVIDERS[h.prov]||{}).label)+' · '+esc(h.session)+'</div></td><td>'+(upText(x.up,P.t)||esc(h.effectText))+'</td><td>'+(x.start?B.mshort(x.start):'Not in plan')+'</td><td>'+(x.booking?bkChip(x.booking):'—')+'</td></tr>'; }).join('')+'</tbody>';
+    var qs=P.quarters.filter(function(q,i){return q.starts.length||q.full.length||i===P.quarters.length-1;});
+    var qt=$('rm-quarters'); if(qt) qt.innerHTML='<thead><tr><th>Quarter</th><th>Starts</th><th>Full effect</th><th class="n">Projected score</th></tr></thead><tbody>'+qs.map(function(q){ return '<tr><td><b>'+esc(q.label)+'</b></td><td>'+(q.starts.map(function(x){return esc(x.title)+(x.booking?' ('+(x.booking.status==='requested'?'requested':'booked')+')':'');}).join('<br>')||'—')+'</td><td>'+(q.full.map(function(x){return esc(x.title);}).join('<br>')||'—')+'</td><td class="n"><b>'+(q.score==null?'—':q.score)+'</b></td></tr>'; }).join('')+'</tbody>';
+    txt('rm-rules',B.HELP_RULES);
+    var bl=bookings.slice().sort(function(a,b){return (a.slot||'9')<(b.slot||'9')?-1:1;});
+    var bt=$('rm-bookings'); if(bt) bt.innerHTML=bl.length?'<thead><tr><th>Help</th><th>When</th><th>Format</th><th>Status</th><th></th></tr></thead><tbody>'+bl.map(function(b){ var h=B.HELP_BY[b.svc]||{title:b.svc};
+      return '<tr><td><b>'+esc(h.title)+'</b>'+dot(h)+'</td><td>'+esc(slotLabel(b.slot))+'</td><td>'+esc(b.mode||'')+'</td><td>'+bkChip(b)+'</td><td>'+((b.status==='requested'||b.status==='confirmed')?'<button type="button" class="btn btn-ghost btn-sm" data-cancel="'+esc(b.id)+'">Cancel</button>':'')+'</td></tr>'; }).join('')+'</tbody>':'<tbody><tr><td>No bookings yet.</td></tr></tbody>';
+    var ind=$('rm-ind'); if(ind) ind.innerHTML=(B.INDEPENDENCE||[]).map(function(x){return '<li><b>'+esc(x.k)+'.</b> '+esc(x.d)+'</li>';}).join('');
+  }
+  function closeBooking(){ var p=$('bk-panel'); if(p){ p.hidden=true; p.innerHTML=''; } bookFor=null; bookSlot=null; }
+  function openBooking(k){
+    var h=B.HELP_BY[k]; if(!h) return; bookFor=k; bookSlot=null;
+    var it=(plan&&plan.items||[]).filter(function(x){return x.k===k;})[0], pv=B.PROVIDERS[h.prov]||{label:'',note:''};
+    var byDay={}, days=[]; nextSlots().forEach(function(v){ var d=v.slice(0,10); if(!byDay[d]){ byDay[d]=[]; days.push(d); } byDay[d].push(v); });
+    var grid=days.map(function(d){ var dt=slotDate(d+'T09:00'); return '<div class="sday"><div class="sd">'+DOW[dt.getDay()]+' '+dt.getDate()+' '+MONTHS[dt.getMonth()]+'</div>'+byDay[d].map(function(v){ return '<button type="button" class="slot" data-slot="'+v+'" aria-pressed="false">'+timeLabel(slotDate(v))+'</button>'; }).join('')+'</div>'; }).join('')
+      +'<div class="sday"><div class="sd">Other</div><button type="button" class="slot" data-slot="other" aria-pressed="false">Another time</button></div>';
+    var p=$('bk-panel'); if(!p) return;
+    p.innerHTML='<div class="panel-h"><h4>Book · '+esc(h.title)+'</h4><span class="m">'+esc(h.session)+' · demo · nothing is sent</span></div>'
+      +'<div class="bk-grid"><div><div class="slots" role="group" aria-label="Available times, next ten business days">'+grid+'</div>'
+      +'<div class="bk-form"><div class="modes" role="radiogroup" aria-label="Format">'+h.modes.map(function(m,i){return '<label><input type="radio" name="bk-mode" value="'+esc(m)+'"'+(i===0?' checked':'')+'>'+esc(m)+'</label>';}).join('')+'</div>'
+      +'<div class="two"><label class="f">Contact name<input type="text" id="bk-name" value="Council waste officer (demo)" autocomplete="off"></label><label class="f">Contact email<input type="email" id="bk-email" value="waste@hepburn.example" autocomplete="off"></label></div>'
+      +'<label class="f">Notes<textarea id="bk-notes" rows="3" placeholder="Anything the provider should know, or a time that suits you if none above does."></textarea></label>'
+      +'<label class="chk"><input type="checkbox" id="bk-share" checked> Share the Yarta figures behind this recommendation with the provider, so they arrive prepared</label>'
+      +'<div class="btn-row"><button type="button" class="btn btn-primary btn-sm" id="bk-go">Request this booking</button><button type="button" class="btn btn-ghost btn-sm" id="bk-x">Cancel</button></div></div></div>'
+      +'<div class="bk-side"><p style="margin:0 0 10px"><b style="color:var(--paper)">Why it is recommended.</b> '+esc(it?it.why:'Your current figures do not call for it, but you can still book it.')+'</p><p style="margin:0 0 10px"><b style="color:var(--paper)">Assumed effect.</b> '+esc(h.effectText)+'</p><p style="margin:0 0 10px"><b style="color:var(--paper)">Who.</b> '+esc(h.who)+(h.prov==='group'?' A Recycle Group business, disclosed on your report.':h.prov==='partner'?' Independent specialist: chosen by you, and Yarta can introduce one.':'')+'</p><p style="margin:0">You can use any provider. Your Yarta Score and the verification of your handovers do not depend on who does the work.</p></div></div>';
+    p.hidden=false;
+    p.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});
+  }
+  function submitBooking(){
+    var h=B.HELP_BY[bookFor]; if(!h) return;
+    if(!bookSlot){ toast('Choose a time, or Another time'); return; }
+    var nm=$('bk-name'), em=$('bk-email'), nt=$('bk-notes');
+    var name=(nm.value||'').trim(), email=(em.value||'').trim(), notes=(nt.value||'').trim();
+    if(!name){ toast('Add a contact name'); nm.focus(); return; }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ toast('Add a valid contact email'); em.focus(); return; }
+    if(bookSlot==='other'&&!notes){ toast('Say in the notes which time suits you'); nt.focus(); return; }
+    var mode=(document.querySelector('#bk-panel input[name="bk-mode"]:checked')||{}).value||h.modes[0];
+    bookings.push({id:'bk-'+Date.now().toString(36), svc:h.k, status:'requested', slot:bookSlot==='other'?null:bookSlot, mode:mode, contact:name, email:email, notes:notes, share:!!($('bk-share')||{}).checked});
+    closeBooking(); renderRoadmap();
+    toast('Requested · '+h.title+' · demo, nothing is sent');
+    var r=$('rm-bookings'); if(r) r.scrollIntoView({behavior:reduced?'auto':'smooth',block:'center'});
+  }
+  var rp=$('p-roadmap');
+  if(rp){
+    rp.addEventListener('click',function(ev){
+      var b=ev.target.closest('[data-book]'); if(b){ openBooking(b.getAttribute('data-book')); return; }
+      var sl=ev.target.closest('.slot'); if(sl){ bookSlot=sl.getAttribute('data-slot'); rp.querySelectorAll('.slot').forEach(function(x){x.setAttribute('aria-pressed',x===sl?'true':'false');}); return; }
+      if(ev.target.closest('#bk-x')){ closeBooking(); return; }
+      if(ev.target.closest('#bk-go')){ submitBooking(); return; }
+      var cx=ev.target.closest('[data-cancel]'); if(cx){ var bk=bookings.filter(function(x){return x.id===cx.getAttribute('data-cancel');})[0]; if(bk){ bk.status='cancelled'; renderRoadmap(); toast('Booking cancelled · demo'); } }
+    });
+    rp.addEventListener('change',function(ev){ var c=ev.target.closest('input[data-plan]'); if(!c) return; var k=c.getAttribute('data-plan'); if(c.checked) delete planOff[k]; else planOff[k]=true; renderRoadmap(); });
+  }
+  document.querySelectorAll('.page-demo [data-goto]').forEach(function(b){ b.addEventListener('click',function(){ selectTab(b.getAttribute('data-goto')); var d=$('demo'); if(d) d.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'}); }); });
+
+  // ---- tabs ---------------------------------------------------------------
+  var tabs=Array.prototype.slice.call(document.querySelectorAll('.demo-tabs [data-tab]'));
+  var panels=Array.prototype.slice.call(document.querySelectorAll('.tab-panel[data-panel]'));
+  function selectTab(name,focus){
+    tabs.forEach(function(b){ var on=b.getAttribute('data-tab')===name; b.classList.toggle('active',on); b.setAttribute('aria-selected',on?'true':'false'); if(on&&focus) b.focus(); });
+    panels.forEach(function(p){ p.hidden=p.getAttribute('data-panel')!==name; });
+    if(name==='overview') drawTrend();
+    if(name==='roadmap') drawRoadmap();
+  }
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){ selectTab(b.getAttribute('data-tab')); });
+    b.addEventListener('keydown',function(ev){
+      var j=null;
+      if(ev.key==='ArrowRight') j=(i+1)%tabs.length; else if(ev.key==='ArrowLeft') j=(i-1+tabs.length)%tabs.length; else if(ev.key==='Home') j=0; else if(ev.key==='End') j=tabs.length-1;
+      if(j!==null){ ev.preventDefault(); selectTab(tabs[j].getAttribute('data-tab'),true); }
+    });
+  });
+
+  // ---- boot -----------------------------------------------------------------
+  render({delta:false});
+  drawTrend();
+  var rz=null; window.addEventListener('resize',function(){ clearTimeout(rz); rz=setTimeout(function(){ drawTrend(); drawRoadmap(); },150); });
+})();
+</script>

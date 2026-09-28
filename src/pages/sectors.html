@@ -1,0 +1,54 @@
+<style>
+.page-sectors .lead{max-width:66ch}
+.page-sectors .sec-grid{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:760px){.page-sectors .sec-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.page-sectors .sec-card{border:1px solid var(--mist);border-radius:var(--r-lg);padding:22px 22px 20px;background:#fff;display:grid;gap:12px;align-content:start}
+.page-sectors .sec-card h3{font-size:clamp(20px,2vw,26px)}
+.page-sectors .sec-card .who{color:var(--graphite);margin:0;font-size:15px}
+.page-sectors .sec-card .k{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin:6px 0 4px}
+.page-sectors .sec-card ul{margin:0;padding-left:1.1em;color:var(--graphite);font-size:14.5px}
+.page-sectors .sec-card li{margin-bottom:.3em}
+.page-sectors .sec-card .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.page-sectors .cats{display:flex;flex-wrap:wrap;gap:6px}
+.page-sectors .cats span{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;background:var(--green-tint);color:var(--green-ink);border-radius:999px;padding:5px 9px}
+</style>
+
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">Sectors</p>
+    <h1>What your sector reports on.</h1>
+    <p class="lead">The same ten categories, weighted by what matters in your sector. A hospital's report leads with energy per bed and clinical waste; a transport operator's with litres per 100 km and tyres; a council's with the kerbside service and Country. Pick a sector to see its demo and its sample report.</p>
+    <div class="btn-row"><a class="btn btn-primary" href="/demo/">Open the live demo {{ARROW}}</a><a class="btn btn-ghost" href="/eco-standards/">The eco standards</a></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">01 · Eight sectors</p><h2>Councils and businesses. One standard, eight shapes.</h2></div>
+    <div class="sec-grid" id="sectors"></div>
+  </div>
+</section>
+
+<section class="tight" style="background:var(--paper-2)">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">02 · Not on the list?</p><h2>Send a month of data and we will show you the shape of your report.</h2></div>
+    <p class="lead">Mining, utilities, agriculture, government agencies and not-for-profits report on the same ten categories with their own streams. Yarta adds the streams to the data dictionary and the profile before the first report, and the eco standards page says which standard applies.</p>
+    <div class="btn-row"><a class="btn btn-primary" href="/contact/">Talk to Yarta {{ARROW}}</a></div>
+  </div>
+</section>
+
+<!--scripts-->
+<script src="/assets/yarta/sectors.js"></script>
+<script>
+(function(){
+  var S=window.YESS, D={energy:"Energy",fleet:"Fleet",carbon:"Carbon",water:"Water",waste:"Waste",circular:"Circularity",land:"Land",nature:"Nature",community:"Community",governance:"Governance"};
+  var esc=function(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+  document.getElementById('sectors').innerHTML=S.SECTORS.map(function(s){
+    return '<div class="sec-card"><div><h3>'+esc(s.name)+'</h3><p class="who">'+esc(s.who)+'</p></div>'
+      +'<div><p class="k">Leads with</p><div class="cats">'+s.dominant.map(function(c){ return '<span>'+esc(D[c]||c)+'</span>'; }).join('')+'</div></div>'
+      +'<div><p class="k">What you report</p><ul>'+s.reports.map(function(r){ return '<li>'+esc(r)+'</li>'; }).join('')+'</ul></div>'
+      +'<div><p class="k">Eco standards that apply</p><ul>'+s.standards.map(function(r){ return '<li>'+esc(r)+'</li>'; }).join('')+'</ul></div>'
+      +'<div class="acts"><a class="btn btn-primary btn-sm" href="/demo/?sector='+s.k+'">See the demo</a><a class="btn btn-ghost btn-sm" href="/report/?sector='+s.k+'">Sample report</a></div></div>';
+  }).join('');
+})();
+</script>
