@@ -46,7 +46,7 @@ window.YES = window.YES || {};
     {k:"timber_coloured", name:"Coloured / treated timber", unit:"t", unitLabel:"tonnes", m3t:2.5, path:{rec:0, sto:0.2, lan:0.8}, steelFrac:0, carbon:null, lanType:"wood", status:"pending", notes:"Painted, treated or engineered timber. No recycling pathway modelled yet: Stored while a pathway is sought, otherwise Landfilled. No avoided emissions claimed."},
     {k:"tyres", name:"Tyres", unit:"count", unitLabel:"tyres", kgUnit:9.5, m3t:6.0, path:{rec:0.97, sto:0, lan:0.03}, steelFrac:0, carbon:1.07, carbonSrc:"nsw2010", lanType:"rubber", status:"reference", notes:"Rubber tyres, C&I/C&D (crumb substitutes synthetic rubber; bead steel recovered). 9.5 kg per passenger tyre is a YES assumption."},
     {k:"whitegoods", name:"White goods", unit:"count", unitLabel:"appliances", kgUnit:60, m3t:4.0, path:{rec:0.85, sto:0, lan:0.15}, steelFrac:0.75, steelRecovery:1, carbon:null, lanType:"ci", interim:true, status:"assumption", notes:"60 kg per appliance and 75% steel by mass are YES assumptions. Non-steel fraction: no avoided emissions claimed; residual at the interim C&I factor."},
-    {k:"ewaste", name:"E-waste", unit:"t", unitLabel:"tonnes", m3t:3.0, path:{rec:0.85, sto:0.15, lan:0}, steelFrac:0, carbon:null, lanType:"inert", status:"pending", notes:"Recovered mass is counted; no avoided-emissions factor in the library yet (AS/NZS 5377 pathway via a downstream partner). E-waste is banned from landfill in Victoria."},
+    {k:"ewaste", name:"E-waste", unit:"t", unitLabel:"tonnes", m3t:3.0, path:{rec:0.85, sto:0.15, lan:0}, steelFrac:0, carbon:null, lanType:"inert", status:"pending", notes:"Recovered mass is counted; no avoided-emissions factor in the library yet (AS/NZS 5377 pathway via a downstream partner)."},
     {k:"clothing", name:"Clothing & textiles", unit:"t", unitLabel:"tonnes", m3t:5.0, path:{rec:0.6, sto:0.4, lan:0}, steelFrac:0, carbon:null, lanType:"textiles", status:"pending", notes:"Reuse via Recycle Warehouse counted as recycled; balance Stored awaiting a textile processor. No avoided emissions claimed."},
     {k:"concrete", name:"Concrete, bricks & rubble", unit:"t", unitLabel:"tonnes", m3t:0.7, path:{rec:1, sto:0, lan:0}, steelFrac:0, carbon:0.02, carbonSrc:"nsw2010", lanType:"inert", status:"reference", notes:"Crushed and screened to aggregate. Low per-tonne factor; large tonnages."},
     {k:"vehicles", name:"Vehicles", unit:"count", unitLabel:"vehicles", kgUnit:1200, m3t:3.0, path:{rec:0.7, sto:0, lan:0.3}, steelFrac:0.7, steelRecovery:1, carbon:null, lanType:"ci", interim:true, status:"assumption", notes:"1,200 kg and 70% steel by mass are YES assumptions; shredder residue landfilled at the interim C&I factor. Non-steel fraction: no avoided emissions claimed."},
@@ -183,9 +183,9 @@ window.YES = window.YES || {};
 
   /* trigger(c) returns {why} when the figures call for it (c = {t, entries, opts}); apply(entries, f) changes the entries at strength f (0 to 1). */
   B.HELP = [
-    { k:"hardwaste", title:"Booked hard-waste collections", area:"Landfill", prov:"group", groupNames:"JUNK",
+    { k:"hardwaste", title:"Booked hard-waste collections", area:"Landfill", prov:"group", groupNames:"Recycle Group collections",
       what:"Residents book a pick-up instead of piling hard waste on the kerb, so items arrive intact and sorted and more of them are recovered.",
-      who:"JUNK runs the booked collections and sorts at pick-up.",
+      who:"A Recycle Group collection business runs the booked collections and sorts at pick-up.",
       modes:["On site","Online"], session:"90-minute planning session",
       rule:"General rubbish to landfill is 5% or more of the tonnes handed over.",
       effectText:"A quarter of general rubbish is sorted out and recovered. No avoided emissions are claimed for it, because its mix is unknown.",
@@ -195,7 +195,7 @@ window.YES = window.YES || {};
     },
     { k:"stored", title:"Clear stored stock", area:"Stored", prov:"partner",
       what:"Move stored clothing, textiles and e-waste on to reuse and licensed recycling, so those tonnes count as recovered.",
-      who:"A textile processor and an AS/NZS 5377 e-waste recycler, arranged through Recycle Group.",
+      who:"A textile processor and a certified e-waste recycler, arranged through Recycle Group.",
       modes:["On site","Online"], session:"Stock review",
       rule:"Clothing, textiles or e-waste are held as Stored.",
       effectText:"Stored clothing, textiles and e-waste are reused or recycled. Treated timber stays stored until it has a pathway.",
@@ -291,7 +291,7 @@ window.YES = window.YES || {};
   B.INDEPENDENCE = [
     {k:"Published rules", d:"The rules and assumptions are published in the YES Method, and the same rules apply to every customer."},
     {k:"Any provider", d:"You can use any provider. Recommendations, your YES Score and the verification of your handovers do not depend on who does the work."},
-    {k:"Disclosure", d:"Work by a Recycle Group business, such as JUNK, is disclosed on your report. YES is a Recycle Group business."},
+    {k:"Disclosure", d:"Work by a Recycle Group business is disclosed on your report. YES is a Recycle Group initiative."},
     {k:"Only through the ledger", d:"Completed work changes your score only through the handovers YES enters and verifies afterwards, like any other change."},
     {k:"Separate people", d:"A YES analyst who runs a paid session for you does not enter or verify your handovers."},
     {k:"Estimates", d:"The score with YES help and the projection are estimates. They are not a promise, a guarantee or a target."}
