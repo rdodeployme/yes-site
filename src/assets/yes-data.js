@@ -1,5 +1,5 @@
 /* YES Method v1.0 (draft): factor library, calculation engine and the proposed YES Score.
-   Single source of truth for the demo dashboard, the calculator, the certificate and the method page.
+   Single source of truth for the demo dashboard, the calculator, the report and the method page.
 
    Two numbers, never netted (GHG Protocol Scope 3 Technical Guidance, Category 5):
      Figure A · Scope 3 Category 5 inventory = processing (supplier-specific) + transport (optional) + landfilled tonnes × NGA landfill factor
@@ -7,7 +7,7 @@
      Figure C · Landfill comparison = the same tonnes had they all been landfilled, at the same NGA factors. Context only.
 
    status: "reference" = published external source · "group" = Recycle Group / TMRC stated figure
-           "assumption" = YES working assumption, to be replaced · "illustrative" = derived placeholder, replaced by metered data before the first certificate
+           "assumption" = YES working assumption, to be replaced · "illustrative" = derived placeholder, replaced by metered data before the first report
            "pending" = no avoided-emissions factor yet; none claimed
 */
 window.YES = window.YES || {};
@@ -15,12 +15,12 @@ window.YES = window.YES || {};
   B.METHOD_VERSION = "v1.0 draft";
   B.SOURCES = {
     nsw2010: {id:"NSW DECCW 2010", title:"Environmental benefits of recycling", detail:"Department of Environment, Climate Change and Water NSW, June 2010 (DECCW 2010/58, ISBN 978 1 74232 530 9). Table 4: net benefit of recycling 1 tonne of waste material, tonnes CO₂-e, C&I/C&D pathway unless noted. Used for avoided emissions only. Every factor from this source is flagged 2010 and is due for refresh.", url:"https://www.epa.nsw.gov.au/sites/default/files/100058-benefits-of-recycling.pdf"},
-    nga: {id:"NGA landfill factors", title:"National Greenhouse Accounts landfill emission factors", detail:"DCCEEW National Greenhouse Accounts (NGA) solid-waste landfill factors, t CO₂-e per tonne landfilled, as reproduced in the Commonwealth Emissions Reporting Framework 2024–25 (Department of Finance, 30 June 2025). Used for the Category 5 inventory. Each certificate cites the NGA edition current at its reporting date.", url:"https://www.finance.gov.au/sites/default/files/2025-06/emissions-reporting-framework.pdf"},
+    nga: {id:"NGA landfill factors", title:"National Greenhouse Accounts landfill emission factors", detail:"DCCEEW National Greenhouse Accounts (NGA) solid-waste landfill factors, t CO₂-e per tonne landfilled, as reproduced in the Commonwealth Emissions Reporting Framework 2024–25 (Department of Finance, 30 June 2025). Used for the Category 5 inventory. Each report cites the NGA edition current at its reporting date.", url:"https://www.finance.gov.au/sites/default/files/2025-06/emissions-reporting-framework.pdf"},
     ghgp: {id:"GHG Protocol", title:"Technical Guidance for Calculating Scope 3 Emissions, Chapter 5 (Category 5: Waste generated in operations)", detail:"Waste-type-specific method: tonnes by waste type and treatment × waste-type-specific factor; supplier-specific where the processor meters its fuel and electricity. Avoided emissions from recycling are not included in, or deducted from, the Scope 3 inventory and may be reported separately.", url:"https://ghgprotocol.org/sites/default/files/2022-12/Ch5_GHGP_Tech.pdf"},
-    rgops: {id:"RG operations (illustrative)", title:"Recycle Group processing and transport: illustrative working values", detail:"Processing: about 1,200 L diesel a day (two shredders plus loaders) at about 2.7 kg CO₂-e per litre, over 44 to 109 t processed a day, gives 0.03 to 0.07 t CO₂-e per tonne; 0.05 is used. Transport: 0.15 kg CO₂-e per tonne-km, rigid truck. Both are replaced by metered fuel and electricity records and fleet fuel data before the first customer certificate."},
+    rgops: {id:"RG operations (illustrative)", title:"Recycle Group processing and transport: illustrative working values", detail:"Processing: about 1,200 L diesel a day (two shredders plus loaders) at about 2.7 kg CO₂-e per litre, over 44 to 109 t processed a day, gives 0.03 to 0.07 t CO₂-e per tonne; 0.05 is used. Transport: 0.15 kg CO₂-e per tonne-km, rigid truck. Both are replaced by metered fuel and electricity records and fleet fuel data before the first customer report."},
     rg: {id:"Recycle Group", title:"Recycle Group / The Mattress Recycling Company stated processing figures", detail:"Per 10,000 mattresses: about 800 t in and about 270 t steel out; 99% of that steel recovered (stated plant yield, to be evidenced by a dated yield study). Shredded residual is 25% of original volume."},
     tmrc: {id:"TMRC", title:"The Mattress Recycling Company per-unit assumptions", detail:"Single 25 kg / 0.4 m³ · Double–Queen 66 kg / 0.8 m³ · King 78 kg / 1.1 m³. Steel-recovery percentages in this table (70–72%) conflict with the group's figure of about 30% of mass and are not used until reconciled."},
-    big: {id:"YES assumption", title:"YES working assumption", detail:"Placeholder pending measured data from the Recycle Group weighbridge and processing records. Replaced before the first customer certificate."}
+    big: {id:"YES assumption", title:"YES working assumption", detail:"Placeholder pending measured data from the Recycle Group weighbridge and processing records. Replaced before the first customer report."}
   };
 
   /* ---- Figure A inputs ------------------------------------------------------ */
@@ -39,7 +39,7 @@ window.YES = window.YES || {};
   /* lanType = NGA landfill factor applied to any landfilled fraction (Figure A) and to the landfill comparison (Figure C).
      interim = mixed-stream factor used until a composition audit of the residual gives a waste-type-specific one. */
   B.CATS = [
-    {k:"mattresses", name:"Mattresses", unit:"count", unitLabel:"mattresses", kgUnit:80, m3t:8.75, path:{rec:0.334, sto:0, lan:0.666}, steelFrac:0.3375, steelRecovery:0.99, carbon:null, carbonSrc:null, lanType:"ci", interim:true, status:"group", notes:"80 kg average and about a third steel by mass, from Recycle Group's stated figures. Steel recovery 99% is the stated plant yield; each certificate prints the measured yield with its study date. Foam and fibre residual is shredded and landfilled at 25% of original volume (recovery trials under way); its landfill factor is the interim C&I figure until a composition audit. m³/t from 0.7 m³ per 80 kg mattress."},
+    {k:"mattresses", name:"Mattresses", unit:"count", unitLabel:"mattresses", kgUnit:80, m3t:8.75, path:{rec:0.334, sto:0, lan:0.666}, steelFrac:0.3375, steelRecovery:0.99, carbon:null, carbonSrc:null, lanType:"ci", interim:true, status:"group", notes:"80 kg average and about a third steel by mass, from Recycle Group's stated figures. Steel recovery 99% is the stated plant yield; each report prints the measured yield with its study date. Foam and fibre residual is shredded and landfilled at 25% of original volume (recovery trials under way); its landfill factor is the interim C&I figure until a composition audit. m³/t from 0.7 m³ per 80 kg mattress."},
     {k:"steel", name:"Steel", unit:"t", unitLabel:"tonnes", m3t:0.6, path:{rec:0.99, sto:0, lan:0.01}, steelFrac:1, steelRecovery:1, carbon:null, lanType:"inert", status:"reference", notes:"Scrap steel to the electric-arc-furnace route. 1% process loss assumed."},
     {k:"aluminium", name:"Aluminium", unit:"t", unitLabel:"tonnes", m3t:1.2, path:{rec:0.99, sto:0, lan:0.01}, steelFrac:0, carbon:17.72, carbonSrc:"nsw2010", lanType:"inert", status:"reference", notes:"Aluminium scrap, C&I/C&D. The highest per-tonne avoided-emissions factor of any common stream, and the one most sensitive to the age of the 2010 study."},
     {k:"timber_plain", name:"Plain timber", unit:"t", unitLabel:"tonnes", m3t:2.5, path:{rec:0.95, sto:0, lan:0.05}, steelFrac:0, carbon:1.35, carbonSrc:"nsw2010", lanType:"wood", status:"reference", notes:"Modelled on timber pallets and packaging (avoided structural pine, non-reusable to mulch). 5% contamination loss assumed."},
@@ -132,7 +132,7 @@ window.YES = window.YES || {};
     avoided:"Estimated avoided emissions: a modelled estimate using NSW DECCW 2010 life-cycle factors. Reported separately from the inventory. Not deducted from it, not an offset and not a carbon-neutral claim.",
     baseline:"Landfill comparison: the same tonnes had they all gone to landfill, at the same NGA factors. Context only, not an inventory figure.",
     score:"Self-declared under the published YES Method. Not an accredited rating, certification or third-party verification.",
-    steel:"Recycle Group's stated plant yield. Each certificate prints the measured yield with its site and study date.",
+    steel:"Recycle Group's stated plant yield. Each report prints the measured yield with its site and study date.",
     recycled:"Recycled means baled or sorted material delivered to a licensed reprocessor, with a receiving docket. Stored material is reported separately and is not counted as recycled.",
     issuer:"Issued by Recycle Group as the processing operator. Not independently assured."
   };
@@ -141,14 +141,14 @@ window.YES = window.YES || {};
   B.EXAMPLE = {entries:[{k:"mattresses", qty:1000}], km:120, label:"1,000 mattresses · 120 km to the processor"};
 
   /* ---- Targets, potential and recommended help (proposed, YES Method v1.0 draft) -------------------------------
-     Three numbers on the dashboard and the certificate: the YES Score now, the score at the 2030 targets, and an
+     Three numbers on the dashboard and the report: the YES Score now, the score at the 2030 targets, and an
      estimate with the recommended help done, plus the roadmap behind the estimate. Recommendations come from the
      published rules below: the same figures give the same recommendations, any provider can do the work, and work by
      a Recycle Group business is disclosed. Every effect is an assumption for discussion, applied to the handover
      entries and recalculated by B.compute, so the estimate uses the same engine as the score. */
   B.TARGETS = [
     {k:"recovery", v:0.8, name:"Resource recovery rate 80%", src:"National Waste Policy Action Plan (2024): 80% average resource recovery rate from all waste streams by 2030"},
-    {k:"evidence", v:1, name:"Every tonne on Grade A evidence", src:"YES standard for a certificate: a weighbridge docket or processor certificate behind every tonne"}
+    {k:"evidence", v:1, name:"Every tonne on Grade A evidence", src:"YES standard for a report: a weighbridge docket or processor certificate behind every tonne"}
   ];
   B.atTargets = function(t){
     var x = {recoveryRate:Math.max(t.recoveryRate||0, B.TARGETS[0].v), intensity:t.intensity||0, evidenceShare:Math.max(t.evidenceShare==null?1:t.evidenceShare, B.TARGETS[1].v)};
@@ -176,7 +176,7 @@ window.YES = window.YES || {};
   B.cloneEntries = function(E){ return E.map(function(e){ var c={}; for(var k in e) c[k]=e[k]; if(e.path) c.path={rec:e.path.rec,sto:e.path.sto,lan:e.path.lan}; return c; }); };
 
   B.PROVIDERS = {
-    group:{label:"Recycle Group business", note:"Disclosed on your certificate"},
+    group:{label:"Recycle Group business", note:"Disclosed on your report"},
     partner:{label:"Independent specialist", note:"Chosen by you; YES can introduce one"},
     yes:{label:"YES analyst", note:"Not the operators who enter or verify your handovers"}
   };
@@ -291,7 +291,7 @@ window.YES = window.YES || {};
   B.INDEPENDENCE = [
     {k:"Published rules", d:"The rules and assumptions are published in the YES Method, and the same rules apply to every customer."},
     {k:"Any provider", d:"You can use any provider. Recommendations, your YES Score and the verification of your handovers do not depend on who does the work."},
-    {k:"Disclosure", d:"Work by a Recycle Group business, such as JUNK, is disclosed on your certificate. YES is a Recycle Group business."},
+    {k:"Disclosure", d:"Work by a Recycle Group business, such as JUNK, is disclosed on your report. YES is a Recycle Group business."},
     {k:"Only through the ledger", d:"Completed work changes your score only through the handovers YES enters and verifies afterwards, like any other change."},
     {k:"Separate people", d:"A YES analyst who runs a paid session for you does not enter or verify your handovers."},
     {k:"Estimates", d:"The score with YES help and the projection are estimates. They are not a promise, a guarantee or a target."}

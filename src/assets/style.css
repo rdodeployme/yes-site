@@ -288,6 +288,12 @@ footer{background:var(--ink);color:var(--mist);padding:64px 0 32px;border-top:1p
 .price .amt small{font-family:var(--font-mono);font-size:13px;letter-spacing:.06em;color:var(--slate);margin-left:8px;font-weight:400}
 .price.featured .amt{color:var(--green-3)}
 .price .who{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate)}
+.price .amt small.from{margin:0 10px 0 0}
+.price .sub{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--slate);margin:-6px 0 0}
+.price .bt{display:grid;border-top:1px solid var(--mist)}
+.price .bt div{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid var(--mist);font-size:15px}
+.price .bt b{font-family:var(--font-display);font-weight:800;font-size:20px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.price.featured .bt,.price.featured .bt div{border-color:#262826}
 .price ul{list-style:none;padding:0;margin:0}
 .price li{padding:9px 0;border-top:1px solid var(--mist);font-size:15px;display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px}
 .price.featured li{border-color:#262826}
@@ -308,7 +314,7 @@ footer{background:var(--ink);color:var(--mist);padding:64px 0 32px;border-top:1p
 .faq details[open] summary::after{content:"–"}
 .faq details p{color:var(--graphite);max-width:70ch;padding-bottom:12px}
 
-/* certificate */
+/* report */
 .cert{background:var(--white);color:var(--ink);max-width:820px;margin:0 auto;padding:clamp(28px,4vw,56px);border:1px solid var(--mist);box-shadow:0 30px 60px rgba(0,0,0,.08);position:relative}
 .cert::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:var(--green)}
 .cert-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;padding-bottom:22px;border-bottom:1px solid var(--ink);margin-bottom:22px;flex-wrap:wrap}
