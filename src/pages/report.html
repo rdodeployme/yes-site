@@ -361,21 +361,21 @@
           <div class="t"><b>Hepburn Shire Council · Roadmap</b><br>Report YARTA-DEMO-2026-0001 · FY2026–27 to date · Method <span id="mv4">v1.0 draft</span><span class="step">Page 3 · Improve</span></div>
         </div>
         <div class="body">
-          <div class="sec"><span>08 · Where you could be</span><b>Yarta Score · proposed <span id="sv3">v0.1</span></b></div>
+          <div class="sec"><span>08 · Benchmark · where you could be</span><b>Yarta Score · proposed <span id="sv3">v0.1</span></b></div>
           <div class="rm3" id="rm3"></div>
 
           <div class="sec"><span>09 · Projected Yarta Score</span><b>Estimate · with the plan in section 11</b></div>
           <svg class="rmc" id="rmc" viewBox="0 0 706 128" role="img" aria-label="Yarta Score now and projected with the plan"></svg>
-          <div class="lg2"><span><i class="dt"></i>Now</span><span><i class="ln d"></i>Projected with the plan (estimate)</span><span><i class="ln t"></i>At the 2030 targets</span></div>
+          <div class="lg2"><span><i class="dt"></i>Now</span><span><i class="ln d"></i>Projected with the plan (estimate)</span><span><i class="ln t"></i>At the eco standards (2030 targets)</span></div>
 
-          <div class="sec"><span>10 · Recommended help</span><b>Published rules · any provider</b></div>
+          <div class="sec"><span>10 · Suggestions</span><b>Published rules · ranked by effect · any provider</b></div>
           <table class="streams help">
             <thead><tr><th>Help</th><th>Why, from your figures</th><th>Estimated change</th><th>Status</th></tr></thead>
             <tbody id="help-rows"></tbody>
           </table>
           <p class="help-other" id="help-other"></p>
 
-          <div class="sec" style="margin-top:14px"><span>11 · Plan by quarter</span><b>Projected Yarta Score at quarter end</b></div>
+          <div class="sec" style="margin-top:14px"><span>11 · Roadmap to improvement · by quarter</span><b>Projected Yarta Score at quarter end</b></div>
           <table class="streams">
             <thead><tr><th>Quarter</th><th>Starts · each builds up over six months</th><th class="n">Projected score</th></tr></thead>
             <tbody id="q-rows"></tbody>
@@ -457,17 +457,17 @@
     var sg=function(v,d){return (v>0?'+':v<0?'−':'±')+f(Math.abs(v),d);};
     var nAct=P.active.filter(function(it){return it.k!=='grants';}).length;
     if($('wyc1')) $('wyc1').innerHTML='<div class="n"><b>'+P.score.score+'</b><div><div class="k">Now</div><div class="s">'+esc(P.score.band)+' · '+esc(Y.mlabel(P.now))+'</div></div></div>'
-      +'<div class="n"><b>'+P.target.score+'</b><div><div class="k">At the 2030 targets</div><div class="s">80% resource recovery, every tonne on Grade A evidence</div></div></div>'
+      +'<div class="n"><b>'+P.target.score+'</b><div><div class="k">At the eco standards · 2030</div><div class="s">80% resource recovery, every tonne on Grade A evidence</div></div></div>'
       +'<div class="n hl"><b>'+P.potential.score+'</b><div><div class="k">With Yarta help · estimate</div><div class="s">'+nAct+' recommended items · the plan is on page 3</div></div></div>';
     if($('rm3')) $('rm3').innerHTML='<div class="n"><div class="k">Now</div><b>'+P.score.score+'</b><div class="s">'+esc(P.score.band)+' · '+f(P.t.recoveryRate*100,1)+'% recovered · '+esc(Y.mlabel(P.now))+'</div></div>'
-      +'<div class="n"><div class="k">At the 2030 targets</div><b>'+P.target.score+'</b><div class="s">80% resource recovery (National Waste Policy Action Plan, 2024) · every tonne on Grade A evidence</div></div>'
+      +'<div class="n"><div class="k">At the eco standards · 2030 targets</div><b>'+P.target.score+'</b><div class="s">80% resource recovery (National Waste Policy Action Plan, 2024) · every tonne on Grade A evidence</div></div>'
       +'<div class="n hl"><div class="k">With Yarta help · estimate</div><b>'+P.potential.score+'</b><div class="s">'+nAct+' recommended items'+(P.lanCut>=0.5?' · '+f(P.lanCut,0)+' t less to landfill for the same tonnes':'')+(P.cat5Cut>=0.5?' · Category 5 inventory '+f(P.cat5Cut,0)+' t CO₂-e lower':'')+'</div></div>';
     // chart
     (function(){ var svg=$('rmc'); if(!svg) return; var W=706,H=128,PL=30,PR=16,PT=12,PB=22;
       var pts=[{m:P.now,v:P.score.score}].concat(P.proj.map(function(p){return {m:p.month,v:p.v};})), n=pts.length, iw=W-PL-PR, ih=H-PT-PB;
       function x(i){return PL+iw*i/Math.max(1,n-1);} function y(v){return PT+ih*(1-v/100);}
       var o=''; [0,25,50,75,100].forEach(function(g){ o+='<line class="gl" x1="'+PL+'" x2="'+(W-PR)+'" y1="'+y(g).toFixed(1)+'" y2="'+y(g).toFixed(1)+'"/><text class="yl" x="'+(PL-6)+'" y="'+(y(g)+3).toFixed(1)+'" text-anchor="end">'+g+'</text>'; });
-      var ty=y(P.target.score); o+='<line class="tl" x1="'+PL+'" x2="'+(W-PR)+'" y1="'+ty.toFixed(1)+'" y2="'+ty.toFixed(1)+'"/><text class="tt" x="'+(PL+6)+'" y="'+(ty-5).toFixed(1)+'">At the 2030 targets · '+P.target.score+'</text>';
+      var ty=y(P.target.score); o+='<line class="tl" x1="'+PL+'" x2="'+(W-PR)+'" y1="'+ty.toFixed(1)+'" y2="'+ty.toFixed(1)+'"/><text class="tt" x="'+(PL+6)+'" y="'+(ty-5).toFixed(1)+'">At the eco standards (2030 targets) · '+P.target.score+'</text>';
       o+='<path class="pj" d="'+pts.map(function(p,i){return (i?'L':'M')+x(i).toFixed(1)+' '+y(p.v).toFixed(1);}).join('')+'"/>';
       o+='<circle class="dt" cx="'+x(0).toFixed(1)+'" cy="'+y(pts[0].v).toFixed(1)+'" r="4"/><text class="vl" x="'+(x(0)+7).toFixed(1)+'" y="'+(y(pts[0].v)+15).toFixed(1)+'">Now · '+pts[0].v+'</text>';
       var lp=pts[n-1]; o+='<circle class="dto" cx="'+x(n-1).toFixed(1)+'" cy="'+y(lp.v).toFixed(1)+'" r="3.5"/><text class="vl" x="'+(x(n-1)-2).toFixed(1)+'" y="'+(y(lp.v)+15).toFixed(1)+'" text-anchor="end">'+lp.v+' · estimate</text>';

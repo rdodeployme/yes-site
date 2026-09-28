@@ -198,7 +198,7 @@
           <button type="button" role="tab" id="t-categories" aria-selected="false" aria-controls="p-categories" data-tab="categories">Categories</button>
           <button type="button" role="tab" id="t-ledger" aria-selected="false" aria-controls="p-ledger" data-tab="ledger">Ledger</button>
           <button type="button" role="tab" id="t-gaps" aria-selected="false" aria-controls="p-gaps" data-tab="gaps">Gaps</button>
-          <button type="button" role="tab" id="t-roadmap" aria-selected="false" aria-controls="p-roadmap" data-tab="roadmap">Roadmap</button>
+          <button type="button" role="tab" id="t-roadmap" aria-selected="false" aria-controls="p-roadmap" data-tab="roadmap">Roadmap to improvement</button>
         </div>
       </div>
 
@@ -219,7 +219,7 @@
 
           <div class="wyc" aria-label="Where you could be">
             <div class="wyc-n"><span class="l">Now</span><b id="wyc-now">—</b><span class="s" id="wyc-now-s">&nbsp;</span></div>
-            <div class="wyc-n"><span class="l">At the 2030 targets</span><b id="wyc-tgt">—</b><span class="s">80% resource recovery · every tonne on a docket</span></div>
+            <div class="wyc-n"><span class="l">At the eco standards · 2030 targets</span><b id="wyc-tgt">—</b><span class="s">80% resource recovery · every tonne on a docket</span></div>
             <div class="wyc-n hl"><span class="l">With Yarta help · estimate</span><b id="wyc-pot">—</b><span class="s" id="wyc-pot-s">&nbsp;</span></div>
             <button type="button" class="btn btn-ghost btn-sm" data-goto="roadmap">See the roadmap</button>
           </div>
@@ -308,13 +308,13 @@
         <!-- ROADMAP -->
         <div class="tab-panel" id="p-roadmap" role="tabpanel" aria-labelledby="t-roadmap" data-panel="roadmap" hidden>
           <div class="panel">
-            <div class="panel-h"><h4>Where you could be</h4><span class="m">Yarta Score · proposed <span class="sv">v0.1</span> · estimates</span></div>
+            <div class="panel-h"><h4>Benchmark · where you could be</h4><span class="m">Yarta Score · proposed <span class="sv">v0.1</span> · estimates</span></div>
             <div class="wyc rm-three" id="rm-three"></div>
             <svg class="trend rm-chart" id="rm-svg" viewBox="0 0 600 220" role="img" aria-label="Yarta Score now, and projected with the plan"></svg>
-            <p class="trend-note rm-leg"><span><i class="o"></i>Now</span><span><i class="d"></i>Projected with the plan (estimate)</span><span><i class="t"></i>At the 2030 targets</span></p>
+            <p class="trend-note rm-leg"><span><i class="o"></i>Now</span><span><i class="d"></i>Projected with the plan (estimate)</span><span><i class="t"></i>At the eco standards (2030 targets)</span></p>
           </div>
           <div class="panel">
-            <div class="panel-h"><h4>Recommended for you</h4><span class="m">Published rules · any provider</span></div>
+            <div class="panel-h"><h4>Suggestions</h4><span class="m">Published rules · ranked by effect · any provider</span></div>
             <div class="recs" id="recs"></div>
           </div>
           <div class="panel bk-panel" id="bk-panel" hidden></div>
@@ -742,7 +742,7 @@
     function x(i){return PL+iw*i/Math.max(1,n-1);} function y(v){return PT+ih*(1-v/100);}
     var out='';
     [0,25,50,75,100].forEach(function(g){ out+='<line class="gl" x1="'+PL+'" x2="'+(W-PR)+'" y1="'+y(g).toFixed(1)+'" y2="'+y(g).toFixed(1)+'"/><text class="yl" x="'+(PL-8)+'" y="'+(y(g)+4).toFixed(1)+'" text-anchor="end">'+g+'</text>'; });
-    var ty=y(plan.target.score); out+='<line class="tl" x1="'+PL+'" x2="'+(W-PR)+'" y1="'+ty.toFixed(1)+'" y2="'+ty.toFixed(1)+'"/><text class="tt" x="'+(PL+6)+'" y="'+(ty-7).toFixed(1)+'">At the 2030 targets · '+plan.target.score+'</text>';
+    var ty=y(plan.target.score); out+='<line class="tl" x1="'+PL+'" x2="'+(W-PR)+'" y1="'+ty.toFixed(1)+'" y2="'+ty.toFixed(1)+'"/><text class="tt" x="'+(PL+6)+'" y="'+(ty-7).toFixed(1)+'">At the eco standards (2030 targets) · '+plan.target.score+'</text>';
     out+='<path class="pj" d="'+pts.map(function(p,i){return (i?'L':'M')+x(i).toFixed(1)+' '+y(p.v).toFixed(1);}).join('')+'"/>';
     out+='<circle class="dt last" cx="'+x(0).toFixed(1)+'" cy="'+y(pts[0].v).toFixed(1)+'" r="5"/><text class="vl" x="'+(x(0)+8).toFixed(1)+'" y="'+(y(pts[0].v)+18).toFixed(1)+'">Now · '+pts[0].v+'</text>';
     var lp=pts[n-1]; out+='<circle class="dt" cx="'+x(n-1).toFixed(1)+'" cy="'+y(lp.v).toFixed(1)+'" r="4"/><text class="vl" x="'+(x(n-1)-2).toFixed(1)+'" y="'+(y(lp.v)+18).toFixed(1)+'" text-anchor="end">'+lp.v+' · estimate</text>';
@@ -758,7 +758,7 @@
     var potS=n+' recommended item'+(n===1?'':'s')+(P.lanCut>=0.5?' · '+fmt(P.lanCut,0)+' t less to landfill for the same tonnes':'');
     var tgtS=B.TARGETS.map(function(x){return x.name;}).join(' · ');
     txt('wyc-now',P.score.score); txt('wyc-now-s',nowS); txt('wyc-tgt',P.target.score); txt('wyc-pot',P.potential.score); txt('wyc-pot-s',potS);
-    var three=$('rm-three'); if(three) three.innerHTML='<div class="wyc-n"><span class="l">Now</span><b>'+P.score.score+'</b><span class="s">'+esc(nowS)+'</span></div><div class="wyc-n"><span class="l">At the 2030 targets</span><b>'+P.target.score+'</b><span class="s">'+esc(tgtS)+'</span></div><div class="wyc-n hl"><span class="l">With Yarta help · estimate</span><b>'+P.potential.score+'</b><span class="s">'+esc(potS)+'</span></div>';
+    var three=$('rm-three'); if(three) three.innerHTML='<div class="wyc-n"><span class="l">Now</span><b>'+P.score.score+'</b><span class="s">'+esc(nowS)+'</span></div><div class="wyc-n"><span class="l">At the eco standards · 2030 targets</span><b>'+P.target.score+'</b><span class="s">'+esc(tgtS)+'</span></div><div class="wyc-n hl"><span class="l">With Yarta help · estimate</span><b>'+P.potential.score+'</b><span class="s">'+esc(potS)+'</span></div>';
     drawRoadmap();
     var recs=$('recs'); if(recs) recs.innerHTML=P.items.length?P.items.map(card).join(''):'<p class="gaps-intro">Nothing is recommended from the current figures.</p>';
     var it=$('rm-items'); if(it) it.innerHTML='<thead><tr><th><span class="vh">Include</span></th><th>Help</th><th>Estimated change</th><th>Starts</th><th>Booking</th></tr></thead><tbody>'+P.items.map(function(x){ var h=x.h;
