@@ -181,7 +181,7 @@
   <div class="wrap">
     <p class="eyebrow">Live demo</p>
     <h1>Hand over a stream. Watch the numbers move.</h1>
-    <p class="lead">This is a YES Dashboard for a council hard waste program, on illustrative data. Use the handover buttons to add material the way YES staff would, and watch every tile recalculate, including the two emissions figures: your Scope 3 Category 5 inventory and the avoided emissions reported beside it. Then open the Roadmap: the score at the 2030 targets, an estimate with YES help, and the help you can book.</p>
+    <p class="lead">This is a YES Dashboard for a council hard waste program, on illustrative data. Use the handover buttons to add material the way YES staff would, and watch every tile recalculate, down to the two emissions figures at the foot of the Overview. Then open the Roadmap: the score at the 2030 targets, an estimate with YES help, and the help you can book.</p>
     <div class="hero-meta"><span class="badge demo">Demo data · illustrative</span><span>In production, only YES staff can do this.</span></div>
   </div>
 </section>
@@ -232,7 +232,6 @@
             <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-loop"/></svg><div class="v green"><span id="k-ret" data-count="0" data-dec="1">0</span><span class="u">t</span></div><div class="l">Delivered to licensed reprocessors</div><div class="d" id="k-ret-d">&nbsp;</div></div>
             <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-landfill"/></svg><div class="v"><span id="k-vol" data-count="0" data-dec="0">0</span><span class="u">m³</span></div><div class="l">Landfill volume avoided</div><div class="d" id="k-vol-d">&nbsp;</div></div>
           </div>
-          <div class="em-host" id="em" aria-live="polite"></div>
 
           <div class="demo-grid">
             <div class="panel">
@@ -272,6 +271,7 @@
               <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-landfill"/></svg><div class="v"><span id="eq-vol">0</span><span class="u">%</span></div><div class="l">Of an Olympic pool, in landfill space</div><div class="d src" id="eq-vol-d">&nbsp;</div></div>
             </div>
           </div>
+          <div class="em-host" id="em" aria-live="polite"></div>
         </div>
 
         <!-- CATEGORIES -->
@@ -301,7 +301,7 @@
             <div class="panel-h"><h4>Fill in the gaps · March</h4><span class="m">Monthly email · answered by the council · entered by YES</span></div>
             <p class="gaps-intro">Once a month YES emails the council a list of every stream it cannot yet account for. The council says where each one went. YES enters it, grades the evidence, and the dashboard moves. These four items are the kind of thing a council reports that did not go through Recycle Group, so no processing or transport is attributed to them; anything landfilled still counts in the Category 5 figure at the NGA factor. Choose a bucket for each and watch the Overview.</p>
             <div class="gaps" id="gaps"></div>
-            <p class="gaps-note">Entries answered by email count as Grade B evidence (contractor report or signed count sheet) until a docket is supplied. Grade B counts, and is flagged on the ledger and the certificate.</p>
+            <p class="gaps-note">Entries answered by email count as Grade B evidence (contractor report or signed count sheet) until a docket is supplied. Grade B counts, and is flagged on the ledger and the report.</p>
           </div>
         </div>
 
@@ -361,7 +361,7 @@
   <div class="wrap saw">
     <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">What you just saw</p><h2>Three rules that make the number hold.</h2></div><p class="lead">The demo lets you press the buttons. In production, a YES operator does, against a docket.</p></div>
     <ol class="steps reveal">
-      <li><div><h4>Only YES enters the data</h4><p>Every handover is entered and verified by YES staff against a weighbridge docket, processor certificate or signed count sheet. Customers never type in their own figures, which is why a YES Certificate can be relied on.</p></div></li>
+      <li><div><h4>Only YES enters the data</h4><p>Every handover is entered and verified by YES staff against a weighbridge docket, processor certificate or signed count sheet. Customers never type in their own figures, which is why a YES Report can be relied on.</p></div></li>
       <li><div><h4>Every tile has a method</h4><p>Steel recovery, landfill volume, both emissions figures and the YES Score each trace to a factor with a source, a status and a version. The Category 5 inventory and the avoided emissions are never netted. Where no factor exists yet, the tonnes are counted and no avoided emissions are claimed.</p></div></li>
       <li><div><h4>Stored is neutral, landfilled counts against</h4><p>Material parked at a depot does not move the score until it moves. Material sent to landfill pulls the recovery rate down. The general rubbish button shows exactly how much.</p></div></li>
     </ol>
@@ -786,7 +786,7 @@
       +'<label class="f">Notes<textarea id="bk-notes" rows="3" placeholder="Anything the provider should know, or a time that suits you if none above does."></textarea></label>'
       +'<label class="chk"><input type="checkbox" id="bk-share" checked> Share the YES figures behind this recommendation with the provider, so they arrive prepared</label>'
       +'<div class="btn-row"><button type="button" class="btn btn-primary btn-sm" id="bk-go">Request this booking</button><button type="button" class="btn btn-ghost btn-sm" id="bk-x">Cancel</button></div></div></div>'
-      +'<div class="bk-side"><p style="margin:0 0 10px"><b style="color:var(--paper)">Why it is recommended.</b> '+esc(it?it.why:'Your current figures do not call for it, but you can still book it.')+'</p><p style="margin:0 0 10px"><b style="color:var(--paper)">Assumed effect.</b> '+esc(h.effectText)+'</p><p style="margin:0 0 10px"><b style="color:var(--paper)">Who.</b> '+esc(h.who)+(h.prov==='group'?' A Recycle Group business, disclosed on your certificate.':h.prov==='partner'?' Independent specialist: chosen by you, and YES can introduce one.':'')+'</p><p style="margin:0">You can use any provider. Your YES Score and the verification of your handovers do not depend on who does the work.</p></div></div>';
+      +'<div class="bk-side"><p style="margin:0 0 10px"><b style="color:var(--paper)">Why it is recommended.</b> '+esc(it?it.why:'Your current figures do not call for it, but you can still book it.')+'</p><p style="margin:0 0 10px"><b style="color:var(--paper)">Assumed effect.</b> '+esc(h.effectText)+'</p><p style="margin:0 0 10px"><b style="color:var(--paper)">Who.</b> '+esc(h.who)+(h.prov==='group'?' A Recycle Group business, disclosed on your report.':h.prov==='partner'?' Independent specialist: chosen by you, and YES can introduce one.':'')+'</p><p style="margin:0">You can use any provider. Your YES Score and the verification of your handovers do not depend on who does the work.</p></div></div>';
     p.hidden=false;
     p.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});
   }

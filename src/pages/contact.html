@@ -61,7 +61,7 @@
             <label>Population or number of sites <span class="opt">optional</span><input type="text" name="size" inputmode="numeric" placeholder="e.g. 48,000 residents or 12 sites"></label>
           </div>
           <label>What would you like to measure?<textarea name="message" rows="5" placeholder="Streams, programs, sites, reporting deadlines. One month of data is enough to start."></textarea></label>
-          <label class="check"><input type="checkbox" name="sample_certificate" value="yes"><span>Send me the sample YES Certificate</span></label>
+          <label class="check"><input type="checkbox" name="sample_report" value="yes"><span>Send me the sample YES Report</span></label>
           <div class="btn-row"><button class="btn btn-primary" type="submit">Book a walkthrough {{ARROW}}</button></div>
           <p class="form-note">{{FORM_NOTE}}</p>
         </form>
@@ -125,8 +125,8 @@
     if(val('phone')) lines.push('Phone: '+val('phone'));
     lines.push('I am: '+val('type'));
     if(val('size')) lines.push('Population or sites: '+val('size'));
-    var cb=form.elements['sample_certificate'];
-    lines.push('Send the sample YES Certificate: '+(cb&&cb.checked?'Yes':'No'));
+    var cb=form.elements['sample_report'];
+    lines.push('Send the sample YES Report: '+(cb&&cb.checked?'Yes':'No'));
     if(val('message')){ lines.push(''); lines.push('What we would like to measure:'); lines.push(val('message')); }
     var subject='YES walkthrough request'+(org?' · '+org:'');
     var body=lines.join('\r\n');
