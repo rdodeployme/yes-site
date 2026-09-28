@@ -154,6 +154,35 @@
 .page-certificate .grades b{font-family:var(--font-mono);font-size:10px;color:var(--ink);background:var(--green-tint);border-radius:3px;text-align:center;padding:2px 0}
 .page-certificate .doc-after{max-width:794px;margin:20px auto 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.06em;color:var(--slate)}
 .page-certificate .doc-after a{color:var(--green-3)}
+/* sheet 3 · roadmap */
+.page-certificate .rm3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.page-certificate .rm3 .n{border:1px solid var(--mist);border-radius:8px;padding:10px 12px 11px;background:#fff}
+.page-certificate .rm3 .n .k{font-family:var(--font-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate)}
+.page-certificate .rm3 .n b{display:block;font-family:var(--font-display);font-weight:800;font-size:36px;letter-spacing:-.04em;line-height:1;margin:7px 0 6px;font-variant-numeric:tabular-nums}
+.page-certificate .rm3 .n .s{font-size:10px;color:var(--graphite);line-height:1.4}
+.page-certificate .rm3 .n.hl{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.page-certificate .rm3 .n.hl .k{color:var(--green-3)}
+.page-certificate .rm3 .n.hl b{color:var(--green-3)}
+.page-certificate .rm3 .n.hl .s{color:var(--mist)}
+.page-certificate .rmc{width:100%;height:auto;display:block}
+.page-certificate .rmc .gl{stroke:var(--mist-2);stroke-width:1}
+.page-certificate .rmc .yl,.page-certificate .rmc .xl{font-family:var(--font-mono);font-size:9px;fill:var(--slate)}
+.page-certificate .rmc .tl{stroke:var(--graphite);stroke-width:1;stroke-dasharray:2 3}
+.page-certificate .rmc .tt{font-family:var(--font-mono);font-size:9px;fill:var(--graphite)}
+.page-certificate .rmc .pj{fill:none;stroke:var(--green);stroke-width:1.8;stroke-dasharray:5 4;stroke-linecap:round}
+.page-certificate .rmc .dt{fill:var(--green)}
+.page-certificate .rmc .dto{fill:#fff;stroke:var(--green);stroke-width:1.5}
+.page-certificate .rmc .vl{font-family:var(--font-display);font-weight:700;font-size:11px;fill:var(--ink)}
+.page-certificate .lg2 .ln{display:inline-block;width:18px;height:0;border-top:2px solid var(--green)}
+.page-certificate .lg2 .ln.d{border-top-style:dashed}
+.page-certificate .lg2 .ln.t{border-top:2px dotted var(--graphite)}
+.page-certificate .lg2 .dt{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.page-certificate .streams.help td{padding:5px 7px;vertical-align:top;line-height:1.35}
+.page-certificate .streams.help td.cat{white-space:normal;font-weight:600}
+.page-certificate .streams.help td .w{display:block;font-size:9.5px;font-weight:400;color:var(--graphite);margin-top:2px}
+.page-certificate .streams.help td.st{white-space:nowrap}
+.page-certificate .gdot{color:var(--green);font-size:9px;margin-left:3px;vertical-align:1px}
+.page-certificate .help-other{font-size:10px;color:var(--graphite);line-height:1.45;margin:6px 0 0}
 @page{size:A4 portrait;margin:0}
 @media print{
   .page-certificate .hero-sub,.page-certificate .doc-tools,.page-certificate .doc-after,.nav,footer,.toast{display:none!important}
@@ -173,14 +202,14 @@
   <div class="wrap">
     <p class="eyebrow">Sample certificate</p>
     <h1>The YES Certificate.</h1>
-    <p class="lead">Two A4 pages a councillor, a CFO or an auditor can read in a minute and trace back to the ledger. Illustrative data for a council hard waste program.</p>
+    <p class="lead">Two A4 pages a councillor, a CFO or an auditor can read in a minute and trace back to the ledger, and a third with the roadmap: the score at the 2030 targets, an estimate with YES help, and the plan by quarter. Illustrative data for a council hard waste program.</p>
     <div class="btn-row"><button class="btn btn-primary" type="button" onclick="window.print()">Print or save as PDF {{ARROW}}</button><a class="btn btn-ghost" href="/yes-report/">Back to the YES Report</a></div>
   </div>
 </section>
 
 <section class="doc-wrap">
   <div class="wrap">
-    <div class="doc-tools"><span class="badge demo"><span class="dot"></span>Demo data · illustrative</span><span>YES-DEMO-2026-0001 · Method <span id="mv0">v1.0 draft</span> · Two pages, A4</span></div>
+    <div class="doc-tools"><span class="badge demo"><span class="dot"></span>Demo data · illustrative</span><span>YES-DEMO-2026-0001 · Method <span id="mv0">v1.0 draft</span> · Three pages, A4</span></div>
 
     <div class="sheets">
       <!-- ================= SHEET 1 ================= -->
@@ -257,7 +286,7 @@
               <div class="cid">Certificate ID<br>YES-DEMO-2026-0001<br>Demo · illustrative</div>
             </div>
           </div>
-          <div class="pgno"><span>YES · Your Environment Score · www.yes.com.au</span><span>Page 1 of 2</span></div>
+          <div class="pgno"><span>YES · Your Environment Score · www.yes.com.au</span><span>Page 1 of 3</span></div>
         </div>
       </div></div></div>
 
@@ -306,7 +335,45 @@
             </div>
             <div class="right"><div class="cid">Certificate ID<br>YES-DEMO-2026-0001<br>Demo · illustrative</div></div>
           </div>
-          <div class="pgno"><span>YES · Your Environment Score · www.yes.com.au</span><span>Page 2 of 2</span></div>
+          <div class="pgno"><span>YES · Your Environment Score · www.yes.com.au</span><span>Page 2 of 3</span></div>
+        </div>
+      </div></div></div>
+
+      <!-- ================= SHEET 3 ================= -->
+      <div class="sheet-slot"><div class="sheet-scaler"><div class="sheet" id="sheet3">
+        <div class="hdr2">
+          {{LOGO_BIG}}
+          <div class="t"><b>Hepburn Shire Council · Roadmap</b><br>Certificate YES-DEMO-2026-0001 · FY2026–27 to date · Method <span id="mv4">v1.0 draft</span></div>
+        </div>
+        <div class="body">
+          <div class="sec"><span>09 · Where you could be</span><b>YES Score · proposed <span id="sv3">v0.1</span></b></div>
+          <div class="rm3" id="rm3"></div>
+
+          <div class="sec"><span>10 · Projected YES Score</span><b>Estimate · with the plan in section 12</b></div>
+          <svg class="rmc" id="rmc" viewBox="0 0 706 128" role="img" aria-label="YES Score now and projected with the plan"></svg>
+          <div class="lg2"><span><i class="dt"></i>Now</span><span><i class="ln d"></i>Projected with the plan (estimate)</span><span><i class="ln t"></i>At the 2030 targets</span></div>
+
+          <div class="sec"><span>11 · Recommended help</span><b>Published rules · any provider</b></div>
+          <table class="streams help">
+            <thead><tr><th>Help</th><th>Why, from your figures</th><th>Estimated change</th><th>Status</th></tr></thead>
+            <tbody id="help-rows"></tbody>
+          </table>
+          <p class="help-other" id="help-other"></p>
+
+          <div class="sec" style="margin-top:14px"><span>12 · Plan by quarter</span><b>Projected YES Score at quarter end</b></div>
+          <table class="streams">
+            <thead><tr><th>Quarter</th><th>Starts · each builds up over six months</th><th class="n">Projected score</th></tr></thead>
+            <tbody id="q-rows"></tbody>
+          </table>
+
+          <div class="foot" style="margin-top:16px">
+            <div>
+              <p><strong>Disclosures.</strong> <span id="rm-disc"></span> The score with YES help and the projection are estimates from the published assumptions in the YES Method, not a promise or a guarantee. Completed work changes the score only through the handovers YES enters and verifies afterwards.</p>
+              <p class="attrib">Rules, assumptions and timing: yes.com.au/method</p>
+            </div>
+            <div class="right"><div class="cid">Certificate ID<br>YES-DEMO-2026-0001<br>Demo · illustrative</div></div>
+          </div>
+          <div class="pgno"><span>YES · Your Environment Score · www.yes.com.au</span><span>Page 3 of 3</span></div>
         </div>
       </div></div></div>
     </div>
@@ -324,7 +391,7 @@
   var t=Y.compute(Y.DEMO.entries,{km:Y.DEMO.km||0,sector:Y.DEMO.sector||'council'});
   var $=function(id){return document.getElementById(id);};
   var set=function(id,v){var e=$(id); if(e) e.textContent=v;};
-  ['mv0','mv1','mv2','mv3'].forEach(function(id){set(id,Y.METHOD_VERSION);});
+  ['mv0','mv1','mv2','mv3','mv4'].forEach(function(id){set(id,Y.METHOD_VERSION);}); set('sv3',(Y.SCORE&&Y.SCORE.version)||'v0.1');
   set('sv1',(Y.SCORE&&Y.SCORE.version)||'v0.1'); set('m-km',f(Y.DEMO.km||0));
   if($('em')&&Y.emPair) $('em').innerHTML=Y.emPair(t,{rows:3,foot:false,compact:true});
   set('hdr-in',f(t.inT,0)+' t handed over');
@@ -367,6 +434,41 @@
   var SHORT={inert:'inert',wood:'wood',garden:'garden',textiles:'textiles',rubber:'rubber',food:'food',paper:'paper',msw:'MSW',ci:'C&I',cd:'C&D'};
   fl+=' · A · NGA, t CO₂-e per t landfilled: '+Object.keys(used).map(function(k){return (SHORT[k]||k)+' '+(used[k]===0?'0':used[k].toFixed(1));}).join(' · ')+' · C&I interim on residual';
   set('factors',fl);
+  // sheet 3 · roadmap: the score now, at the 2030 targets and with YES help (engine: YES.helpPlan)
+  if(Y.helpPlan){
+    var OPT={km:Y.DEMO.km||0,sector:Y.DEMO.sector||'council'};
+    var P=Y.helpPlan(Y.DEMO.entries,OPT,{now:Y.DEMO.now,bookings:Y.DEMO.bookings||[]});
+    var esc=function(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+    var sg=function(v,d){return (v>0?'+':v<0?'−':'±')+f(Math.abs(v),d);};
+    var nAct=P.active.filter(function(it){return it.k!=='grants';}).length;
+    if($('rm3')) $('rm3').innerHTML='<div class="n"><div class="k">Now</div><b>'+P.score.score+'</b><div class="s">'+esc(P.score.band)+' · '+f(P.t.recoveryRate*100,1)+'% recovered · '+esc(Y.mlabel(P.now))+'</div></div>'
+      +'<div class="n"><div class="k">At the 2030 targets</div><b>'+P.target.score+'</b><div class="s">80% resource recovery (National Waste Policy Action Plan, 2024) · every tonne on Grade A evidence</div></div>'
+      +'<div class="n hl"><div class="k">With YES help · estimate</div><b>'+P.potential.score+'</b><div class="s">'+nAct+' recommended items'+(P.lanCut>=0.5?' · '+f(P.lanCut,0)+' t less to landfill for the same tonnes':'')+(P.cat5Cut>=0.5?' · Category 5 inventory '+f(P.cat5Cut,0)+' t CO₂-e lower':'')+'</div></div>';
+    // chart
+    (function(){ var svg=$('rmc'); if(!svg) return; var W=706,H=128,PL=30,PR=16,PT=12,PB=22;
+      var pts=[{m:P.now,v:P.score.score}].concat(P.proj.map(function(p){return {m:p.month,v:p.v};})), n=pts.length, iw=W-PL-PR, ih=H-PT-PB;
+      function x(i){return PL+iw*i/Math.max(1,n-1);} function y(v){return PT+ih*(1-v/100);}
+      var o=''; [0,25,50,75,100].forEach(function(g){ o+='<line class="gl" x1="'+PL+'" x2="'+(W-PR)+'" y1="'+y(g).toFixed(1)+'" y2="'+y(g).toFixed(1)+'"/><text class="yl" x="'+(PL-6)+'" y="'+(y(g)+3).toFixed(1)+'" text-anchor="end">'+g+'</text>'; });
+      var ty=y(P.target.score); o+='<line class="tl" x1="'+PL+'" x2="'+(W-PR)+'" y1="'+ty.toFixed(1)+'" y2="'+ty.toFixed(1)+'"/><text class="tt" x="'+(PL+6)+'" y="'+(ty-5).toFixed(1)+'">At the 2030 targets · '+P.target.score+'</text>';
+      o+='<path class="pj" d="'+pts.map(function(p,i){return (i?'L':'M')+x(i).toFixed(1)+' '+y(p.v).toFixed(1);}).join('')+'"/>';
+      o+='<circle class="dt" cx="'+x(0).toFixed(1)+'" cy="'+y(pts[0].v).toFixed(1)+'" r="4"/><text class="vl" x="'+(x(0)+7).toFixed(1)+'" y="'+(y(pts[0].v)+15).toFixed(1)+'">Now · '+pts[0].v+'</text>';
+      var lp=pts[n-1]; o+='<circle class="dto" cx="'+x(n-1).toFixed(1)+'" cy="'+y(lp.v).toFixed(1)+'" r="3.5"/><text class="vl" x="'+(x(n-1)-2).toFixed(1)+'" y="'+(y(lp.v)+15).toFixed(1)+'" text-anchor="end">'+lp.v+' · estimate</text>';
+      pts.forEach(function(p,i){ if(i%3===0||i===n-1) o+='<text class="xl" x="'+x(i).toFixed(1)+'" y="'+(H-6)+'" text-anchor="'+(i===0?'start':i===n-1?'end':'middle')+'">'+(i===0?'Now':Y.mshort(p.m))+'</text>'; });
+      svg.innerHTML=o; })();
+    // recommended help with booking status
+    var DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var sl=function(v){ if(!v) return 'Time to be arranged'; var p=v.split('T'),d=p[0].split('-'),tm=(p[1]||'09:00').split(':'); var dt=new Date(+d[0],+d[1]-1,+d[2],+tm[0],+tm[1]); var h=dt.getHours(); return DOW[dt.getDay()]+' '+dt.getDate()+' '+MON[dt.getMonth()]+', '+((h%12)||12)+':'+('0'+dt.getMinutes()).slice(-2)+' '+(h<12?'am':'pm'); };
+    var up=function(u){ var a=[]; if(u.recPts>=0.05) a.push('Recovery '+f(P.t.recoveryRate*100,1)+'% → '+f(P.t.recoveryRate*100+u.recPts,1)+'%'); if(u.evidence>=0.05) a.push('Evidence '+f(P.t.evidenceShare*100,1)+'% → 100%'); if(u.lanT>=0.5) a.push(f(u.lanT,0)+' t less to landfill'); if(u.score>=0.05) a.push('Score '+sg(u.score,1)); return a.join(' · '); };
+    var moves=P.items.filter(function(it){ return it.up.score>=0.05 || it.booking; }), other=P.items.filter(function(it){ return moves.indexOf(it)<0; });
+    if($('help-rows')) $('help-rows').innerHTML=moves.map(function(it){ var h=it.h, pv=Y.PROVIDERS[h.prov]||{label:''}, b=it.booking;
+      return '<tr><td class="cat">'+esc(it.title)+(h.prov==='group'?'<span class="gdot">●</span>':'')+'<span class="w">'+esc(pv.label)+(h.groupNames?' · '+esc(h.groupNames):'')+'</span></td><td>'+esc(it.why)+'</td><td>'+(up(it.up)||esc(h.effectText))+'</td><td class="st">'+(b?(b.status==='confirmed'?'Booked':'Requested')+'<span class="w">'+esc(sl(b.slot))+'</span>':'Not booked')+'</td></tr>'; }).join('');
+    set('help-other', other.length ? 'Also recommended, with no change to the score: '+other.map(function(it){ return it.title+' ('+it.h.effectText.replace(/^No (direct )?change to the score\. ?/,'').replace(/\.$/,'').replace(/^./,function(c){return c.toLowerCase();})+')'; }).join('; ')+'.' : '');
+    // quarters
+    var qs=P.quarters.filter(function(q,i){return q.starts.length||q.full.length||i===P.quarters.length-1;});
+    if($('q-rows')) $('q-rows').innerHTML=qs.map(function(q){ return '<tr><td class="cat">'+esc(q.label)+'</td><td>'+(q.starts.map(function(it){return esc(it.title)+(it.booking?' (booked)':'');}).join(' · ')||'No new starts')+'</td><td class="n"><b>'+(q.score==null?'—':q.score)+'</b></td></tr>'; }).join('');
+    var grp=P.items.filter(function(it){return it.h.prov==='group';}).map(function(it){return it.h.groupNames;});
+    set('rm-disc', grp.length ? 'Items marked ● are delivered by a Recycle Group business ('+grp.join(', ')+'). YES is a Recycle Group business. You can use any provider; the YES Score and the verification of your handovers do not depend on who does the work.' : 'No item in this plan is delivered by a Recycle Group business. YES is a Recycle Group business.');
+  }
   // responsive scale
   function fit(){var w=Math.min(document.documentElement.clientWidth-32,794); var sc=Math.min(1,w/794); document.querySelectorAll('.page-certificate .sheet-slot, .sheet-slot').forEach(function(s){var sh=s.querySelector('.sheet'); s.style.setProperty('--sc',sc); if(sh) s.style.setProperty('--sh',Math.max(1123,sh.scrollHeight)+'px');});}
   fit(); window.addEventListener('resize',fit); window.addEventListener('load',fit); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fit);

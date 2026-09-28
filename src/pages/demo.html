@@ -100,6 +100,80 @@
 /* what you just saw: numbered editorial list */
 .page-demo .saw .steps p{max-width:62ch}
 @media(min-width:900px){.page-demo .saw .steps h4{font-size:22px;letter-spacing:-.02em}}
+/* where you could be · roadmap · recommended help · booking */
+.page-demo .wyc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:12px;align-items:stretch}
+@media(max-width:900px){.page-demo .wyc{grid-template-columns:repeat(3,minmax(0,1fr))}.page-demo .wyc .btn{grid-column:1/-1;justify-self:start}}
+@media(max-width:560px){.page-demo .wyc{grid-template-columns:1fr}}
+.page-demo .wyc-n{background:var(--ink-2);border:1px solid #262826;border-radius:10px;padding:14px 16px;display:grid;gap:6px;align-content:start}
+.page-demo .wyc-n .l{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
+.page-demo .wyc-n b{font-family:var(--font-display);font-weight:700;font-size:clamp(30px,3vw,40px);letter-spacing:-.03em;line-height:1;color:var(--paper);font-variant-numeric:tabular-nums}
+.page-demo .wyc-n .s{font-size:12.5px;color:var(--mist);line-height:1.45}
+.page-demo .wyc-n.hl{border-color:#2D5E40;background:linear-gradient(180deg,rgba(79,193,122,.08),rgba(79,193,122,.02))}
+.page-demo .wyc-n.hl b{color:var(--green-3)}
+.page-demo .wyc .btn{align-self:center;white-space:nowrap}
+.page-demo .rm-three{margin-bottom:16px}
+.page-demo .rm-three .wyc-n b{font-size:clamp(34px,3.4vw,48px)}
+.page-demo .rm-chart .tl{stroke:#8E938E;stroke-width:1.3;stroke-dasharray:2 4}
+.page-demo .rm-chart .tt{font-family:var(--font-mono);font-size:11px;fill:var(--mist)}
+.page-demo .rm-chart .pj{fill:none;stroke:var(--green-3);stroke-width:2;stroke-dasharray:6 5;stroke-linecap:round}
+.page-demo .rm-leg{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}
+.page-demo .rm-leg span{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.page-demo .rm-leg i{display:inline-block;width:20px;height:0;border-top:2px solid var(--green-3)}
+.page-demo .rm-leg i.d{border-top-style:dashed}
+.page-demo .rm-leg i.o{width:9px;height:9px;border:0;border-radius:50%;background:var(--green-3)}.page-demo .rm-leg i.t{border-top:2px dotted #8E938E}
+.page-demo .recs{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:760px){.page-demo .recs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1100px){.page-demo .recs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.page-demo .rec{background:var(--ink-3);border:1px solid #262826;border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.page-demo .rec .a{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
+.page-demo .rec h5{font-family:var(--font-display);font-weight:700;font-size:17px;letter-spacing:-.01em;line-height:1.2;margin:0;color:var(--paper)}
+.page-demo .rec .why{font-size:13.5px;color:var(--mist);line-height:1.5;margin:0}
+.page-demo .rec dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0;font-size:12.5px}
+.page-demo .rec dt{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);padding-top:2px}
+.page-demo .rec dd{margin:0;color:var(--paper)}
+.page-demo .rec dd .up{color:var(--green-3);font-weight:600}
+.page-demo .rec .f{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding-top:4px}
+.page-demo .rec .f .when{font-family:var(--font-mono);font-size:11.5px;color:var(--mist)}
+.page-demo .grp-dot{color:var(--green-3);font-size:10px;margin-left:4px;vertical-align:1px}
+.page-demo .bkst{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.page-demo .bkst::before{content:"";width:8px;height:8px;border-radius:50%;border:1.5px solid currentColor}
+.page-demo .bkst.requested{color:var(--mist)}.page-demo .bkst.confirmed{color:var(--green-3)}.page-demo .bkst.confirmed::before{background:var(--green-3)}
+.page-demo .bkst.cancelled{color:var(--slate);text-decoration:line-through}
+.page-demo .bk-panel{border-color:#2D5E40}
+.page-demo .bk-panel[hidden]{display:none}
+.page-demo .slots{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));margin-top:6px}
+.page-demo .sday{display:grid;gap:6px;align-content:start}
+.page-demo .sday .sd{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--slate)}
+.page-demo .slot{background:transparent;border:1px solid #3A3D3A;color:var(--paper);font:500 13px var(--font-body);padding:9px 10px;border-radius:6px;cursor:pointer;text-align:left}
+.page-demo .slot:hover{border-color:var(--mist)}
+.page-demo .slot[aria-pressed=true]{background:var(--green-3);border-color:var(--green-3);color:var(--ink)}
+.page-demo .bk-form{display:grid;gap:14px;margin-top:18px}
+@media(min-width:760px){.page-demo .bk-form .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}}
+.page-demo .bk-form label.f{display:grid;gap:6px;font-size:13px;color:var(--mist)}
+.page-demo .bk-form input[type=text],.page-demo .bk-form input[type=email],.page-demo .bk-form textarea{width:100%;background:var(--ink-3);border:1px solid #3A3D3A;border-radius:6px;color:var(--paper);font:14px var(--font-body);padding:10px 12px}
+.page-demo .bk-form input:focus,.page-demo .bk-form textarea:focus{outline:2px solid var(--green-3);outline-offset:1px}
+.page-demo .bk-form .modes{display:flex;flex-wrap:wrap;gap:8px}
+.page-demo .bk-form .modes label,.page-demo .bk-form .chk{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--paper);cursor:pointer}
+.page-demo .bk-form .modes label{border:1px solid #3A3D3A;border-radius:6px;padding:8px 12px}
+.page-demo .bk-form input[type=radio],.page-demo .bk-form input[type=checkbox]{accent-color:var(--green-3)}
+.page-demo .bk-side{font-size:13px;color:var(--mist);line-height:1.55;border-left:2px solid var(--green-3);padding-left:14px}
+.page-demo .bk-grid{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:1000px){.page-demo .bk-grid{grid-template-columns:minmax(0,8fr) minmax(0,4fr)}}
+.page-demo .rm-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.page-demo .rm-tbl th{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);font-weight:500;text-align:left;padding:0 10px 8px;border-bottom:1px solid #3A3D3A}
+.page-demo .rm-tbl td{padding:10px;border-bottom:1px solid #262826;vertical-align:top;color:var(--mist)}
+.page-demo .rm-tbl td b{color:var(--paper);font-weight:600}
+.page-demo .rm-tbl td.n,.page-demo .rm-tbl th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.page-demo .rm-tbl td.n b{font-family:var(--font-display);font-size:16px}
+.page-demo .rm-tbl tr.off td{opacity:.5}
+.page-demo .rm-tbl input[type=checkbox]{width:16px;height:16px;accent-color:var(--green-3)}
+.page-demo .rm-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;min-width:0}
+.page-demo #p-roadmap{grid-template-columns:minmax(0,1fr)}
+.page-demo #p-roadmap .panel{min-width:0}
+.page-demo .ind{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:6px;font-size:13px;color:var(--mist)}
+.page-demo .ind b{color:var(--paper);font-weight:600}
+.page-demo .vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media(max-width:640px){.page-demo .rm-tbl.plan thead{display:none}.page-demo .rm-tbl.plan tr{display:grid;grid-template-columns:26px minmax(0,1fr);gap:4px 10px;padding:12px 0;border-bottom:1px solid #262826}.page-demo .rm-tbl.plan td{display:block;padding:0;border:0}.page-demo .rm-tbl.plan td:first-child{grid-row:span 4}.page-demo .rm-tbl.plan td.n{text-align:left}}
 </style>
 
 <!-- HERO -->
@@ -107,7 +181,7 @@
   <div class="wrap">
     <p class="eyebrow">Live demo</p>
     <h1>Hand over a stream. Watch the numbers move.</h1>
-    <p class="lead">This is a YES Dashboard for a council hard waste program, on illustrative data. Use the handover buttons to add material the way YES staff would, and watch every tile recalculate, including the two emissions figures: your Scope 3 Category 5 inventory and the avoided emissions reported beside it.</p>
+    <p class="lead">This is a YES Dashboard for a council hard waste program, on illustrative data. Use the handover buttons to add material the way YES staff would, and watch every tile recalculate, including the two emissions figures: your Scope 3 Category 5 inventory and the avoided emissions reported beside it. Then open the Roadmap: the score at the 2030 targets, an estimate with YES help, and the help you can book.</p>
     <div class="hero-meta"><span class="badge demo">Demo data · illustrative</span><span>In production, only YES staff can do this.</span></div>
   </div>
 </section>
@@ -124,6 +198,7 @@
           <button type="button" role="tab" id="t-categories" aria-selected="false" aria-controls="p-categories" data-tab="categories">Categories</button>
           <button type="button" role="tab" id="t-ledger" aria-selected="false" aria-controls="p-ledger" data-tab="ledger">Ledger</button>
           <button type="button" role="tab" id="t-gaps" aria-selected="false" aria-controls="p-gaps" data-tab="gaps">Gaps</button>
+          <button type="button" role="tab" id="t-roadmap" aria-selected="false" aria-controls="p-roadmap" data-tab="roadmap">Roadmap</button>
         </div>
       </div>
 
@@ -140,6 +215,13 @@
               <div class="legend"><span class="p1"><i></i>Recovery <b id="sc-l1"></b></span><span class="p2"><i></i>Carbon <b id="sc-l2"></b></span><span class="p3"><i></i>Evidence <b id="sc-l3"></b></span></div>
               <p class="m">Self-declared under the published YES Method · not an accredited rating, certification or third-party verification · Stored is neutral · Landfilled counts against</p>
             </div>
+          </div>
+
+          <div class="wyc" aria-label="Where you could be">
+            <div class="wyc-n"><span class="l">Now</span><b id="wyc-now">—</b><span class="s" id="wyc-now-s">&nbsp;</span></div>
+            <div class="wyc-n"><span class="l">At the 2030 targets</span><b id="wyc-tgt">—</b><span class="s">80% resource recovery · every tonne on a docket</span></div>
+            <div class="wyc-n hl"><span class="l">With YES help · estimate</span><b id="wyc-pot">—</b><span class="s" id="wyc-pot-s">&nbsp;</span></div>
+            <button type="button" class="btn btn-ghost btn-sm" data-goto="roadmap">See the roadmap</button>
           </div>
 
           <div class="demo-kpis" aria-label="Your Environment Score tiles">
@@ -220,6 +302,33 @@
             <p class="gaps-intro">Once a month YES emails the council a list of every stream it cannot yet account for. The council says where each one went. YES enters it, grades the evidence, and the dashboard moves. These four items are the kind of thing a council reports that did not go through Recycle Group, so no processing or transport is attributed to them; anything landfilled still counts in the Category 5 figure at the NGA factor. Choose a bucket for each and watch the Overview.</p>
             <div class="gaps" id="gaps"></div>
             <p class="gaps-note">Entries answered by email count as Grade B evidence (contractor report or signed count sheet) until a docket is supplied. Grade B counts, and is flagged on the ledger and the certificate.</p>
+          </div>
+        </div>
+
+        <!-- ROADMAP -->
+        <div class="tab-panel" id="p-roadmap" role="tabpanel" aria-labelledby="t-roadmap" data-panel="roadmap" hidden>
+          <div class="panel">
+            <div class="panel-h"><h4>Where you could be</h4><span class="m">YES Score · proposed <span class="sv">v0.1</span> · estimates</span></div>
+            <div class="wyc rm-three" id="rm-three"></div>
+            <svg class="trend rm-chart" id="rm-svg" viewBox="0 0 600 220" role="img" aria-label="YES Score now, and projected with the plan"></svg>
+            <p class="trend-note rm-leg"><span><i class="o"></i>Now</span><span><i class="d"></i>Projected with the plan (estimate)</span><span><i class="t"></i>At the 2030 targets</span></p>
+          </div>
+          <div class="panel">
+            <div class="panel-h"><h4>Recommended for you</h4><span class="m">Published rules · any provider</span></div>
+            <div class="recs" id="recs"></div>
+          </div>
+          <div class="panel bk-panel" id="bk-panel" hidden></div>
+          <div class="panel">
+            <div class="panel-h"><h4>Plan by quarter</h4><span class="m">Untick an item to see the estimate without it</span></div>
+            <div class="rm-wrap"><table class="rm-tbl plan" id="rm-items"></table></div>
+            <div class="rm-wrap" style="margin-top:18px"><table class="rm-tbl" id="rm-quarters"></table></div>
+            <p class="gaps-note" id="rm-rules"></p>
+          </div>
+          <div class="panel">
+            <div class="panel-h"><h4>Bookings</h4><span class="m">Demo · nothing is sent</span></div>
+            <div class="rm-wrap"><table class="rm-tbl" id="rm-bookings"></table></div>
+            <p class="gaps-note">YES confirms the time with you and the provider. Once the work is done, the change shows only as YES enters and verifies the handovers that follow.</p>
+            <ul class="ind" id="rm-ind"></ul>
           </div>
         </div>
       </div>
@@ -548,12 +657,14 @@
     var cars=$('eq-cars'); if(cars) setCounter(cars,'cars',t.cars,0);
     txt('eq-steel',fmt(Math.round(t.steelT/0.9),0)); txt('eq-vol',fmt(t.volAvoided/2500*100,0));
     last=t;
+    renderRoadmap();
   }
   txt('eq-cars-d','Avoided-emissions estimate ÷ '+(B.EQUIV?B.EQUIV.carT:4.16)+' t CO₂-e per family vehicle lifetime · '+srcId(B.EQUIV?B.EQUIV.carSrc:'nsw2010')+' indicator · shows scale only');
   txt('eq-steel-d','Steel recovered ÷ about 900 kg of steel in an average car · WorldAutoSteel · sold to licensed metal reprocessors');
   txt('eq-vol-d','Landfill volume avoided ÷ 2,500 m³ per Olympic-size pool · mattress residual counted at 25% of its volume');
   txt('demo-ver',B.METHOD_VERSION||'v1.0 draft');
   txt('sc-ver',(B.SCORE&&B.SCORE.version)||'v0.1');
+  document.querySelectorAll('.page-demo .sv').forEach(function(el){el.textContent=(B.SCORE&&B.SCORE.version)||'v0.1';});
   document.querySelectorAll('.page-demo .mv').forEach(function(el){el.textContent=B.METHOD_VERSION||'';});
   (function(){ var w=B.SCORE&&B.SCORE.weights; if(w) txt('sc-wl','Composition · points of 100 · weights '+w.recovery+' / '+w.carbon+' / '+w.evidence); })();
 
@@ -582,11 +693,129 @@
       entries=B.DEMO.entries.map(function(e){return Object.assign({},e);});
       trend=B.DEMO.trend.map(function(m){return {m:m.m,t:m.t};});
       gapChoice=GAPS.map(function(){return null;});
+      bookings=(B.DEMO.bookings||[]).map(function(b){return Object.assign({},b);}); planOff={}; closeBooking();
       clearDemoRows(); paintGaps();
       render({delta:false}); tweenTrend();
       toast('Demo reset · illustrative data restored');
     });
   }
+
+  // ---- roadmap: the score now, at the 2030 targets and with YES help; recommended help and bookings ----
+  var bookings=(B.DEMO.bookings||[]).map(function(b){return Object.assign({},b);});
+  var planOff={}, bookFor=null, bookSlot=null, plan=null;
+  var DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  function esc(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function pad2(n){return (n<10?'0':'')+n;}
+  function slotDate(v){var p=v.split('T'),d=p[0].split('-'),tm=(p[1]||'09:00').split(':');return new Date(+d[0],+d[1]-1,+d[2],+tm[0],+tm[1]);}
+  function timeLabel(d){var h=d.getHours(),mi=d.getMinutes();return (h%12||12)+':'+pad2(mi)+' '+(h<12?'am':'pm');}
+  function slotLabel(v){if(!v) return 'Time to be arranged'; var d=slotDate(v); return DOW[d.getDay()]+' '+d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear()+', '+timeLabel(d);}
+  function sgn(v,d){return (v>0?'+':v<0?'−':'±')+fmt(Math.abs(v),d);}
+  function upText(u,t){
+    if(!u) return ''; var a=[];
+    if(u.recPts>=0.05) a.push('Recovery '+fmt(t.recoveryRate*100,1)+'% → '+fmt(t.recoveryRate*100+u.recPts,1)+'%');
+    if(u.evidence>=0.05) a.push('Evidence '+fmt(t.evidenceShare*100,1)+'% → 100%');
+    if(u.lanT>=0.5) a.push(fmt(u.lanT,0)+' t less to landfill');
+    if(u.score>=0.05) a.push('<span class="up">Score '+sgn(u.score,1)+'</span>');
+    return a.join(' · ');
+  }
+  var BKL={requested:'Requested',confirmed:'Confirmed',cancelled:'Cancelled'};
+  function bkChip(b){return '<span class="bkst '+esc(b.status)+'">'+(BKL[b.status]||esc(b.status))+'</span>';}
+  function dot(h){return h.prov==='group'?'<span class="grp-dot" title="Delivered by a Recycle Group business">●</span>':'';}
+  function nextSlots(){
+    var out=[], d=new Date(); d.setHours(0,0,0,0);
+    while(out.length<20){ d.setDate(d.getDate()+1); var w=d.getDay(); if(w===0||w===6) continue; var ds=d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate()); out.push(ds+'T09:00'); out.push(ds+'T13:30'); }
+    return out.filter(function(v){ return !bookings.some(function(b){ return b.status!=='cancelled'&&b.slot===v; }); });
+  }
+  function card(it){
+    var h=it.h, pv=B.PROVIDERS[h.prov]||{label:''}, b=it.booking, up=upText(it.up,plan.t);
+    return '<article class="rec"><span class="a">'+esc(h.area)+'</span><h5>'+esc(it.title)+dot(h)+'</h5><p class="why">'+esc(it.why)+'</p>'
+      +'<dl><dt>Change</dt><dd>'+(up||esc(h.effectText))+'</dd><dt>Who</dt><dd>'+esc(pv.label)+(h.groupNames?' · '+esc(h.groupNames):'')+'</dd></dl>'
+      +'<div class="f">'+(b?bkChip(b)+'<span class="when">'+esc(slotLabel(b.slot))+'</span>':'<button type="button" class="btn btn-primary btn-sm" data-book="'+h.k+'">Book a session</button>')+'</div></article>';
+  }
+  function drawRoadmap(){
+    var svg=$('rm-svg'); if(!svg||!plan) return;
+    var w=svg.getBoundingClientRect().width, sm=w>0&&w<420;
+    var W=sm?320:600, H=sm?210:220, PL=sm?30:36, PR=sm?14:20, PT=16, PB=28;
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    var pts=[{m:plan.now,v:plan.score.score}].concat(plan.proj.map(function(p){return {m:p.month,v:p.v};}));
+    var n=pts.length, iw=W-PL-PR, ih=H-PT-PB;
+    function x(i){return PL+iw*i/Math.max(1,n-1);} function y(v){return PT+ih*(1-v/100);}
+    var out='';
+    [0,25,50,75,100].forEach(function(g){ out+='<line class="gl" x1="'+PL+'" x2="'+(W-PR)+'" y1="'+y(g).toFixed(1)+'" y2="'+y(g).toFixed(1)+'"/><text class="yl" x="'+(PL-8)+'" y="'+(y(g)+4).toFixed(1)+'" text-anchor="end">'+g+'</text>'; });
+    var ty=y(plan.target.score); out+='<line class="tl" x1="'+PL+'" x2="'+(W-PR)+'" y1="'+ty.toFixed(1)+'" y2="'+ty.toFixed(1)+'"/><text class="tt" x="'+(PL+6)+'" y="'+(ty-7).toFixed(1)+'">At the 2030 targets · '+plan.target.score+'</text>';
+    out+='<path class="pj" d="'+pts.map(function(p,i){return (i?'L':'M')+x(i).toFixed(1)+' '+y(p.v).toFixed(1);}).join('')+'"/>';
+    out+='<circle class="dt last" cx="'+x(0).toFixed(1)+'" cy="'+y(pts[0].v).toFixed(1)+'" r="5"/><text class="vl" x="'+(x(0)+8).toFixed(1)+'" y="'+(y(pts[0].v)+18).toFixed(1)+'">Now · '+pts[0].v+'</text>';
+    var lp=pts[n-1]; out+='<circle class="dt" cx="'+x(n-1).toFixed(1)+'" cy="'+y(lp.v).toFixed(1)+'" r="4"/><text class="vl" x="'+(x(n-1)-2).toFixed(1)+'" y="'+(y(lp.v)+18).toFixed(1)+'" text-anchor="end">'+lp.v+' · estimate</text>';
+    var every=sm?6:3; pts.forEach(function(p,i){ if(i%every===0||i===n-1) out+='<text class="xl" x="'+x(i).toFixed(1)+'" y="'+(H-8)+'" text-anchor="'+(i===0?'start':i===n-1?'end':'middle')+'">'+(i===0?'Now':B.mshort(p.m))+'</text>'; });
+    svg.innerHTML=out;
+    svg.setAttribute('aria-label','YES Score now '+pts[0].v+'; projected with the plan '+lp.v+' by '+B.mlabel(lp.m)+' (estimate); at the 2030 targets '+plan.target.score);
+  }
+  function renderRoadmap(){
+    if(!B.helpPlan) return;
+    plan=B.helpPlan(entries,OPTS,{now:B.DEMO.now,bookings:bookings,off:planOff});
+    var P=plan, n=P.active.filter(function(it){return it.k!=='grants';}).length;
+    var nowS=P.score.band+' · '+fmt(P.t.recoveryRate*100,1)+'% recovered · '+B.mlabel(P.now);
+    var potS=n+' recommended item'+(n===1?'':'s')+(P.lanCut>=0.5?' · '+fmt(P.lanCut,0)+' t less to landfill for the same tonnes':'');
+    var tgtS=B.TARGETS.map(function(x){return x.name;}).join(' · ');
+    txt('wyc-now',P.score.score); txt('wyc-now-s',nowS); txt('wyc-tgt',P.target.score); txt('wyc-pot',P.potential.score); txt('wyc-pot-s',potS);
+    var three=$('rm-three'); if(three) three.innerHTML='<div class="wyc-n"><span class="l">Now</span><b>'+P.score.score+'</b><span class="s">'+esc(nowS)+'</span></div><div class="wyc-n"><span class="l">At the 2030 targets</span><b>'+P.target.score+'</b><span class="s">'+esc(tgtS)+'</span></div><div class="wyc-n hl"><span class="l">With YES help · estimate</span><b>'+P.potential.score+'</b><span class="s">'+esc(potS)+'</span></div>';
+    drawRoadmap();
+    var recs=$('recs'); if(recs) recs.innerHTML=P.items.length?P.items.map(card).join(''):'<p class="gaps-intro">Nothing is recommended from the current figures.</p>';
+    var it=$('rm-items'); if(it) it.innerHTML='<thead><tr><th><span class="vh">Include</span></th><th>Help</th><th>Estimated change</th><th>Starts</th><th>Booking</th></tr></thead><tbody>'+P.items.map(function(x){ var h=x.h;
+      return '<tr'+(x.off?' class="off"':'')+'><td><input type="checkbox" data-plan="'+h.k+'"'+(x.off?'':' checked')+(x.booking?' disabled title="Booked items stay in the plan"':'')+' aria-label="Include '+esc(x.title)+' in the plan"></td><td><b>'+esc(x.title)+'</b>'+dot(h)+'<div>'+esc((B.PROVIDERS[h.prov]||{}).label)+' · '+esc(h.session)+'</div></td><td>'+(upText(x.up,P.t)||esc(h.effectText))+'</td><td>'+(x.start?B.mshort(x.start):'Not in plan')+'</td><td>'+(x.booking?bkChip(x.booking):'—')+'</td></tr>'; }).join('')+'</tbody>';
+    var qs=P.quarters.filter(function(q,i){return q.starts.length||q.full.length||i===P.quarters.length-1;});
+    var qt=$('rm-quarters'); if(qt) qt.innerHTML='<thead><tr><th>Quarter</th><th>Starts</th><th>Full effect</th><th class="n">Projected score</th></tr></thead><tbody>'+qs.map(function(q){ return '<tr><td><b>'+esc(q.label)+'</b></td><td>'+(q.starts.map(function(x){return esc(x.title)+(x.booking?' ('+(x.booking.status==='requested'?'requested':'booked')+')':'');}).join('<br>')||'—')+'</td><td>'+(q.full.map(function(x){return esc(x.title);}).join('<br>')||'—')+'</td><td class="n"><b>'+(q.score==null?'—':q.score)+'</b></td></tr>'; }).join('')+'</tbody>';
+    txt('rm-rules',B.HELP_RULES);
+    var bl=bookings.slice().sort(function(a,b){return (a.slot||'9')<(b.slot||'9')?-1:1;});
+    var bt=$('rm-bookings'); if(bt) bt.innerHTML=bl.length?'<thead><tr><th>Help</th><th>When</th><th>Format</th><th>Status</th><th></th></tr></thead><tbody>'+bl.map(function(b){ var h=B.HELP_BY[b.svc]||{title:b.svc};
+      return '<tr><td><b>'+esc(h.title)+'</b>'+dot(h)+'</td><td>'+esc(slotLabel(b.slot))+'</td><td>'+esc(b.mode||'')+'</td><td>'+bkChip(b)+'</td><td>'+((b.status==='requested'||b.status==='confirmed')?'<button type="button" class="btn btn-ghost btn-sm" data-cancel="'+esc(b.id)+'">Cancel</button>':'')+'</td></tr>'; }).join('')+'</tbody>':'<tbody><tr><td>No bookings yet.</td></tr></tbody>';
+    var ind=$('rm-ind'); if(ind) ind.innerHTML=(B.INDEPENDENCE||[]).map(function(x){return '<li><b>'+esc(x.k)+'.</b> '+esc(x.d)+'</li>';}).join('');
+  }
+  function closeBooking(){ var p=$('bk-panel'); if(p){ p.hidden=true; p.innerHTML=''; } bookFor=null; bookSlot=null; }
+  function openBooking(k){
+    var h=B.HELP_BY[k]; if(!h) return; bookFor=k; bookSlot=null;
+    var it=(plan&&plan.items||[]).filter(function(x){return x.k===k;})[0], pv=B.PROVIDERS[h.prov]||{label:'',note:''};
+    var byDay={}, days=[]; nextSlots().forEach(function(v){ var d=v.slice(0,10); if(!byDay[d]){ byDay[d]=[]; days.push(d); } byDay[d].push(v); });
+    var grid=days.map(function(d){ var dt=slotDate(d+'T09:00'); return '<div class="sday"><div class="sd">'+DOW[dt.getDay()]+' '+dt.getDate()+' '+MONTHS[dt.getMonth()]+'</div>'+byDay[d].map(function(v){ return '<button type="button" class="slot" data-slot="'+v+'" aria-pressed="false">'+timeLabel(slotDate(v))+'</button>'; }).join('')+'</div>'; }).join('')
+      +'<div class="sday"><div class="sd">Other</div><button type="button" class="slot" data-slot="other" aria-pressed="false">Another time</button></div>';
+    var p=$('bk-panel'); if(!p) return;
+    p.innerHTML='<div class="panel-h"><h4>Book · '+esc(h.title)+'</h4><span class="m">'+esc(h.session)+' · demo · nothing is sent</span></div>'
+      +'<div class="bk-grid"><div><div class="slots" role="group" aria-label="Available times, next ten business days">'+grid+'</div>'
+      +'<div class="bk-form"><div class="modes" role="radiogroup" aria-label="Format">'+h.modes.map(function(m,i){return '<label><input type="radio" name="bk-mode" value="'+esc(m)+'"'+(i===0?' checked':'')+'>'+esc(m)+'</label>';}).join('')+'</div>'
+      +'<div class="two"><label class="f">Contact name<input type="text" id="bk-name" value="Council waste officer (demo)" autocomplete="off"></label><label class="f">Contact email<input type="email" id="bk-email" value="waste@hepburn.example" autocomplete="off"></label></div>'
+      +'<label class="f">Notes<textarea id="bk-notes" rows="3" placeholder="Anything the provider should know, or a time that suits you if none above does."></textarea></label>'
+      +'<label class="chk"><input type="checkbox" id="bk-share" checked> Share the YES figures behind this recommendation with the provider, so they arrive prepared</label>'
+      +'<div class="btn-row"><button type="button" class="btn btn-primary btn-sm" id="bk-go">Request this booking</button><button type="button" class="btn btn-ghost btn-sm" id="bk-x">Cancel</button></div></div></div>'
+      +'<div class="bk-side"><p style="margin:0 0 10px"><b style="color:var(--paper)">Why it is recommended.</b> '+esc(it?it.why:'Your current figures do not call for it, but you can still book it.')+'</p><p style="margin:0 0 10px"><b style="color:var(--paper)">Assumed effect.</b> '+esc(h.effectText)+'</p><p style="margin:0 0 10px"><b style="color:var(--paper)">Who.</b> '+esc(h.who)+(h.prov==='group'?' A Recycle Group business, disclosed on your certificate.':h.prov==='partner'?' Independent specialist: chosen by you, and YES can introduce one.':'')+'</p><p style="margin:0">You can use any provider. Your YES Score and the verification of your handovers do not depend on who does the work.</p></div></div>';
+    p.hidden=false;
+    p.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});
+  }
+  function submitBooking(){
+    var h=B.HELP_BY[bookFor]; if(!h) return;
+    if(!bookSlot){ toast('Choose a time, or Another time'); return; }
+    var nm=$('bk-name'), em=$('bk-email'), nt=$('bk-notes');
+    var name=(nm.value||'').trim(), email=(em.value||'').trim(), notes=(nt.value||'').trim();
+    if(!name){ toast('Add a contact name'); nm.focus(); return; }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ toast('Add a valid contact email'); em.focus(); return; }
+    if(bookSlot==='other'&&!notes){ toast('Say in the notes which time suits you'); nt.focus(); return; }
+    var mode=(document.querySelector('#bk-panel input[name="bk-mode"]:checked')||{}).value||h.modes[0];
+    bookings.push({id:'bk-'+Date.now().toString(36), svc:h.k, status:'requested', slot:bookSlot==='other'?null:bookSlot, mode:mode, contact:name, email:email, notes:notes, share:!!($('bk-share')||{}).checked});
+    closeBooking(); renderRoadmap();
+    toast('Requested · '+h.title+' · demo, nothing is sent');
+    var r=$('rm-bookings'); if(r) r.scrollIntoView({behavior:reduced?'auto':'smooth',block:'center'});
+  }
+  var rp=$('p-roadmap');
+  if(rp){
+    rp.addEventListener('click',function(ev){
+      var b=ev.target.closest('[data-book]'); if(b){ openBooking(b.getAttribute('data-book')); return; }
+      var sl=ev.target.closest('.slot'); if(sl){ bookSlot=sl.getAttribute('data-slot'); rp.querySelectorAll('.slot').forEach(function(x){x.setAttribute('aria-pressed',x===sl?'true':'false');}); return; }
+      if(ev.target.closest('#bk-x')){ closeBooking(); return; }
+      if(ev.target.closest('#bk-go')){ submitBooking(); return; }
+      var cx=ev.target.closest('[data-cancel]'); if(cx){ var bk=bookings.filter(function(x){return x.id===cx.getAttribute('data-cancel');})[0]; if(bk){ bk.status='cancelled'; renderRoadmap(); toast('Booking cancelled · demo'); } }
+    });
+    rp.addEventListener('change',function(ev){ var c=ev.target.closest('input[data-plan]'); if(!c) return; var k=c.getAttribute('data-plan'); if(c.checked) delete planOff[k]; else planOff[k]=true; renderRoadmap(); });
+  }
+  document.querySelectorAll('.page-demo [data-goto]').forEach(function(b){ b.addEventListener('click',function(){ selectTab(b.getAttribute('data-goto')); var d=$('demo'); if(d) d.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'}); }); });
 
   // ---- tabs ---------------------------------------------------------------
   var tabs=Array.prototype.slice.call(document.querySelectorAll('.demo-tabs [data-tab]'));
@@ -595,6 +824,7 @@
     tabs.forEach(function(b){ var on=b.getAttribute('data-tab')===name; b.classList.toggle('active',on); b.setAttribute('aria-selected',on?'true':'false'); if(on&&focus) b.focus(); });
     panels.forEach(function(p){ p.hidden=p.getAttribute('data-panel')!==name; });
     if(name==='overview') drawTrend();
+    if(name==='roadmap') drawRoadmap();
   }
   tabs.forEach(function(b,i){
     b.addEventListener('click',function(){ selectTab(b.getAttribute('data-tab')); });
@@ -608,6 +838,6 @@
   // ---- boot -----------------------------------------------------------------
   render({delta:false});
   drawTrend();
-  var rz=null; window.addEventListener('resize',function(){ clearTimeout(rz); rz=setTimeout(drawTrend,150); });
+  var rz=null; window.addEventListener('resize',function(){ clearTimeout(rz); rz=setTimeout(function(){ drawTrend(); drawRoadmap(); },150); });
 })();
 </script>

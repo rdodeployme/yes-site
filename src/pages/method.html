@@ -98,6 +98,26 @@
 .page-method .lock .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0 0 12px}
 .page-method .lock ul{margin:0;padding-left:1.1em;max-width:70ch;color:var(--graphite);font-size:15px}
 .page-method .lock li{margin-bottom:.5em}
+/* 07 · targets, potential and help */
+.page-method .help-three{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+@media(min-width:900px){.page-method .help-three{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.page-method .h3n{background:var(--white);border:1px solid var(--mist);border-radius:10px;padding:20px 22px}
+.page-method .h3n .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0 0 10px}
+.page-method .h3n .v{font-family:var(--font-display);font-weight:800;font-size:clamp(44px,5vw,64px);letter-spacing:-.04em;line-height:1;margin:0 0 12px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.page-method .h3n p{margin:0;color:var(--graphite);font-size:15px}
+.page-method .h3n.hl{background:var(--ink);border-color:var(--ink)}
+.page-method .h3n.hl .k,.page-method .h3n.hl .v{color:var(--green-3)}
+.page-method .h3n.hl p{color:var(--mist)}
+.page-method .help-rules{min-width:960px}
+.page-method .help-rules td{font-size:14px;vertical-align:top}
+.page-method .help-rules td.hn{font-weight:600;min-width:210px}
+.page-method .help-rules td.hn small{display:block;font-weight:400;color:var(--slate);font-size:12.5px;margin-top:4px}
+.page-method .help-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(24px,4vw,48px);margin-top:clamp(28px,4vw,44px)}
+@media(min-width:900px){.page-method .help-grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}}
+.page-method .help-grid p{color:var(--graphite);font-size:15px;max-width:52ch}
+.page-method .h-ind{list-style:none;margin:0;padding:0;border-top:1px solid var(--mist)}
+.page-method .h-ind li{padding:12px 0;border-bottom:1px solid var(--mist);font-size:15px;color:var(--graphite)}
+.page-method .h-ind b{color:var(--ink);font-weight:600}
 </style>
 
 <!-- HERO -->
@@ -284,10 +304,34 @@
   </div>
 </section>
 
+<!-- 07 · TARGETS, POTENTIAL AND RECOMMENDED HELP -->
+<section class="paper-2" id="help">
+  <div class="wrap">
+    <div class="section-head reveal"><div><span class="sec-idx">07</span><p class="eyebrow">Targets, potential and help</p><h2>Where you are, where the targets are, and what would close the gap.</h2></div><p class="lead">Beside the YES Score, every dashboard and certificate shows the score at the 2030 targets and an estimate with the recommended help done. The help comes from published rules, so the same figures always give the same recommendations, and any provider can do the work.</p></div>
+    <div class="help-three reveal">
+      <div class="h3n"><p class="k">Now</p><p class="v" id="h-now">—</p><p>The YES Score for the period, from the handovers YES has entered and verified.</p></div>
+      <div class="h3n"><p class="k">At the 2030 targets</p><p class="v" id="h-tgt">—</p><p>The same period with each target met: an 80% resource recovery rate (National Waste Policy Action Plan, 2024) and every tonne on Grade A evidence. Carbon performance stays as it is, because there is no target for it.</p></div>
+      <div class="h3n hl"><p class="k">With YES help · estimate</p><p class="v" id="h-pot">—</p><p>The same period with the assumed effect of every recommended item applied in full, recalculated by the same engine as the score. An estimate, not a promise or a guarantee.</p></div>
+    </div>
+    <p class="note">Worked on the demo data: Hepburn Shire Council hard waste program, illustrative. The rules below are proposed under the YES Method <span class="mv">v1.0 draft</span>.</p>
+    <div class="table-wrap reveal" style="margin-top:clamp(28px,4vw,44px)">
+      <table class="table help-rules" aria-label="Recommendation rules and assumed effects">
+        <thead><tr><th>Help</th><th>Recommended when</th><th>Assumed effect · estimate</th><th>Delivered by</th></tr></thead>
+        <tbody id="h-body"></tbody>
+      </table>
+    </div>
+    <p class="scroll-hint">Scroll the table sideways →</p>
+    <div class="help-grid reveal">
+      <div><p class="k2">The roadmap</p><p id="h-roadmap"></p><p>The certificate carries the roadmap as its third page: the three numbers, the projected score month by month, and the plan by quarter.</p></div>
+      <div><p class="k2">Independence</p><ul class="h-ind" id="h-ind"></ul></div>
+    </div>
+  </div>
+</section>
+
 <!-- 06 · EVIDENCE GRADES -->
 <section id="grades">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">07</span><p class="eyebrow">Evidence grades</p><h2>Evidence is graded, not assumed.</h2></div><p class="lead">A weighbridge docket and a customer's say-so are both recorded. They do not carry the same weight.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">08</span><p class="eyebrow">Evidence grades</p><h2>Evidence is graded, not assumed.</h2></div><p class="lead">A weighbridge docket and a customer's say-so are both recorded. They do not carry the same weight.</p></div>
     <div class="reveal">
       <div class="grades-top"><h4>Grades A, B and C</h4><span class="badge">Proposed · YES Method <span class="mv">v1.0 draft</span></span></div>
       <!-- Evidence grades are PROPOSED (YES Method v0.1). The engine weights weighbridge/processor evidence at 1; the weight applied to Grade B is not yet fixed and is not stated here. -->
@@ -304,12 +348,12 @@
 <!-- 07 · VERSIONING AND CHANGE LOG -->
 <section class="paper-2" id="versions">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">08</span><p class="eyebrow">Versioning and change log</p><h2>The method changes only when the change is published.</h2></div><p class="lead">Every certificate states the version it was calculated under. A later version never rewrites an earlier certificate.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">09</span><p class="eyebrow">Versioning and change log</p><h2>The method changes only when the change is published.</h2></div><p class="lead">Every certificate states the version it was calculated under. A later version never rewrites an earlier certificate.</p></div>
     <div class="table-wrap reveal">
       <table class="table log" aria-label="YES Method change log">
         <thead><tr><th>Version</th><th>Date</th><th>Change</th></tr></thead>
         <tbody>
-          <tr><td class="v">v1.0 draft</td><td class="v">28 September 2026</td><td>Two figures, never netted. Figure A: Scope 3 Category 5 inventory, GHG Protocol waste-type-specific method, NGA landfill factors, illustrative processing and transport values. Figure B: avoided emissions from NSW DECCW 2010 factors, reported separately and flagged 2010. Figure C: landfill comparison, context only. Recycled defined as delivered to a licensed reprocessor. The 99% steel figure treated as a stated plant yield until a dated study. YES Score unchanged at proposed v0.1, labelled self-declared.</td></tr>
+          <tr><td class="v">v1.0 draft</td><td class="v">28 September 2026</td><td>Two figures, never netted. Figure A: Scope 3 Category 5 inventory, GHG Protocol waste-type-specific method, NGA landfill factors, illustrative processing and transport values. Figure B: avoided emissions from NSW DECCW 2010 factors, reported separately and flagged 2010. Figure C: landfill comparison, context only. Recycled defined as delivered to a licensed reprocessor. The 99% steel figure treated as a stated plant yield until a dated study. YES Score unchanged at proposed v0.1, labelled self-declared. Added, proposed: the score at the 2030 targets, an estimated score with recommended help, the published help rules and the roadmap page on the certificate.</td></tr>
           <tr><td class="v">v0.1 draft</td><td class="v">27 September 2026</td><td>Initial factor library. NSW DECCW 2010 reference factors. Recycle Group mattress figures. Working assumptions flagged as assumptions. Pending streams carry no carbon.</td></tr>
         </tbody>
       </table>
@@ -474,6 +518,17 @@
         mp.appendChild(document.createElement('br'));
       });
     }
+  }
+
+  // --- 07 · targets, potential and recommended help, from YES.HELP ---
+  if(B.HELP&&B.helpPlan&&B.DEMO){
+    var HP=B.helpPlan(B.DEMO.entries,{km:B.DEMO.km||0,sector:B.DEMO.sector||'council'},{now:B.DEMO.now,bookings:[]});
+    txt('h-now',String(HP.score.score)); txt('h-tgt',String(HP.target.score)); txt('h-pot',String(HP.potential.score));
+    var hb=document.getElementById('h-body');
+    if(hb){ B.HELP.forEach(function(h){ var tr=document.createElement('tr'); var c1=td('hn',h.title); if(h.only){ var sm=document.createElement('small'); sm.textContent='Business customers only'; c1.appendChild(sm); } tr.appendChild(c1); tr.appendChild(td('',h.rule)); tr.appendChild(td('',h.effectText)); tr.appendChild(td('',h.prov==='yes'?h.who:((B.PROVIDERS[h.prov]||{}).label||'')+'. '+h.who)); hb.appendChild(tr); }); }
+    txt('h-roadmap',B.HELP_RULES||'');
+    var hi=document.getElementById('h-ind');
+    if(hi&&B.INDEPENDENCE){ B.INDEPENDENCE.forEach(function(x){ var li=document.createElement('li'), b=document.createElement('b'); b.textContent=x.k+'. '; li.appendChild(b); li.appendChild(document.createTextNode(x.d)); hi.appendChild(li); }); }
   }
 })();
 </script>
