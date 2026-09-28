@@ -18,7 +18,7 @@ NAME_LINES = ["Environmental", "Sustainability"]   # the full name, always shown
 NAME_FULL = "Environmental Sustainability"
 URL = "www.yes.com.au"
 EMAIL = "contact@yes.com.au"
-POSITION = "Environmental Impact Intelligence · A Recycle Group initiative"
+POSITION = "Environmental Impact Intelligence"
 SITE_TITLE = "Yarta · Environmental Sustainability · A Recycle Group initiative"
 DOMAIN = "https://yes.com.au"
 
@@ -81,7 +81,7 @@ def footer():
     <div class="foot-grid">
       <div>
         {logo()}
-        <p class="foot-tag">{POSITION}. A recycling report and a live environmental dashboard — verified data, documented method, real outcomes.</p>
+        <p class="foot-tag">{POSITION}. An environmental sustainability report, a live dashboard and a roadmap to improvement — verified data, documented method, real outcomes.</p>
       </div>
       <div><h5>Product</h5><ul>
         <li><a href="/yes-report/">The YES Report</a></li>
