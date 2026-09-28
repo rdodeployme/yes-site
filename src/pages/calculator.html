@@ -106,10 +106,10 @@
 <!-- HERO -->
 <section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
   <div class="wrap">
-    <p class="eyebrow">YES calculator</p>
+    <p class="eyebrow">Yarta calculator</p>
     <h1>Your recycling, measured.</h1>
-    <p class="lead">Enter what you recycled and see what YES would report: tonnes by fate, steel recovered, landfill volume avoided, the proposed YES Score, and two emissions figures kept apart: your Scope 3 Category 5 inventory and the avoided emissions reported beside it. Every figure shows its method.</p>
-    <div class="hero-meta"><span class="badge">Indicative · YES Method <span class="mv">v1.0 draft</span></span><span>Computed in your browser. Nothing is sent anywhere.</span></div>
+    <p class="lead">Enter what you recycled and see what Yarta would report: tonnes by fate, steel recovered, landfill volume avoided, the proposed Yarta Score, and two emissions figures kept apart: your Scope 3 Category 5 inventory and the avoided emissions reported beside it. Every figure shows its method.</p>
+    <div class="hero-meta"><span class="badge">Indicative · Yarta Method <span class="mv">v1.0 draft</span></span><span>Computed in your browser. Nothing is sent anywhere.</span></div>
   </div>
 </section>
 
@@ -130,21 +130,21 @@
               <div class="c-row"><label for="c-km"><svg class="ic" aria-hidden="true"><use href="#i-car"/></svg><span class="lt"><span class="nm">Distance to the processor</span><span class="u">km, one way · 0 leaves transport out</span></span></label><div class="c-in"><input type="number" id="c-km" name="km" min="0" step="1" inputmode="numeric" value="120" aria-describedby="c-km-h"><span class="hint" id="c-km-h">0.15 kg CO₂-e per t-km · illustrative</span></div></div>
             </div>
           </form>
-          <div class="calc-foot"><p class="m">Counts are converted to tonnes with the unit weights in the YES Method.</p></div>
+          <div class="calc-foot"><p class="m">Counts are converted to tonnes with the unit weights in the Yarta Method.</p></div>
         </div>
       </div>
       <div class="span7">
           <div class="results dark" id="results" aria-live="polite" aria-label="The score, indicative">
-            <div class="res-head"><div><p class="eyebrow">The score</p><h3>What YES would report</h3></div><span class="m">Computed live · YES Method <span id="c-ver">v1.0 draft</span></span></div>
+            <div class="res-head"><div><p class="eyebrow">The score</p><h3>What Yarta would report</h3></div><span class="m">Computed live · Yarta Method <span id="c-ver">v1.0 draft</span></span></div>
             <div class="score-row">
               <div class="gauge" id="c-gauge" style="--gs:150px"></div>
               <div class="score-meta">
-                <div class="l">YES Score · proposed <span class="sv">v0.1</span> · self-declared</div>
+                <div class="l">Yarta Score · proposed <span class="sv">v0.1</span> · self-declared</div>
                 <div class="band" id="c-band">&nbsp;</div>
                 <div class="l" id="c-wl">Composition · points of 100</div>
-                <div class="stack" id="c-stack" aria-label="YES Score composition"><i class="p1" id="c-p1"></i><i class="p2" id="c-p2"></i><i class="p3" id="c-p3"></i></div>
+                <div class="stack" id="c-stack" aria-label="Yarta Score composition"><i class="p1" id="c-p1"></i><i class="p2" id="c-p2"></i><i class="p3" id="c-p3"></i></div>
                 <div class="legend"><span class="p1"><i></i>Recovery <b id="c-l1"></b></span><span class="p2"><i></i>Carbon <b id="c-l2"></b></span><span class="p3"><i></i>Evidence <b id="c-l3"></b></span></div>
-                <p class="m">Self-declared under the published YES Method · not an accredited rating or certification · evidence assumed Grade A for the calculator</p>
+                <p class="m">Self-declared under the published Yarta Method · not an accredited rating or certification · evidence assumed Grade A for the calculator</p>
               </div>
             </div>
             <div class="tiles" aria-label="Score tiles">
@@ -165,12 +165,12 @@
               <details id="c-details">
                 <summary>How this was calculated</summary>
                 <div class="how" id="c-how"></div>
-                <p class="how-foot">Generated from the YES Method factor library, so it cannot drift from the method. Sources, statuses and unit weights are listed in full on the <a href="/method/">method page</a>.</p>
+                <p class="how-foot">Generated from the Yarta Method factor library, so it cannot drift from the method. Sources, statuses and unit weights are listed in full on the <a href="/method/">method page</a>.</p>
               </details>
             </div>
             <p class="attrib">Verified recycling data supplied by The Mattress Recycling Company and Recycle Group.</p>
-            <p class="note">Recycled means delivered to a licensed reprocessor, with a docket; stored material is not counted as recycled. Pending categories count recovered mass but carry no avoided-emissions estimate. The calculator is indicative: it uses default pathways and illustrative processing and transport values. A YES Report requires YES-entered, evidenced data for the period, and is issued by Recycle Group as the processing operator.</p>
-            <div class="btn-row"><a class="btn btn-primary" href="/contact/">Talk to YES about a report {{ARROW}}</a><a class="btn btn-ghost" href="/method/">See the YES Method</a></div>
+            <p class="note">Recycled means delivered to a licensed reprocessor, with a docket; stored material is not counted as recycled. Pending categories count recovered mass but carry no avoided-emissions estimate. The calculator is indicative: it uses default pathways and illustrative processing and transport values. A Yarta Report requires Yarta-entered, evidenced data for the period, and is issued by Recycle Group as the processing operator.</p>
+            <div class="btn-row"><a class="btn btn-primary" href="/contact/">Talk to Yarta about a report {{ARROW}}</a><a class="btn btn-ghost" href="/method/">See the Yarta Method</a></div>
           </div>
       </div>
     </div>
@@ -191,7 +191,7 @@
         <dt>B · Avoided · separate</dt><dd><span id="w-co2-big">11.8</span><span class="u">t CO₂-e</span></dd>
         <dt>Landfill volume avoided</dt><dd><span id="w-vol-big">583</span><span class="u">m³</span></dd>
         <dt>Recovery rate</dt><dd><span id="w-rate-big">33.4</span><span class="u">%</span></dd>
-        <dt>YES Score · self-declared</dt><dd><span id="w-score-big">42</span><span class="u">of 100 · <span id="w-band-big">Developing</span></span></dd>
+        <dt>Yarta Score · self-declared</dt><dd><span id="w-score-big">42</span><span class="u">of 100 · <span id="w-band-big">Developing</span></span></dd>
       </dl>
     </div>
     <ol class="steps reveal" id="worked-steps">
@@ -200,16 +200,16 @@
       <li><div><h4>A · Scope 3 Category 5, your inventory figure</h4><p>Processing <span class="tab" id="w-mass4">80.0</span> t × <span class="tab" id="w-pf">0.05</span> = <span class="tab" id="w-proc">4.0</span> t (supplier-specific, illustrative) + transport <span class="tab" id="w-mass5">80.0</span> t × <span class="tab" id="w-km">120</span> km × 0.15 kg = <span class="tab" id="w-tr">1.4</span> t (illustrative) + landfilled residual <span class="tab" id="w-lan">53.3</span> t × <span class="tab" id="w-lf">1.3</span> (NGA mixed C&amp;I, interim) = <span class="tab" id="w-lanE">69.3</span> t. Total <b id="w-cat5">74.7</b> t CO₂-e.</p><p class="why">Had all 80 t gone to landfill, the figure would be <span class="tab" id="w-base">104</span> t. And a one-week composition audit of the residual would likely cut it further: at an assumed 70% foam, 25% textile fibre and 5% wood, the residual factor falls to about 0.54 and the total to about 34 t. That audit is the cheapest improvement in the method.</p></div></li>
       <li><div><h4>B · Avoided emissions, reported separately</h4><p><span class="tab" id="w-steel2">26.7</span> t × <span class="tab" id="w-f">0.44</span> t CO₂-e per tonne recycled (steel, <span id="w-fsrc">NSW DECCW 2010</span>, Table 4) = <b id="w-co2">11.8</b> t CO₂-e. An estimate, shown beside A and never deducted from it. Not an offset. No estimate is made for the foam and fibre, because no factor for it is in the library.</p></div></li>
       <li><div><h4>Landfill volume avoided</h4><p>Each mattress is <span class="tab" id="w-m3">0.7</span> m³, so <span class="tab" id="w-volin">700</span> m³ would have gone into landfill. The residual, <span class="tab" id="w-lanpct">67</span>% of the mass, is shredded to 25% of its volume, so <span class="tab" id="w-vollan">117</span> m³ did go in. <b id="w-vol">583</b> m³ avoided.</p></div></li>
-      <li><div><h4>Material recovery rate</h4><p><span class="tab" id="w-rec">26.7</span> t recycled ÷ <span class="tab" id="w-mass3">80.0</span> t handed over = <b id="w-rate">33.4</b>%.</p><p class="why">Why a third. The steel is recovered. The foam and fibre residual is shredded and landfilled while recovery trials continue, so two thirds of a mattress by mass currently counts as landfilled. YES reports it that way rather than counting the whole mattress as recycled.</p></div></li>
-      <li><div><h4>YES Score</h4><p>Recovery <span class="tab" id="w-p1">20.0</span> of <span id="w-w1">60</span> · Carbon <span class="tab" id="w-p2">7.4</span> of <span id="w-w2">25</span> (<span class="tab" id="w-int">0.15</span> t of estimated avoided emissions per tonne handed over, against a reference of <span id="w-ref">0.5</span>) · Evidence <span class="tab" id="w-p3">15.0</span> of <span id="w-w3">15</span> (weighbridge docket assumed) = <b id="w-score">42</b> out of 100, <b id="w-band">Developing</b>. Proposed v0.1: self-declared, not an accredited rating or certification.</p></div></li>
+      <li><div><h4>Material recovery rate</h4><p><span class="tab" id="w-rec">26.7</span> t recycled ÷ <span class="tab" id="w-mass3">80.0</span> t handed over = <b id="w-rate">33.4</b>%.</p><p class="why">Why a third. The steel is recovered. The foam and fibre residual is shredded and landfilled while recovery trials continue, so two thirds of a mattress by mass currently counts as landfilled. Yarta reports it that way rather than counting the whole mattress as recycled.</p></div></li>
+      <li><div><h4>Yarta Score</h4><p>Recovery <span class="tab" id="w-p1">20.0</span> of <span id="w-w1">60</span> · Carbon <span class="tab" id="w-p2">7.4</span> of <span id="w-w2">25</span> (<span class="tab" id="w-int">0.15</span> t of estimated avoided emissions per tonne handed over, against a reference of <span id="w-ref">0.5</span>) · Evidence <span class="tab" id="w-p3">15.0</span> of <span id="w-w3">15</span> (weighbridge docket assumed) = <b id="w-score">42</b> out of 100, <b id="w-band">Developing</b>. Proposed v0.1: self-declared, not an accredited rating or certification.</p></div></li>
     </ol>
     </div>
-    <div class="btn-row mt-3 reveal"><a class="btn btn-ghost" href="/method/">Read the YES Method {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div>
+    <div class="btn-row mt-3 reveal"><a class="btn btn-ghost" href="/method/">Read the Yarta Method {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div>
   </div>
 </section>
 
 <!-- CTA -->
-<section class="cta-band"><div class="wrap"><p class="eyebrow">Switched on in 30 days</p><h2>See your YES impact before you commit.</h2><p class="lead">Book a 30-minute walkthrough with the demo dashboard, or send us one month of data and we will show you what YES makes of it.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div></div></section>
+<section class="cta-band"><div class="wrap"><p class="eyebrow">Switched on in 30 days</p><h2>See your Yarta impact before you commit.</h2><p class="lead">Book a 30-minute walkthrough with the demo dashboard, or send us one month of data and we will show you what Yarta makes of it.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div></div></section>
 
 <!--scripts-->
 <script src="/assets/yes-data.js"></script>
@@ -285,7 +285,7 @@
   function paintGauge(sc,t){
     if(!gaugeEl||!B.gauge||!B.gaugeUpdate) return;
     if(!gaugeEl.firstChild) B.gauge(gaugeEl,sc,150); else B.gaugeUpdate(gaugeEl,sc);
-    gaugeEl.setAttribute('aria-label','YES Score '+sc.score+' of 100'+(t.inT>0?', '+sc.band:', nothing entered'));
+    gaugeEl.setAttribute('aria-label','Yarta Score '+sc.score+' of 100'+(t.inT>0?', '+sc.band:', nothing entered'));
   }
 
   function howBlock(c,e,o){
@@ -352,7 +352,7 @@
     txt('c-band',t.inT>0?sc.band:'—');
     setW('c-p1',sc.parts.recovery); setW('c-p2',sc.parts.carbon); setW('c-p3',sc.parts.evidence);
     txt('c-l1',fmt(sc.parts.recovery,1)+' / '+W.recovery); txt('c-l2',fmt(sc.parts.carbon,1)+' / '+W.carbon); txt('c-l3',fmt(sc.parts.evidence,1)+' / '+W.evidence);
-    var stk=$('c-stack'); if(stk) stk.setAttribute('aria-label','YES Score '+sc.score+' of 100: recovery '+fmt(sc.parts.recovery,1)+', carbon '+fmt(sc.parts.carbon,1)+', evidence '+fmt(sc.parts.evidence,1));
+    var stk=$('c-stack'); if(stk) stk.setAttribute('aria-label','Yarta Score '+sc.score+' of 100: recovery '+fmt(sc.parts.recovery,1)+', carbon '+fmt(sc.parts.carbon,1)+', evidence '+fmt(sc.parts.evidence,1));
     // buckets
     var tot=t.inT>0?t.inT:1;
     setW('c-b-rec',t.recT/tot*100); setW('c-b-sto',t.stoT/tot*100); setW('c-b-lan',t.lanT/tot*100);

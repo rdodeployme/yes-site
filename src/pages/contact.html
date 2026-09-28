@@ -34,8 +34,8 @@
 <section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
   <div class="wrap">
     <p class="eyebrow">Contact</p>
-    <h1>Talk to YES.</h1>
-    <p class="lead">Book a 30-minute walkthrough of the demo dashboard, or send one month of data and we will show you what YES makes of it.</p>
+    <h1>Talk to Yarta.</h1>
+    <p class="lead">Book a 30-minute walkthrough of the demo dashboard, or send one month of data and we will show you what Yarta makes of it.</p>
   </div>
 </section>
 
@@ -61,13 +61,13 @@
             <label>Population or number of sites <span class="opt">optional</span><input type="text" name="size" inputmode="numeric" placeholder="e.g. 48,000 residents or 12 sites"></label>
           </div>
           <label>What would you like to measure?<textarea name="message" rows="5" placeholder="Streams, programs, sites, reporting deadlines. One month of data is enough to start."></textarea></label>
-          <label class="check"><input type="checkbox" name="sample_report" value="yes"><span>Send me the sample YES Report</span></label>
+          <label class="check"><input type="checkbox" name="sample_report" value="yes"><span>Send me the sample Yarta Report</span></label>
           <div class="btn-row"><button class="btn btn-primary" type="submit">Book a walkthrough {{ARROW}}</button></div>
           <p class="form-note">{{FORM_NOTE}}</p>
         </form>
         <div class="f-done" id="f-done" hidden role="status">
           <p class="k">Almost there</p>
-          <p>Your email app should have opened with the request filled in. Press send and it reaches YES. If nothing opened, copy the request below and email it to <a href="mailto:{{EMAIL}}">{{EMAIL}}</a>.</p>
+          <p>Your email app should have opened with the request filled in. Press send and it reaches Yarta. If nothing opened, copy the request below and email it to <a href="mailto:{{EMAIL}}">{{EMAIL}}</a>.</p>
           <pre></pre>
           <button type="button" class="btn btn-outline btn-sm" id="f-copy">Copy the request</button>
         </div>
@@ -81,7 +81,7 @@
           </div>
           <div class="row">
             <svg class="ic g"><use href="#i-site"/></svg>
-            <div><p class="k">A Recycle Group initiative</p><p class="addr">YES is run by Recycle Group, the operator that recovers the material. Email is the way to reach the team.</p></div>
+            <div><p class="k">A Recycle Group initiative</p><p class="addr">Yarta is run by Recycle Group, the operator that recovers the material. Email is the way to reach the team.</p></div>
           </div>
           <div class="row">
             <svg class="ic g"><use href="#i-clock"/></svg>
@@ -90,14 +90,14 @@
                 <!-- proposed: reply-time commitment not yet confirmed -->
                 <li>A reply within two working days</li>
                 <li>A 30-minute walkthrough of the demo dashboard, on a call or on site</li>
-                <li>No obligation. If YES is not a fit, we will say so</li>
+                <li>No obligation. If Yarta is not a fit, we will say so</li>
               </ul>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <p class="note mt-4 reveal">YES does not accept asbestos, prescribed waste or hazardous material for processing.</p>
+    <p class="note mt-4 reveal">Yarta does not accept asbestos, prescribed waste or hazardous material for processing.</p>
   </div>
 </section>
 
@@ -126,9 +126,9 @@
     lines.push('I am: '+val('type'));
     if(val('size')) lines.push('Population or sites: '+val('size'));
     var cb=form.elements['sample_report'];
-    lines.push('Send the sample YES Report: '+(cb&&cb.checked?'Yes':'No'));
+    lines.push('Send the sample Yarta Report: '+(cb&&cb.checked?'Yes':'No'));
     if(val('message')){ lines.push(''); lines.push('What we would like to measure:'); lines.push(val('message')); }
-    var subject='YES walkthrough request'+(org?' · '+org:'');
+    var subject='Yarta walkthrough request'+(org?' · '+org:'');
     var body=lines.join('\r\n');
     if(done){ done.hidden=false; var pre=done.querySelector('pre'); if(pre) pre.textContent='To: '+to+'\nSubject: '+subject+'\n\n'+lines.join('\n'); }
     if(Y.toast) Y.toast('Opening your email app with the request filled in');
