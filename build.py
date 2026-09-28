@@ -13,13 +13,13 @@ BASE_PATH = os.environ.get("YES_BASE_PATH", "/yes-site")   # "" once yes.com.au 
 FORM_MODE = os.environ.get("YES_FORM") or ("netlify" if os.environ.get("NETLIFY") == "true" else "mailto")
 
 # ---- brand variables (one place to change) -------------------------------
-MARK = "YES"
-NAME_LINES = ["Your Environment", "Score"]          # the full name, always shown with the mark
-NAME_FULL = "Your Environment Score"
+MARK = "YARTA"
+NAME_LINES = ["Environmental", "Sustainability"]   # the full name, always shown with the mark
+NAME_FULL = "Environmental Sustainability"
 URL = "www.yes.com.au"
 EMAIL = "contact@yes.com.au"
 POSITION = "Environmental Impact Intelligence by Recycle Group"
-SITE_TITLE = "YES · Your Environment Score · by Recycle Group"
+SITE_TITLE = "Yarta · Environmental Sustainability · by YES, a Recycle Group business"
 DOMAIN = "https://yes.com.au"
 
 PAGES = [
@@ -49,12 +49,12 @@ FORM_NOTE = (f"Submitting opens an email to YES at {EMAIL} with your details fil
 ARROW = '<svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 
 def logo(cls="logo"):
-    # YES wordmark, full name underneath, URL underneath that. Never the mark alone.
+    # The Yarta mark (the roundel), the YARTA wordmark set in type, the full name underneath, the URL underneath that. Never the mark alone.
     return (f'<a class="{cls}" href="/" aria-label="{MARK} — {NAME_FULL} — {URL}">'
-            f'<span class="logo-top"><span class="logo-mark">{MARK}</span>'
-            f'<span class="logo-bar" aria-hidden="true"><i></i><i></i><i></i></span></span>'
+            f'<img class="logo-img" src="/assets/yarta/yarta-mark.webp" alt="" width="320" height="315">'
+            f'<span class="logo-text"><span class="logo-mark">{MARK}</span>'
             f'<span class="logo-name">{NAME_FULL}</span>'
-            f'<span class="logo-url">{URL}</span></a>')
+            f'<span class="logo-url">{URL}</span></span></a>')
 
 def nav(current):
     items = []
@@ -124,7 +124,8 @@ HEAD = '''<!doctype html>
 <meta property="og:type" content="website">
 <meta property="og:url" content="{domain}{path}">
 <meta name="theme-color" content="#0B0B0B">
-<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
