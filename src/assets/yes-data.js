@@ -1,4 +1,4 @@
-/* YES Method v1.0 (draft): factor library, calculation engine and the proposed YES Score.
+/* Yarta Method v1.0 (draft): factor library, calculation engine and the proposed Yarta Score.
    Single source of truth for the demo dashboard, the calculator, the report and the method page.
 
    Two numbers, never netted (GHG Protocol Scope 3 Technical Guidance, Category 5):
@@ -7,7 +7,7 @@
      Figure C · Landfill comparison = the same tonnes had they all been landfilled, at the same NGA factors. Context only.
 
    status: "reference" = published external source · "group" = Recycle Group / TMRC stated figure
-           "assumption" = YES working assumption, to be replaced · "illustrative" = derived placeholder, replaced by metered data before the first report
+           "assumption" = Yarta working assumption, to be replaced · "illustrative" = derived placeholder, replaced by metered data before the first report
            "pending" = no avoided-emissions factor yet; none claimed
 */
 window.YES = window.YES || {};
@@ -20,7 +20,7 @@ window.YES = window.YES || {};
     rgops: {id:"RG operations (illustrative)", title:"Recycle Group processing and transport: illustrative working values", detail:"Processing: about 1,200 L diesel a day (two shredders plus loaders) at about 2.7 kg CO₂-e per litre, over 44 to 109 t processed a day, gives 0.03 to 0.07 t CO₂-e per tonne; 0.05 is used. Transport: 0.15 kg CO₂-e per tonne-km, rigid truck. Both are replaced by metered fuel and electricity records and fleet fuel data before the first customer report."},
     rg: {id:"Recycle Group", title:"Recycle Group / The Mattress Recycling Company stated processing figures", detail:"Per 10,000 mattresses: about 800 t in and about 270 t steel out; 99% of that steel recovered (stated plant yield, to be evidenced by a dated yield study). Shredded residual is 25% of original volume."},
     tmrc: {id:"TMRC", title:"The Mattress Recycling Company per-unit assumptions", detail:"Single 25 kg / 0.4 m³ · Double–Queen 66 kg / 0.8 m³ · King 78 kg / 1.1 m³. Steel-recovery percentages in this table (70–72%) conflict with the group's figure of about 30% of mass and are not used until reconciled."},
-    big: {id:"YES assumption", title:"YES working assumption", detail:"Placeholder pending measured data from the Recycle Group weighbridge and processing records. Replaced before the first customer report."}
+    big: {id:"Yarta assumption", title:"Yarta working assumption", detail:"Placeholder pending measured data from the Recycle Group weighbridge and processing records. Replaced before the first customer report."}
   };
 
   /* ---- Figure A inputs ------------------------------------------------------ */
@@ -34,7 +34,7 @@ window.YES = window.YES || {};
   B.TRANSPORT = {f:0.00015, src:"rgops", status:"illustrative", note:"0.15 kg CO₂-e per tonne-km, rigid truck. Included when the transport is performed or paid for on the customer's behalf. Illustrative until fleet fuel data replaces it."};
 
   /* ---- Figure B input: steel ------------------------------------------------ */
-  var STEEL = {f:0.44, src:"nsw2010", status:"reference", note:"Steel, C&I/C&D. Conservative net life-cycle figure (includes collection and reprocessing impacts). worldsteel's gross figure of about 1.5 t CO₂-e per tonne of scrap is higher; YES uses the conservative figure."};
+  var STEEL = {f:0.44, src:"nsw2010", status:"reference", note:"Steel, C&I/C&D. Conservative net life-cycle figure (includes collection and reprocessing impacts). worldsteel's gross figure of about 1.5 t CO₂-e per tonne of scrap is higher; Yarta uses the conservative figure."};
 
   /* lanType = NGA landfill factor applied to any landfilled fraction (Figure A) and to the landfill comparison (Figure C).
      interim = mixed-stream factor used until a composition audit of the residual gives a waste-type-specific one. */
@@ -44,12 +44,12 @@ window.YES = window.YES || {};
     {k:"aluminium", name:"Aluminium", unit:"t", unitLabel:"tonnes", m3t:1.2, path:{rec:0.99, sto:0, lan:0.01}, steelFrac:0, carbon:17.72, carbonSrc:"nsw2010", lanType:"inert", status:"reference", notes:"Aluminium scrap, C&I/C&D. The highest per-tonne avoided-emissions factor of any common stream, and the one most sensitive to the age of the 2010 study."},
     {k:"timber_plain", name:"Plain timber", unit:"t", unitLabel:"tonnes", m3t:2.5, path:{rec:0.95, sto:0, lan:0.05}, steelFrac:0, carbon:1.35, carbonSrc:"nsw2010", lanType:"wood", status:"reference", notes:"Modelled on timber pallets and packaging (avoided structural pine, non-reusable to mulch). 5% contamination loss assumed."},
     {k:"timber_coloured", name:"Coloured / treated timber", unit:"t", unitLabel:"tonnes", m3t:2.5, path:{rec:0, sto:0.2, lan:0.8}, steelFrac:0, carbon:null, lanType:"wood", status:"pending", notes:"Painted, treated or engineered timber. No recycling pathway modelled yet: Stored while a pathway is sought, otherwise Landfilled. No avoided emissions claimed."},
-    {k:"tyres", name:"Tyres", unit:"count", unitLabel:"tyres", kgUnit:9.5, m3t:6.0, path:{rec:0.97, sto:0, lan:0.03}, steelFrac:0, carbon:1.07, carbonSrc:"nsw2010", lanType:"rubber", status:"reference", notes:"Rubber tyres, C&I/C&D (crumb substitutes synthetic rubber; bead steel recovered). 9.5 kg per passenger tyre is a YES assumption."},
-    {k:"whitegoods", name:"White goods", unit:"count", unitLabel:"appliances", kgUnit:60, m3t:4.0, path:{rec:0.85, sto:0, lan:0.15}, steelFrac:0.75, steelRecovery:1, carbon:null, lanType:"ci", interim:true, status:"assumption", notes:"60 kg per appliance and 75% steel by mass are YES assumptions. Non-steel fraction: no avoided emissions claimed; residual at the interim C&I factor."},
+    {k:"tyres", name:"Tyres", unit:"count", unitLabel:"tyres", kgUnit:9.5, m3t:6.0, path:{rec:0.97, sto:0, lan:0.03}, steelFrac:0, carbon:1.07, carbonSrc:"nsw2010", lanType:"rubber", status:"reference", notes:"Rubber tyres, C&I/C&D (crumb substitutes synthetic rubber; bead steel recovered). 9.5 kg per passenger tyre is a Yarta assumption."},
+    {k:"whitegoods", name:"White goods", unit:"count", unitLabel:"appliances", kgUnit:60, m3t:4.0, path:{rec:0.85, sto:0, lan:0.15}, steelFrac:0.75, steelRecovery:1, carbon:null, lanType:"ci", interim:true, status:"assumption", notes:"60 kg per appliance and 75% steel by mass are Yarta assumptions. Non-steel fraction: no avoided emissions claimed; residual at the interim C&I factor."},
     {k:"ewaste", name:"E-waste", unit:"t", unitLabel:"tonnes", m3t:3.0, path:{rec:0.85, sto:0.15, lan:0}, steelFrac:0, carbon:null, lanType:"inert", status:"pending", notes:"Recovered mass is counted; no avoided-emissions factor in the library yet (AS/NZS 5377 pathway via a downstream partner)."},
     {k:"clothing", name:"Clothing & textiles", unit:"t", unitLabel:"tonnes", m3t:5.0, path:{rec:0.6, sto:0.4, lan:0}, steelFrac:0, carbon:null, lanType:"textiles", status:"pending", notes:"Reuse via Recycle Warehouse counted as recycled; balance Stored awaiting a textile processor. No avoided emissions claimed."},
     {k:"concrete", name:"Concrete, bricks & rubble", unit:"t", unitLabel:"tonnes", m3t:0.7, path:{rec:1, sto:0, lan:0}, steelFrac:0, carbon:0.02, carbonSrc:"nsw2010", lanType:"inert", status:"reference", notes:"Crushed and screened to aggregate. Low per-tonne factor; large tonnages."},
-    {k:"vehicles", name:"Vehicles", unit:"count", unitLabel:"vehicles", kgUnit:1200, m3t:3.0, path:{rec:0.7, sto:0, lan:0.3}, steelFrac:0.7, steelRecovery:1, carbon:null, lanType:"ci", interim:true, status:"assumption", notes:"1,200 kg and 70% steel by mass are YES assumptions; shredder residue landfilled at the interim C&I factor. Non-steel fraction: no avoided emissions claimed."},
+    {k:"vehicles", name:"Vehicles", unit:"count", unitLabel:"vehicles", kgUnit:1200, m3t:3.0, path:{rec:0.7, sto:0, lan:0.3}, steelFrac:0.7, steelRecovery:1, carbon:null, lanType:"ci", interim:true, status:"assumption", notes:"1,200 kg and 70% steel by mass are Yarta assumptions; shredder residue landfilled at the interim C&I factor. Non-steel fraction: no avoided emissions claimed."},
     {k:"greenwaste", name:"Green waste", unit:"t", unitLabel:"tonnes", m3t:4.0, path:{rec:1, sto:0, lan:0}, steelFrac:0, carbon:0.32, carbonSrc:"nsw2010", lanType:"garden", status:"reference", notes:"Garden organics, kerbside pathway, composted."},
     {k:"general", name:"General rubbish", unit:"t", unitLabel:"tonnes", m3t:4.0, path:{rec:0, sto:0, lan:1}, steelFrac:0, carbon:null, lanType:"msw", lanTypeBusiness:"ci", status:"reference", notes:"Residual waste to landfill. Counts against the customer. NGA mixed municipal factor for councils, mixed C&I for business. Volume shown is what went in, not what was avoided."}
   ];
@@ -61,7 +61,7 @@ window.YES = window.YES || {};
   B.lanFactor = function(c, opts){ var f = B.NGA.f[B.lanType(c, opts)]; return f==null ? B.NGA.f.ci : f; };
 
   /* entries: [{k, qty, path?, ev?, sup?, km?}]
-       sup:false = material the customer reports that YES/Recycle Group did not handle: no processing or transport attributed; landfilled share still at NGA.
+       sup:false = material the customer reports that Yarta/Recycle Group did not handle: no processing or transport attributed; landfilled share still at NGA.
      opts: {km: one-way distance to the processor for handled material (0 = transport excluded), sector: "council" | "business"} */
   B.compute = function(entries, opts){
     opts = opts || {};
@@ -114,7 +114,7 @@ window.YES = window.YES || {};
   };
 
   B.SCORE = {version:"v0.1", status:"proposed", weights:{recovery:60, carbon:25, evidence:15}, refIntensity:0.5,
-    disclaimer:"Self-declared under the published YES Method. Not an accredited rating, certification or third-party verification.",
+    disclaimer:"Self-declared under the published Yarta Method. Not an accredited rating, certification or third-party verification.",
     note:"Material recovery rate 60% (recycled ÷ handed over) · Carbon performance 25% (estimated avoided emissions per tonne handed over, indexed to a reference intensity of 0.5 t/t, capped at 100%) · Evidence quality 15% (mass-weighted share backed by weighbridge dockets or processor certificates). Stored is neutral; Landfilled counts against through the recovery rate. The Category 5 inventory is never adjusted by the score."};
   B.score = function(t){
     var w=B.SCORE.weights;
@@ -131,7 +131,7 @@ window.YES = window.YES || {};
     cat5:"Scope 3 Category 5 (waste generated in operations). GHG Protocol waste-type-specific method, supplier-specific where metered. NGA landfill factors.",
     avoided:"Estimated avoided emissions: a modelled estimate using NSW DECCW 2010 life-cycle factors. Reported separately from the inventory. Not deducted from it, not an offset and not a carbon-neutral claim.",
     baseline:"Landfill comparison: the same tonnes had they all gone to landfill, at the same NGA factors. Context only, not an inventory figure.",
-    score:"Self-declared under the published YES Method. Not an accredited rating, certification or third-party verification.",
+    score:"Self-declared under the published Yarta Method. Not an accredited rating, certification or third-party verification.",
     steel:"Recycle Group's stated plant yield. Each report prints the measured yield with its site and study date.",
     recycled:"Recycled means baled or sorted material delivered to a licensed reprocessor, with a receiving docket. Stored material is reported separately and is not counted as recycled.",
     issuer:"Issued by Recycle Group as the processing operator. Not independently assured."
@@ -140,15 +140,15 @@ window.YES = window.YES || {};
   /* The worked example used on every page and in the method specification: 1,000 mattresses, 120 km to the processor. */
   B.EXAMPLE = {entries:[{k:"mattresses", qty:1000}], km:120, label:"1,000 mattresses · 120 km to the processor"};
 
-  /* ---- Targets, potential and recommended help (proposed, YES Method v1.0 draft) -------------------------------
-     Three numbers on the dashboard and the report: the YES Score now, the score at the 2030 targets, and an
+  /* ---- Targets, potential and recommended help (proposed, Yarta Method v1.0 draft) -------------------------------
+     Three numbers on the dashboard and the report: the Yarta Score now, the score at the 2030 targets, and an
      estimate with the recommended help done, plus the roadmap behind the estimate. Recommendations come from the
      published rules below: the same figures give the same recommendations, any provider can do the work, and work by
      a Recycle Group business is disclosed. Every effect is an assumption for discussion, applied to the handover
      entries and recalculated by B.compute, so the estimate uses the same engine as the score. */
   B.TARGETS = [
     {k:"recovery", v:0.8, name:"Resource recovery rate 80%", src:"National Waste Policy Action Plan (2024): 80% average resource recovery rate from all waste streams by 2030"},
-    {k:"evidence", v:1, name:"Every tonne on Grade A evidence", src:"YES standard for a report: a weighbridge docket or processor certificate behind every tonne"}
+    {k:"evidence", v:1, name:"Every tonne on Grade A evidence", src:"Yarta standard for a report: a weighbridge docket or processor certificate behind every tonne"}
   ];
   B.atTargets = function(t){
     var x = {recoveryRate:Math.max(t.recoveryRate||0, B.TARGETS[0].v), intensity:t.intensity||0, evidenceShare:Math.max(t.evidenceShare==null?1:t.evidenceShare, B.TARGETS[1].v)};
@@ -177,8 +177,8 @@ window.YES = window.YES || {};
 
   B.PROVIDERS = {
     group:{label:"Recycle Group business", note:"Disclosed on your report"},
-    partner:{label:"Independent specialist", note:"Chosen by you; YES can introduce one"},
-    yes:{label:"YES analyst", note:"Not the operators who enter or verify your handovers"}
+    partner:{label:"Independent specialist", note:"Chosen by you; Yarta can introduce one"},
+    yes:{label:"Yarta analyst", note:"Not the operators who enter or verify your handovers"}
   };
 
   /* trigger(c) returns {why} when the figures call for it (c = {t, entries, opts}); apply(entries, f) changes the entries at strength f (0 to 1). */
@@ -205,7 +205,7 @@ window.YES = window.YES || {};
     },
     { k:"evidence", title:"Docket every load", area:"Evidence", prov:"yes",
       what:"Set up weighbridge dockets or processor certificates for the streams still on count sheets, so every tonne is on Grade A evidence.",
-      who:"A YES analyst who does not enter or verify your handovers.",
+      who:"A Yarta analyst who does not enter or verify your handovers.",
       modes:["Online","On site"], session:"One-hour session",
       rule:"Less than 95% of tonnes is backed by a weighbridge docket or processor certificate.",
       effectText:"Every tonne is backed by a docket or certificate: evidence share 100%.",
@@ -216,7 +216,7 @@ window.YES = window.YES || {};
     },
     { k:"residual", title:"Residual composition audit", area:"Inventory", prov:"partner",
       what:"Sample the landfilled residual from mattresses, white goods and vehicles so its landfill factor is measured, not the interim mixed figure.",
-      who:"An independent waste auditor, working with YES.",
+      who:"An independent waste auditor, working with Yarta.",
       modes:["On site"], session:"Scoping visit",
       rule:"Landfilled residual is reported at the interim mixed commercial and industrial factor.",
       effectText:"No change to the score. Your Category 5 inventory uses a measured factor for the residual instead of the interim one, which may move it up or down.",
@@ -225,7 +225,7 @@ window.YES = window.YES || {};
     },
     { k:"scope3", title:"Auditor-ready Category 5 pack", area:"Inventory", prov:"yes", only:"business",
       what:"Your Category 5 figure, factors, evidence and ledger in the order an auditor asks for them, ready for your climate report.",
-      who:"A YES analyst who does not enter or verify your handovers.",
+      who:"A Yarta analyst who does not enter or verify your handovers.",
       modes:["Online"], session:"One-hour session",
       rule:"Business customers, who report Scope 3 under mandatory climate reporting.",
       effectText:"No change to the score. Prepares your Category 5 figure for an auditor's review.",
@@ -233,12 +233,12 @@ window.YES = window.YES || {};
       apply:function(){}
     },
     { k:"grants", title:"Grant application pack", area:"Funding", prov:"partner",
-      what:"Match the recommended work to open state and federal funding rounds, with your YES figures as the evidence base.",
+      what:"Match the recommended work to open state and federal funding rounds, with your Yarta figures as the evidence base.",
       who:"A grants writer.",
       modes:["Online"], session:"One-hour session",
       rule:"Two or more other recommendations apply.",
       effectText:"No direct change to the score. It can fund the other items.",
-      trigger:function(c,n){ if(!(n>=2)) return null; return {why:n+" other recommendations apply to you. YES figures give a funding application its evidence base."}; },
+      trigger:function(c,n){ if(!(n>=2)) return null; return {why:n+" other recommendations apply to you. Yarta figures give a funding application its evidence base."}; },
       apply:function(){}
     }
   ];
@@ -289,12 +289,12 @@ window.YES = window.YES || {};
   };
   B.HELP_RULES = "Booked items start in the month booked. The others start from next month, two a quarter, biggest estimated change first. Each change builds up evenly over "+B.HELP_RAMP+" months, and every other stream is held at its current level. Work completed in the last six months is not recommended again.";
   B.INDEPENDENCE = [
-    {k:"Published rules", d:"The rules and assumptions are published in the YES Method, and the same rules apply to every customer."},
-    {k:"Any provider", d:"You can use any provider. Recommendations, your YES Score and the verification of your handovers do not depend on who does the work."},
-    {k:"Disclosure", d:"Work by a Recycle Group business is disclosed on your report. YES is a Recycle Group initiative."},
-    {k:"Only through the ledger", d:"Completed work changes your score only through the handovers YES enters and verifies afterwards, like any other change."},
-    {k:"Separate people", d:"A YES analyst who runs a paid session for you does not enter or verify your handovers."},
-    {k:"Estimates", d:"The score with YES help and the projection are estimates. They are not a promise, a guarantee or a target."}
+    {k:"Published rules", d:"The rules and assumptions are published in the Yarta Method, and the same rules apply to every customer."},
+    {k:"Any provider", d:"You can use any provider. Recommendations, your Yarta Score and the verification of your handovers do not depend on who does the work."},
+    {k:"Disclosure", d:"Work by a Recycle Group business is disclosed on your report. Yarta is a Recycle Group initiative."},
+    {k:"Only through the ledger", d:"Completed work changes your score only through the handovers Yarta enters and verifies afterwards, like any other change."},
+    {k:"Separate people", d:"A Yarta analyst who runs a paid session for you does not enter or verify your handovers."},
+    {k:"Estimates", d:"The score with Yarta help and the projection are estimates. They are not a promise, a guarantee or a target."}
   ];
 
   B.DEMO = {
@@ -308,6 +308,6 @@ window.YES = window.YES || {};
       {k:"vehicles", qty:40, ev:0.8}, {k:"greenwaste", qty:220}, {k:"general", qty:180, ev:0.8}
     ],
     trend:[{m:"Oct",t:31},{m:"Nov",t:38},{m:"Dec",t:27},{m:"Jan",t:22},{m:"Feb",t:35},{m:"Mar",t:44},{m:"Apr",t:39},{m:"May",t:41},{m:"Jun",t:36},{m:"Jul",t:48},{m:"Aug",t:52},{m:"Sep",t:178}],
-    ledger:[ {d:"27 Sep", what:"Hard waste sweep · Clunes · day 7 · mattresses", k:"mattresses", qty:132, by:"YES · RO"}, {d:"26 Sep", what:"Transfer station · scrap steel · weighbridge 4471", k:"steel", qty:6.4, by:"YES · RO"}, {d:"25 Sep", what:"Hard waste sweep · Clunes · day 6 · white goods", k:"whitegoods", qty:88, by:"YES · RO"}, {d:"24 Sep", what:"Transfer station · green waste · weighbridge 4462", k:"greenwaste", qty:18.2, by:"YES · RO"}, {d:"23 Sep", what:"Hard waste sweep · Clunes · day 5 · tyres", k:"tyres", qty:140, by:"YES · RO"}, {d:"22 Sep", what:"Depot clearance · aluminium · docket 1187", k:"aluminium", qty:0.9, by:"YES · RO"}, {d:"22 Sep", what:"Hard waste sweep · Clunes · day 4 · general rubbish", k:"general", qty:14.5, by:"YES · RO"} ]
+    ledger:[ {d:"27 Sep", what:"Hard waste sweep · Clunes · day 7 · mattresses", k:"mattresses", qty:132, by:"Yarta · RO"}, {d:"26 Sep", what:"Transfer station · scrap steel · weighbridge 4471", k:"steel", qty:6.4, by:"Yarta · RO"}, {d:"25 Sep", what:"Hard waste sweep · Clunes · day 6 · white goods", k:"whitegoods", qty:88, by:"Yarta · RO"}, {d:"24 Sep", what:"Transfer station · green waste · weighbridge 4462", k:"greenwaste", qty:18.2, by:"Yarta · RO"}, {d:"23 Sep", what:"Hard waste sweep · Clunes · day 5 · tyres", k:"tyres", qty:140, by:"Yarta · RO"}, {d:"22 Sep", what:"Depot clearance · aluminium · docket 1187", k:"aluminium", qty:0.9, by:"Yarta · RO"}, {d:"22 Sep", what:"Hard waste sweep · Clunes · day 4 · general rubbish", k:"general", qty:14.5, by:"Yarta · RO"} ]
   };
 })(window.YES);

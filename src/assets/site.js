@@ -1,4 +1,4 @@
-/* YES — shared site behaviour */
+/* Yarta — shared site behaviour */
 (function(){
   // reveal on scroll
   var els=document.querySelectorAll('.reveal');
@@ -39,7 +39,7 @@
     var off=0, cols={recovery:'#B8641F',carbon:'#E9A860',evidence:'#F2C894'};
     ['recovery','carbon','evidence'].forEach(function(k){var len=sweep*((sc.parts[k]||0)/100);C+='<circle class="ga-'+k+'" cx="85" cy="85" r="70" fill="none" stroke="'+cols[k]+'" stroke-width="14" stroke-dasharray="'+len+' 440" stroke-dashoffset="'+(-off)+'" transform="rotate(135 85 85)" style="transition:stroke-dasharray .9s cubic-bezier(.2,.7,.2,1),stroke-dashoffset .9s cubic-bezier(.2,.7,.2,1)"/>';off+=len;});
     C+='</svg><div class="gv"><b>'+sc.score+'</b><small>of 100</small></div>';
-    el.innerHTML=C; el.setAttribute('role','img'); el.setAttribute('aria-label','YES Score '+sc.score+' of 100, '+sc.band);
+    el.innerHTML=C; el.setAttribute('role','img'); el.setAttribute('aria-label','Yarta Score '+sc.score+' of 100, '+sc.band);
   };
   window.YES.gaugeUpdate=function(el,sc){var sweep=330,off=0;['recovery','carbon','evidence'].forEach(function(k){var c=el.querySelector('.ga-'+k);var len=sweep*((sc.parts[k]||0)/100);if(c){c.setAttribute('stroke-dasharray',len+' 440');c.setAttribute('stroke-dashoffset',-off);}off+=len;});var b=el.querySelector('.gv b');if(b)b.textContent=sc.score;};
 
