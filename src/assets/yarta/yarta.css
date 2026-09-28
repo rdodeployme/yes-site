@@ -1,0 +1,55 @@
+/* Yarta theme for the sample environmental sustainability report: earthy light orange instead of green,
+   a warm dark band, and the Yarta logo. Loads after yes.css and portal.css and only overrides tokens and the cover. */
+:root{
+  --green:#B8641F; --green-2:#CF7A2E; --green-3:#E9A860; --green-4:#F2C894; --green-soft:#FBF0E3; --green-ink:#8A4A14;
+}
+body.page-yarta{background:#F3EFE9}
+.page-yarta .rp-cover{--rp-green:#1E1712;--rp-green-2:#2B211A;--rp-line:#5A4531}
+.page-yarta .rp-brand{align-items:center;gap:14px}
+.page-yarta .ylogo-mark{width:auto;height:96px}
+.page-yarta .rp-brand .full,.page-yarta .rp-ethos{color:#E9A860}
+.page-yarta .rp-tag{border-top-color:#E9A860;color:#E6D9CB}
+.page-yarta .rp-kv.light{color:#C9B8A6}
+.page-yarta .rp-country{color:#E6D9CB}
+.page-yarta .rp-band-r{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
+.page-yarta .rp-steps span.on{color:var(--green-ink)}
+.page-yarta .rp-ico{background:var(--green-soft);color:var(--green-ink)}
+.page-yarta .rp-wyc .hl,.page-yarta .three .tn.hl{background:var(--green-soft);border-color:#F0CFA6}
+.page-yarta .rp-sub .bar i{background:var(--green-2)}
+.page-yarta .rp-tg .bar i{background:var(--green-3)}
+.page-yarta .rp-tg.met .bar i{background:var(--green-2)}
+.page-yarta .delta.up{color:var(--green-ink)}
+.page-yarta .score-ring.light{background:conic-gradient(var(--green-2) calc(var(--v)*1%),#E6DFD6 0)}
+.page-yarta .score-ring.light::before{background:radial-gradient(circle at 50% 30%,#FFFFFF,#F3EFE9 70%);box-shadow:0 0 0 1px #E6DFD6 inset}
+.page-yarta .grp-dot{color:var(--green-2)}
+.page-yarta .chart .ref{stroke:#9A8B7A}
+/* the page around the report */
+.ytop{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px 20px;padding:14px clamp(16px,3vw,40px);background:#1E1712;color:#F3EFE9}
+.ylogo{display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit}
+.ylogo img{width:auto;height:52px}
+.ylogo span{display:grid;font-size:12.5px;color:#C9B8A6;line-height:1.3}
+.ylogo span b{font:800 18px/1.1 var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:#fff}
+.yacts{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.ydemo{font:500 11px/1.3 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:#E9A860;margin-right:6px}
+.ytop .btn-ink{background:#E9A860;color:#1E1712;border-color:#E9A860}
+.ytop .btn-ghost{color:#F3EFE9;border-color:#5A4531}
+.ymain{padding:clamp(18px,3vw,36px) clamp(12px,3vw,40px) 60px;max-width:1080px;margin:0 auto}
+.ynote{max-width:76ch;margin:18px auto 0;font-size:13.5px;line-height:1.55;color:#6B5F53}
+.ynote a{color:inherit}
+@media print{
+  .ytop,.ynote{display:none!important}
+  body.page-yarta{background:#fff}
+  .ymain{padding:0;max-width:none}
+  .page-yarta .ylogo-mark{height:54px}
+  .page-yarta .rp-brand{gap:10px}
+  .page-yarta .rp-band{padding:14px 18px 14px}
+  .page-yarta .rp-ethos{margin-top:8px}
+  .page-yarta .rp-big{font-size:27px;margin:4px 0 6px}
+  .page-yarta .rp-tag{font-size:11px;padding-top:6px}
+  .page-yarta .rp-score{margin-top:10px}
+  .page-yarta .rp-cards{margin-top:10px}
+  .page-yarta .rp-card{padding:8px 10px 7px}
+  .page-yarta .rp-cover .rp-h{margin:9px 0 4px}
+  .page-yarta .rp-foot{margin-top:8px}
+  .page-yarta .report{border:0;border-radius:0}
+}
