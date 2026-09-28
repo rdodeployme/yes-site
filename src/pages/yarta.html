@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yarta Environmental Sustainability Report — sample (Demo Shire Council)</title>
+<meta name="description" content="A sample Yarta Environmental Sustainability Report: the score, four headline figures, the ten categories, real-world scale, progress towards targets, the figures behind the score and the roadmap.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1E1712">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/yarta/yes.css">
+<link rel="stylesheet" href="/assets/yarta/portal.css">
+<link rel="stylesheet" href="/assets/yarta/yarta.css">
+</head>
+<body class="page-portal page-yarta">
+<div id="app" hidden></div>
+<header class="ytop no-print">
+  <a class="ylogo" href="/"><img src="/assets/yarta/yarta-logo.webp" alt="Yarta" width="66" height="72"><span><b>Yarta</b>Environmental Sustainability · a YES report</span></a>
+  <div class="yacts">
+    <span class="ydemo">Sample · Demo Shire Council · demo data</span>
+    <button class="btn btn-ink btn-sm" type="button" onclick="window.print()">Print or save as PDF</button>
+    <a class="btn btn-ghost btn-sm" href="/report/">The recycling report</a>
+  </div>
+</header>
+<main class="ymain">
+  <div class="report" id="yarta"><p class="rp-p" style="padding:40px">Building the sample…</p></div>
+  <p class="ynote no-print">Three A4 pages. Page 1 measures: the Yindyamarra Score, where you could be, four headline figures, the ten categories, real-world scale and progress towards targets. Page 2 is the figures behind the score. Page 3 is the roadmap: the projected score, the plan by quarter and progress so far. Demo Shire Council is fictional. The words Yarta and Yindyamarra are proposed names; see <a href="/language/">language on this site</a>.</p>
+</main>
+<script>
+window.REPORT_BRAND={
+  mark:'<img class="ylogo-mark" src="/assets/yarta/yarta-logo.webp" alt="Yarta" width="66" height="72">',
+  full:'Environmental Sustainability · yes.com.au',
+  score:'Yindyamarra Score',
+  title:'Environmental<br>Sustainability Report'
+};
+</script>
+<script src="/assets/yarta/dictionary.js"></script>
+<script src="/assets/yarta/engine.js"></script>
+<script src="/assets/yarta/demo-data.js"></script>
+<script src="/assets/yarta/recommend.js"></script>
+<script src="/assets/yarta/portal.js"></script>
+<script>
+(function(){
+  try{
+    var P=window.YESPortal, o=P.org('demo-shire'); if(!o) throw new Error('no demo org');
+    var S=P.seriesOf(o), k=S.months.length?S.months[S.months.length-1].month:null;
+    var want='2026-07'; if(S.months.some(function(m){ return m.month===want; })) k=want;
+    document.getElementById('yarta').innerHTML=P.reportSheets(o,S,k);
+    document.title='Yarta Environmental Sustainability Report — '+o.profile.org_name+' · '+P.mLabel(k)+' (sample)';
+  }catch(e){ document.getElementById('yarta').innerHTML='<p class="rp-p" style="padding:40px">The sample could not be built: '+String(e.message||e)+'</p>'; }
+})();
+</script>
+</body>
+</html>
