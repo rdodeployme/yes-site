@@ -20,7 +20,8 @@
   <a class="ylogo" href="/"><img src="/assets/yarta/yarta-logo.webp" alt="Yarta" width="66" height="72"><span><b>Yarta</b>Environmental Sustainability · sample report</span></a>
   <div class="yacts">
     <span class="ydemo">Demo data · fictional organisations</span>
-    <button class="btn btn-ink btn-sm" type="button" onclick="window.print()">Print or save as PDF</button>
+    <a class="btn btn-ink btn-sm" id="pdf" href="/assets/samples/yarta-sample-report-council.pdf" download>Download the PDF</a>
+    <button class="btn btn-ghost btn-sm" type="button" onclick="window.print()">Print</button>
     <a class="btn btn-ghost btn-sm" href="/demo/">Open the live demo</a>
   </div>
 </header>
@@ -57,6 +58,7 @@ window.REPORT_BRAND={
       var o=P.org(sec.org); if(!o) throw new Error('no demo organisation for '+k);
       var Sx=P.seriesOf(o), m=Sx.months[Sx.months.length-1].month;
       document.getElementById('yarta').innerHTML=P.reportSheets(o,Sx,m);
+      var pdf=document.getElementById('pdf'); if(pdf) pdf.setAttribute('href',pdf.getAttribute('href').replace(/yarta-sample-report-[a-z]+\.pdf/,'yarta-sample-report-'+k+'.pdf'));
       document.title='Sample Yarta Report — '+o.profile.org_name+' ('+sec.name+') · '+P.mLabel(m);
       Array.prototype.forEach.call(chips.querySelectorAll('button'),function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-k')===k?'true':'false'); });
       if(history.replaceState) history.replaceState(null,'',location.pathname+'?sector='+k);

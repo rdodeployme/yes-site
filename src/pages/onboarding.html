@@ -1,0 +1,52 @@
+<style>
+.page-onboarding .lead{max-width:66ch}
+.page-onboarding .weeks{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){.page-onboarding .weeks{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.page-onboarding .wk{border:1px solid var(--mist);border-radius:var(--r-lg);padding:22px 22px 8px;background:#fff}
+.page-onboarding .wk .w{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--green-ink);margin:0 0 6px}
+.page-onboarding .wk h3{margin:0 0 6px;font-size:clamp(20px,2vw,26px)}
+.page-onboarding .wk .step{border-top:1px solid var(--mist);padding:14px 0}
+.page-onboarding .wk .step b{display:block;font-family:var(--font-display);font-weight:700;font-size:17px;margin-bottom:6px}
+.page-onboarding .wk .step p{margin:0 0 4px;font-size:14.5px;color:var(--graphite);line-height:1.5}
+.page-onboarding .wk .step p span{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin-right:6px}
+.page-onboarding .end{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:800px){.page-onboarding .end{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">Onboarding</p>
+    <h1>Switched on in 30 days. Here is exactly how.</h1>
+    <p class="lead">Thirteen steps over four weeks, each with what you do and what Yarta does. By the end of week four you have a live dashboard, a first score and a first roadmap. Nothing is calculated until the method sheet is agreed.</p>
+    <div class="btn-row"><a class="btn btn-primary" href="/contact/">Start the 30 days {{ARROW}}</a><a class="btn btn-ghost" href="/checklist/">What we will ask you for</a></div>
+  </div>
+</section>
+<section>
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">The four weeks</p><h2>Your part is small. Ours is the rest.</h2></div>
+    <div class="weeks" id="weeks"></div>
+    <noscript><p class="lead">Week 1: scope, agreement, contacts, data request. Week 2: baseline year, targets, method sheet. Week 3: first month and baseline months entered and verified. Week 4: dashboard live, gap email scheduled, handover call.</p></noscript>
+    <p class="note" style="margin-top:18px">This is the proposed schedule. Subscription applies from the switch-on date. If a step waits on a document, the clock stops on that step, not on the rest.</p>
+  </div>
+</section>
+<section class="tight" style="background:var(--paper-2)">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">At the end</p><h2>What you have on day 30.</h2></div>
+    <div class="end">
+      <div><h4>A live dashboard</h4><p>Your score, the ten categories, where the eco standards would put you, and how you compare with the benchmark for your sector, moving each month as your data lands.</p></div>
+      <div><h4>A first roadmap</h4><p>Suggestions ranked by what would move the number most, with an estimate for each and the accredited help you can book.</p></div>
+      <div><h4>A named operator and a rhythm</h4><p>One person who enters your figures, one email a month listing what is still needed, and a report at the end of every period.</p></div>
+    </div>
+    <div class="btn-row mt-3"><a class="btn btn-ink" href="/how-it-works/">How the loop runs {{ARROW}}</a><a class="btn btn-outline" href="/method/">The Yarta Method</a></div>
+  </div>
+</section>
+<section class="cta-band"><div class="wrap"><p class="eyebrow">Switched on in 30 days</p><h2>Send one month of data and see the shape of your report.</h2><p class="lead">We will show you the score, the ten categories and the first suggestions before you commit to anything.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Talk to Yarta {{ARROW}}</a><a class="btn btn-ghost" href="/report/">See a sample report</a></div></div></section>
+<!--scripts-->
+<script src="/assets/yarta/sectors.js"></script>
+<script>
+(function(){
+  var S=window.YESS, el=document.getElementById('weeks'); if(!S||!el) return;
+  function esc(x){ return String(x).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  var T={1:['Scope and contracts','Agree what is in, who does what, and what we will ask for.'],2:['Baseline, targets and method','Set the year you are compared against and how each category is counted.'],3:['Your first data','The first month and the baseline months are entered and verified.'],4:['Live','You sign in, see your score and roadmap, and we walk through it together.']};
+  el.innerHTML=[1,2,3,4].map(function(w){ return '<div class="wk"><p class="w">Week '+w+'</p><h3>'+esc(T[w][0])+'</h3><p style="margin:0 0 10px;color:var(--graphite)">'+esc(T[w][1])+'</p>'+S.ONBOARDING.filter(function(s){ return s.week===w; }).map(function(s){ return '<div class="step"><b>'+esc(s.label)+'</b><p><span>You</span>'+esc(s.you)+'</p><p><span>Yarta</span>'+esc(s.us)+'</p></div>'; }).join('')+'</div>'; }).join('');
+})();
+</script>

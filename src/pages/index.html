@@ -105,25 +105,17 @@
         <div class="btn-row"><a class="btn btn-primary" href="/demo/">Open the live demo {{ARROW}}</a><a class="btn btn-ghost" href="/contact/">Talk to Yarta</a></div>
       </div>
       <div class="reveal">
-        <div class="dash" aria-label="Yarta Dashboard mock, demo data">
-          <div class="dash-top"><span>Yarta DASHBOARD · WASTE &amp; RESOURCE RECOVERY · <b>Demo Shire Council</b></span><span class="badge demo">Demo data · illustrative</span></div>
+        <div class="dash" aria-label="Yarta Dashboard, demo data">
+          <div class="dash-top"><span>Yarta DASHBOARD · <b id="h-org">Demo Shire Council</b></span><span class="badge demo">Demo data · illustrative</span></div>
           <div class="dash-body">
             <div class="kpis">
-              <div class="kpi"><svg class="ic"><use href="#i-loop"/></svg><div class="v green"><span id="h-rec" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">Tonnes recycled</div><div class="d" id="h-rec-d">&nbsp;</div></div>
-              <div class="kpi"><svg class="ic"><use href="#i-steel"/></svg><div class="v"><span id="h-steel" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">Steel recovered</div><div class="d" id="h-steel-d">&nbsp;</div></div>
-              <div class="kpi"><svg class="ic"><use href="#i-co2"/></svg><div class="v"><span id="h-cat5" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">A · Scope 3 Cat 5</div><div class="d">inventory · t CO₂-e</div></div>
-              <div class="kpi"><svg class="ic"><use href="#i-co2"/></svg><div class="v green"><span id="h-co2" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">B · Avoided</div><div class="d">estimate · never netted</div></div>
+              <div class="kpi"><svg class="ic"><use href="#i-dash"/></svg><div class="v green"><span id="h-score" data-count="0" data-dec="0">0</span></div><div class="l">Yindyamarra Score</div><div class="d" id="h-band">&nbsp;</div></div>
+              <div class="kpi"><svg class="ic"><use href="#i-scale"/></svg><div class="v"><span id="h-eco" data-count="0" data-dec="0">0</span></div><div class="l">At the eco standards</div><div class="d">where you could be</div></div>
+              <div class="kpi"><svg class="ic"><use href="#i-bench"/></svg><div class="v green"><span id="h-help" data-count="0" data-dec="0">0</span></div><div class="l">With Yarta help</div><div class="d">estimate, from the roadmap</div></div>
+              <div class="kpi"><svg class="ic"><use href="#i-co2"/></svg><div class="v"><span id="h-co2" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">Emissions, 12 months</div><div class="d" id="h-co2-d">&nbsp;</div></div>
             </div>
-            <div class="bars" aria-label="Recovered tonnes by stream, top five">
-              <div class="bar" id="h-bar-0"><span class="n">&nbsp;</span><div class="track"><div class="fill" data-w="0"></div></div><span class="val"></span></div>
-              <div class="bar" id="h-bar-1"><span class="n">&nbsp;</span><div class="track"><div class="fill" data-w="0"></div></div><span class="val"></span></div>
-              <div class="bar" id="h-bar-2"><span class="n">&nbsp;</span><div class="track"><div class="fill" data-w="0"></div></div><span class="val"></span></div>
-              <div class="bar" id="h-bar-3"><span class="n">&nbsp;</span><div class="track"><div class="fill" data-w="0"></div></div><span class="val"></span></div>
-              <div class="bar" id="h-bar-4"><span class="n">&nbsp;</span><div class="track"><div class="fill" data-w="0"></div></div><span class="val"></span></div>
-            </div>
-            <div class="ledger" id="h-ledger" aria-label="Latest handovers">
-              <div><span>Date</span><span>Stream</span><span class="r">Qty</span><span class="r">Entered</span></div>
-            </div>
+            <div class="bars" id="h-bars" aria-label="Score for each of the ten categories"></div>
+            <div class="ledger sug" id="h-sug" aria-label="First suggestions on the roadmap"><div><span>Effect</span><span>Roadmap suggestion</span><span class="r">Category</span></div></div>
           </div>
         </div>
         <p class="dash-cap"><span>Live demo · illustrative data</span><a href="/demo/">Open the demo →</a></p>
@@ -391,78 +383,29 @@
 <section class="cta-band"><div class="wrap"><p class="eyebrow">Switched on in 30 days</p><h2>See your Yarta impact before you commit.</h2><p class="lead">Book a 30-minute walkthrough with the demo dashboard, or send us one month of data and we will show you what Yarta makes of it.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div></div></section>
 
 <!--scripts-->
-<script src="/assets/yes-data.js"></script>
+<script src="/assets/yarta/dictionary.js"></script>
+<script src="/assets/yarta/engine.js"></script>
+<script src="/assets/yarta/demo-data.js"></script>
+<script src="/assets/yarta/recommend.js"></script>
 <script>
 (function(){
-  var B=window.YES; if(!B||!B.compute||!B.DEMO) return;
-  var fmt=B.fmt||function(n,d){return n.toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d});};
-  function setCount(id,v,dec){
-    var el=document.getElementById(id); if(!el) return;
-    dec=dec||0; el.setAttribute('data-count',v); el.setAttribute('data-dec',dec);
-    // if the shared counter has already run for this element, write the value straight in
-    if(el.getAttribute('data-from')) el.textContent=(el.getAttribute('data-prefix')||'')+fmt(v,dec)+(el.getAttribute('data-suffix')||'');
-  }
-  function txt(id,s){var el=document.getElementById(id); if(el) el.textContent=s;}
-
-  // --- hero mock: same dataset and engine as /demo/ ---
-  var t=B.compute(B.DEMO.entries,{km:B.DEMO.km||0,sector:B.DEMO.sector||'council'});
-  setCount('h-rec',t.recT,0);
-  setCount('h-cat5',t.cat5,0);
-  setCount('h-co2',t.avoided,0);
-  setCount('h-steel',t.steelT,0);
-  txt('h-rec-d',fmt(t.recoveryRate*100,0)+'% of '+fmt(t.inT,0)+' t handed over');
-  var steelCats=Object.keys(t.byCat).filter(function(k){return t.byCat[k].steel>0;}).length;
-  txt('h-steel-d','from '+steelCats+' steel-bearing streams');
-
-  var cats=Object.keys(t.byCat).map(function(k){return t.byCat[k];}).filter(function(b){return b.rec>0;}).sort(function(a,b){return b.rec-a.rec;}).slice(0,5);
-  var max=cats.length?cats[0].rec:1;
-  cats.forEach(function(b,i){
-    var row=document.getElementById('h-bar-'+i); if(!row) return;
-    row.querySelector('.n').textContent=b.name;
-    row.querySelector('.fill').setAttribute('data-w',Math.max(2,Math.round(b.rec/max*100)));
-    row.querySelector('.val').textContent=fmt(b.rec,b.rec<10?1:0)+' t';
-  });
-
-  var led=document.getElementById('h-ledger');
-  if(led){
-    B.DEMO.ledger.slice(0,4).forEach(function(r){
-      var c=B.CAT[r.k]||{name:r.k,unit:'t'};
-      var q=c.unit==='count'?fmt(r.qty,0):fmt(r.qty,1)+' t';
-      var d=document.createElement('div');
-      d.innerHTML='<span>'+r.d+'</span><span>'+c.name+'</span><span class="r">'+q+'</span><span class="r">'+r.by+'</span>';
-      led.appendChild(d);
-    });
-  }
-
-  // --- 04 · three buckets, from the same demo dataset ---
-  var bar=document.getElementById('bk-bar');
-  if(bar&&t.inT>0){
-    var pr=t.recT/t.inT*100, ps=t.stoT/t.inT*100, pl=t.lanT/t.inT*100;
-    bar.setAttribute('aria-label','Three buckets for the demo program: '+fmt(t.recT,0)+' t recycled, '+fmt(t.stoT,0)+' t stored, '+fmt(t.lanT,0)+' t landfilled');
-    function paint(){document.getElementById('bk-rec').style.width=pr+'%';document.getElementById('bk-sto').style.width=ps+'%';document.getElementById('bk-lan').style.width=pl+'%';}
-    if('IntersectionObserver' in window){var iob=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){paint();iob.unobserve(e.target);}});},{threshold:.3});iob.observe(bar);} else paint();
-  }
-  setCount('bk-recn',t.recT,0);
-  setCount('bk-ston',t.stoT,0);
-  setCount('bk-lann',t.lanT,0);
-  txt('bk-who',(B.DEMO.customer||'').toUpperCase());
-
-  // --- 03 · worked example: 1,000 mattresses, with the proposed Yindyamarra Score ---
-  var X=B.EXAMPLE||{entries:[{k:'mattresses',qty:1000}],km:120};
-  var m=B.compute(X.entries,{km:X.km});
-  var sc=m.score||B.score(m);
-  var g=document.getElementById('ex-gauge');
-  if(g&&B.gauge){B.gauge(g,sc,220);g.classList.add('on-paper');}
-  txt('ex-band',sc.band);
-  setCount('ex-matt',m.units.mattresses||1000,0);
-  setCount('ex-steelpct',(B.CAT.mattresses.steelRecovery||0)*100,0);
-  setCount('ex-steel',m.steelT,1);
-  setCount('ex-vol',m.volAvoided,0);
-  setCount('ex-rate',m.recoveryRate*100,0);
-  setCount('ex-ret',m.recT,1);
-  txt('ex-ver',B.METHOD_VERSION||'');
-  txt('ex-sv',(B.SCORE&&B.SCORE.version)||'v0.1');
-  var exEm=document.getElementById('ex-em'); if(exEm&&B.emPair) exEm.innerHTML=B.emPair(m,{rows:3});
-  if(B.STEEL) txt('ex-sf',String(B.STEEL.f));
+  var X=window.YESDEMO, E=window.YESE, R=window.YESR, D=window.YESD; if(!X||!E||!R||!D) return;
+  function fmt(n,d){ return Number(n).toLocaleString('en-AU',{minimumFractionDigits:d||0,maximumFractionDigits:d||0}); }
+  function setCount(id,v,dec){ var el=document.getElementById(id); if(!el) return; dec=dec||0; el.setAttribute('data-count',v); el.setAttribute('data-dec',dec); if(el.getAttribute('data-from')) el.textContent=fmt(v,dec); }
+  function txt(id,s){ var el=document.getElementById(id); if(el) el.textContent=s; }
+  try{
+    var st=X.build(), o=st.orgs['demo-shire'], recs=o.records.filter(function(r){ return r.status==='verified'; });
+    var S=E.series(recs,o.profile), i=S.months.length-1, m=S.months[i];
+    var PL=R.plan(S,i,o.profile,{bookings:[],off:{},anchor:E.addMonths(m.month,1)});
+    txt('h-org',o.profile.org_name);
+    setCount('h-score',m.score,0); txt('h-band',m.band+' · '+E.label(m.month));
+    setCount('h-eco',PL.target,0); setCount('h-help',PL.potential,0);
+    setCount('h-co2',m.r12.total_t,0); txt('h-co2-d','Scope 1, 2 and 3 · '+fmt(m.r12.avoided_t,0)+' t avoided, separate');
+    var bars=document.getElementById('h-bars');
+    bars.innerHTML=D.CATEGORIES.map(function(c,k){ var v=m.scores[c.k]; return '<div class="bar"><span class="n">'+c.short+'</span><div class="track"><div class="fill" data-w="'+(v==null?0:Math.max(2,Math.round(v)))+'"></div></div><span class="val">'+(v==null?'—':Math.round(v))+'</span></div>'; }).join('');
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ Array.prototype.forEach.call(bars.querySelectorAll('.fill'),function(f){ f.style.width=f.getAttribute('data-w')+'%'; }); }); });
+    var led=document.getElementById('h-sug');
+    PL.items.slice(0,3).forEach(function(it){ var cat=it.s.cat&&D.CAT[it.s.cat]?D.CAT[it.s.cat].short:'Governance'; var d=document.createElement('div'); d.innerHTML='<span>+'+it.uplift.overall.toFixed(1)+' pts</span><span>'+R.title(it.s,o.profile)+'</span><span class="r">'+cat+'</span>'; led.appendChild(d); });
+  }catch(e){ var dash=document.querySelector('.dash'); if(dash) dash.style.display='none'; }
 })();
 </script>

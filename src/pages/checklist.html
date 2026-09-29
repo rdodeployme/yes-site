@@ -1,0 +1,46 @@
+<style>
+.page-checklist .lead{max-width:66ch}
+.page-checklist .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px}
+.page-checklist .chips button{font:500 14px var(--font-body);padding:9px 15px;border-radius:999px;border:1px solid var(--graphite);background:transparent;color:var(--ink);cursor:pointer}
+.page-checklist .chips button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.page-checklist h4{margin:26px 0 8px}
+.page-checklist .table-wrap{overflow-x:auto}
+@media print{.page-checklist .chips,.page-checklist .no-print,nav,.topbar,footer,.cta-band{display:none!important}}
+</style>
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">What we will ask you for</p>
+    <h1>The documents Yarta works from.</h1>
+    <p class="lead">You send the records you already hold; Yarta enters every figure. This is the list for your sector: what to send, who usually holds it, how often, and the evidence grade it earns. If a record does not exist, say so and the category is marked not reported, never guessed.</p>
+  </div>
+</section>
+<section>
+  <div class="wrap">
+    <div class="chips" id="chips" role="group" aria-label="Choose a sector"></div>
+    <div id="list"></div>
+    <div class="btn-row mt-3 no-print"><button class="btn btn-ink" type="button" id="print">Print this list {{ARROW}}</button><a class="btn btn-outline" href="/onboarding/">The 30-day onboarding</a></div>
+    <p class="note" style="margin-top:18px">Evidence grades: A is a primary document such as a bill or a docket; B is a system extract or reconciled record such as a contractor report or a register; C is an estimate or a figure without a document yet, and lowers the evidence share until the document arrives. <a href="/method/#evidence">How grading works</a>.</p>
+  </div>
+</section>
+<section class="cta-band"><div class="wrap"><p class="eyebrow">Not sure what you hold?</p><h2>Send what you have. We will tell you what is missing.</h2><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Talk to Yarta {{ARROW}}</a></div></div></section>
+<!--scripts-->
+<script src="/assets/yarta/dictionary.js"></script>
+<script src="/assets/yarta/sectors.js"></script>
+<script>
+(function(){
+  var S=window.YESS, D=window.YESD; if(!S||!D) return;
+  function esc(x){ return String(x).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  var chips=document.getElementById('chips'), list=document.getElementById('list');
+  var q=/[?&]sector=([a-z]+)/.exec(location.search), cur=(q&&S.BY[q[1]])?q[1]:'council';
+  function draw(){
+    Array.prototype.forEach.call(chips.querySelectorAll('button'),function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-k')===cur?'true':'false'); });
+    var items=S.checklist(cur), cats={}, order=[]; items.forEach(function(x){ if(!cats[x.cat]){ cats[x.cat]=[]; order.push(x.cat); } cats[x.cat].push(x); });
+    list.innerHTML='<p class="lead" style="margin-bottom:0">'+esc(S.BY[cur].name)+': '+esc(S.BY[cur].who)+'</p>'+order.map(function(c){ return '<h4>'+esc(D.CAT[c]?D.CAT[c].name:c)+'</h4><div class="table-wrap"><table class="table"><thead><tr><th>What to send</th><th>Who usually holds it</th><th>How often</th><th>Evidence grade</th></tr></thead><tbody>'+cats[c].map(function(x){ return '<tr><td>'+esc(x.item)+'</td><td>'+esc(x.holder)+'</td><td>'+esc(x.freq)+'</td><td>'+esc(x.evidence)+'</td></tr>'; }).join('')+'</tbody></table></div>'; }).join('');
+    if(history.replaceState) history.replaceState(null,'',location.pathname+'?sector='+cur);
+  }
+  chips.innerHTML=S.SECTORS.map(function(s){ return '<button type="button" data-k="'+s.k+'" aria-pressed="false">'+esc(s.name)+'</button>'; }).join('');
+  chips.addEventListener('click',function(e){ var b=e.target.closest('button[data-k]'); if(b){ cur=b.getAttribute('data-k'); draw(); } });
+  document.getElementById('print').addEventListener('click',function(){ window.print(); });
+  draw();
+})();
+</script>

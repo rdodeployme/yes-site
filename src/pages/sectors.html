@@ -48,7 +48,7 @@
       +'<div><p class="k">Leads with</p><div class="cats">'+s.dominant.map(function(c){ return '<span>'+esc(D[c]||c)+'</span>'; }).join('')+'</div></div>'
       +'<div><p class="k">What you report</p><ul>'+s.reports.map(function(r){ return '<li>'+esc(r)+'</li>'; }).join('')+'</ul></div>'
       +'<div><p class="k">Eco standards that apply</p><ul>'+s.standards.map(function(r){ return '<li>'+esc(r)+'</li>'; }).join('')+'</ul></div>'
-      +'<div class="acts"><a class="btn btn-primary btn-sm" href="/demo/?sector='+s.k+'">See the demo</a><a class="btn btn-ghost btn-sm" href="/report/?sector='+s.k+'">Sample report</a></div></div>';
+      +'<div class="acts"><a class="btn btn-primary btn-sm" href="/demo/?sector='+s.k+'">See the demo</a><a class="btn btn-ghost btn-sm" href="/report/?sector='+s.k+'">Sample report</a><a class="btn btn-ghost btn-sm" href="/assets/samples/yarta-sample-report-'+s.k+'.pdf" download>PDF</a><a class="btn btn-ghost btn-sm" href="/checklist/?sector='+s.k+'">What to send</a></div></div>';
   }).join('');
 })();
 </script>
