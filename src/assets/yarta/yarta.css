@@ -72,3 +72,16 @@ body.page-yarta{background:#F3EFE9}
 .page-demo-portal .app{min-height:calc(100vh - 130px)}
 .page-demo-portal .side .brand .mark{font-size:22px}
 @media print{.sector-strip{display:none!important}}
+
+/* operations tool (Yarta team) */
+.ops-grid{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:8px}
+@media(min-width:900px){.ops-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.ops-card{display:block;text-decoration:none;color:inherit;transition:border-color .15s}
+.ops-card:hover{border-color:var(--green-2)}
+.ops-card .v{color:var(--silver-4)}
+.ops-card.on .v{color:var(--ink)}
+.ops-card.warn{border-color:#E9A860;background:#FBF0E3}
+.ops-card.warn .v{color:var(--green-ink)}
+.opsel{font:500 13px var(--font-body);padding:6px 8px;border:1px solid var(--silver-2);border-radius:6px;background:#fff;color:var(--ink);max-width:180px}
+.tbl tr.flag td{background:#FBF0E3}
+.page-tool .ytop .ydemo{color:#F2C894}

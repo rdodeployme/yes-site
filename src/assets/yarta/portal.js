@@ -37,13 +37,14 @@ function field(id){ return D.FIELD[id] || (D.PROFILE.filter(function(f){return f
 
 /* ------------------------------------------------------------------ store */
 function load(){
-  try{ var s=JSON.parse(localStorage.getItem(KEY)); if(s && s.v===4 && s.orgs && s.users){ s.bookings=s.bookings||[]; return s; } }catch(e){}
-  var fresh = X.build(); persist(fresh); return fresh;
+  try{ var s=JSON.parse(localStorage.getItem(KEY)); if(s && s.v===4 && s.orgs && s.users){ s.bookings=s.bookings||[]; seedOps(s); return s; } }catch(e){}
+  var fresh = X.build(); seedOps(fresh); persist(fresh); return fresh;
 }
 function persist(s){
   try{ localStorage.setItem(KEY, JSON.stringify(s||state)); return true; }
   catch(e){ flash('This browser would not save the change (storage is full or blocked).','err'); return false; }
 }
+function seedOps(s){ if(!s.providers) s.providers=defaultProviders(); if(!s.gapLog) s.gapLog=[]; if(!s.opsSeeded){ s.opsSeeded=true; Object.keys(s.orgs).forEach(function(id){ var vs=s.orgs[id].records.filter(function(r){ return r.status==='verified'; }).sort(function(a,b){ return a.month<b.month?-1:1; }); vs.forEach(function(r){ if(!r.issuedAt){ var q=E.parse(E.addMonths(r.month,1)); r.issuedAt=new Date(q.y,q.m,20).toISOString().slice(0,10); r.issuedBy='Chris Walker'; } }); }); } var opsU=s.users.filter(function(u){ return u.role==='operator'; }); Object.keys(s.orgs).forEach(function(id,i){ var p=s.orgs[id].profile; if(!p.operator && opsU.length) p.operator=opsU[i%opsU.length].id; }); }
 var state = load();
 function save(){ return persist(state); }
 function me(){ return state.session ? state.users.filter(function(u){ return u.id===state.session.user; })[0] : null; }
@@ -135,9 +136,13 @@ function shell(active, body){
   var u=me(), o=org(), op=isOp();
   var links = op ? [
       ['grp','Yarta team'],
+      ['#/ops/home','Today','home'],
+      ['#/ops/gaps','Gap emails','gaps'],
       ['#/ops/entry','Data entry','entry', entryQueue().length||''],
       ['#/ops','Verification','ops', queue().length||''],
+      ['#/ops/reports','Reports to issue','issue', reportsToIssue().length||''],
       ['#/ops/bookings','Bookings','bookings', (state.bookings||[]).filter(function(b){ return b.status==='requested'; }).length||''],
+      ['#/ops/providers','Providers','providers'],
       ['#/ops/customers','Customers','customers'],
       ['#/ops/factors','Factor library','factors'],
       ['#/ops/activity','Activity','activity'],
@@ -461,7 +466,7 @@ function benchTable(p,tg,BM){
     + '<p class="rp-bmnote">'+esc(BM.edition)+'. '+(BM.none?esc(BM.none)+' ':'')+'Benchmarks come from public sources only; Yarta never pools customer data. Sources: '+srcs+'.</p>';
 }
 var RB=window.REPORT_BRAND||{mark:'<span class="mark">Yarta</span>', full:'Yindyamarra Environmental Sustainability', score:'Yindyamarra Environmental Score', title:'Environmental<br>Sustainability Report'};
-function sheetCover(o,S,i,PL,k,nP,provTxt){
+function sheetCover(o,S,i,PL,k,nP,provTxt,issuedTxt){
   var m=S.months[i], R12=m.r12, B=R12.base||{}, p=o.profile, T=S.targets, ly=S.months[i-12]||null;
   if(inBaselineFY(S,p,k)) B={};
   var tg=E.targets({months:S.months.slice(0,i+1), targets:T, baseline:S.baseline});
@@ -494,13 +499,13 @@ function sheetCover(o,S,i,PL,k,nP,provTxt){
   return '<section class="rp-sheet rp-cover">'
     + '<div class="rp-band"'+photo+'><div class="rp-band-l"><div class="rp-brand">'+RB.mark+'<span class="full">'+RB.full+'</span></div>'
     + '<div class="rp-ethos">Measure. Understand. Report. Improve.</div><h1 class="rp-big">'+RB.title+'</h1><p class="rp-tag">Where '+esc(p.org_name)+' stands, verified figure by figure, and the ways to improve.</p></div>'
-    + '<div class="rp-band-r"><div class="rp-kv light"><span>Organisation</span><b>'+esc(p.org_name)+'</b>'+(sectorName?'<span>Sector</span><b>'+esc(sectorName)+'</b>':'')+'<span>Month</span><b>'+mLabel(k)+'</b><span>Status</span><b>'+esc(provTxt)+'</b><span>Issued</span><b>'+longDate(new Date())+'</b></div>'+(p.traditional_owners?'<div class="rp-country">On '+esc(p.traditional_owners)+' Country</div>':'')+'</div></div>'
+    + '<div class="rp-band-r"><div class="rp-kv light"><span>Organisation</span><b>'+esc(p.org_name)+'</b>'+(sectorName?'<span>Sector</span><b>'+esc(sectorName)+'</b>':'')+'<span>Month</span><b>'+mLabel(k)+'</b><span>Status</span><b>'+esc(provTxt)+'</b><span>Issued</span><b>'+(issuedTxt||longDate(new Date()))+'</b></div>'+(p.traditional_owners?'<div class="rp-country">On '+esc(p.traditional_owners)+' Country</div>':'')+'</div></div>'
     + (p.country_photo?'<div class="rp-photo-credit">Photo: '+esc(p.country_photo_credit||'supplied by the organisation and approved by Traditional Owners')+'</div>':'')
     + '<div class="rp-score">'+ring(m.score,150,true)+'<div class="rp-score-t"><p class="kicker">'+RB.score+' · '+esc(mLabel(k))+'</p><div class="band">'+esc(m.band)+'</div><div class="rp-score-d">'+(m.yoy==null?'':'<span>'+delta(m.yoy,{unit:' pts'})+' year on year'+(ly?' ('+esc(mLabel(ly.month))+')':'')+'</span>')+(m.mom==null?'':'<span>'+delta(m.mom,{unit:' pts'})+' month on month</span>')+'<span>'+m.scored+' of 10 categories scored</span></div></div>'+wyc+'</div>'
     + '<div class="rp-cards">'+cardsH+'</div>'
     + '<div class="rp-cols"><div><div class="rp-h">Category scores · change on last year</div><div class="rp-subs one">'+subs+'</div></div>'
     + '<div><div class="rp-h">At real-world scale · rolling '+win+'</div><div class="rp-scale">'+scaleH+'</div><div class="rp-h">Progress towards the eco standards · rolling '+win+'</div><div class="rp-tgs">'+tgH+'</div>'+(BM?'<p class="rp-bmnote">The mark on each bar is the published industry benchmark; figures and sources are on page 2. No other organisation\'s data is used.</p>':'')+'</div></div>'
-    + '<div class="rp-foot">Headline figures are rolling '+win+' totals; the change is against the same calendar months of the baseline year'+(inBaselineFY(S,p,k)?' ('+esc(S.baseline.fy||p.baseline_fy)+' is the baseline year, so there is no earlier year to compare with yet)':'')+'. (P) provisional: a target-based category with less than 12 months of data. The score is self-declared under the published Yarta method v0.1 (draft); it is not an accredited rating, certification or offset. Page 1 of '+nP+'.</div></section>';
+    + '<div class="rp-foot">Headline figures are rolling '+win+' totals; the change is against the same calendar months of the baseline year'+(inBaselineFY(S,p,k)?' ('+esc(S.baseline.fy||p.baseline_fy)+' is the baseline year, so there is no earlier year to compare with yet)':'')+'. (P) provisional: a target-based category with less than 12 months of data.'+(operatorOf(o)?' Your Yarta data operator: '+esc(operatorOf(o).name)+'.':'')+' The score is self-declared under the published Yarta method v0.1 (draft); it is not an accredited rating, certification or offset. Page 1 of '+nP+'.</div></section>';
 }
 
 function vReport(k){
@@ -521,7 +526,8 @@ function reportSheets(o,S,k){
   var subs=D.CATEGORIES.map(function(c){ var v=m.scores[c.k]; return '<div class="rp-sub"><span>'+esc(c.name)+(m.prov[c.k]?' <span class="muted">(P)</span>':'')+'</span><span class="v">'+(v==null?'—':Math.round(v))+'</span><span class="d">'+(v==null?'<span class="muted small">not reported</span>':delta(m.cat_yoy[c.k]))+'</span><div class="bar"><i style="width:'+(v||0)+'%"></i></div></div>'; }).join('');
   function kvrow(l,a,u,note){ return '<tr><td>'+esc(l)+'</td><td class="num">'+a+'</td><td>'+esc(u||'')+'</td><td class="small muted">'+(note||'')+'</td></tr>'; }
   var v=m.values;
-  var sheet1 = sheetCover(o,S,i,PL,k,nP,provTxt), BM2=benchFor(p);
+  var issuedTxt = r.issuedAt ? longDate(r.issuedAt) : (r.status==='verified' ? 'Verified, not yet issued' : 'Draft');
+  var sheet1 = sheetCover(o,S,i,PL,k,nP,provTxt,issuedTxt), BM2=benchFor(p);
   var sheet2 = '<section class="rp-sheet"><div class="rp-head"><div><div class="rp-title" style="font-size:22px">'+esc(p.org_name)+' · '+mLabel(k)+'</div>'+rpSteps(['understand'])+'</div><div class="rp-kv"><span>Report</span><b>Figures behind the score</b></div></div>'
     + '<div class="rp-h" style="margin-top:0">Emissions · t CO₂-e</div><div class="rp-tw"><table class="tbl compact"><thead><tr><th></th><th class="r">'+mShort(k)+'</th><th class="r">Rolling 12 months</th><th class="r">Baseline months</th></tr></thead><tbody>'
     + [['Scope 1 · fuel and gas','scope1_t'],['Scope 2 · grid electricity','scope2_t'],['Scope 3 · landfill and upstream','scope3_t'],['Total operational emissions','total_t']].map(function(x){ return '<tr><td>'+x[0]+'</td><td class="num">'+fmt(m[x[1]],1)+'</td><td class="num">'+fmt(R12[x[1]],0)+'</td><td class="num">'+fmt(R12.base[x[1]],0)+'</td></tr>'; }).join('')
@@ -667,9 +673,9 @@ function vBookings(){
     else if(b.status==='completed') acts='<span class="small muted">Done '+(b.completedMonth?mLabel(b.completedMonth):'')+'</span>';
     return '<tr><td><b>'+esc(o.profile.org_name)+'</b><div class="small muted">'+esc(b.contact||'')+(b.email?' · '+esc(b.email):'')+'</div></td>'
       + '<td><b>'+esc(R.title(s,o.profile))+'</b>'+grpDot(s)+'<div class="small muted">'+esc(provOf(s).label)+'</div>'+(b.notes?'<div class="small">'+esc(b.notes)+'</div>':'')+(b.share&&(b.why||liveWhy(b))?'<div class="small muted">Figures shared: '+esc(b.why||liveWhy(b))+'</div>':'')+'</td>'
-      + '<td>'+esc(slotLabel(b.slot,b.other))+'<div class="small muted">'+esc(b.mode||'')+(b.location?' · '+esc(b.location):'')+'</div></td><td>'+bookingChip(b)+'</td><td><div class="pill-row">'+acts+'</div></td></tr>'; }).join('');
+      + '<td>'+esc(slotLabel(b.slot,b.other))+'<div class="small muted">'+esc(b.mode||'')+(b.location?' · '+esc(b.location):'')+'</div></td><td>'+(b.provider&&provById(b.provider)?'<b style="font-weight:600">'+esc(provById(b.provider).name)+'</b><div class="small muted">'+(b.introducedAt?'Introduced '+longDate(b.introducedAt):'Not yet introduced')+'</div>':(s.prov==='yes'?'<span class="small muted">Yarta analyst</span>':'<span class="small" style="color:var(--red)">No provider</span>'))+'</td><td>'+bookingChip(b)+'</td><td><div class="pill-row">'+acts+(s.prov!=='yes'&&b.status!=='cancelled'&&b.status!=='completed'?'<a class="btn btn-ghost btn-sm" href="#/ops/introduce/'+esc(b.id)+'" style="color:var(--ink)">'+(b.provider?'Introduction':'Assign provider')+'</a>':'')+'</div></td></tr>'; }).join('');
   var body='<div class="pg-head"><div><p class="kicker">Yarta team</p><h1>Bookings</h1><p class="pg-sub">Help requested from customers\' roadmaps. Confirm the time with the customer and the provider, then mark it done when the work is complete so the customer can follow the change in later months. Work by a Recycle Group business (●) is disclosed on the customer\'s report.</p></div></div>'
-    + (rows?'<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Organisation</th><th>Help</th><th>When</th><th>Status</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<div class="empty">No bookings yet.</div>');
+    + (rows?'<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Organisation</th><th>Help</th><th>When</th><th>Provider</th><th>Status</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<div class="empty">No bookings yet.</div>');
   return shell('bookings', body);
 }
 
@@ -705,7 +711,7 @@ function vOrganisation(){
   var users=state.users.filter(function(u){ return u.org===o.id; }).map(function(u){ return '<tr><td>'+esc(u.name)+'</td><td>'+esc(u.title)+'</td><td class="mono small">'+esc(u.email)+'</td></tr>'; }).join('');
   var body='<div class="pg-head"><div><p class="kicker">Organisation</p><h1>'+esc(p.org_name)+'</h1><p class="pg-sub">Details used for intensities, the baseline and targets. Changing them recalculates every month.'+(ro?' Yarta keeps these up to date: to change anything, email <a class="link" href="mailto:contact@yes.com.au">contact@yes.com.au</a>.':'')+'</p></div>'+(ro?'':'<div class="pg-actions"><button class="btn btn-primary btn-sm" type="button" data-act="save-profile">Save changes</button></div>')+'</div>'
     + '<div class="row2"><div class="panel"><h3>Profile</h3><div class="stack" style="margin-top:16px">'+fields.slice(0,8).join('')+'</div></div><div class="panel"><h3>Targets</h3><div class="stack" style="margin-top:16px">'+fields.slice(8).join('')+'</div></div></div>'
-    + '<h2 class="sec-t" style="margin-top:28px">People with access</h2><p class="sec-s">In production each person has their own sign-in. Demo accounts only here.</p><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Name</th><th>Role</th><th>Email</th></tr></thead><tbody>'+(users||'<tr><td colspan="3" class="muted">No demo users for this organisation.</td></tr>')+'</tbody></table></div>';
+    + '<h2 class="sec-t" style="margin-top:28px">Your Yarta data operator</h2><p class="sec-s">'+(operatorOf(o)?esc(operatorOf(o).name)+' · '+esc(operatorOf(o).title)+' · <a class="link" href="mailto:'+esc(operatorOf(o).email)+'">'+esc(operatorOf(o).email)+'</a>. Enters your figures, sends the monthly gap email and answers for the month.':'Not yet assigned.')+'</p><h2 class="sec-t" style="margin-top:28px">People with access</h2><p class="sec-s">In production each person has their own sign-in. Demo accounts only here.</p><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Name</th><th>Role</th><th>Email</th></tr></thead><tbody>'+(users||'<tr><td colspan="3" class="muted">No demo users for this organisation.</td></tr>')+'</tbody></table></div>';
   return shell('organisation', body);
 }
 function fyOptions(o){ var set={}; sorted(o).forEach(function(r){ set[E.fyOf(r.month)]=1; }); var a=Object.keys(set).sort(); if(o.profile.baseline_fy && a.indexOf(o.profile.baseline_fy)<0) a.unshift(o.profile.baseline_fy); return a; }
@@ -744,8 +750,8 @@ function vQueue(){
 }
 function vCustomers(){
   var rows=Object.keys(state.orgs).map(function(id){ var o=state.orgs[id], S=seriesOf(o), m=monthOf(S), rs=sorted(o), last=rs[rs.length-1]; var waiting=o.records.filter(function(r){ return r.status==='submitted'; }).length;
-    return '<tr><td><b>'+esc(o.profile.org_name)+'</b><div class="small muted">'+esc(o.profile.org_type)+' · '+esc(o.profile.state)+'</div></td><td class="num">'+o.records.length+'</td><td>'+(last?mLabel(last.month)+' '+statusChip(last.status):'—')+'</td><td class="num"><b>'+(m&&m.score!=null?m.score:'—')+'</b></td><td>'+(m?esc(m.band):'—')+'</td><td class="num">'+(m&&m.yoy!=null?sgn(m.yoy):'—')+'</td><td class="num">'+waiting+'</td><td><div class="pill-row"><button class="btn btn-ghost btn-sm" type="button" data-act="view-org" data-org="'+id+'" style="color:var(--ink)">Dashboard</button>'+(openMonths(o).length?'<a class="btn btn-primary btn-sm" href="#/entry/'+id+'/'+openMonths(o)[openMonths(o).length-1].month+'">Enter figures</a>':'')+'</div></td></tr>'; }).join('');
-  var body='<div class="pg-head"><div><p class="kicker">Yarta team</p><h1>Customers</h1><p class="pg-sub">Fictional demo organisations.</p></div></div><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Organisation</th><th class="r">Months</th><th>Latest month</th><th class="r">Score</th><th>Band</th><th class="r">Year on year</th><th class="r">Waiting</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+    return '<tr><td><b>'+esc(o.profile.org_name)+'</b><div class="small muted">'+esc(o.profile.org_type)+' · '+esc(o.profile.state)+'</div></td><td><select class="opsel" data-act="set-operator" data-org="'+id+'" aria-label="Data operator">'+ops().map(function(u){ return '<option value="'+esc(u.id)+'"'+(o.profile.operator===u.id?' selected':'')+'>'+esc(u.name)+'</option>'; }).join('')+'</select></td><td class="num">'+o.records.length+'</td><td>'+(last?mLabel(last.month)+' '+statusChip(last.status):'—')+'</td><td class="num"><b>'+(m&&m.score!=null?m.score:'—')+'</b></td><td>'+(m?esc(m.band):'—')+'</td><td class="num">'+(m&&m.yoy!=null?sgn(m.yoy):'—')+'</td><td class="num">'+waiting+'</td><td><div class="pill-row"><button class="btn btn-ghost btn-sm" type="button" data-act="view-org" data-org="'+id+'" style="color:var(--ink)">Dashboard</button>'+(openMonths(o).length?'<a class="btn btn-primary btn-sm" href="#/entry/'+id+'/'+openMonths(o)[openMonths(o).length-1].month+'">Enter figures</a>':'')+'</div></td></tr>'; }).join('');
+  var body='<div class="pg-head"><div><p class="kicker">Yarta team</p><h1>Customers</h1><p class="pg-sub">Every customer, its named Yarta data operator and where its latest month sits. Demo organisations are fictional.</p></div><div class="pg-actions"><a class="btn btn-ink btn-sm" href="#/ops/customers/new">New customer</a></div></div><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Organisation</th><th>Data operator</th><th class="r">Months</th><th>Latest month</th><th class="r">Score</th><th>Band</th><th class="r">Year on year</th><th class="r">Waiting</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
   return shell('customers', body);
 }
 function vReview(orgId,k){
@@ -786,6 +792,232 @@ function vActivity(){
     + (rows?'<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>When</th><th>Who</th><th>Organisation</th><th>Action</th><th>Detail</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<div class="empty">No activity yet in this browser. Submit or verify a month and it will appear here.</div>');
   return shell('activity', body);
 }
+/* ------------------------------------------------------------------ Yarta team: the operations tool (prototype)
+   Adds, on top of entry and verification: a Today workbench, the monthly gap email, reports to issue,
+   the provider directory with accreditation checks, provider introductions for bookings, a named data
+   operator per customer, and new-customer onboarding. State shape is flat so it maps to collections later:
+   orgs, users, bookings, providers, gapLog, audit. */
+function today(){ return new Date().toISOString().slice(0,10); }
+function addDays(d,n){ var x=new Date(d); x.setDate(x.getDate()+n); return x; }
+function ops(){ return state.users.filter(function(u){ return u.role==='operator'; }); }
+function opById(id){ return state.users.filter(function(u){ return u.id===id; })[0]; }
+function operatorOf(o){ return o && o.profile && o.profile.operator ? opById(o.profile.operator) : null; }
+function contactsOf(o){ return state.users.filter(function(u){ return u.role==='customer' && u.org===o.id; }); }
+function copyText(s){ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(s).then(function(){ flash('Copied.'); },function(){ flash('Could not copy. Select the text and copy it.','err'); }); } else flash('Select the text and copy it.','err'); }
+function mailto(to,subject,body){ return 'mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body); }
+
+/* --- providers: who Yarta introduces, and the accreditation each must hold --- */
+var ACCRED = {
+  hardwaste:'Environment protection licence or registration for the activity in that state; processor certificates per stream',
+  contamination:'Bin audit practitioners working to the state waste authority audit method',
+  fleet:'Fleet and EV advisers working from the organisation\'s own kilometres and fuel data; charging by licensed electricians',
+  energy:'Energy audits to AS/NZS 3598; solar and battery installers accredited under the Clean Energy Council scheme (Solar Accreditation Australia); electrical work by licensed electricians',
+  dumping:'Environment protection licence or registration for collection in that state',
+  water:'Licensed plumbers for works; water auditors working to the utility\'s efficiency program',
+  evidence:'Yarta analysts, not the analysts who enter or verify the customer\'s months',
+  procurement:'Procurement advisers; recycled-content claims backed by supplier certificates',
+  planting:'Landcare groups, accredited bush regenerators, Traditional Owner ranger programs engaged on their terms',
+  grants:'Grants writers using the verified Yarta figures as the evidence base'
+};
+function defaultProviders(){
+  var d=today();
+  function P(id,name,svc,kind,acc,lic,exp,contact,email){ return {id:id,name:name,svc:svc,kind:kind,accreditation:acc,licence:lic,expiry:exp,checkedAt:d,checkedBy:'Demo seed',contact:contact,email:email,phone:'',notes:'Fictional demo provider.',demo:true}; }
+  return [
+    P('pv-rg-collect','Recycle Group collections (demo)',['hardwaste','dumping'],'group','EPA licence for waste collection and transfer; processor certificates per stream','EPA-DEMO-0001','2027-06-30','Operations desk','collections@demo-recyclegroup.example'),
+    P('pv-solar','Demo Solar & Storage',['energy'],'partner','Clean Energy Council accredited installer (Solar Accreditation Australia); licensed electrical contractor','SAA-DEMO-2211','2027-03-31','Sam Ortiz','sam@demo-solar.example'),
+    P('pv-audit','Demo Energy Audits',['energy'],'partner','Energy audits to AS/NZS 3598 (Type 2)','—','2027-12-31','Ana Petrov','ana@demo-audits.example'),
+    P('pv-fleet','Demo Fleet Advisory',['fleet'],'partner','Fleet transition adviser; charging installed by licensed electricians','—','2026-11-30','Lee Zhang','lee@demo-fleet.example'),
+    P('pv-water','Demo Water Services',['water'],'partner','Licensed plumbing contractor; leak detection and irrigation','PL-DEMO-77812','2027-01-31','Jo Barker','jo@demo-water.example'),
+    P('pv-bins','Demo Bin Audits',['contamination'],'partner','Kerbside bin audit practitioners (state audit method)','—','2026-10-15','Rae Singh','rae@demo-binaudits.example'),
+    P('pv-land','Demo Landcare Network',['planting'],'partner','Accredited bush regeneration; works with Traditional Owner ranger programs','—','2027-06-30','Kim Doyle','kim@demo-landcare.example'),
+    P('pv-proc','Demo Procurement Advisory',['procurement'],'partner','Recycled-content procurement; supplier certificate verification','—','2027-06-30','Pat Nguyen','pat@demo-procure.example'),
+    P('pv-grants','Demo Grants Partners',['grants'],'partner','Grants writing; uses verified Yarta figures only','—','2027-06-30','Alex Kaur','alex@demo-grants.example')
+  ];
+}
+function providersFor(svc){ return (state.providers||[]).filter(function(p){ return p.svc.indexOf(svc)>=0; }); }
+function provById(id){ return (state.providers||[]).filter(function(p){ return p.id===id; })[0]; }
+function provStatus(p){ var d=today(); if(!p.expiry) return {k:'unknown',l:'No expiry recorded'}; if(p.expiry<d) return {k:'lapsed',l:'Lapsed '+longDate(p.expiry)}; if(p.expiry<=addDays(new Date(),90).toISOString().slice(0,10)) return {k:'expiring',l:'Expires '+longDate(p.expiry)}; return {k:'ok',l:'Current to '+longDate(p.expiry)}; }
+function provChip(p){ var s=provStatus(p); var cls={ok:'st-verified',expiring:'st-submitted',lapsed:'st-returned',unknown:'st-draft'}[s.k]; return '<span class="st '+cls+'">'+esc(s.l)+'</span>'; }
+
+/* --- the month in play for a customer, and what is still missing --- */
+function monthInPlay(o){ var open=openMonths(o); if(open.length) return {k:open[0].month, r:open[0], started:true}; var nk=nextStartable(o); return nk?{k:nk, r:null, started:false}:null; }
+function gapsFor(o){
+  var mp=monthInPlay(o); if(!mp) return null;
+  var due=dueFields(o,mp.k).filter(function(f){ return f.req; }), v=(mp.r&&mp.r.values)||{};
+  var have=[], need=[];
+  due.forEach(function(f){ if(isNum(v[f.id]) || (f.kind!=='number'&&f.kind!=='count'&&f.kind!=='currency'&&f.kind!=='percent'&&v[f.id])) have.push(f); else need.push(f); });
+  var byCat={}; need.forEach(function(f){ (byCat[f.cat]=byCat[f.cat]||[]).push(f); });
+  var docs=(mp.r&&mp.r.inbox)||[];
+  var sent=(state.gapLog||[]).filter(function(g){ return g.org===o.id && g.month===mp.k; });
+  var askFrom=new Date(E.parse(E.addMonths(mp.k,1)).y, E.parse(E.addMonths(mp.k,1)).m, 1);
+  return {month:mp.k, started:mp.started, rec:mp.r, have:have, need:need, byCat:byCat, docs:docs, due:dueDate(mp.k), askFrom:askFrom, sent:sent, lastSent:sent.length?sent[sent.length-1]:null, dueNow: new Date()>=askFrom && need.length>0 && !sent.length};
+}
+function gapEmail(o,g){
+  var c=contactsOf(o)[0], op=operatorOf(o)||me(), cats=Object.keys(g.byCat);
+  var lines=cats.map(function(k){ var c2=D.CAT[k]; return '• '+(c2?c2.name:k)+': '+g.byCat[k].map(function(f){ return f.name+(f.src?' ('+f.src+')':''); }).join('; '); });
+  var subject='Yarta · '+o.profile.org_name+' · '+mLabel(g.month)+': what we still need';
+  var body='Hi '+(c?c.name.split(' ')[0]:'there')+',\n\n'
+    + 'Thanks for the '+mLabel(g.month)+' records so far'+(g.docs.length?' ('+g.docs.length+' document'+(g.docs.length===1?'':'s')+' received)':'')+'. We have '+g.have.length+' of '+(g.have.length+g.need.length)+' required figures.\n\n'
+    + 'To close the month we still need:\n'+lines.join('\n')+'\n\n'
+    + 'Reply to this email with the documents attached, or upload them in the portal. If a record does not exist, reply and say so and we will mark the category "not reported" for the month; it is left out of the score rather than guessed.\n\n'
+    + 'Documents are due by '+longDate(g.due)+'. Once they are in, we enter the figures, a second analyst verifies the month, and your dashboard and report update.\n\n'
+    + 'Thanks,\n'+op.name+'\nYarta · your data operator\n'+op.email;
+  return {to:c?c.email:'', subject:subject, body:body};
+}
+
+/* --- reports to issue --- */
+function reportsToIssue(){ var out=[]; Object.keys(state.orgs).forEach(function(id){ state.orgs[id].records.forEach(function(r){ if(r.status==='verified' && !r.issuedAt) out.push({org:id,rec:r}); }); }); return out.sort(function(a,b){ return a.rec.month<b.rec.month?-1:1; }); }
+
+/* --- views --- */
+function vOpsHome(){
+  var u=me(), d=today();
+  var entry=entryQueue(), ver=queue(), issue=reportsToIssue(), bks=(state.bookings||[]).filter(function(b){ return b.status==='requested'; });
+  var confirmedNoProv=(state.bookings||[]).filter(function(b){ return b.status==='confirmed' && !b.provider && R.byKey[b.svc] && R.byKey[b.svc].prov!=='yes'; });
+  var gaps=[]; Object.keys(state.orgs).forEach(function(id){ var g=gapsFor(state.orgs[id]); if(g) gaps.push({org:id,g:g}); });
+  var gapsDue=gaps.filter(function(x){ return x.g.dueNow; });
+  var docsDue=gaps.filter(function(x){ return x.g.need.length && x.g.due>=new Date() && x.g.due<=addDays(new Date(),7); });
+  var exp=(state.providers||[]).filter(function(p){ var s=provStatus(p); return s.k==='expiring'||s.k==='lapsed'; });
+  var mine=Object.keys(state.orgs).filter(function(id){ return state.orgs[id].profile.operator===u.id; });
+  function card(n,l,href,sub,tone){ return '<a class="panel metric ops-card'+(n?' on':'')+(tone?' '+tone:'')+'" href="'+href+'"><div class="k">'+esc(l)+'</div><div class="v">'+n+'</div><div class="s">'+esc(sub)+'</div></a>'; }
+  var body='<div class="pg-head"><div><p class="kicker">Yarta team · '+esc(longDate(new Date()))+'</p><h1>Today</h1><p class="pg-sub">Everything the six promises need, in the order the month runs: documents in, figures entered, month verified, report issued, gap email out, help introduced.</p></div></div>'
+    + '<div class="ops-grid">'
+    + card(gapsDue.length,'Gap emails to send','#/ops/gaps','Months past the 1st with required figures missing and no email sent', gapsDue.length?'warn':'')
+    + card(docsDue.length,'Documents due this week','#/ops/gaps','Customers whose records are due by the 15th')
+    + card(entry.length,'Months to enter','#/ops/entry','Open for data entry, or returned by verification')
+    + card(ver.length,'Awaiting verification','#/ops','Entered, waiting for a second analyst', ver.length?'warn':'')
+    + card(issue.length,'Reports to issue','#/ops/reports','Verified months whose report has not been issued', issue.length?'warn':'')
+    + card(bks.length,'Bookings to confirm','#/ops/bookings','Help requested from a roadmap')
+    + card(confirmedNoProv.length,'Introductions to make','#/ops/bookings','Confirmed bookings with no accredited provider assigned', confirmedNoProv.length?'warn':'')
+    + card(exp.length,'Provider checks','#/ops/providers','Accreditations lapsed or expiring within 90 days', exp.length?'warn':'')
+    + '</div>'
+    + '<h2 class="sec-t" style="margin-top:28px">My customers</h2><p class="sec-s">Organisations where '+esc(u.name)+' is the named data operator.</p>'
+    + (mine.length?'<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Organisation</th><th>Month in play</th><th class="r">Required figures</th><th>Documents due</th><th>Gap email</th><th></th></tr></thead><tbody>'
+      + mine.map(function(id){ var o=state.orgs[id], g=gapsFor(o); return '<tr><td><b>'+esc(o.profile.org_name)+'</b></td><td>'+(g?mLabel(g.month)+(g.started?' '+statusChip(g.rec.status):' <span class="st st-draft">Not started</span>'):'<span class="muted">Up to date</span>')+'</td><td class="num">'+(g?g.have.length+' / '+(g.have.length+g.need.length):'—')+'</td><td>'+(g?longDate(g.due):'—')+'</td><td>'+(g?(g.lastSent?'Sent '+longDate(g.lastSent.at):(g.dueNow?'<span class="st st-returned">Due</span>':'Not yet')):'—')+'</td><td>'+(g?'<a class="btn btn-ghost btn-sm" href="#/ops/gaps/'+id+'" style="color:var(--ink)">Open</a>':'')+'</td></tr>'; }).join('')
+      + '</tbody></table></div>':'<div class="empty">No customers are assigned to you yet. Assign an operator on the <a class="link" href="#/ops/customers">Customers</a> page.</div>');
+  return shell('home', body);
+}
+
+function vGaps(orgId){
+  if(orgId){ var o=state.orgs[orgId]; if(!o) return vNotFound(); var g=gapsFor(o); var body;
+    if(!g){ body='<div class="pg-head"><div><p class="kicker"><a class="link" href="#/ops/gaps">Gap emails</a></p><h1>'+esc(o.profile.org_name)+'</h1></div></div><div class="empty">Every month is entered. Nothing to ask for.</div>'; return shell('gaps',body); }
+    var em=gapEmail(o,g), c=contactsOf(o), op=operatorOf(o);
+    var needRows=Object.keys(g.byCat).map(function(k){ return '<tr><td><b>'+esc(D.CAT[k]?D.CAT[k].name:k)+'</b></td><td>'+g.byCat[k].map(function(f){ return esc(f.name)+(f.src?' <span class="muted small">· '+esc(f.src)+'</span>':''); }).join('<br>')+'</td></tr>'; }).join('');
+    body='<div class="pg-head"><div><p class="kicker"><a class="link" href="#/ops/gaps">Gap emails</a> · '+mLabel(g.month)+'</p><h1>'+esc(o.profile.org_name)+'</h1><p class="pg-sub">'+g.have.length+' of '+(g.have.length+g.need.length)+' required figures in · '+g.docs.length+' document'+(g.docs.length===1?'':'s')+' received · due '+longDate(g.due)+(g.lastSent?' · last email sent '+longDate(g.lastSent.at)+' by '+esc(g.lastSent.by):' · no email sent yet')+'</p></div>'
+      + '<div class="pg-actions">'+(g.started?'<a class="btn btn-ink btn-sm" href="#/entry/'+orgId+'/'+g.month+'">Enter figures</a>':'<button class="btn btn-ink btn-sm" type="button" data-act="start-month" data-org="'+orgId+'" data-month="'+g.month+'">Open the month</button>')+'</div></div>'
+      + '<div class="row2"><div class="panel"><h3>Still needed</h3>'+(needRows?'<div class="tbl-wrap" style="margin-top:12px"><table class="tbl compact"><thead><tr><th>Category</th><th>Figures and the document that carries them</th></tr></thead><tbody>'+needRows+'</tbody></table></div>':'<p class="sec-s" style="margin-top:8px">Nothing. Every required figure is in.</p>')
+      + '<h3 style="margin-top:22px">Documents received</h3>'+(g.rec?inboxList(g.rec):'<p class="sec-s" style="margin:6px 0 0">None yet. The month has not been opened.</p>')+'</div>'
+      + '<div class="panel"><h3>The email</h3><p class="sec-s" style="margin-top:6px">To '+(c.length?c.map(function(x){ return esc(x.name)+' &lt;'+esc(x.email)+'&gt;'; }).join(', '):'<span style="color:var(--red)">no customer contact on file</span>')+' · from '+esc(op?op.name:me().name)+'</p>'
+      + '<div class="field" style="margin-top:12px"><label>Subject</label><input type="text" id="gap-subj" value="'+esc(em.subject)+'"></div>'
+      + '<div class="field"><label>Body</label><textarea id="gap-body" style="min-height:340px;font-family:var(--font-mono);font-size:12.5px;line-height:1.5">'+esc(em.body)+'</textarea></div>'
+      + '<div class="pill-row" style="margin-top:12px"><button class="btn btn-primary btn-sm" type="button" data-act="gap-sent" data-org="'+orgId+'" data-month="'+g.month+'">Mark as sent</button><a class="btn btn-ghost btn-sm" style="color:var(--ink)" href="'+mailto(c.map(function(x){ return x.email; }).join(','),em.subject,em.body)+'">Open in mail</a><button class="btn btn-ghost btn-sm" type="button" data-act="gap-copy" style="color:var(--ink)">Copy</button></div>'
+      + '<p class="small muted" style="margin:12px 0 0">In production this email goes out automatically on the 1st of the month after the reporting month, with a reminder on the 10th, and every send is logged here. In this prototype you send it from your own mail and mark it sent.</p></div></div>';
+    return shell('gaps', body);
+  }
+  var rows=Object.keys(state.orgs).map(function(id){ var o2=state.orgs[id], g2=gapsFor(o2); if(!g2) return ''; return '<tr'+(g2.dueNow?' class="flag"':'')+'><td><b>'+esc(o2.profile.org_name)+'</b><div class="small muted">'+esc((operatorOf(o2)||{}).name||'No operator')+'</div></td><td>'+mLabel(g2.month)+(g2.started?' '+statusChip(g2.rec.status):' <span class="st st-draft">Not started</span>')+'</td><td class="num">'+g2.have.length+' / '+(g2.have.length+g2.need.length)+'</td><td class="num">'+g2.docs.length+'</td><td>'+longDate(g2.due)+'</td><td>'+(g2.lastSent?'Sent '+longDate(g2.lastSent.at):(g2.dueNow?'<span class="st st-returned">Due now</span>':'<span class="muted">From '+longDate(g2.askFrom)+'</span>'))+'</td><td><a class="btn btn-primary btn-sm" href="#/ops/gaps/'+id+'">Open</a></td></tr>'; }).join('');
+  var body2='<div class="pg-head"><div><p class="kicker">Yarta team</p><h1>Gap emails</h1><p class="pg-sub">Once a month, for every customer, the email that lists what Yarta still needs for the reporting month. Goes out from the 1st of the following month; documents are due by the 15th.</p></div></div>'
+    + (rows?'<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Organisation</th><th>Month in play</th><th class="r">Required in</th><th class="r">Documents</th><th>Due</th><th>Email</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<div class="empty">Every customer is up to date.</div>');
+  return shell('gaps', body2);
+}
+
+function vIssue(){
+  var list=reportsToIssue();
+  var rows=list.map(function(x){ var o=state.orgs[x.org], r=x.rec; return '<tr><td><b>'+esc(o.profile.org_name)+'</b></td><td>'+mLabel(r.month)+'</td><td>'+longDate(r.verifiedAt)+(r.verifiedBy?' · '+esc(r.verifiedBy):'')+'</td><td><div class="pill-row"><button class="btn btn-ghost btn-sm" type="button" data-act="view-report" data-org="'+x.org+'" data-month="'+r.month+'" style="color:var(--ink)">Preview</button><button class="btn btn-primary btn-sm" type="button" data-act="issue-report" data-org="'+x.org+'" data-month="'+r.month+'">Issue report</button></div></td></tr>'; }).join('');
+  var issued=[]; Object.keys(state.orgs).forEach(function(id){ state.orgs[id].records.forEach(function(r){ if(r.issuedAt) issued.push({org:id,rec:r}); }); }); issued.sort(function(a,b){ return a.rec.issuedAt<b.rec.issuedAt?1:-1; });
+  var body='<div class="pg-head"><div><p class="kicker">Yarta team</p><h1>Reports to issue</h1><p class="pg-sub">A verified month becomes a Yarta Report when it is issued: the issue date is printed on page 1, the customer is told, and the report is fixed. Issuing is the last check that the month reads right.</p></div></div>'
+    + (rows?'<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Organisation</th><th>Month</th><th>Verified</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<div class="empty">Nothing to issue. Every verified month has its report.</div>')
+    + (issued.length?'<h2 class="sec-t" style="margin-top:28px">Issued</h2><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Organisation</th><th>Month</th><th>Issued</th><th>By</th></tr></thead><tbody>'+issued.slice(0,40).map(function(x){ return '<tr><td>'+esc(state.orgs[x.org].profile.org_name)+'</td><td>'+mLabel(x.rec.month)+'</td><td>'+longDate(x.rec.issuedAt)+'</td><td>'+esc(x.rec.issuedBy||'')+'</td></tr>'; }).join('')+'</tbody></table></div>':'');
+  return shell('issue', body);
+}
+
+function vProviders(editId){
+  var ps=(state.providers||[]).slice().sort(function(a,b){ return a.name<b.name?-1:1; });
+  var ed=editId==='new'?{id:'',name:'',svc:[],kind:'partner',accreditation:'',licence:'',expiry:'',contact:'',email:'',phone:'',notes:''}:(editId?provById(editId):null);
+  var rows=ps.map(function(p){ var n=(state.bookings||[]).filter(function(b){ return b.provider===p.id; }).length; return '<tr><td><b>'+esc(p.name)+'</b>'+(p.kind==='group'?' <span class="grp-dot" title="Recycle Group business">●</span>':'')+'<div class="small muted">'+esc(p.contact||'')+(p.email?' · '+esc(p.email):'')+'</div></td><td>'+p.svc.map(function(k){ var s=R.byKey[k]; return '<span class="chip">'+esc(s?R.title(s,{}):k)+'</span>'; }).join(' ')+'</td><td class="small">'+esc(p.accreditation)+(p.licence&&p.licence!=='—'?'<div class="muted">'+esc(p.licence)+'</div>':'')+'</td><td>'+provChip(p)+'<div class="small muted">Checked '+longDate(p.checkedAt)+(p.checkedBy?' · '+esc(p.checkedBy):'')+'</div></td><td class="num">'+n+'</td><td><div class="pill-row"><button class="btn btn-ghost btn-sm" type="button" data-act="prov-check" data-id="'+esc(p.id)+'" style="color:var(--ink)">Checked today</button><a class="btn btn-ghost btn-sm" href="#/ops/providers/'+esc(p.id)+'" style="color:var(--ink)">Edit</a></div></td></tr>'; }).join('');
+  var svcOpts=R.SERVICES.map(function(s){ return '<label class="small" style="display:inline-flex;gap:6px;align-items:center;margin:0 12px 6px 0"><input type="checkbox" data-psvc="'+esc(s.k)+'"'+(ed&&ed.svc.indexOf(s.k)>=0?' checked':'')+'> '+esc(R.title(s,{}))+'</label>'; }).join('');
+  var form = ed ? '<div class="panel" style="margin-top:22px" id="prov-form"><h3>'+(ed.id?'Edit provider':'New provider')+'</h3><p class="sec-s" style="margin-top:6px">Every provider Yarta introduces holds the licence or accreditation the work requires. Record what was checked, the number, and when it expires.</p>'
+      + '<div class="row2" style="margin-top:12px"><div class="stack"><div class="field"><label for="pv-name">Provider name</label><input type="text" id="pv-name" value="'+esc(ed.name)+'"></div>'
+      + '<div class="field"><label>Kind</label><select id="pv-kind"><option value="partner"'+(ed.kind==='partner'?' selected':'')+'>Independent specialist</option><option value="group"'+(ed.kind==='group'?' selected':'')+'>Recycle Group business (disclosed on the report)</option></select></div>'
+      + '<div class="field"><label>Kinds of help</label><div>'+svcOpts+'</div></div>'
+      + '<div class="field"><label for="pv-acc">Accreditation or licence held</label><textarea id="pv-acc" style="min-height:70px">'+esc(ed.accreditation)+'</textarea><span class="hint">'+esc(ed.svc.length?ACCRED[ed.svc[0]]||'':'What the Yarta Method requires for this kind of help.')+'</span></div></div>'
+      + '<div class="stack"><div class="field"><label for="pv-lic">Licence or accreditation number</label><input type="text" id="pv-lic" value="'+esc(ed.licence)+'"></div>'
+      + '<div class="field"><label for="pv-exp">Expiry</label><input type="date" id="pv-exp" value="'+esc(ed.expiry)+'"></div>'
+      + '<div class="field"><label for="pv-contact">Contact</label><input type="text" id="pv-contact" value="'+esc(ed.contact)+'"></div>'
+      + '<div class="field"><label for="pv-email">Email</label><input type="email" id="pv-email" value="'+esc(ed.email)+'"></div>'
+      + '<div class="field"><label for="pv-phone">Phone</label><input type="text" id="pv-phone" value="'+esc(ed.phone)+'"></div>'
+      + '<div class="field"><label for="pv-notes">Notes</label><textarea id="pv-notes" style="min-height:60px">'+esc(ed.notes)+'</textarea></div></div></div>'
+      + '<div class="pill-row" style="margin-top:12px"><button class="btn btn-primary btn-sm" type="button" data-act="prov-save" data-id="'+esc(ed.id)+'">Save provider</button><a class="btn btn-ghost btn-sm" href="#/ops/providers" style="color:var(--ink)">Cancel</a>'+(ed.id?'<button class="btn btn-ghost btn-sm" type="button" data-act="prov-remove" data-id="'+esc(ed.id)+'" style="color:var(--red)">Remove</button>':'')+'</div></div>' : '';
+  var body='<div class="pg-head"><div><p class="kicker">Yarta team</p><h1>Providers</h1><p class="pg-sub">Who Yarta introduces when a customer books a suggestion, and the accreditation each one holds. A provider whose accreditation has lapsed cannot be assigned to a booking.</p></div><div class="pg-actions"><a class="btn btn-ink btn-sm" href="#/ops/providers/new">Add a provider</a></div></div>'
+    + '<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Provider</th><th>Kinds of help</th><th>Accreditation</th><th>Status</th><th class="r">Bookings</th><th></th></tr></thead><tbody>'+(rows||'<tr><td colspan="6" class="muted">No providers yet.</td></tr>')+'</tbody></table></div>'
+    + form
+    + '<div class="panel" style="margin-top:22px"><h3>What the method requires, by kind of help</h3><div class="tbl-wrap" style="margin-top:10px"><table class="tbl compact"><tbody>'+Object.keys(ACCRED).map(function(k){ var s=R.byKey[k]; return '<tr><td style="white-space:nowrap"><b>'+esc(s?R.title(s,{}):k)+'</b></td><td class="small">'+esc(ACCRED[k])+'</td></tr>'; }).join('')+'</tbody></table></div></div>';
+  return shell('providers', body);
+}
+
+function introEmail(b){
+  var o=state.orgs[b.org], s=R.byKey[b.svc], p=provById(b.provider), op=operatorOf(o)||me();
+  var title=R.title(s,o.profile);
+  var subject='Introduction · '+o.profile.org_name+' and '+(p?p.name:'provider')+' · '+title;
+  var body='Hi '+(b.contact?b.contact.split(' ')[0]:'there')+(p&&p.contact?' and '+p.contact.split(' ')[0]:'')+',\n\n'
+    + 'Introducing you to each other for the work '+o.profile.org_name+' booked from its Yarta roadmap: '+title+'.\n\n'
+    + (p?p.name+' holds '+p.accreditation+(p.licence&&p.licence!=='—'?' ('+p.licence+')':'')+', checked by Yarta on '+longDate(p.checkedAt)+'.\n\n':'')
+    + 'Requested time: '+slotLabel(b.slot,b.other)+(b.mode?' · '+b.mode:'')+(b.location?' · '+b.location:'')+'.\n'
+    + (b.notes?'Notes from '+o.profile.org_name+': '+b.notes+'\n':'')
+    + (b.share&&b.why?'Figures shared with the provider, with the customer\'s permission: '+b.why+'\n':'')
+    + '\nThe contract for the work is between '+o.profile.org_name+' and '+(p?p.name:'the provider')+'; Yarta is not a party to it and charges nothing for the introduction. When the work is done, tell us and the next Yarta Report will show the change'+(p&&p.kind==='group'?' and disclose that a Recycle Group business did the work':'')+'.\n\n'
+    + 'Thanks,\n'+op.name+'\nYarta\n'+op.email;
+  var to=[b.email, p?p.email:''].filter(Boolean).join(',');
+  return {to:to, subject:subject, body:body};
+}
+function vIntroduce(id){
+  var b=bkById(id); if(!b) return vNotFound(); var o=state.orgs[b.org], s=R.byKey[b.svc]; if(!o||!s) return vNotFound();
+  var cands=providersFor(b.svc);
+  var sel='<select id="in-prov"><option value="">Choose a provider…</option>'+cands.map(function(p){ var st=provStatus(p); return '<option value="'+esc(p.id)+'"'+(b.provider===p.id?' selected':'')+(st.k==='lapsed'?' disabled':'')+'>'+esc(p.name)+' · '+esc(st.l)+'</option>'; }).join('')+'</select>';
+  var em=b.provider?introEmail(b):null;
+  var body='<div class="pg-head"><div><p class="kicker"><a class="link" href="#/ops/bookings">Bookings</a> · '+bookingChip(b)+'</p><h1>'+esc(o.profile.org_name)+' · '+esc(R.title(s,o.profile))+'</h1><p class="pg-sub">'+esc(slotLabel(b.slot,b.other))+(b.mode?' · '+esc(b.mode):'')+' · contact '+esc(b.contact||'')+(b.email?' &lt;'+esc(b.email)+'&gt;':'')+(b.introducedAt?' · introduced '+longDate(b.introducedAt)+' by '+esc(b.introducedBy||''):'')+'</p></div></div>'
+    + '<div class="row2"><div class="panel"><h3>Provider</h3><p class="sec-s" style="margin-top:6px">Required for this kind of help: '+esc(ACCRED[b.svc]||'')+'</p><div class="field" style="margin-top:12px"><label for="in-prov">Assign</label>'+sel+'</div>'
+    + (cands.length?'':'<p class="small" style="color:var(--red)">No provider offers this kind of help yet. <a class="link" href="#/ops/providers/new">Add one</a>.</p>')
+    + '<div class="pill-row" style="margin-top:12px"><button class="btn btn-ink btn-sm" type="button" data-act="in-assign" data-id="'+esc(b.id)+'">Assign provider</button></div>'
+    + (b.provider?'<div class="callout" style="margin-top:14px"><b>'+esc(provById(b.provider).name)+'</b><br><span class="small">'+esc(provById(b.provider).accreditation)+'</span><br>'+provChip(provById(b.provider))+'</div>':'')+'</div>'
+    + '<div class="panel"><h3>Introduction</h3>'+(em?'<p class="sec-s" style="margin-top:6px">To '+esc(em.to)+'</p><div class="field" style="margin-top:12px"><label>Subject</label><input type="text" id="in-subj" value="'+esc(em.subject)+'"></div><div class="field"><label>Body</label><textarea id="in-body" style="min-height:320px;font-family:var(--font-mono);font-size:12.5px;line-height:1.5">'+esc(em.body)+'</textarea></div>'
+      + '<div class="pill-row" style="margin-top:12px"><button class="btn btn-primary btn-sm" type="button" data-act="in-sent" data-id="'+esc(b.id)+'">Mark as introduced</button><a class="btn btn-ghost btn-sm" style="color:var(--ink)" href="'+mailto(em.to,em.subject,em.body)+'">Open in mail</a><button class="btn btn-ghost btn-sm" type="button" data-act="in-copy" style="color:var(--ink)">Copy</button></div>':'<p class="sec-s" style="margin-top:6px">Assign a provider to draft the introduction.</p>')+'</div></div>';
+  return shell('bookings', body);
+}
+
+function vNewCustomer(){
+  var sectors=(window.YESS?window.YESS.SECTORS:[]);
+  var body='<div class="pg-head"><div><p class="kicker"><a class="link" href="#/ops/customers">Customers</a></p><h1>New customer</h1><p class="pg-sub">Enough to open the first month. Targets and the rest of the profile are set on the Organisation page after onboarding week 2.</p></div></div>'
+    + '<div class="panel"><div class="row2"><div class="stack">'
+    + '<div class="field"><label for="nc-name">Organisation name <span class="req">*</span></label><input type="text" id="nc-name"></div>'
+    + '<div class="field"><label for="nc-type">Organisation type</label><select id="nc-type"><option>Council</option><option>Business</option><option>Government agency</option><option>Other</option></select></div>'
+    + '<div class="field"><label for="nc-sector">Sector</label><select id="nc-sector">'+sectors.map(function(s){ return '<option value="'+esc(s.k)+'">'+esc(s.name)+'</option>'; }).join('')+'</select></div>'
+    + '<div class="field"><label for="nc-state">State or territory</label><select id="nc-state">'+D.STATES.map(function(s){ return '<option>'+esc(s[0])+'</option>'; }).join('')+'</select></div>'
+    + '<div class="field"><label for="nc-emp">Employees (FTE) <span class="req">*</span></label><input type="number" id="nc-emp" min="1"></div>'
+    + '<div class="field"><label for="nc-res">Residents serviced (councils)</label><input type="number" id="nc-res" min="0"></div>'
+    + '<div class="field"><label for="nc-sites">Sites operated</label><input type="number" id="nc-sites" min="0"></div></div>'
+    + '<div class="stack"><div class="field"><label for="nc-fy">Baseline financial year</label><input type="text" id="nc-fy" value="'+esc(E.fyOf(E.addMonths(nowKey(),-12)))+'"><span class="hint">The year the first twelve months are compared against.</span></div>'
+    + '<div class="field"><label for="nc-cname">Customer contact name <span class="req">*</span></label><input type="text" id="nc-cname"></div>'
+    + '<div class="field"><label for="nc-ctitle">Contact role</label><input type="text" id="nc-ctitle" placeholder="Sustainability lead"></div>'
+    + '<div class="field"><label for="nc-cemail">Contact email <span class="req">*</span></label><input type="email" id="nc-cemail"></div>'
+    + '<div class="field"><label for="nc-op">Named Yarta data operator</label><select id="nc-op">'+ops().map(function(u){ return '<option value="'+esc(u.id)+'"'+(u.id===me().id?' selected':'')+'>'+esc(u.name)+'</option>'; }).join('')+'</select></div>'
+    + '<div class="field"><label for="nc-first">First reporting month</label><input type="month" id="nc-first" value="'+esc(E.addMonths(nowKey(),-1))+'"></div></div></div>'
+    + '<div class="pill-row" style="margin-top:14px"><button class="btn btn-primary" type="button" data-act="nc-create">Create customer and open the first month</button><a class="btn btn-ghost" href="#/ops/customers" style="color:var(--ink)">Cancel</a></div></div>';
+  return shell('customers', body);
+}
+function createCustomer(){
+  var name=($('#nc-name').value||'').trim(), emp=+($('#nc-emp').value||0), cname=($('#nc-cname').value||'').trim(), cemail=($('#nc-cemail').value||'').trim();
+  if(!name){ flash('Add the organisation name.','err'); return; } if(!(emp>0)){ flash('Add the number of employees.','err'); return; }
+  if(!cname||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(cemail)){ flash('Add a contact name and a valid email.','err'); return; }
+  var id='org-'+name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,24)+'-'+Date.now().toString(36).slice(-4);
+  var sector=$('#nc-sector').value, sec=window.YESS&&window.YESS.BY[sector];
+  var profile={org_name:name, org_type:$('#nc-type').value, sector:sector, state:$('#nc-state').value, employees:emp, residents:+($('#nc-res').value||0)||'', sites:+($('#nc-sites').value||0)||'', baseline_fy:($('#nc-fy').value||'').trim(), operator:$('#nc-op').value,
+    target_emissions:43, target_renewable:E.STANDARDS.renewable, target_diversion:E.STANDARDS.diversion, target_fleet_ev:30, target_trees:'', target_rehab_ha:'', target_native_ha:'', target_participants:''};
+  var first=($('#nc-first').value||E.addMonths(nowKey(),-1)); if(first>nowKey()) first=nowKey();
+  state.orgs[id]={id:id, profile:profile, records:[{month:first, values:{}, evidence:{}, status:'draft', inbox:[], openedAt:isoNow(), openedBy:me().name}], plan:{off:{}}};
+  state.users.push({id:'u-'+id, name:cname, title:($('#nc-ctitle').value||'').trim()||'Customer contact', email:cemail, role:'customer', org:id});
+  log('Customer created',name+' · '+(sec?sec.name:sector)+' · first month '+mLabel(first),id); save();
+  flash(name+' created. First month open for data entry.'); state.session.viewOrg=id; save(); go('#/ops/gaps/'+id);
+}
+
 function vNotFound(){ return shell('', '<div class="empty">That page does not exist. <a class="link" href="#/dashboard">Back to the dashboard</a>.</div>'); }
 
 /* ------------------------------------------------------------------ render */
@@ -808,7 +1040,7 @@ function render(){
     else if(a==='report') html=vReport(P[1]);
     else if(a==='organisation') html=vOrganisation();
     else if(a==='data') html=vData();
-    else if(a==='ops' && isOp()){ html = !P[1] ? vQueue() : P[1]==='entry' ? vEntryQueue() : P[1]==='customers' ? vCustomers() : P[1]==='review' ? vReview(P[2],P[3]) : P[1]==='factors' ? vFactors() : P[1]==='activity' ? vActivity() : P[1]==='bookings' ? vBookings() : vNotFound(); }
+    else if(a==='ops' && isOp()){ html = !P[1] ? vQueue() : P[1]==='home' ? vOpsHome() : P[1]==='gaps' ? vGaps(P[2]) : P[1]==='reports' ? vIssue() : P[1]==='providers' ? vProviders(P[2]) : P[1]==='introduce' ? vIntroduce(P[2]) : (P[1]==='customers' && P[2]==='new') ? vNewCustomer() : P[1]==='entry' ? vEntryQueue() : P[1]==='customers' ? vCustomers() : P[1]==='review' ? vReview(P[2],P[3]) : P[1]==='factors' ? vFactors() : P[1]==='activity' ? vActivity() : P[1]==='bookings' ? vBookings() : vNotFound(); }
     else html=vNotFound();
   }
   app.innerHTML=html;
@@ -843,6 +1075,7 @@ app.addEventListener('input', function(e){
 app.addEventListener('change', function(e){
   var t=e.target, act=t.getAttribute('data-act');
   if(act==='dash-month'){ go('#/dashboard?m='+t.value); }
+  else if(act==='set-operator'){ var so=state.orgs[t.getAttribute('data-org')]; if(so){ so.profile.operator=t.value; log('Data operator assigned',(opById(t.value)||{}).name||'',so.id); save(); flash('Operator assigned.'); } }
   else if(act==='plan-toggle'){ var po=org(); po.plan=po.plan||{off:{}}; po.plan.off=po.plan.off||{}; var sv=t.getAttribute('data-svc'); if(t.checked) delete po.plan.off[sv]; else po.plan.off[sv]=true; save(); render(); }
   else if(act==='ev-file' && t.files && t.files[0]){ attach(t.getAttribute('data-cat'), t.files[0]); }
   else if(act==='import-file' && t.files && t.files[0]){ previewImport(t.files[0]); }
@@ -936,6 +1169,18 @@ document.addEventListener('click', function(e){
     case 'bk-cancel-op': case 'bk-cancel-go': var bx=bkById(t.getAttribute('data-id')); if(!bx) return; bx.status='cancelled'; bx.cancelledAt=isoNow(); bx.cancelledBy=me().name; ui.confirmCancel=null; log('Booking cancelled',bkDesc(bx),bx.org); save(); flash('Booking cancelled.'); render(); break;
     case 'bk-cancel': ui.confirmCancel=t.getAttribute('data-id'); render(); break;
     case 'bk-cancel-no': ui.confirmCancel=null; render(); break;
+    case 'gap-sent': var go_=state.orgs[t.getAttribute('data-org')], gk=t.getAttribute('data-month'); state.gapLog=state.gapLog||[]; state.gapLog.push({org:go_.id, month:gk, at:isoNow(), by:me().name, subject:($('#gap-subj')||{}).value||''}); log('Gap email sent',mLabel(gk),go_.id); save(); flash('Marked as sent.'); render(); break;
+    case 'gap-copy': copyText('Subject: '+($('#gap-subj')||{}).value+'\n\n'+($('#gap-body')||{}).value); break;
+    case 'in-copy': copyText('Subject: '+($('#in-subj')||{}).value+'\n\n'+($('#in-body')||{}).value); break;
+    case 'view-report': state.session.viewOrg=t.getAttribute('data-org'); save(); go('#/report/'+t.getAttribute('data-month')); break;
+    case 'issue-report': var io=state.orgs[t.getAttribute('data-org')], ir=rec(io,t.getAttribute('data-month')); if(!ir||ir.status!=='verified') return; ir.issuedAt=isoNow().slice(0,10); ir.issuedBy=me().name; log('Report issued',mLabel(ir.month),io.id); save(); flash(io.profile.org_name+' · '+mLabel(ir.month)+' report issued.'); render(); break;
+    case 'prov-check': var pc=provById(t.getAttribute('data-id')); if(!pc) return; pc.checkedAt=today(); pc.checkedBy=me().name; log('Provider accreditation checked',pc.name,null); save(); flash(pc.name+' marked as checked today.'); render(); break;
+    case 'prov-save': var pid=t.getAttribute('data-id'), pv2=pid?provById(pid):null; var pn=($('#pv-name').value||'').trim(); if(!pn){ flash('Add the provider name.','err'); return; } var svcs=$$('[data-psvc]').filter(function(x){ return x.checked; }).map(function(x){ return x.getAttribute('data-psvc'); }); if(!svcs.length){ flash('Tick at least one kind of help.','err'); return; } var acc=($('#pv-acc').value||'').trim(); if(!acc){ flash('Record the accreditation or licence held.','err'); return; } if(!pv2){ pv2={id:'pv-'+Date.now().toString(36), checkedAt:today(), checkedBy:me().name}; state.providers.push(pv2); } pv2.name=pn; pv2.kind=$('#pv-kind').value; pv2.svc=svcs; pv2.accreditation=acc; pv2.licence=($('#pv-lic').value||'').trim(); pv2.expiry=$('#pv-exp').value||''; pv2.contact=($('#pv-contact').value||'').trim(); pv2.email=($('#pv-email').value||'').trim(); pv2.phone=($('#pv-phone').value||'').trim(); pv2.notes=($('#pv-notes').value||'').trim(); pv2.demo=false; log(pid?'Provider updated':'Provider added',pn,null); save(); flash('Saved '+pn+'.'); go('#/ops/providers'); break;
+    case 'prov-remove': var prid=t.getAttribute('data-id'); if((state.bookings||[]).some(function(b){ return b.provider===prid && b.status!=='cancelled'; })){ flash('This provider is assigned to a booking. Reassign it first.','err'); return; } state.providers=(state.providers||[]).filter(function(x){ return x.id!==prid; }); log('Provider removed',prid,null); save(); go('#/ops/providers'); break;
+    case 'in-assign': var ib=bkById(t.getAttribute('data-id')); if(!ib) return; var ipv=$('#in-prov').value; if(!ipv){ flash('Choose a provider.','err'); return; } var ipp=provById(ipv); if(provStatus(ipp).k==='lapsed'){ flash('That provider\'s accreditation has lapsed.','err'); return; } ib.provider=ipv; log('Provider assigned',ipp.name+' · '+bkDesc(ib),ib.org); save(); flash(ipp.name+' assigned.'); render(); break;
+    case 'in-sent': var sb2=bkById(t.getAttribute('data-id')); if(!sb2||!sb2.provider) return; sb2.introducedAt=isoNow(); sb2.introducedBy=me().name; if(sb2.status==='requested'){ sb2.status='confirmed'; sb2.confirmedAt=isoNow(); sb2.confirmedBy=me().name; } log('Provider introduced',provById(sb2.provider).name+' · '+bkDesc(sb2),sb2.org); save(); flash('Marked as introduced.'); render(); break;
+    case 'set-operator': var so=state.orgs[t.getAttribute('data-org')]; if(!so) return; so.profile.operator=t.getAttribute('data-op'); log('Data operator assigned',(opById(so.profile.operator)||{}).name||'',so.id); save(); render(); break;
+    case 'nc-create': createCustomer(); break;
     case 'return': var or=state.orgs[t.getAttribute('data-org')], rr=rec(or,t.getAttribute('data-month')); var nt=($('#rv-note')||{}).value; if(!nt||!nt.trim()){ flash('Add a note so data entry knows what to fix.','err'); var ta=$('#rv-note'); if(ta) ta.focus(); return; } rr.status='returned'; rr.notes=rr.notes||[]; rr.notes.push({by:me().name,at:isoNow(),text:nt.trim()}); log('Month returned to data entry',mLabel(rr.month)+' · '+nt.trim(),or.id); save(); flash('Returned to data entry with your note.'); go('#/ops'); break;
   }
 });
@@ -944,6 +1189,7 @@ document.addEventListener('click', function(e){
 window.YESPortal={reportSheets:reportSheets, org:org, seriesOf:seriesOf, mLabel:mLabel, state:state,
   currentOrgId:ctxOrgId,
   /* sign in as the customer of an organisation (the public demo and the sample report use this) */
+  signInAsOperator:function(userId, hash){ var u=state.users.filter(function(x){ return x.role==='operator' && x.id===userId; })[0]; if(!u) return false; state.session={user:u.id, viewOrg:(state.session&&state.session.viewOrg)||'demo-shire'}; ui.loginTab='operator'; save(); if(location.hash===(hash||'#/ops/home')) render(); else location.hash=hash||'#/ops/home'; return true; },
   signInAs:function(orgId, hash){ var u=state.users.filter(function(x){ return x.role==='customer' && x.org===orgId; })[0]; if(!u) return false; state.session={user:u.id}; ui.loginTab='customer'; save(); if(hash!==false){ if(location.hash===(hash||'#/dashboard')) render(); else location.hash=hash||'#/dashboard'; } return true; }
 };
 render();
