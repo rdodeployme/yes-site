@@ -22,6 +22,9 @@
 .page-home .mri h3{font-size:clamp(38px,4.6vw,64px);letter-spacing:-.035em;line-height:1}
 .page-home .mri p.idx{margin:0 0 14px}
 .page-home .mri p.t{color:var(--mist);margin:14px 0 0;max-width:30ch;font-size:15.5px;line-height:1.55}
+.page-home #evidenced h3{font-size:clamp(22px,2.2vw,28px);letter-spacing:-.02em;line-height:1.15;margin:0}
+.page-home #evidenced p.idx{margin:0 0 12px;color:var(--green-ink)}
+.page-home #evidenced p.t{color:var(--graphite);margin:12px 0 0;max-width:34ch;font-size:15.5px;line-height:1.55}
 .page-home .stat .v span[data-count]{font-size:1em;color:inherit;margin-left:0;letter-spacing:inherit;font-weight:inherit}
 .page-home .display span[data-count]{font-size:1em;color:inherit;margin:0;letter-spacing:inherit;font-weight:inherit}
 .page-home .more{display:inline-block;margin-top:14px;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;color:var(--green-3)}
@@ -98,12 +101,12 @@
       <div>
         <p class="eyebrow">{{POSITION}}</p>
         <h1>Measure. Understand. Report. Improve.</h1>
-        <p class="lead">Yarta is an environmental sustainability report and live dashboard for councils and businesses. It evaluates your data against the eco standards and the benchmarks for your industry, compares it with your targets and your last period, then gives you a roadmap to improvement: practical suggestions, ranked by what would move the number, and accredited help you can book.</p>
+        <p class="lead">Yarta is an environmental sustainability report and live dashboard for councils and businesses. It evaluates your data against the eco standards and the benchmarks for your industry, compares it with your targets and your last period, then gives you a roadmap to improvement: practical suggestions, ranked by what would move the number, and accredited help you can book. Where your material passes through Recycle Group, the recycling line is evidenced by the recycler.</p>
         <div class="btn-row"><a class="btn btn-primary" href="/demo/">Open the live demo {{ARROW}}</a><a class="btn btn-ghost" href="/contact/">Talk to Yarta</a></div>
       </div>
       <div class="reveal">
         <div class="dash" aria-label="Yarta Dashboard mock, demo data">
-          <div class="dash-top"><span>Yarta DASHBOARD · <b>Hepburn Shire Council</b></span><span class="badge demo">Demo data · illustrative</span></div>
+          <div class="dash-top"><span>Yarta DASHBOARD · WASTE &amp; RESOURCE RECOVERY · <b>Demo Shire Council</b></span><span class="badge demo">Demo data · illustrative</span></div>
           <div class="dash-body">
             <div class="kpis">
               <div class="kpi"><svg class="ic"><use href="#i-loop"/></svg><div class="v green"><span id="h-rec" data-count="0" data-dec="0">0</span><span class="u">t</span></div><div class="l">Tonnes recycled</div><div class="d" id="h-rec-d">&nbsp;</div></div>
@@ -152,12 +155,12 @@
         <div class="shot tilt"><img src="/assets/img/product-dashboard.webp" alt="Yarta Dashboard for a council hard waste program, showing the Yindyamarra Score, six headline tiles and the two emissions figures side by side (demo data)" loading="lazy" width="1600" height="2176"></div>
       </div>
       <div class="span5">
-        <div class="shot paper tilt-r"><img src="/assets/img/product-report.webp" alt="Yarta Report, page one: the score, headline outcomes, the two emissions figures, three buckets and the data statement (demo data)" loading="lazy" width="1588" height="2699"></div>
+        <div class="shot paper tilt-r"><img src="/assets/img/product-report.webp" alt="Yarta Report, page one: the Yindyamarra Score, where you could be, four headline figures, the ten categories and progress towards the eco standards (demo data)" loading="lazy" width="1588" height="2699"></div>
       </div>
     </div>
     <div class="layers reveal">
-      <div class="layer"><span class="n">01</span><div><h3>Yarta Dashboard. The live layer.</h3><p>Your organisation's recycling, live. Hand over 100 mattresses, then a load of aluminium, and the dashboard moves each time. All of your recycling, not only what passes through Recycle Group, filed into three buckets.</p><a class="more" href="/demo/">Open the live demo →</a></div></div>
-      <div class="layer"><span class="n">02</span><div><h3>Yarta Report. The layer you hand over.</h3><p>Issued for each project or reporting period. One page a board, a councillor or an auditor can read in a minute: period, streams, tonnes by fate, steel, the Scope 3 Category 5 figure, avoided emissions reported separately, landfill avoided, method version, issuer and report ID.</p><a class="more" href="/report/">See a sample report →</a></div></div>
+      <div class="layer"><span class="n">01</span><div><h3>Yarta Dashboard. The live layer.</h3><p>Your score, the ten categories, where you could be at the eco standards and the suggestions, live, across every site. It moves the month the data lands. For material that passes through Recycle Group, the waste category rests on the recycler's own records.</p><a class="more" href="/demo/">Open the live demo →</a></div></div>
+      <div class="layer"><span class="n">02</span><div><h3>Yarta Report. The layer you hand over.</h3><p>Issued for each reporting period. Three pages a board, a councillor or an auditor can read: the score and the ten categories, the eco standards and the industry benchmark, the figures behind the score with their evidence grades, and the roadmap to improvement. Every figure carries the method version it was calculated under.</p><a class="more" href="/report/">See the sample report →</a></div></div>
     </div>
     <div class="btn-row mt-4 reveal"><a class="btn btn-ghost" href="/yes-report/">See the Yarta Report {{ARROW}}</a></div>
   </div>
@@ -171,6 +174,19 @@
       <div><p class="idx">02</p><h3>Benchmark and compare.</h3><p class="t">One score, benchmarked against the eco standards and the published benchmarks for your industry, and compared with your targets and your last period. Your data is never shared with anyone else. A report for each period and a dashboard that moves as your data arrives.</p></div>
       <div><p class="idx">03</p><h3>Roadmap to improvement.</h3><p class="t">Suggestions ranked by what would move the number most, the score you could reach, and the help you can book to get there.</p></div>
     </div>
+  </div>
+</section>
+
+<!-- 2b · EVIDENCED BY THE RECYCLER -->
+<section class="paper-2" id="evidenced">
+  <div class="wrap">
+    <div class="section-head reveal"><div><p class="eyebrow">Why believe the number</p><h2>The recycling line is evidenced by the recycler.</h2></div><p class="lead">Yarta is a Recycle Group initiative, and the group runs the recovery operations. For material that passes through them, the waste category on your report rests on the processor's own weighbridge and processing records, not a contractor's summary. Every other category rests on your bills, meters and registers, graded the same way.</p></div>
+    <div class="grid g3 reveal">
+      <div><p class="idx">01</p><h3>Weighed where it was recovered.</h3><p class="t">Incoming material is separated into more than 90 streams at the group's transfer station, so each stream can be weighed and traced to a pathway, with the certificate to show for it.</p></div>
+      <div><p class="idx">02</p><h3>The top tier of Scope 3 evidence.</h3><p class="t">The GHG Protocol ranks supplier-specific data, the processor's own allocated energy per tonne, above waste-type and average factors for Category 5. A recycler that also writes the report can supply it.</p></div>
+      <div><p class="idx">03</p><h3>Graded, never assumed.</h3><p class="t">Material handled by any other contractor is reported too, graded by the evidence behind it and flagged on the report, so a reader can always see what a figure rests on.</p></div>
+    </div>
+    <div class="btn-row mt-3 reveal"><a class="btn btn-ink" href="/about/">How Yarta is built {{ARROW}}</a><a class="btn btn-outline" href="/method/#evidence">The evidence grades</a></div>
   </div>
 </section>
 
@@ -303,7 +319,7 @@
       <div class="copy">
         <div class="top"><p class="idx">BUSINESS</p><span class="badge demo">Demo data · illustrative</span></div>
         <h3>ESG, Scope 3 and the annual report.</h3>
-        <p>Recycling data with a documented method behind every figure: a GHG Protocol Scope 3 Category 5 figure (waste generated in operations) for your inventory, avoided emissions reported separately, and the evidence trail an assurance reviewer will ask for.</p>
+        <p>Ten categories with a documented method behind every figure: Scope 1, 2 and 3 emissions for your inventory, avoided emissions reported separately, the industry benchmark for your sector, and the evidence trail an assurance reviewer will ask for.</p>
         <p class="line">From <b>$999</b> a month, by staff numbers · Annual subscription · Switched on in 30 days</p>
         <div class="btn-row"><a class="btn btn-outline" href="/business/">Yarta for business {{ARROW}}</a></div>
       </div>
