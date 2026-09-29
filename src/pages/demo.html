@@ -42,7 +42,8 @@
   chips.innerHTML=S.SECTORS.map(function(s){ return '<button type="button" data-k="'+s.k+'" aria-pressed="false">'+s.name+'</button>'; }).join('');
   chips.addEventListener('click',function(e){ var b=e.target.closest('button[data-k]'); if(!b) return; var k=b.getAttribute('data-k'); P.signInAs(S.BY[k].org,'#/dashboard'); if(history.replaceState) history.replaceState(null,'',location.pathname+'?sector='+k+location.hash); mark(); });
   var k=pick(); var cur=P.currentOrgId(), curSec=cur && S.forOrg(cur);
-  if(!cur || !curSec || curSec.k!==k || !location.hash || location.hash==='#/') P.signInAs(S.BY[k].org, location.hash && location.hash!=='#/' ? location.hash : '#/dashboard');
+  var opSession = !!(P.state.session && P.state.users.some(function(u){ return u.id===P.state.session.user && u.role==='operator'; }));
+  if(opSession || !cur || !curSec || curSec.k!==k || !location.hash || location.hash==='#/') P.signInAs(S.BY[k].org, location.hash && location.hash!=='#/' && !opSession ? location.hash : '#/dashboard');
   mark();
   window.addEventListener('hashchange', mark);
   document.addEventListener('click', function(e){ if(e.target.closest('[data-act="signout"]')){ setTimeout(function(){ P.signInAs(S.BY[pick()].org,'#/dashboard'); mark(); },0); } });

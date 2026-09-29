@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Yarta team · operations tool (prototype)</title>
+<meta name="description" content="Yarta team operations tool prototype: documents in, figures entered, months verified, reports issued, gap emails, providers and introductions.">
+<meta name="theme-color" content="#1E1712">
+<link rel="icon" href="/assets/favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/yarta/yes.css">
+<link rel="stylesheet" href="/assets/yarta/portal.css">
+<link rel="stylesheet" href="/assets/yarta/yarta.css">
+</head>
+<body class="page-portal page-yarta page-demo-portal page-tool">
+<header class="ytop no-print">
+  <a class="ylogo" href="/"><img src="/assets/yarta/yarta-logo.webp" alt="Yarta" width="66" height="72"><span><b>Yarta</b>Team · operations tool (prototype)</span></a>
+  <div class="yacts">
+    <span class="ydemo">Prototype · demo data · everything stays in this browser</span>
+    <span class="sector-chips" id="who"></span>
+    <a class="btn btn-ghost btn-sm" href="/demo/">Customer demo</a>
+  </div>
+</header>
+<div id="app"></div>
+<script src="/assets/yarta/dictionary.js"></script>
+<script src="/assets/yarta/engine.js"></script>
+<script src="/assets/yarta/demo-data.js"></script>
+<script src="/assets/yarta/recommend.js"></script>
+<script src="/assets/yarta/sectors.js"></script>
+<script src="/assets/yarta/benchmarks.js"></script>
+<script src="/assets/yarta/portal.js"></script>
+<script>
+(function(){
+  var P=window.YESPortal, who=document.getElementById('who');
+  var opsU=P.state.users.filter(function(u){ return u.role==='operator'; });
+  function cur(){ var s=P.state.session; return s && opsU.filter(function(u){ return u.id===s.user; })[0]; }
+  function mark(){ var c=cur(); Array.prototype.forEach.call(who.querySelectorAll('button'),function(b){ b.setAttribute('aria-pressed', c && b.getAttribute('data-u')===c.id ? 'true':'false'); }); }
+  who.innerHTML=opsU.map(function(u){ return '<button type="button" data-u="'+u.id+'" aria-pressed="false" title="'+u.title+'">'+u.name.split(' ')[0]+'</button>'; }).join('');
+  who.addEventListener('click',function(e){ var b=e.target.closest('button[data-u]'); if(!b) return; P.signInAsOperator(b.getAttribute('data-u'), location.hash && location.hash.indexOf('#/ops')===0 ? location.hash : '#/ops/home'); mark(); });
+  var want = location.hash && location.hash.indexOf('#/ops')===0 ? location.hash : '#/ops/home';
+  if(!cur()) P.signInAsOperator(opsU[0].id, want); else if(location.hash!==want) location.hash=want;
+  mark();
+  window.addEventListener('hashchange', mark);
+  document.addEventListener('click', function(e){ if(e.target.closest('[data-act="signout"]')){ setTimeout(function(){ P.signInAsOperator(opsU[0].id,'#/ops/home'); mark(); },0); } });
+})();
+</script>
+</body>
+</html>

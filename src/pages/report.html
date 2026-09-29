@@ -53,6 +53,7 @@ window.REPORT_BRAND={
   function show(k){
     var sec=S.BY[k]; if(!sec) return;
     try{
+      P.signInAs(sec.org, false); /* customer context: verified months only, whatever session this browser holds */
       var o=P.org(sec.org); if(!o) throw new Error('no demo organisation for '+k);
       var Sx=P.seriesOf(o), m=Sx.months[Sx.months.length-1].month;
       document.getElementById('yarta').innerHTML=P.reportSheets(o,Sx,m);
