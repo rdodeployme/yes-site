@@ -33,6 +33,8 @@ PAGES = [
     ("/councils/",        None,           "councils.html",     "Yarta for councils — whole-of-council environmental sustainability", "One score for the kerbside service, transfer stations, depots, buildings, fleet, water, Country and community programs, with a roadmap to improvement. Switched on in 30 days."),
     ("/climate-reporting/", None,         "climate-reporting.html", "Mandatory climate reporting — is your waste number ready?", "Australia's mandatory climate reporting is live. Scope 3 is reported from each company's second year and reviewed by an auditor. Check your group and your first Scope 3 year, and get your waste number from the processor."),
     ("/sectors/",         "Sectors",      "sectors.html",      "Sectors — what councils, hospitals, universities, manufacturers, builders, retailers and transport operators report on", "The same ten categories, shaped by sector: what each kind of organisation reports on, the eco standards that apply, and a demo and sample report for each."),
+    ("/privacy/",         None,           "privacy.html", "Privacy — how Yarta handles your data", "What Yarta collects, why, who can see it, where it is stored and how long it is kept. Your data is never shared with another organisation."),
+    ("/terms/",           None,           "terms.html", "Terms of service — what Yarta does and what a report is", "The plain-language terms behind a Yarta subscription: what you send, what Yarta does, what a report is and is not, fees, data and liability."),
     ("/eco-standards/",   None,           "eco-standards.html", "Eco standards — the standards behind every Yarta score", "The published standard behind each Yarta category, with sources: 80% resource recovery by 2030, 43% below 2005 by 2030, 82% renewable electricity, 30 by 30, halving food waste, mandatory climate reporting."),
     ("/business/",        None,           "business.html",     "Yarta for business — environmental sustainability reporting, Scope 3 and a roadmap", "Your data evaluated against the eco standards, with the emissions figures ready for mandatory climate reporting and a roadmap to improvement."),
     ("/method/",          None,           "method.html",       "The Yarta Method — how every number is calculated",    "Factors, formulas, score rules, eco standards, benchmarks, providers and evidence grades behind every Yarta figure, published in full."),
@@ -111,6 +113,8 @@ def footer():
         <li><a href="/contact/">Contact</a></li>
         <li><a href="mailto:{EMAIL}">{EMAIL}</a></li>
         <li><a href="https://recycle.net.au" rel="noopener">Recycle Group</a></li>
+        <li><a href="/privacy/">Privacy</a></li>
+        <li><a href="/terms/">Terms</a></li>
       </ul></div>
     </div>
     <div class="foot-mark" aria-hidden="true">Yarta</div>
