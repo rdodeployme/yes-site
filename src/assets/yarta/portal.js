@@ -790,6 +790,7 @@ function vNotFound(){ return shell('', '<div class="empty">That page does not ex
 
 /* ------------------------------------------------------------------ render */
 function render(){
+  var appEl=document.getElementById('app'); if(!appEl || appEl.hidden) return; /* pages that only use the engine (the sample report) keep #app hidden */
   var h=parseHash(), P=h.parts, q=h.q, html;
   var u=me();
   if(!u){ html=vLogin(); }
