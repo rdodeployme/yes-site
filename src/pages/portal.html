@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yarta client portal (prototype)</title>
+<meta name="description" content="The Yarta client portal prototype: sign in to send documents, see verified months, targets, sites and reports. Demo data only.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0B0B0B">
+<link rel="icon" href="/assets/favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/yarta/yes.css">
+<link rel="stylesheet" href="/assets/yarta/portal.css">
+<link rel="stylesheet" href="/assets/yarta/yarta.css">
+</head>
+<body class="page-portal page-yarta page-demo-portal page-client-portal">
+<header class="ytop no-print">
+  <a class="ylogo" href="/"><img src="/assets/yarta/yarta-logo.webp" alt="Yarta" width="66" height="72"><span><b>Yarta</b>Client portal (prototype)</span></a>
+  <div class="yacts">
+    <span class="ydemo">Prototype · demo data · everything stays in this browser</span>
+    <a class="btn btn-ink btn-sm" href="/demo/">Live demo</a>
+    <a class="btn btn-ghost btn-sm" href="/contact/">Talk to Yarta</a>
+  </div>
+</header>
+<div id="app"></div>
+<script src="/assets/yarta/dictionary.js"></script>
+<script src="/assets/yarta/engine.js"></script>
+<script src="/assets/yarta/demo-data.js"></script>
+<script src="/assets/yarta/recommend.js"></script>
+<script src="/assets/yarta/sectors.js"></script>
+<script src="/assets/yarta/benchmarks.js"></script>
+<script>window.__hash0=location.hash; window.YESPORTAL_CLIENT=true;</script>
+<script src="/assets/yarta/portal.js"></script>
+<script>
+(function(){
+  /* Arriving at /portal/ with no deep link shows the sign-in screen, not whichever demo session was open last. */
+  var P=window.YESPortal;
+  var h0=window.__hash0;
+  if(P && P.state.session && (!h0 || h0==='#/')){
+    var b=document.createElement('button'); b.setAttribute('data-act','signout'); b.hidden=true; document.body.appendChild(b); b.click(); b.remove();
+  }
+})();
+</script>
+</body>
+</html>
