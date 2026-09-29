@@ -28,6 +28,7 @@ PAGES = [
     ("/how-it-works/",    "How it works", "how-it-works.html", "How Yarta works — from your data to a headline number",     "Send the records you already hold. Yarta enters them, grades the evidence, moves your dashboard and issues your report with a roadmap to improvement."),
     ("/yes-report/",      "The Yarta Report","yes-report.html",  "The Yarta Report — the report, the dashboard and the data",     "The Yarta Report is two layers: a report for each project or period and a live environmental dashboard, backed by Yarta Data, Yarta Carbon, Yarta Circularity and Yarta Benchmark."),
     ("/demo/",            "Live demo",    "demo.html",         "Live demo — the Yarta dashboard, by sector",           "The Yarta environmental sustainability dashboard on demo data: pick a sector, see the score, the categories, the figures and the roadmap to improvement."),
+    ("/portal/",          None,           "portal.html",       "Yarta client portal (prototype)",                      "Yarta client portal prototype: sign in to send documents, see verified months, targets, sites and reports. Demo data only."),
     ("/tool/",            None,           "tool.html",         "Yarta team · operations tool (prototype)",             "Yarta team operations tool prototype: documents in, figures entered, months verified, reports issued, gap emails, providers and introductions."),
     ("/recycling-demo/",  None,           "recycling-demo.html", "Recycling demo — Hepburn Shire hard waste program",  "The recycling dashboard for a council hard waste program on illustrative data: add a stream and watch the numbers move."),
     ("/calculator/",      None,           "calculator.html",   "Recycling calculator — what your recycling achieves",    "Enter what you recycled and see the Yarta impact: tonnes recovered, steel recovered, CO₂-e avoided, landfill avoided. Every figure with its method."),
@@ -53,8 +54,8 @@ PAGES = [
     ("/recycling-report/", None,      "recycling-report.html", "Sample recycling report — Hepburn Shire Council (demo)", "The recycling report sample, print-ready: summary, figures and roadmap."),
     ("/language/",   None,           "language.html", "Language on this site — proposed names and their status (internal)", "The First Nations words proposed for Yarta products, which language each comes from, the dictionary check and whether the custodians have confirmed it."),
 ]
-NOINDEX = {"/language/", "/tool/", "/not-found/"}   # internal pages: built and linkable, not indexed
-STANDALONE = [("/report/", "report.html"), ("/demo/", "demo.html"), ("/tool/", "tool.html")]   # the portal-based pages: their own document, not the site shell
+NOINDEX = {"/language/", "/tool/", "/portal/", "/not-found/"}   # internal pages: built and linkable, not indexed
+STANDALONE = [("/report/", "report.html"), ("/demo/", "demo.html"), ("/tool/", "tool.html"), ("/portal/", "portal.html")]   # the portal-based pages: their own document, not the site shell
 STANDALONE_FRAGS = {f for _, f in STANDALONE}
 REDIRECTS = {"/yarta/": "/report/", "/certificate/": "/recycling-report/"}   # old paths that keep working
 
@@ -103,6 +104,7 @@ def footer():
         <li><a href="/yes-report/">The Yarta Report</a></li>
         <li><a href="/how-it-works/">How it works</a></li>
         <li><a href="/demo/">Live demo</a></li>
+        <li><a href="/portal/">Client portal (prototype)</a></li>
         <li><a href="/calculator/">Impact calculator</a></li>
         <li><a href="/climate-reporting/">Climate reporting</a></li>
         <li><a href="/method/">The Yarta Method</a></li>
