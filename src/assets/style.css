@@ -108,6 +108,11 @@ section.tight{padding:clamp(40px,6vw,80px) 0}
 .btn-ghost:hover{border-color:var(--paper)}
 .btn-ink{background:var(--ink);color:var(--paper)}
 .btn-ink:hover{background:var(--charcoal)}
+/* a ghost button on a light section reads as an outline button; dark cards inside light sections keep the light ghost */
+:where(section:not(.dark):not(.cta-band)) .btn-ghost{color:var(--ink);border-color:var(--graphite)}
+:where(section:not(.dark):not(.cta-band)) .btn-ghost:hover{border-color:var(--ink)}
+.dark .btn-ghost,.price.featured .btn-ghost{color:var(--paper);border-color:#3A3D3A}
+.dark .btn-ghost:hover,.price.featured .btn-ghost:hover{border-color:var(--paper)}
 .btn-outline{background:transparent;color:var(--ink);border-color:var(--graphite)}
 .btn-outline:hover{border-color:var(--ink)}
 .btn .arrow{width:16px;height:16px}
