@@ -154,10 +154,11 @@ function shell(active, body){
       ['#/ops/guides','Field guide','guides'],
       ['#/ops/factors','Factor library','factors'],
       ['#/ops/activity','Activity','activity'],
-      ['grp','Viewing '+(o?o.profile.org_name:'')],
+      ['grp','Customer view · '+(o?o.profile.org_name:'')],
       ['#/dashboard','Dashboard','dashboard'],
       ['#/reports','Reports','reports'],
-      ['#/roadmap','Roadmap and help','roadmap'],
+      ['#/roadmap','Roadmap','roadmap'],
+      ['#/improvements','Improvements','improve'],
       ['#/documents','Documents','documents'],
       ['#/organisation','Organisation','organisation'],
       ['#/data','Data and export','data']
@@ -165,7 +166,8 @@ function shell(active, body){
       ['grp','Reporting'],
       ['#/dashboard','Dashboard','dashboard'],
       ['#/reports','Reports','reports'],
-      ['#/roadmap','Roadmap and help','roadmap'],
+      ['#/roadmap','Roadmap','roadmap'],
+      ['#/improvements','Improvements','improve'],
       ['#/documents','Send documents','documents'],
       ['#/checklist','What to send','checklist'],
       ['grp','Account'],
@@ -188,6 +190,7 @@ function shell(active, body){
 
 /* ------------------------------------------------------------------ login */
 function vLogin(){
+  if(window.YESPORTAL_CLIENT) ui.loginTab='customer';
   var accts = state.users.filter(function(u){ return ui.loginTab==='operator' ? u.role==='operator' : u.role==='customer'; });
   var list = accts.map(function(u){ var o=u.org?state.orgs[u.org]:null; return '<button class="acct" type="button" data-act="login" data-user="'+esc(u.id)+'"><span class="av">'+esc(initials(u.name))+'</span><span class="nm">'+esc(u.name)+'</span><span class="go" aria-hidden="true">→</span><span class="ds">'+esc(u.title)+(o?' · '+esc(o.profile.org_name):'')+'</span></button>'; }).join('');
   return '<div class="login"><div class="l"><div class="bg" aria-hidden="true"><video data-bgv muted loop playsinline preload="none" poster="../assets/video/aisle-720.webp"><source data-src="../assets/video/aisle-720.mp4" type="video/mp4"></video></div>'
@@ -195,7 +198,7 @@ function vLogin(){
    + '<div><p class="eyebrow">Customer portal</p><h1><span class="silver">Send the paperwork once a month.</span> Yarta does the rest.</h1><p class="lead" style="margin-top:20px;color:var(--silver-2)">Upload your bills, statements and registers. Yarta enters every figure, grades the evidence and has a second analyst verify the month, then calculates the emissions, the rates, the trends and your Yindyamarra Environmental Score.</p></div>'
    + '<p class="small" style="color:var(--silver-4);max-width:52ch">Prototype with fictional demo organisations. There are no passwords here: in production each customer signs in with their own account, and Yarta staff sign in separately. Customers see their verified reports and send documents; Yarta staff enter and verify the figures.</p></div>'
    + '<div class="r"><div class="box"><p class="kicker">Sign in</p><h2 style="font-size:30px;margin:8px 0 18px">Choose a demo account</h2>'
-   + '<div class="tabs" role="tablist" style="margin-bottom:18px"><button type="button" role="tab" data-act="ltab" data-tab="customer" aria-selected="'+(ui.loginTab==='customer')+'">Council or business</button><button type="button" role="tab" data-act="ltab" data-tab="operator" aria-selected="'+(ui.loginTab==='operator')+'">Yarta team</button></div>'
+   + ''+(window.YESPORTAL_CLIENT?'':'<div class="tabs" role="tablist" style="margin-bottom:18px"><button type="button" role="tab" data-act="ltab" data-tab="customer" aria-selected="'+(ui.loginTab==='customer')+'">Council or business</button><button type="button" role="tab" data-act="ltab" data-tab="operator" aria-selected="'+(ui.loginTab==='operator')+'">Yarta team</button></div>')
    + list
    + '<p class="small muted" style="margin-top:22px">Everything you enter stays in this browser. <button class="link" type="button" data-act="reset-demo" style="background:none;border:0;padding:0;font:inherit;cursor:pointer">Reset the demo data</button></p>'
    + '</div></div></div>';
@@ -602,7 +605,7 @@ function recCard(it){
     + '<h3>'+esc(it.title)+'</h3>'
     + '<p class="why">'+esc(it.why)+'</p>'
     + '<dl class="rec-dl"><dt>Estimated change</dt><dd>'+(up||esc(s.effectText))+'</dd><dt>Who</dt><dd>'+esc(pv.label)+(s.prov==='group'?' · disclosed on your report':'')+'</dd></dl>'
-    + '<div class="rec-f">'+(b?bookingChip(b)+'<span class="small muted">'+esc(slotLabel(b.slot,b.other))+'</span>':'<a class="btn btn-primary btn-sm" href="#/book/'+s.k+'">Book a session</a>')+'</div>'
+    + '<div class="rec-f">'+(b?bookingChip(b)+'<span class="small muted">'+esc(slotLabel(b.slot,b.other))+'</span>':'<a class="btn btn-primary btn-sm" href="#/improvements/'+s.k+'">Details and booking</a>')+'</div>'
     + '</article>';
 }
 function sinceText(S,b,i){
@@ -627,7 +630,7 @@ function vRoadmap(){
   var top='<section class="panel-dark rm-top">'+threeNums(P,m,'dark')+'<div class="rm-chart">'+roadChart(S,i,P,{dark:true})+'</div><p class="rm-leg"><span class="lg-i"><span class="lg-l solid"></span>Your score by month</span><span class="lg-i"><span class="lg-l dash"></span>Projected with the plan below (estimate)</span><span class="lg-i"><span class="lg-l dot"></span>At the eco standards</span></p></section>';
   var rows=P.items.map(function(it){
     var s=it.s, b=it.booking, pv=provOf(s);
-    var st = b ? bookingChip(b)+'<div class="small muted">'+esc(slotLabel(b.slot,b.other))+'</div>' : '<a class="btn btn-primary btn-sm" href="#/book/'+s.k+'">Book a session</a>';
+    var st = b ? bookingChip(b)+'<div class="small muted">'+esc(slotLabel(b.slot,b.other))+'</div>' : '<a class="btn btn-primary btn-sm" href="#/improvements/'+s.k+'">Details and booking</a>';
     return '<tr'+(it.off?' class="off"':'')+'><td class="tg"><label class="tgl" title="'+(b?'Booked items stay in the plan':'Include in the plan')+'"><input type="checkbox" data-act="plan-toggle" data-svc="'+s.k+'"'+(it.off?'':' checked')+(b?' disabled':'')+'><span class="vh">Include '+esc(it.title)+' in the plan</span></label></td>'
       + '<td><b>'+itemName(it)+'</b><div class="small muted">'+esc(pv.label)+' · '+esc(s.session)+'</div><div class="small why">'+esc(it.why)+'</div></td>'
       + '<td class="small">'+(upText(it.uplift)||esc(s.effectText))+'</td>'
@@ -655,9 +658,12 @@ function vBook(key){
   slots.forEach(function(v){ var d=v.slice(0,10); if(!byDay[d]){ byDay[d]=[]; days.push(d); } byDay[d].push(v); });
   var grid=days.map(function(d){ var dt=slotDate(d+'T09:00'); return '<div class="sday"><div class="sd">'+DOW[dt.getDay()]+' '+dt.getDate()+' '+MONTHS[dt.getMonth()].slice(0,3)+'</div>'+byDay[d].map(function(v){ return '<button type="button" class="slot" data-act="slot" data-slot="'+v+'" aria-pressed="false">'+timeLabel(slotDate(v))+'</button>'; }).join('')+'</div>'; }).join('');
   var pv=provOf(s), title=R.title(s,o.profile);
-  var body='<div class="pg-head"><div><p class="kicker"><a class="link" href="#/roadmap">Roadmap and help</a> · Book</p><h1>'+esc(title)+'</h1><p class="pg-sub">'+esc(s.what)+'</p></div></div>'
-    + (open?'<div class="banner grey"><span>You already have a '+esc(BK_L[open.status].toLowerCase())+' booking for this: <b>'+esc(slotLabel(open.slot,open.other))+'</b>.</span><a class="btn btn-ghost btn-sm" href="#/roadmap" style="color:var(--ink)">See it</a></div>':'')
-    + '<div class="row2 w73 book"><div class="panel"><h3>Choose a time</h3><p class="sec-s" style="margin-top:4px">'+esc(s.session)+'. The next ten business days, in your local time.</p>'
+  var body='<div class="pg-head"><div><p class="kicker"><a class="link" href="#/improvements">Improvements</a> · '+esc(s.cat?D.CAT[s.cat].name:'Funding')+'</p><h1>'+esc(title)+'</h1><p class="pg-sub">'+esc(s.what)+'</p></div></div>'
+    + (open?'<div class="banner grey"><span>You already have a '+esc(BK_L[open.status].toLowerCase())+' booking for this: <b>'+esc(slotLabel(open.slot,open.other))+'</b>.</span><a class="btn btn-ghost btn-sm" href="#/improvements" style="color:var(--ink)">See it</a></div>':'')
+        + '<section class="panel imp-detail"><div class="imp-top"><div><p class="k">Estimated change</p><p class="imp-num">'+(r&&r.uplift&&r.uplift.overall>=0.05?'Score '+sgn(r.uplift.overall,1):(r?esc(upText(r.uplift)||s.effectText):'—'))+'</p>'+(r&&r.uplift&&r.uplift.overall>=0.05&&m?'<p class="small muted">from '+fmt(m.score,0)+' to about '+fmt(Math.min(100,m.score+r.uplift.overall),0)+', on its own, once it has taken full effect</p>':'<p class="small muted">Once it has taken full effect</p>')+'</div><div><p class="k">Why it is recommended</p><p>'+esc(r?r.why:'Your current figures do not call for this, but you can still book it.')+'</p></div></div>'
+    + '<div class="imp-cols"><div><h3>What is involved</h3><p class="small">'+esc(s.what)+'</p><p class="small muted">'+esc(s.session)+'</p></div><div><h3>Who delivers it</h3><p class="small">'+esc(s.who)+'</p>'+(s.prov==='group'?'<p class="small muted">'+esc(s.groupNames)+(s.groupNames.indexOf(' and ')>0?' are':' is')+' part of Recycle Group, like Yarta. Disclosed on your monthly report.</p>':'')+'</div><div><h3>The estimate</h3><p class="small">Assumed effect: '+esc(s.effectText)+'</p><p class="small muted">You can use any provider. Your score and the verification of your figures do not depend on who does the work.</p></div></div></section>'
+    + '<h2 class="sec-t" style="margin-top:28px">Book the relevant expert</h2>'
++ '<div class="book"><div class="panel"><h3>Choose a time</h3><p class="sec-s" style="margin-top:4px">'+esc(s.session)+'. The next ten business days, in your local time.</p>'
     + '<div class="slots" role="group" aria-label="Available times">'+grid+'<div class="sday"><div class="sd">Other</div><button type="button" class="slot" data-act="slot" data-slot="other" aria-pressed="false">Another time</button></div></div>'
     + '<div class="stack" style="margin-top:24px">'
     + '<fieldset class="field"><legend class="lbl">Format</legend><div class="pill-row">'+s.modes.map(function(md,ix){ return '<label class="radio"><input type="radio" name="bk-mode" value="'+esc(md)+'"'+(ix===0?' checked':'')+'> '+esc(md)+'</label>'; }).join('')+'</div></fieldset>'
@@ -666,13 +672,28 @@ function vBook(key){
     + '<div class="field"><label for="bk-notes">Notes</label><textarea id="bk-notes" rows="3" placeholder="Anything the specialist should know, or a time that suits you if none above does."></textarea></div>'
     + '<label class="check"><input type="checkbox" id="bk-share" checked> <span>Share the Yarta figures behind this recommendation with the provider, so they arrive prepared.</span></label>'
     + '<div class="note-box grey">Prototype: nothing is sent. In production, Yarta would confirm the time with you by email.</div>'
-    + '<div class="btn-row"><button class="btn btn-primary" type="button" data-act="book-submit" data-svc="'+s.k+'">Request this booking</button><a class="btn btn-ghost" href="#/roadmap" style="color:var(--ink)">Back to the roadmap</a></div>'
+    + '<div class="btn-row"><button class="btn btn-primary" type="button" data-act="book-submit" data-svc="'+s.k+'">Request this booking</button><a class="btn btn-ghost" href="#/improvements" style="color:var(--ink)">Back to improvements</a></div>'
     + '</div></div>'
-    + '<aside class="panel bk-side"><h3>Why it is recommended</h3><p class="small" style="margin-top:8px">'+esc(r?r.why:'Your current figures do not call for this, but you can still book it.')+'</p>'
-    + '<dl class="rec-dl" style="margin-top:14px"><dt>Estimated change</dt><dd>'+(r?(upText(r.uplift)||esc(s.effectText)):'—')+'</dd></dl><p class="small muted" style="margin:8px 0 0">Assumed effect: '+esc(s.effectText)+'</p>'
-    + '<h3 style="margin-top:22px">Who delivers it</h3><p class="small" style="margin-top:8px">'+esc(s.who)+'</p>'+(s.prov==='group'?'<p class="small muted">'+esc(s.groupNames)+(s.groupNames.indexOf(' and ')>0?' are':' is')+' part of Recycle Group, like Yarta. Disclosed on your monthly report.</p>':s.prov==='partner'?'<p class="small muted">Independent specialist: chosen by you, and Yarta can introduce one.</p>':'')
-    + '<p class="small muted" style="margin-top:10px">You can use any provider. Your score and the verification of your figures do not depend on who does the work.</p></aside></div>';
-  return shell('roadmap', body);
+    + '</div>';
+  return shell('improve', body);
+}
+
+function vImprove(){
+  var o=org(), S=seriesOf(o), m=monthOf(S);
+  if(!m || !R) return shell('improve','<div class="pg-head"><div><p class="kicker">Improvements</p><h1>Improvements</h1></div></div><div class="empty">Suggested improvements appear once your first month is verified.</div>');
+  var i=idxOf(S,m.month), P=planFor(o,S,i);
+  var items=P.items.slice().sort(function(a,b){ return ((b.uplift&&b.uplift.overall)||0)-((a.uplift&&a.uplift.overall)||0); });
+  var head='<div class="pg-head"><div><p class="kicker">Improvements</p><h1>What would lift your score</h1><p class="pg-sub">Suggestions from your verified figures to '+mLabel(m.month)+(m.status!=='verified'?' (provisional: awaiting verification)':'')+', biggest estimated change first. Open one to see what is involved, then book the relevant expert.</p></div></div>';
+  var cards=items.map(function(it){
+    var s=it.s, b=it.booking, pv=provOf(s), ov=it.uplift&&it.uplift.overall>=0.05?it.uplift.overall:null;
+    return '<a class="imp-card'+(s.prov==='group'?' grp':'')+'" href="#/improvements/'+s.k+'">'
+      + '<span class="imp-n"><b>'+(ov!=null?sgn(ov,1):'—')+'</b><small>'+(ov!=null?'score':'see detail')+'</small></span>'
+      + '<span class="imp-b"><span class="k">'+esc(s.cat?D.CAT[s.cat].name:'Funding')+'</span><span class="imp-t">'+itemName(it)+'</span><span class="small muted">'+esc(upText(it.uplift)||s.effectText)+' · '+esc(pv.label)+'</span></span>'
+      + '<span class="imp-s">'+(b?bookingChip(b):'<span class="btn btn-primary btn-sm">Details and booking</span>')+'</span></a>';
+  }).join('');
+  var bl=orgBookings(o.id).slice().sort(function(a,b){ return (b.slot||b.createdAt||'')<(a.slot||a.createdAt||'')?-1:1; });
+  var bk=bl.length?'<h2 class="sec-t" style="margin-top:28px">Your bookings</h2><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Help</th><th>When</th><th>Status</th><th>Since then</th><th></th></tr></thead><tbody>'+bl.map(function(b){ return bookingRow(b,o,S,i); }).join('')+'</tbody></table></div>':'';
+  return shell('improve', head+'<section class="panel-dark rm-top">'+threeNums(P,m,'dark')+'</section><h2 class="sec-t" style="margin-top:28px">Suggested improvements</h2><p class="sec-s">The estimated change is for each item on its own, once it has taken full effect. You can use any provider.</p>'+(cards?'<div class="imp-list">'+cards+'</div>':'<div class="empty">Nothing is suggested from your current figures.</div>')+bk);
 }
 
 /* the figures behind an open booking, from the customer's verified months, when none were saved with it */
@@ -1552,6 +1573,7 @@ function render(){
   var appEl=document.getElementById('app'); if(!appEl || appEl.hidden) return; /* pages that only use the engine (the sample report) keep #app hidden */
   SITE=null; var h=parseHash(), P=h.parts, q=h.q, html;
   var u=me();
+  if(u && window.YESPORTAL_CLIENT && isOp()){ state.session=null; save(); u=null; }   /* the client portal never shows the team's screens */
   if(!u){ html=vLogin(); }
   else if(!P.length){ go(isOp()?(u.home||'#/ops'):'#/dashboard'); return; }
   else {
@@ -1568,6 +1590,7 @@ function render(){
     else if(a==='reports') html=vReports();
     else if(a==='roadmap') html=vRoadmap();
     else if(a==='book') html=vBook(P[1]);
+    else if(a==='improvements') html=P[1]?vBook(P[1]):vImprove();
     else if(a==='report') html=vReport(P[1]);
     else if(a==='organisation') html=vOrganisation();
     else if(a==='data') html=vData();
@@ -1665,7 +1688,7 @@ function bookSubmit(key){
   var b={id:'bk-'+Date.now().toString(36), org:o.id, svc:key, status:'requested', slot:sl==='other'?null:sl, other:sl==='other', mode:mode, location:mode==='On site'?loc:'', contact:name, email:email, notes:notes, share:share, why:share&&r?r.why:'', month:m?m.month:null, group:s.prov==='group', createdAt:isoNow(), createdBy:me().name};
   state.bookings=state.bookings||[]; state.bookings.push(b);
   log('Help requested',bkDesc(b),o.id); save(); ui.bookSlot=null;
-  flash('Requested: '+R.title(s,o.profile)+'.'); go('#/roadmap');
+  flash('Requested: '+R.title(s,o.profile)+'.'); go('#/improvements');
 }
 
 document.addEventListener('click', function(e){

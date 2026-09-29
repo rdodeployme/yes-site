@@ -427,3 +427,23 @@ fieldset.field legend{padding:0;margin-bottom:6px}
 .rp-bmnote{font-size:10.5px;line-height:1.4;color:var(--steel);margin:8px 0 0}
 .tbar s.bm{position:absolute;top:-5px;bottom:-5px;width:3px;background:#8A4A14;box-shadow:0 0 0 1.5px #fff;border-radius:2px;text-decoration:none;margin-left:-1px}
 @media print{.rp-bmnote{font-size:8.5px;margin-top:4px}}
+
+/* Improvements: list, detail and booking */
+.imp-list{display:grid;gap:10px;margin-top:14px}
+.imp-card{display:grid;grid-template-columns:88px 1fr auto;gap:18px;align-items:center;padding:16px 18px;border:1px solid var(--line,#d8d2c8);border-radius:10px;background:#fff;color:var(--ink,#1E1712);text-decoration:none}
+.imp-card:hover,.imp-card:focus-visible{border-color:var(--ink,#1E1712);box-shadow:0 2px 0 var(--ink,#1E1712)}
+.imp-card.grp{border-left:4px solid var(--green,#B8641F)}
+.imp-n{display:flex;flex-direction:column;align-items:flex-start}
+.imp-n b{font:800 30px/1 Archivo,Inter,sans-serif}
+.imp-n small{font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.65}
+.imp-b{display:flex;flex-direction:column;gap:3px;min-width:0}
+.imp-b .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.65}
+.imp-t{font-weight:700;font-size:17px}
+.imp-s{white-space:nowrap}
+.imp-detail{margin-top:6px}
+.imp-top{display:grid;grid-template-columns:minmax(200px,1fr) 2fr;gap:28px;align-items:start;padding-bottom:18px;border-bottom:1px solid var(--line,#d8d2c8)}
+.imp-top .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.65;margin:0 0 4px}
+.imp-num{font:800 44px/1 Archivo,Inter,sans-serif;margin:0 0 6px}
+.imp-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding-top:18px}
+.imp-cols h3{margin:0 0 6px}
+@media (max-width:760px){.imp-card{grid-template-columns:64px 1fr}.imp-s{grid-column:1/-1}.imp-top,.imp-cols{grid-template-columns:1fr}.imp-num{font-size:36px}}

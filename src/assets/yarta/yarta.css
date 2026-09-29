@@ -102,3 +102,8 @@ pre.mailbody{white-space:pre-wrap;font:12.5px/1.55 var(--font-mono);background:#
 .sop ul,.sop ol{margin:8px 0 0;padding-left:1.2em}
 .sop li{margin-bottom:.5em;line-height:1.55}
 .sop p{line-height:1.6;margin:8px 0 0}
+
+/* dark panels: the highlighted number card keeps readable text */
+.page-yarta .three.dark .tn.hl{background:rgba(184,100,31,.16);border-color:#7A4A1F}
+.page-yarta .three.dark .tn.hl b{color:#F0A65A}
+.page-yarta .three.dark .tn.hl .k,.page-yarta .three.dark .tn.hl .s{color:#E8DDD0}
