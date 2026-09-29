@@ -85,3 +85,20 @@ body.page-yarta{background:#F3EFE9}
 .opsel{font:500 13px var(--font-body);padding:6px 8px;border:1px solid var(--silver-2);border-radius:6px;background:#fff;color:var(--ink);max-width:180px}
 .tbl tr.flag td{background:#FBF0E3}
 .page-tool .ytop .ydemo{color:#F2C894}
+
+/* operations systems: sites, onboarding, outbox, manual */
+.site-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.site-tabs a{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--silver-2);border-radius:999px;background:#fff;color:var(--ink);text-decoration:none;font-size:13.5px}
+.site-tabs a[aria-selected=true]{background:#1E1712;color:#fff;border-color:#1E1712}
+.site-tabs a .c{font:600 11px var(--font-mono);color:var(--steel)}
+.site-tabs a .c.ok{color:var(--green-ink)}
+.site-tabs a[aria-selected=true] .c{color:#E9A860}
+.onb-row{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:start;padding:10px 0;border-top:1px solid var(--silver-1)}
+.onb-row:first-child{border-top:0}
+.onb-tick{width:26px;height:26px;border-radius:7px;border:1.5px solid var(--silver-3);background:#fff;color:#fff;font-weight:800;cursor:pointer;line-height:1}
+.onb-row.done .onb-tick{background:var(--green-2);border-color:var(--green-2)}
+.onb-row.done b{color:var(--steel)}
+pre.mailbody{white-space:pre-wrap;font:12.5px/1.55 var(--font-mono);background:#F7F3EE;border:1px solid var(--silver-1);border-radius:8px;padding:14px;margin:10px 0 4px}
+.sop ul,.sop ol{margin:8px 0 0;padding-left:1.2em}
+.sop li{margin-bottom:.5em;line-height:1.55}
+.sop p{line-height:1.6;margin:8px 0 0}
