@@ -68,7 +68,7 @@
   <div class="wrap">
     <p class="eyebrow">The Yarta Report</p>
     <h1>One score. Ten categories. A roadmap to improvement.</h1>
-    <p class="lead">The Yarta Report is an environmental sustainability report for each period and a live dashboard, built on the Yarta Method: your data evaluated against the eco standards, benchmarked, compared with your targets and your last period, and closed with the suggestions and the plan by quarter.</p>
+    <p class="lead">The Yarta Report is an environmental sustainability report for each period and a live dashboard, built on the Yarta Method: your data evaluated against the eco standards, benchmarked against your industry, compared with your targets and your last period, and closed with the suggestions and the plan by quarter.</p>
     <div class="btn-row"><a class="btn btn-primary" href="/demo/">Open the live demo {{ARROW}}</a><a class="btn btn-ghost" href="/report/">View a sample report</a></div>
   </div>
 </section>
@@ -83,7 +83,7 @@
       <li><span class="sec-idx">03</span><div><div class="h"><svg class="ic g"><use href="#i-loop"/></svg><h3>Yarta Roadmap</h3></div><p class="k">Roadmap to improvement</p><p>The score now, at the eco standards and with Yarta help; suggestions ranked by what would move the number, each bookable; the plan by quarter; and the change since work was done, shown as a change, not a cause.</p></div></li>
       <li><span class="sec-idx">04</span><div><div class="h"><svg class="ic g"><use href="#i-ledger"/></svg><h3>Yarta Data</h3></div><p class="k">The figures behind every number</p><p>Every figure with its month, source document, evidence grade and the analyst who entered it, exportable as CSV or JSON. The data dictionary lists every field Yarta enters and every figure it calculates.</p></div></li>
       <li><span class="sec-idx">05</span><div><div class="h"><svg class="ic g"><use href="#i-co2"/></svg><h3>Yarta Carbon</h3></div><p class="k">Scope 1, 2 and 3 · avoided emissions separate</p><p>Operational emissions with the National Greenhouse Accounts factors, by scope and by month, ready for mandatory climate reporting. Avoided emissions from recovered material are estimated with their own factors, reported separately and never netted.</p></div></li>
-      <li><span class="sec-idx">06</span><div><div class="h"><svg class="ic g"><use href="#i-bench"/></svg><h3>Yarta Benchmark</h3></div><p class="k">Compare</p><p>Your score against the eco standards, your own targets and your last period, category by category. Comparison with organisations like yours follows once enough organisations report on the same method; until then the report says so.</p></div></li>
+      <li><span class="sec-idx">06</span><div><div class="h"><svg class="ic g"><use href="#i-bench"/></svg><h3>Yarta Benchmark</h3></div><p class="k">Compare</p><p>Your score against the eco standards, the published benchmarks for your industry, your own targets and your last period, category by category. The industry benchmarks come from public sources for your sector, never from other Yarta customers: your data is not shared, and nobody else's is shown to you.</p></div></li>
     </ol>
   </div>
 </section>
@@ -123,7 +123,7 @@
   <div class="wrap">
     <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">The dashboard</p><h2>Environmental sustainability, live.</h2></div><p class="lead">The Yindyamarra Score, where you could be, the suggestions, the ten category tiles, emissions by scope and targets against actuals, recalculated as Yarta enters each month from the records you send.</p></div>
     <div class="reveal">
-      <div class="shot"><img src="/assets/img/product-dashboard.webp" alt="Yarta Dashboard for a council hard waste program: Yarta Score with its composition, six score tiles, the Scope 3 Category 5 figure beside the avoided-emissions estimate, three buckets and recovered tonnes by month (demo data)" loading="lazy" width="1600" height="2176"></div>
+      <div class="shot"><img src="/assets/img/product-dashboard.webp" alt="Yarta Dashboard for a council hard waste program: Yindyamarra Score with its composition, six score tiles, the Scope 3 Category 5 figure beside the avoided-emissions estimate, three buckets and recovered tonnes by month (demo data)" loading="lazy" width="1600" height="2176"></div>
       <div class="cap"><span><b>Demo Shire Council</b> · <span>July 2026 · a fictional council</span></span><span>Yarta Method v0.1 draft · entered by Yarta</span><span class="badge demo">Demo data · illustrative</span></div>
     </div>
     <div class="btn-row mt-3 reveal"><a class="btn btn-ink" href="/demo/">Open the live demo {{ARROW}}</a><a class="btn btn-outline" href="/how-it-works/">How the data gets in</a></div>
@@ -229,7 +229,7 @@
   var t=B.compute(B.DEMO.entries,{km:B.DEMO.km||0,sector:B.DEMO.sector||'council'});
   var sc=t.score||B.score(t);
 
-  // --- 02 · the Yarta Score: gauge drawn by the shared component from the engine's score ---
+  // --- 02 · the Yindyamarra Score: gauge drawn by the shared component from the engine's score ---
   var g=document.getElementById('s-gauge');
   if(g&&B.gauge) B.gauge(g,sc,260);
   txt('s-band',sc.band);

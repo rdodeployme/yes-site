@@ -1,22 +1,27 @@
 <style>
 /* how-it-works refinements (scoped) */
-/* 02 · three buckets: large bar + display tonnes from the demo dataset */
-.page-how-it-works .bk-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
-.page-how-it-works .bucket.big{height:22px}
-.page-how-it-works .bucket.big>div{transition:width 1.1s var(--ease)}
-.page-how-it-works .bk-nums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px clamp(24px,3vw,40px);margin-top:32px}
-@media(max-width:800px){.page-how-it-works .bk-nums{grid-template-columns:1fr}}
-.page-how-it-works .bk-nums .display{font-size:clamp(48px,7vw,104px)}
-.page-how-it-works .bk-nums .display.sto{color:var(--stored)}
-.page-how-it-works .bk-nums .display.lan{color:var(--mist)}
-.page-how-it-works .bk-nums .legend{margin-top:14px}
-.page-how-it-works .bk-nums .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--green-3);margin:18px 0 8px;border-top:1px solid #2A2C2A;padding-top:16px}
-.page-how-it-works .bk-nums .k.sto{color:var(--stored)}
-.page-how-it-works .bk-nums .k.lan{color:var(--mist)}
-.page-how-it-works .bk-nums .s{font-size:15px;color:var(--mist);margin:0;max-width:34ch;line-height:1.55}
-.page-how-it-works .cap{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin:32px 0 0}
-.page-how-it-works .stored-note{border-top:1px solid #2A2C2A;padding-top:22px;margin-top:8px}
-.page-how-it-works .stored-note p{color:var(--mist);max-width:60ch}
+/* 02 · how we help you improve */
+.page-how-it-works .imp-steps{display:grid;gap:14px;grid-template-columns:minmax(0,1fr);counter-reset:imp}
+@media(min-width:760px){.page-how-it-works .imp-steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1100px){.page-how-it-works .imp-steps{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.page-how-it-works .imp-steps>div{border:1px solid #2A2C2A;border-radius:var(--r-lg);padding:20px 18px 18px;background:rgba(255,255,255,.03);counter-increment:imp}
+.page-how-it-works .imp-steps>div::before{content:"0" counter(imp);display:block;font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;color:var(--green-3);margin-bottom:12px}
+.page-how-it-works .imp-steps h4{margin:0 0 8px;color:#fff;font-size:19px}
+.page-how-it-works .imp-steps p{margin:0;color:var(--mist);font-size:14.5px;line-height:1.55}
+.page-how-it-works .imp-steps .who{display:block;margin-top:12px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--green-3)}
+.page-how-it-works .acc{margin-top:clamp(32px,4vw,48px)}
+.page-how-it-works .acc-top{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.page-how-it-works .acc-top h3{margin:0;color:#fff;font-size:clamp(22px,2.4vw,30px)}
+.page-how-it-works .acc-top p{margin:0;color:var(--mist);max-width:56ch}
+.page-how-it-works .acc-grid{display:grid;gap:10px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:700px){.page-how-it-works .acc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1100px){.page-how-it-works .acc-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.page-how-it-works .acc-grid>div{border-top:2px solid var(--green-2);padding:14px 0 6px}
+.page-how-it-works .acc-grid .c{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--green-3);margin:0 0 6px}
+.page-how-it-works .acc-grid b{display:block;color:#fff;font-size:15px;margin-bottom:4px}
+.page-how-it-works .acc-grid p{margin:0;color:var(--mist);font-size:13.5px;line-height:1.5}
+.page-how-it-works .imp-note{margin-top:22px;color:var(--mist);font-size:14px;max-width:80ch}
+.page-how-it-works .imp-note a{color:var(--green-3)}
 /* 03 · whole of organisation */
 .page-how-it-works .example{border-left:3px solid var(--green-2);padding:6px 0 6px 22px;margin:0}
 .page-how-it-works .example b{font-family:var(--font-display);font-weight:800;font-size:clamp(34px,4vw,56px);letter-spacing:-.04em;line-height:1;display:block;color:var(--ink);font-variant-numeric:tabular-nums}
@@ -52,55 +57,41 @@
   <div class="wrap">
     <div class="section-head reveal"><div><span class="sec-idx">01</span><p class="eyebrow">The loop</p><h2>Six steps. One of them is yours.</h2></div><p class="lead">You send the data. Yarta does the entering, the grading and the calculating. The loop runs every period, and closes when the report issues with its roadmap.</p></div>
     <ol class="steps reveal" aria-label="The Yarta loop">
-      <li><div><h4>Onboard</h4><p>Thirty days. Yarta agrees your streams, your sites and your baseline period with you, and issues the method sheet that states how each stream will be counted. Nothing is calculated until the method sheet is agreed.</p></div></li>
+      <li><div><h4>Onboard</h4><p>Thirty days. Yarta agrees your categories, your sites, your targets and your baseline year with you, and issues the method sheet that states how each one will be counted. Nothing is calculated until the method sheet is agreed.</p></div></li>
       <li><div><h4>Send your data</h4><p>Waste and recycling reports, utility bills, fuel and fleet records, invoices, contractor reports. Whatever you already hold for the period, for the whole organisation or one program.</p></div></li>
       <li><div><h4>Yarta enters and grades</h4><p>Yarta enters the figures from your records. Every entry carries an evidence reference and a grade, so any figure on your dashboard can be traced back to the document it came from.</p></div></li>
-      <li><div><h4>Your dashboard moves</h4><p>As the data arrives. Every tile recalculates: tonnes by fate, steel recovered, landfill avoided, the material recovery rate, the Yarta Score, and the two emissions figures: your Category 5 figure and, beside it, the avoided emissions.</p></div></li>
-      <li><div><h4>Fill in the gaps</h4><p>Once a month an automated email lists what Yarta still needs for the period. You send it, or say it does not exist. Yarta files every tonne as Landfilled, Recycled or Stored.</p></div></li>
+      <li><div><h4>Your dashboard moves</h4><p>As the data arrives. Every tile recalculates: the ten category scores, the Yindyamarra Score, where you could be at the eco standards, and the emissions figures: your inventory by scope and, beside it, the avoided emissions.</p></div></li>
+      <li><div><h4>Fill in the gaps</h4><p>Once a month an automated email lists what Yarta still needs for the period, by category. You send it, or say it does not exist. A category with no data is marked "not reported" and left out of the score, never guessed.</p></div></li>
       <li><div><h4>Report issues, with the roadmap</h4><p>Monthly, quarterly or annual, to suit your reporting cycle. The report states every figure with the method version it was calculated under, pinned so the number can be reproduced later, and closes with the roadmap to improvement: the score at the eco standards, the suggestions, the estimate with Yarta help and the plan by quarter.</p></div></li>
       <!-- [needs confirmation] report cadence options (monthly / quarterly / annual) as offered to customers -->
     </ol>
   </div>
 </section>
 
-<!-- 02 · THE THREE BUCKETS -->
-<section class="dark" id="buckets">
+<!-- 02 · HOW WE HELP YOU IMPROVE -->
+<section class="dark" id="improve">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">The three buckets</p><h2>Every tonne lands in one place.</h2></div><p class="lead">There is no fourth bucket and no rounding up. What went to landfill counts against you. What was recycled counts for you. What is waiting counts for nothing until it moves.</p></div>
-    <div class="reveal">
-      <div class="bk-top"><span class="idx">THREE BUCKETS · <span id="bk-who">HEPBURN SHIRE COUNCIL</span> · TONNES, FY TO DATE</span><span class="badge demo">Demo data · illustrative</span></div>
-      <div class="bucket big" id="bk-bar" aria-label="Three buckets for the demo program, tonnes"><div class="rec" id="bk-rec" style="width:0"></div><div class="sto" id="bk-sto" style="width:0"></div><div class="lan" id="bk-lan" style="width:0"></div></div>
-      <div class="bk-nums">
-        <div>
-          <div class="display g"><span id="bk-recn" data-count="0" data-dec="0">0</span><span class="u">t</span></div>
-          <div class="legend"><span class="rec"><i></i>Recycled</span></div>
-          <p class="k">Counts for you</p>
-          <p class="s">Baled or sorted material delivered to a licensed reprocessor, with a docket: scrap to a metal reprocessor, timber to mulch, green waste to a composter, goods to reuse.</p>
-        </div>
-        <div>
-          <div class="display sto"><span id="bk-ston" data-count="0" data-dec="0">0</span><span class="u">t</span></div>
-          <div class="legend"><span class="sto"><i></i>Stored</span></div>
-          <p class="k sto">Neutral</p>
-          <p class="s">Parked until it moves, then reclassified. Stored material never inflates a recovery rate and never counts against you while a pathway is found.</p>
-        </div>
-        <div>
-          <div class="display lan"><span id="bk-lann" data-count="0" data-dec="0">0</span><span class="u">t</span></div>
-          <div class="legend"><span class="lan"><i></i>Landfilled</span></div>
-          <p class="k lan">Counts against you</p>
-          <p class="s">Residual waste, contamination and any stream with no recovery pathway. Yarta reports the tonnes that went in and the volume they took up.</p>
-        </div>
-      </div>
-      <p class="cap">Computed in your browser from the demo dataset with the Yarta Method <span id="bk-ver">v1.0 draft</span>. Not a result.</p>
+    <div class="section-head reveal"><div><span class="sec-idx">02</span><p class="eyebrow">The roadmap to improvement</p><h2>From your data to a better score. Five steps, every period.</h2></div><p class="lead">A report that only measures leaves you where you were. Yarta evaluates, benchmarks, suggests, introduces the accredited help, and measures the change on the next report.</p></div>
+    <div class="imp-steps reveal">
+      <div><h4>Evaluate</h4><p>Your data becomes ten category scores and one Yindyamarra Score, each with the rule that produced it. The weakest categories are the ones the roadmap starts with.</p><span class="who">Yarta</span></div>
+      <div><h4>Benchmark and compare</h4><p>Each category is set against the eco standards, the published industry benchmark for your sector and your own history. The gap between where you are and "at the eco standards" is the size of the opportunity.</p><span class="who">Yarta</span></div>
+      <div><h4>Suggest</h4><p>The roadmap lists the suggestions that would move the score most: switch to renewable electricity, add an organics service, fix the contamination, electrify the next fleet purchase. Each one carries its estimated effect on the score.</p><span class="who">Yarta</span></div>
+      <div><h4>Book accredited help</h4><p>Every suggestion can be booked. Yarta introduces a provider who holds the licence or accreditation the work requires, or you use your own. The booking is recorded against the roadmap.</p><span class="who">You choose · Yarta introduces</span></div>
+      <div><h4>Measure the change</h4><p>The next report shows the category that moved, the figure behind it and who did the work. The roadmap rolls forward with the next set of suggestions.</p><span class="who">Yarta · next period</span></div>
     </div>
-    <div class="grid g12 mt-4 reveal">
-      <div class="span7 stored-note">
-        <h4>Why Stored exists</h4>
-        <p>Some material has to wait. E-waste is batched until there is enough for a processor run. Textiles sit while a textile pathway is confirmed. Coloured and treated timber has no recycling route modelled yet. A report that quietly counted that material as recycled would be wrong, and one that counted it as landfilled would be unfair. So Yarta parks it, in the open, and moves it the day it moves.</p>
+    <div class="acc reveal">
+      <div class="acc-top"><h3>The accreditation we require of every provider we introduce.</h3><p>Yarta does not do the physical work. The provider must hold the licence or accreditation for it, checked before the introduction and recorded against the booking.</p></div>
+      <div class="acc-grid">
+        <div><p class="c">Waste &amp; circularity</p><b>Licensed collection and recovery</b><p>An environment protection licence or registration for the activity in that state, processor certificates for every stream, and AS/NZS 5377-certified processors for e-waste.</p></div>
+        <div><p class="c">Energy &amp; renewables</p><b>Accredited audits and installers</b><p>Energy audits to AS/NZS 3598. Solar and battery installers accredited under the Clean Energy Council scheme (Solar Accreditation Australia). Electrical work by licensed electricians.</p></div>
+        <div><p class="c">Buildings</p><b>NABERS and Green Star</b><p>NABERS accredited assessors for building ratings; Green Star accredited professionals where the project calls for it.</p></div>
+        <div><p class="c">Fleet &amp; transport</p><b>Fleet and EV advisers</b><p>Working from your own kilometres and fuel data, with charging installed by licensed electricians.</p></div>
+        <div><p class="c">Water</p><b>Licensed and program-aligned</b><p>Licensed plumbers for works, leak-detection and irrigation specialists, and water auditors working to your utility's efficiency program.</p></div>
+        <div><p class="c">Land, nature &amp; Country</p><b>Landcare, bush regeneration, rangers</b><p>Landcare groups, accredited bush regenerators and Traditional Owner ranger programs, engaged and paid on their terms. Contaminated land by EPA-recognised consultants.</p></div>
+        <div><p class="c">Carbon &amp; governance</p><b>Independent assurance</b><p>Where assurance is needed, an independent assurance practitioner. Yarta never assures its own figures.</p></div>
+        <div><p class="c">Funding</p><b>Grants on verified figures</b><p>Grants writers using the Yarta figures as the evidence base, so an application rests on the same numbers as the report.</p></div>
       </div>
-      <div class="span5 stored-note">
-        <h4>What reclassification looks like</h4>
-        <p>When a stored batch reaches a processor, the Yarta operator enters the processor certificate, the tonnes leave Stored and land in Recycled, and every tile recalculates. If a pathway is never found and the batch goes to landfill, it moves to Landfilled instead. Either way the ledger shows both entries and both dates.</p>
-      </div>
+      <p class="imp-note">Where a Recycle Group business does the work, the report says so. The estimate "with Yarta help" on your report is calculated from the published rules for each suggestion, not from a promise. <a href="/method/#providers">The provider rules in the Yarta Method →</a> · <a href="/eco-standards/">The eco standards →</a></p>
     </div>
   </div>
 </section>
@@ -108,34 +99,34 @@
 <!-- 03 · WHOLE OF ORGANISATION -->
 <section id="scope">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">Whole-of-organisation</p><h2>All of your recycling. Not only ours.</h2></div><p class="lead">Yarta reports every stream your organisation recycles, wherever it went. Material that passes through Recycle Group arrives with its own docket. Material handled elsewhere is graded by the evidence behind it.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">03</span><p class="eyebrow">Whole-of-organisation</p><h2>Every category. Whoever supplies it.</h2></div><p class="lead">Yarta reports the whole organisation: the electricity retailer's bill, the fuel-card statement, the water meter, every waste contractor, the planting record and the community program. Each figure is graded by the evidence behind it, wherever it came from.</p></div>
     <div class="grid g12 reveal">
       <div class="span5">
         <div class="example">
-          <b>23,000</b>
-          <span>Wheelie bins collected this month</span>
-          <p>A council reports the count and states where the material went. Yarta enters it, grades the evidence, and the dashboard moves. The council's kerbside contractor never touched Yarta and did not need to.</p>
+          <b>1</b>
+          <span>Email a month is your part</span>
+          <p>It lists what Yarta still needs for the period, by category. You forward the bill, the statement or the contractor report, or say it does not exist. None of your suppliers ever touch Yarta, and none need to.</p>
         </div>
       </div>
       <div class="span7 scope-copy">
-        <p>The rule is the same for every stream: a Yarta operator enters it, the entry carries an evidence reference, and the evidence decides how much the figure counts. That is what lets one dashboard hold a hard waste program, a transfer station, a kerbside contract and a depot clearance at once, and still put a number on the report that an auditor can follow back.</p>
-        <p>Evidence is graded, not assumed. A weighbridge docket and a customer's say-so are both recorded. They do not carry the same weight.</p>
+        <p>The rule is the same for every category: a Yarta operator enters it, the entry carries an evidence reference, and the evidence decides how much the figure counts. That is what lets one dashboard hold an energy bill, a fleet register, a kerbside contract and a revegetation program at once, and still put a number on the report that an auditor can follow back.</p>
+        <p>Evidence is graded, not assumed. A bill and a customer's say-so are both recorded. They do not carry the same weight.</p>
       </div>
     </div>
     <div class="mt-4 reveal">
-      <div class="grades-top"><h4>Evidence grades</h4><span class="badge">Proposed · Yarta Method <span id="gr-ver">v1.0 draft</span></span></div>
+      <div class="grades-top"><h4>Evidence grades</h4><span class="badge">Proposed · Yarta Method v0.1</span></div>
       <!-- Evidence grades are PROPOSED (Yarta Method v0.1). The engine weights weighbridge/processor evidence at 1; the weight applied to Grade B is not yet fixed and is not stated here. -->
       <div class="table-wrap">
         <table class="table">
           <thead><tr><th>Grade</th><th>Evidence</th><th>How it counts</th><th>Status</th></tr></thead>
           <tbody>
-            <tr><td class="g">A</td><td>Weighbridge docket or processor certificate</td><td>Counts in full toward the Yarta Score and every tile.</td><td class="tagcell"><span class="tag">Counts in full</span></td></tr>
-            <tr><td class="g">B</td><td>Signed count sheet or contractor report</td><td>Counts, and is flagged on the ledger and the report so a reader can see what it rests on.</td><td class="tagcell"><span class="tag assume">Counts · flagged</span></td></tr>
-            <tr><td class="g">C</td><td>Customer statement without documentation</td><td>Recorded on the ledger. Does not count toward the Yarta Score until evidence is supplied.</td><td class="tagcell"><span class="tag pending">Recorded · not counted</span></td></tr>
+            <tr><td class="g">A</td><td>Primary document: a bill, meter read, weighbridge record or processor certificate</td><td>Counts in full toward the Yindyamarra Score and every tile.</td><td class="tagcell"><span class="tag">Counts in full</span></td></tr>
+            <tr><td class="g">B</td><td>System extract or reconciled internal record: a fleet, finance or contractor report, or a register reconciled to source</td><td>Counts, and is flagged on the record and the report so a reader can see what it rests on.</td><td class="tagcell"><span class="tag assume">Counts · flagged</span></td></tr>
+            <tr><td class="g">C</td><td>Estimate or statement without documentation</td><td>Recorded, and shown as an estimate. Lowers the evidence share in the Governance score until the document arrives.</td><td class="tagcell"><span class="tag pending">Recorded · estimate</span></td></tr>
           </tbody>
         </table>
       </div>
-      <p class="note">The Yarta Score's evidence-quality component is the mass-weighted share of tonnes backed by Grade A evidence. A Grade C entry can be upgraded at any time: send the docket, the operator attaches it, and the tonnes start counting.</p>
+      <p class="note">The Governance score's evidence share is the share of entries backed by Grade A evidence. A Grade C entry can be upgraded at any time: send the document, the operator attaches it, and the grade moves.</p>
     </div>
   </div>
 </section>
@@ -143,13 +134,13 @@
 <!-- 04 · SWITCHED ON IN 30 DAYS -->
 <section class="dark" id="onboarding">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">Switched on in 30 days</p><h2>Four weeks from first call to live dashboard.</h2></div><p class="lead">Onboarding is scoped, not open-ended. By the end of week four your first handovers are entered, your dashboard is live and the first monthly email is scheduled.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">Switched on in 30 days</p><h2>Four weeks from first call to live dashboard.</h2></div><p class="lead">Onboarding is scoped, not open-ended. By the end of week four your first month is entered, your dashboard is live and the first monthly email is scheduled.</p></div>
     <!-- Proposed onboarding schedule. The 30-day switch-on is a confirmed go-to-market line; the week-by-week split is Yarta's proposed plan. -->
     <div class="timeline reveal" aria-label="Proposed 30-day onboarding schedule">
-      <div><p class="w">Week 1</p><h4>Scope and streams</h4><p>Sites, programs and the reporting categories in play. Who hands over what, and where the evidence comes from.</p></div>
-      <div><p class="w">Week 2</p><h4>Baseline and method sheet</h4><p>The baseline period is set and the method sheet is agreed: unit weights, pathways and factors per stream, with their status.</p></div>
-      <div><p class="w">Week 3</p><h4>First handovers entered</h4><p>Your named Yarta data operator enters the first dockets and count sheets. The ledger starts.</p></div>
-      <div><p class="w">Week 4</p><h4>Dashboard live</h4><p>Every tile calculating from the ledger. The first monthly fill-in-the-gaps email is scheduled.</p></div>
+      <div><p class="w">Week 1</p><h4>Scope and categories</h4><p>Sites, the ten categories and the streams in play for your sector. Who holds which record, and where the evidence comes from.</p></div>
+      <div><p class="w">Week 2</p><h4>Baseline, targets and method sheet</h4><p>The baseline year is set, your targets and the eco standards that apply are agreed, and the method sheet states how each category will be counted.</p></div>
+      <div><p class="w">Week 3</p><h4>First month entered</h4><p>Your named Yarta data operator enters the first bills, statements and contractor reports. The record starts.</p></div>
+      <div><p class="w">Week 4</p><h4>Dashboard live</h4><p>Every tile calculating from the record, the first score on the screen and the first roadmap drafted. The first monthly fill-in-the-gaps email is scheduled.</p></div>
     </div>
     <p class="timeline-note">Proposed schedule. Subscription applies from the switch-on date.</p>
   </div>
@@ -158,23 +149,23 @@
 <!-- 05 · WHAT YOU RECEIVE -->
 <section id="receive">
   <div class="wrap">
-    <div class="section-head reveal"><div><span class="sec-idx">05</span><p class="eyebrow">What you receive</p><h2>The dashboard, the report and the method behind both.</h2></div><p class="lead">Everything on this list is built from one ledger, so the number on the report is the number on the dashboard is the number in the export.</p></div>
+    <div class="section-head reveal"><div><span class="sec-idx">05</span><p class="eyebrow">What you receive</p><h2>The dashboard, the report and the method behind both.</h2></div><p class="lead">Everything on this list is built from one record, so the number on the report is the number on the dashboard is the number in the export.</p></div>
     <div class="grid g12 reveal">
       <div class="span7">
         <ul class="feature-list">
-          <li><svg class="ic g"><use href="#i-dash"/></svg><div><strong>Yarta Dashboard access.</strong> Your organisation's recycling, live, across every site and program. Moves the day a stream moves.</div></li>
-          <li><svg class="ic g"><use href="#i-mail"/></svg><div><strong>Monthly gap email and summary.</strong> What moved, what is unaccounted for, and where the month landed across the three buckets.</div></li>
-          <li><svg class="ic g"><use href="#i-doc"/></svg><div><strong>Yarta Report per period.</strong> One page a board, a councillor or an auditor can read in a minute, with a report ID and the method version.</div></li>
-          <li><svg class="ic g"><use href="#i-export"/></svg><div><strong>CSV and PDF exports.</strong> Every ledger entry with its evidence reference, and the Yarta Report as a PDF.</div></li>
-          <li><svg class="ic g"><use href="#i-ledger"/></svg><div><strong>Method pack.</strong> The factor library, every unit-weight assumption and the version history, so any figure can be reproduced.</div></li>
-          <li><svg class="ic g"><use href="#i-verify"/></svg><div><strong>A named Yarta data operator.</strong> One person who enters your handovers, answers the gap email and signs off the ledger with their initials.</div></li>
+          <li><svg class="ic g"><use href="#i-dash"/></svg><div><strong>Yarta Dashboard access.</strong> Your score, the ten categories, where you could be and the suggestions, live, across every site. Moves the month the data lands.</div></li>
+          <li><svg class="ic g"><use href="#i-mail"/></svg><div><strong>Monthly gap email and summary.</strong> What we have, what we still need, and where the month landed by category.</div></li>
+          <li><svg class="ic g"><use href="#i-doc"/></svg><div><strong>Yarta Report per period.</strong> Three pages: the score and the categories, the figures behind them, and the roadmap to improvement, with a report ID and the method version.</div></li>
+          <li><svg class="ic g"><use href="#i-export"/></svg><div><strong>CSV and PDF exports.</strong> Every entry with its evidence reference, the carbon export by scope, and the Yarta Report as a PDF.</div></li>
+          <li><svg class="ic g"><use href="#i-ledger"/></svg><div><strong>Roadmap and provider introductions.</strong> The suggestions by quarter, the estimate with Yarta help, and an accredited provider for each one you choose to book.</div></li>
+          <li><svg class="ic g"><use href="#i-verify"/></svg><div><strong>A named Yarta data operator.</strong> One person who enters your records, answers the gap email and signs off the month with their initials.</div></li>
         </ul>
       </div>
       <div class="span5">
         <div class="receive-side">
           <p class="k">The principle</p>
           <p class="callout" style="font-size:clamp(19px,1.8vw,24px)">Your data in. Your results out. Then the roadmap.</p>
-          <p class="mt-2">If customers typed in their own figures, no report built on them would be credible. So they do not. Your part of the loop is to hand the material over and answer one email a month.</p>
+          <p class="mt-2">If customers typed in their own figures, no report built on them would be credible. So they do not. Your part of the loop is to send the records you already hold and answer one email a month. Yarta does the rest, and the roadmap tells you what to do next.</p>
           <div class="btn-row mt-2"><a class="btn btn-ink" href="/yes-report/">See the Yarta Report {{ARROW}}</a><a class="btn btn-outline" href="/method/">Read the Yarta Method</a></div>
         </div>
       </div>
@@ -185,32 +176,3 @@
 <!-- CTA -->
 <section class="cta-band"><div class="wrap"><p class="eyebrow">Switched on in 30 days</p><h2>See your Yarta impact before you commit.</h2><p class="lead">Book a 30-minute walkthrough with the demo dashboard, or send us one month of data and we will show you what Yarta makes of it.</p><div class="btn-row mt-3"><a class="btn btn-primary" href="/contact/">Book a walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div></div></section>
 
-<!--scripts-->
-<script src="/assets/yes-data.js"></script>
-<script>
-(function(){
-  var B=window.YES; if(!B||!B.compute||!B.DEMO) return;
-  var fmt=B.fmt||function(n,d){return n.toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d});};
-  function setCount(id,v,dec){
-    var el=document.getElementById(id); if(!el) return;
-    dec=dec||0; el.setAttribute('data-count',v); el.setAttribute('data-dec',dec);
-    if(el.getAttribute('data-from')) el.textContent=(el.getAttribute('data-prefix')||'')+fmt(v,dec)+(el.getAttribute('data-suffix')||'');
-  }
-  function txt(id,s){var el=document.getElementById(id); if(el) el.textContent=s;}
-
-  // --- 02 · three buckets, from the demo dataset and the engine ---
-  var t=B.compute(B.DEMO.entries,{km:B.DEMO.km||0,sector:B.DEMO.sector||'council'});
-  var bar=document.getElementById('bk-bar');
-  if(bar&&t.inT>0){
-    var pr=t.recT/t.inT*100, ps=t.stoT/t.inT*100, pl=t.lanT/t.inT*100;
-    bar.setAttribute('aria-label','Three buckets for the demo program: '+fmt(t.recT,0)+' t recycled, '+fmt(t.stoT,0)+' t stored, '+fmt(t.lanT,0)+' t landfilled');
-    function paint(){document.getElementById('bk-rec').style.width=pr+'%';document.getElementById('bk-sto').style.width=ps+'%';document.getElementById('bk-lan').style.width=pl+'%';}
-    if('IntersectionObserver' in window){var iob=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){paint();iob.unobserve(e.target);}});},{threshold:.3});iob.observe(bar);} else paint();
-  }
-  setCount('bk-recn',t.recT,0);
-  setCount('bk-ston',t.stoT,0);
-  setCount('bk-lann',t.lanT,0);
-  txt('bk-who',(B.DEMO.customer||'').toUpperCase());
-  txt('bk-ver',B.METHOD_VERSION||''); txt('gr-ver',B.METHOD_VERSION||'');
-})();
-</script>
