@@ -238,9 +238,10 @@ function vDashboard(q){
     + '<p class="small muted" style="margin:10px 0 0">Avoided emissions from recycling, reported separately and never deducted: <b>'+fmt(R12.avoided_t,0)+' t CO₂-e</b> (modelled estimate). '+(R12.flights?'':'')+'Flights are recorded but not yet in the totals.</p></div>';
   // targets
   var tg = E.targets(S.months.length ? {months:S.months.slice(0,i+1), targets:T, baseline:S.baseline} : S);
-  var targ = '<div class="panel"><h3>Targets and actuals</h3><p class="sec-s" style="margin-top:4px">Rolling 12 months to '+mLabel(m.month)+'. Targets are set on the Organisation page.</p>'
-    + tg.map(function(t){ var a=t.actual, max=Math.max(100,t.target||0); return '<div style="margin-top:18px"><div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><b style="font-weight:600">'+esc(t.name)+'</b><span class="mono">'+(a==null?'—':fmt(a,1)+'%')+' <span class="muted">/ '+fmt(t.target,0)+'%</span></span></div><div class="tbar" aria-hidden="true"><i style="width:'+clamp((a||0)/max*100,0,100)+'%"></i><b style="left:'+clamp(t.target/max*100,0,100)+'%"></b></div></div>'; }).join('')
-    + '<p class="small muted" style="margin:16px 0 0">The black mark is the target.'+(tg[0]&&tg[0].note?' Emissions: '+esc(tg[0].note.toLowerCase())+'.':'')+'</p></div>';
+  var BMd=benchFor(o.profile);
+  var targ = '<div class="panel"><h3>Eco standards, benchmarks and actuals</h3><p class="sec-s" style="margin-top:4px">Rolling 12 months to '+mLabel(m.month)+'. Targets are set on the Organisation page.</p>'
+    + tg.map(function(t){ var a=t.actual, max=Math.max(100,t.target||0), b=BMd&&BMd[t.k]; return '<div style="margin-top:18px"><div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><b style="font-weight:600">'+esc(t.name)+'</b><span class="mono">'+(a==null?'—':fmt(a,1)+'%')+' <span class="muted">/ '+fmt(t.target,0)+'%</span></span></div><div class="tbar" aria-hidden="true"><i style="width:'+clamp((a||0)/max*100,0,100)+'%"></i><b style="left:'+clamp(t.target/max*100,0,100)+'%"></b>'+(b?'<s class="bm" style="left:'+clamp(b.v/max*100,0,100)+'%"></s>':'')+'</div>'+(b?'<p class="small muted" style="margin:6px 0 0">Industry benchmark '+fmt(b.v,0)+'%: '+esc(b.label)+'.</p>':'')+'</div>'; }).join('')
+    + '<p class="small muted" style="margin:16px 0 0">The black mark is the eco standard or your target, whichever is higher. The dark orange mark is the published industry benchmark for your sector; no other organisation\'s data is used.'+(tg[0]&&tg[0].note?' Emissions: '+esc(tg[0].note.toLowerCase())+'.':'')+'</p></div>';
   // key metrics
   function mc(k,v,u,s){ return '<div class="panel metric"><div class="k">'+k+'</div><div class="v">'+v+(u?'<span class="u">'+u+'</span>':'')+'</div><div class="s">'+s+'</div></div>'; }
   var fuelChg = R12.base.fuel_l>0 ? (R12.fuel_l-R12.base.fuel_l)/R12.base.fuel_l*100 : null;
@@ -447,6 +448,18 @@ function rpChg(cur,base,lowerBetter){
 /* true while the report month still sits inside the baseline financial year (July to June): there is nothing earlier to compare with */
 function inBaselineFY(S,p,k){ var fy=String(S.baseline.fy||p.baseline_fy||''), y0=parseInt(fy.slice(0,4),10); if(!y0) return false; var d=E.parse(k), n=d.y*12+d.m; return n>=y0*12+6 && n<=(y0+1)*12+5; }
 /* the brand on the report cover: a page can override window.REPORT_BRAND before portal.js loads */
+/* industry benchmarks: published figures for the organisation's sector, never other customers' data (benchmarks.js) */
+function benchFor(p){ return (window.YESB && p) ? window.YESB.forSector(p.sector||'business') : null; }
+function benchTable(p,tg,BM){
+  if(!BM) return '';
+  var Bx=window.YESB, rows='', codes={}, n=0;
+  function code(c){ if(!codes[c]){ n++; codes[c]=n; } return codes[c]; }
+  tg.forEach(function(t){ var b=BM[t.k]; if(!b) return; rows+='<tr><td>'+esc(t.name)+'</td><td class="num">'+(t.actual==null?'—':pct(t.actual,0))+'</td><td class="num">'+pct(b.v,0)+'</td><td class="small">'+esc(b.label)+' <span class="muted">['+code(b.src)+']</span></td></tr>'; });
+  BM.extra.slice(0,4).forEach(function(x){ rows+='<tr><td>'+esc(x.k)+'</td><td class="num muted">—</td><td class="num">'+esc(x.v)+'</td><td class="small">'+esc(x.label)+' <span class="muted">['+code(x.src)+']</span></td></tr>'; });
+  var srcs=Object.keys(codes).sort(function(a,b){ return codes[a]-codes[b]; }).map(function(c){ return '['+codes[c]+'] '+esc(Bx.src(c)); }).join(' · ');
+  return '<div class="rp-h">Industry benchmarks · published figures for your sector</div><div class="rp-tw"><table class="tbl compact"><thead><tr><th>Figure</th><th class="r">You</th><th class="r">Benchmark</th><th>What the benchmark is</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+    + '<p class="rp-bmnote">'+esc(BM.edition)+'. '+(BM.none?esc(BM.none)+' ':'')+'Benchmarks come from public sources only; Yarta never pools customer data. Sources: '+srcs+'.</p>';
+}
 var RB=window.REPORT_BRAND||{mark:'<span class="mark">Yarta</span>', full:'Yindyamarra Environmental Sustainability', score:'Yindyamarra Environmental Score', title:'Environmental<br>Sustainability Report'};
 function sheetCover(o,S,i,PL,k,nP,provTxt){
   var m=S.months[i], R12=m.r12, B=R12.base||{}, p=o.profile, T=S.targets, ly=S.months[i-12]||null;
@@ -474,7 +487,8 @@ function sheetCover(o,S,i,PL,k,nP,provTxt){
   if(m.r12.n && R12.treated_t>0) scale.push({ic:'scale', v:fmt(R12.treated_t,0)+' t', t:'of clinical and related waste sent for treatment, counted in the total but never as recovered'});
   var scaleH=scale.slice(0,6).map(function(x){ return '<div class="rp-sc">'+rpIco(x.ic)+'<div><b>'+x.v+'</b> '+esc(x.t)+'</div></div>'; }).join('') || '<p class="rp-p muted">No figures yet.</p>';
   var subs=D.CATEGORIES.map(function(c){ var v=m.scores[c.k]; return '<div class="rp-sub"><span>'+esc(c.name)+(m.prov[c.k]?' <span class="muted">(P)</span>':'')+'</span><span class="v">'+(v==null?'—':Math.round(v))+'</span><span class="d">'+(v==null?'<span class="muted small">not reported</span>':delta(m.cat_yoy[c.k]))+'</span><div class="bar"><i style="width:'+(v||0)+'%"></i></div></div>'; }).join('');
-  var tgH=tg.map(function(t){ var w=(t.actual==null||!(t.target>0))?0:Math.max(0,Math.min(100,t.actual/t.target*100)); var met=t.actual!=null&&t.actual>=t.target; return '<div class="rp-tg'+(met?' met':'')+'"><span class="n">'+esc(t.name)+'</span><span class="r">'+(t.actual==null?'—':pct(t.actual,0))+' <span class="muted">of '+pct(t.target,0)+'</span></span><div class="bar"><i style="width:'+w.toFixed(0)+'%"></i></div></div>'; }).join('');
+  var BM=benchFor(p);
+  var tgH=tg.map(function(t){ var w=(t.actual==null||!(t.target>0))?0:Math.max(0,Math.min(100,t.actual/t.target*100)); var met=t.actual!=null&&t.actual>=t.target; var b=BM&&BM[t.k]; var bw=(b&&t.target>0)?Math.max(0,Math.min(100,b.v/t.target*100)):null; return '<div class="rp-tg'+(met?' met':'')+'"><span class="n">'+esc(t.name)+(b?' <span class="muted">· industry '+pct(b.v,0)+'</span>':'')+'</span><span class="r">'+(t.actual==null?'—':pct(t.actual,0))+' <span class="muted">of '+pct(t.target,0)+'</span></span><div class="bar"><i style="width:'+w.toFixed(0)+'%"></i>'+(bw==null?'':'<b class="bm" style="left:'+bw.toFixed(0)+'%" title="Industry benchmark"></b>')+'</div></div>'; }).join('');
   var photo = p.country_photo ? ' style="background-image:linear-gradient(90deg,rgba(11,40,24,.96) 0%,rgba(11,40,24,.78) 55%,rgba(11,40,24,.35) 100%),url('+esc(p.country_photo)+')"' : '';
   var wyc = PL ? '<div class="rp-wyc"><div><span class="k">Now</span><b>'+(PL.now==null?'—':PL.now)+'</b></div><div><span class="k">At the eco standards</span><b>'+(PL.target==null?'—':PL.target)+'</b></div><div class="hl"><span class="k">With Yarta help</span><b>'+(PL.potential==null?'—':PL.potential)+'</b><span class="s">estimate · plan on page '+nP+'</span></div></div>' : '';
   return '<section class="rp-sheet rp-cover">'
@@ -485,7 +499,7 @@ function sheetCover(o,S,i,PL,k,nP,provTxt){
     + '<div class="rp-score">'+ring(m.score,150,true)+'<div class="rp-score-t"><p class="kicker">'+RB.score+' · '+esc(mLabel(k))+'</p><div class="band">'+esc(m.band)+'</div><div class="rp-score-d">'+(m.yoy==null?'':'<span>'+delta(m.yoy,{unit:' pts'})+' year on year'+(ly?' ('+esc(mLabel(ly.month))+')':'')+'</span>')+(m.mom==null?'':'<span>'+delta(m.mom,{unit:' pts'})+' month on month</span>')+'<span>'+m.scored+' of 10 categories scored</span></div></div>'+wyc+'</div>'
     + '<div class="rp-cards">'+cardsH+'</div>'
     + '<div class="rp-cols"><div><div class="rp-h">Category scores · change on last year</div><div class="rp-subs one">'+subs+'</div></div>'
-    + '<div><div class="rp-h">At real-world scale · rolling '+win+'</div><div class="rp-scale">'+scaleH+'</div><div class="rp-h">Progress towards targets · rolling '+win+'</div><div class="rp-tgs">'+tgH+'</div></div></div>'
+    + '<div><div class="rp-h">At real-world scale · rolling '+win+'</div><div class="rp-scale">'+scaleH+'</div><div class="rp-h">Progress towards the eco standards · rolling '+win+'</div><div class="rp-tgs">'+tgH+'</div>'+(BM?'<p class="rp-bmnote">The mark on each bar is the published industry benchmark; figures and sources are on page 2. No other organisation\'s data is used.</p>':'')+'</div></div>'
     + '<div class="rp-foot">Headline figures are rolling '+win+' totals; the change is against the same calendar months of the baseline year'+(inBaselineFY(S,p,k)?' ('+esc(S.baseline.fy||p.baseline_fy)+' is the baseline year, so there is no earlier year to compare with yet)':'')+'. (P) provisional: a target-based category with less than 12 months of data. The score is self-declared under the published Yarta method v0.1 (draft); it is not an accredited rating, certification or offset. Page 1 of '+nP+'.</div></section>';
 }
 
@@ -507,7 +521,7 @@ function reportSheets(o,S,k){
   var subs=D.CATEGORIES.map(function(c){ var v=m.scores[c.k]; return '<div class="rp-sub"><span>'+esc(c.name)+(m.prov[c.k]?' <span class="muted">(P)</span>':'')+'</span><span class="v">'+(v==null?'—':Math.round(v))+'</span><span class="d">'+(v==null?'<span class="muted small">not reported</span>':delta(m.cat_yoy[c.k]))+'</span><div class="bar"><i style="width:'+(v||0)+'%"></i></div></div>'; }).join('');
   function kvrow(l,a,u,note){ return '<tr><td>'+esc(l)+'</td><td class="num">'+a+'</td><td>'+esc(u||'')+'</td><td class="small muted">'+(note||'')+'</td></tr>'; }
   var v=m.values;
-  var sheet1 = sheetCover(o,S,i,PL,k,nP,provTxt);
+  var sheet1 = sheetCover(o,S,i,PL,k,nP,provTxt), BM2=benchFor(p);
   var sheet2 = '<section class="rp-sheet"><div class="rp-head"><div><div class="rp-title" style="font-size:22px">'+esc(p.org_name)+' · '+mLabel(k)+'</div>'+rpSteps(['understand'])+'</div><div class="rp-kv"><span>Report</span><b>Figures behind the score</b></div></div>'
     + '<div class="rp-h" style="margin-top:0">Emissions · t CO₂-e</div><div class="rp-tw"><table class="tbl compact"><thead><tr><th></th><th class="r">'+mShort(k)+'</th><th class="r">Rolling 12 months</th><th class="r">Baseline months</th></tr></thead><tbody>'
     + [['Scope 1 · fuel and gas','scope1_t'],['Scope 2 · grid electricity','scope2_t'],['Scope 3 · landfill and upstream','scope3_t'],['Total operational emissions','total_t']].map(function(x){ return '<tr><td>'+x[0]+'</td><td class="num">'+fmt(m[x[1]],1)+'</td><td class="num">'+fmt(R12[x[1]],0)+'</td><td class="num">'+fmt(R12.base[x[1]],0)+'</td></tr>'; }).join('')
@@ -521,6 +535,7 @@ function reportSheets(o,S,k){
     + kvrow('Total waste',fmt(v.waste_total_t,1),'t','Landfill '+fmt(v.landfill_t,1)+' t') + kvrow('Landfill diversion',pct(m.diversion_pct,1),'','Recovery '+pct(m.recovery_pct,1))
     + kvrow('Trees planted',fmt(v.trees),'trees') + kvrow('Program participants',fmt(v.participants),'people')
     + '</tbody></table></div>'
+    + benchTable(p,tg,BM2)
     + '<div class="rp-h">Data quality and evidence</div><div class="rp-tw"><table class="tbl compact"><tbody><tr><td>Required figures supplied</td><td class="num">'+pct(m.complete_pct)+'</td></tr><tr><td>Figures backed by evidence</td><td class="num">'+pct(m.evidence_pct)+'</td></tr><tr><td>Evidence grades</td><td>'+D.CATEGORIES.filter(function(c){return c.k!=='carbon';}).map(function(c){ var e=(r.evidence||{})[c.k]; return esc(c.short)+' '+(e?(e.grade||'…'):'—'); }).join(' · ')+'</td></tr></tbody></table></div>'
     + '<div class="rp-foot">Method: emissions use the National Greenhouse Accounts Factors 2024 (DCCEEW), location-based electricity for '+esc(p.state)+'. Scope 3 covers waste to landfill and upstream fuel and electricity only. Flights are recorded but not yet converted. Avoided emissions use NSW DECCW (2010) factors, flagged as dated, and are never netted against emissions. Comparisons with the baseline use the same calendar months of '+esc(S.baseline.fy||p.baseline_fy)+'. Figures are entered by Yarta from the organisation\'s source documents and verified by a second Yarta analyst. Full method: yes.com.au/method. Page 2 of '+nP+'.</div></section>';
   return sheet1+sheet2+(PL?sheet3(o,S,i,PL,k):'');
