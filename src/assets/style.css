@@ -610,3 +610,4 @@ footer{background:var(--ink);color:var(--mist);padding:64px 0 32px;border-top:1p
 .sector-teaser{display:flex;flex-wrap:wrap;gap:8px}
 .sector-teaser a{font-family:var(--font-display);font-weight:600;font-size:15px;letter-spacing:-.01em;border:1px solid var(--mist);border-radius:999px;padding:10px 16px;background:#fff;color:var(--ink)}
 .sector-teaser a:hover{border-color:var(--green);color:var(--green-ink)}
+@media(max-width:600px){.logo.big{gap:12px}.logo.big .logo-img{width:64px}.logo.big .logo-mark{font-size:26px;letter-spacing:.18em}.logo.big .logo-name{white-space:normal;font-size:11px;letter-spacing:.16em;line-height:1.3}}

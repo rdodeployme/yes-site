@@ -21,7 +21,7 @@
     {k:'yamarr',     word:'Yamarr',      given:'fish',                         lang:'Not found',                check:'Not in GYY.',                                                           use:'The waterways report (planned module).'},
     {k:'yuwalla',    word:'Yuwalla',     given:'tree',                         lang:'Not found',                check:'Not in GYY; yuwal = vegetable food. River red gum is yarraan.',        use:'Trees planted (planned module).'},
     {k:'yurrandaali',word:'Yurrandaali', given:'tree goanna; ongoing planting of vegetation', lang:'Gamilaraay / Yuwaalaraay', check:'Matches: yurrandaali = tree goanna, Varanus varius (GYY).', use:'The planting and vegetation program (planned module).'},
-    {k:'yaraandhu',  word:'Yaraandhu',   given:'southern cross',               lang:'Not found',                check:'Not in GYY.',                                                           use:'Not assigned. Proposed: Yarta Benchmark, your position among peers.'}
+    {k:'yaraandhu',  word:'Yaraandhu',   given:'southern cross',               lang:'Not found',                check:'Not in GYY.',                                                           use:'Not assigned. Proposed: Yarta Benchmark, your position against the industry benchmark.'}
   ];
   /* words the custodians have confirmed for public use, by key. Empty until permission is on file. */
   Y.TERMS_CONFIRMED=[];
