@@ -2,7 +2,7 @@
 """Yarta site builder — wraps page fragments in the shared layout and writes dist/.
 Usage: python3 build.py
 """
-import os, re, shutil, json, datetime
+import os, shutil, re, shutil, json, datetime
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(ROOT, "src")
@@ -34,8 +34,14 @@ PAGES = [
     ("/councils/",        None,           "councils.html",     "Yarta for councils — whole-of-council environmental sustainability", "One score for the kerbside service, transfer stations, depots, buildings, fleet, water, Country and community programs, with a roadmap to improvement. Switched on in 30 days."),
     ("/climate-reporting/", None,         "climate-reporting.html", "Mandatory climate reporting — is your waste number ready?", "Australia's mandatory climate reporting is live. Scope 3 is reported from each company's second year and reviewed by an auditor. Check your group and your first Scope 3 year, and get your waste number from the processor."),
     ("/sectors/",         "Sectors",      "sectors.html",      "Sectors — what councils, hospitals, universities, manufacturers, builders, retailers and transport operators report on", "The same ten categories, shaped by sector: what each kind of organisation reports on, the eco standards that apply, and a demo and sample report for each."),
+    ("/onboarding/",     None,           "onboarding.html", "Onboarding — switched on in 30 days", "The 30-day plan for a new Yarta customer: thirteen steps over four weeks, what you do, what Yarta does, and what you have on day 30."),
+    ("/checklist/",      None,           "checklist.html", "What to send Yarta — the data checklist for your sector", "The documents Yarta works from for a council, business, hospital, university, manufacturer, builder, retailer or transport operator: what to send, who holds it, how often."),
+    ("/compare/",        None,           "compare.html", "Yarta and the alternatives — portals, carbon software and consultants", "How Yarta compares with a waste contractor's portal, carbon accounting software and a sustainability consultant, and when each is the better fit."),
+    ("/faq/",            None,           "faq.html", "Questions we are asked — Yarta FAQ", "Straight answers on the score, the evidence, your data, privacy, price and what happens if you stop."),
+    ("/glossary/",       None,           "glossary.html", "Glossary — the terms on a Yarta Report", "Scope 1, 2 and 3, diversion, evidence grades, eco standards, benchmark and other terms on a Yarta Report, in a line each."),
     ("/privacy/",         None,           "privacy.html", "Privacy — how Yarta handles your data", "What Yarta collects, why, who can see it, where it is stored and how long it is kept. Your data is never shared with another organisation."),
     ("/terms/",           None,           "terms.html", "Terms of service — what Yarta does and what a report is", "The plain-language terms behind a Yarta subscription: what you send, what Yarta does, what a report is and is not, fees, data and liability."),
+    ("/not-found/",      None,           "not-found.html", "Page not found", "That page does not exist. Start from the Yarta home page, the sample report or the live demo."),
     ("/eco-standards/",   None,           "eco-standards.html", "Eco standards — the standards behind every Yarta score", "The published standard behind each Yarta category, with sources: 80% resource recovery by 2030, 43% below 2005 by 2030, 82% renewable electricity, 30 by 30, halving food waste, mandatory climate reporting."),
     ("/business/",        None,           "business.html",     "Yarta for business — environmental sustainability reporting, Scope 3 and a roadmap", "Your data evaluated against the eco standards, with the emissions figures ready for mandatory climate reporting and a roadmap to improvement."),
     ("/method/",          None,           "method.html",       "The Yarta Method — how every number is calculated",    "Factors, formulas, score rules, eco standards, benchmarks, providers and evidence grades behind every Yarta figure, published in full."),
@@ -47,7 +53,7 @@ PAGES = [
     ("/recycling-report/", None,      "recycling-report.html", "Sample recycling report — Hepburn Shire Council (demo)", "The recycling report sample, print-ready: summary, figures and roadmap."),
     ("/language/",   None,           "language.html", "Language on this site — proposed names and their status (internal)", "The First Nations words proposed for Yarta products, which language each comes from, the dictionary check and whether the custodians have confirmed it."),
 ]
-NOINDEX = {"/language/", "/tool/"}   # internal pages: built and linkable, not indexed
+NOINDEX = {"/language/", "/tool/", "/not-found/"}   # internal pages: built and linkable, not indexed
 STANDALONE = [("/report/", "report.html"), ("/demo/", "demo.html"), ("/tool/", "tool.html")]   # the portal-based pages: their own document, not the site shell
 STANDALONE_FRAGS = {f for _, f in STANDALONE}
 REDIRECTS = {"/yarta/": "/report/", "/certificate/": "/recycling-report/"}   # old paths that keep working
@@ -101,6 +107,7 @@ def footer():
         <li><a href="/climate-reporting/">Climate reporting</a></li>
         <li><a href="/method/">The Yarta Method</a></li>
         <li><a href="/eco-standards/">Eco standards</a></li>
+        <li><a href="/glossary/">Glossary</a></li>
       </ul></div>
       <div><h5>Who it's for</h5><ul>
         <li><a href="/sectors/">Sectors</a></li>
@@ -108,6 +115,10 @@ def footer():
         <li><a href="/business/">Business</a></li>
         <li><a href="/pricing/">Pricing</a></li>
         <li><a href="/pricing/#foundation">Foundation Members</a></li>
+        <li><a href="/onboarding/">Onboarding</a></li>
+        <li><a href="/checklist/">What to send</a></li>
+        <li><a href="/compare/">Yarta and the alternatives</a></li>
+        <li><a href="/faq/">Questions</a></li>
       </ul></div>
       <div><h5>Yarta</h5><ul>
         <li><a href="/about/">About</a></li>
@@ -137,6 +148,9 @@ HEAD = '''<!doctype html>
 <meta property="og:description" content="{desc}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="{domain}{path}">
+<meta property="og:image" content="{domain}/assets/img/og.png">
+<meta property="og:site_name" content="Yarta">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0B0B0B">
 <link rel="icon" href="/assets/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
@@ -221,7 +235,17 @@ def build():
         to = (BASE_PATH or "") + new_path
         with open(os.path.join(old, "index.html"), "w", encoding="utf-8") as f:
             f.write(f'<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><title>Moved</title><meta name="robots" content="noindex"><link rel="canonical" href="{DOMAIN}{new_path}"><meta http-equiv="refresh" content="0; url={to}"></head><body><p>This page has moved: <a href="{to}">{DOMAIN}{new_path}</a>.</p></body></html>\n')
-    open(os.path.join(DIST, "robots.txt"), "w").write("User-agent: *\nAllow: /\n")
+    # 404: GitHub Pages and Netlify both serve /404.html for a missing path
+    nf = os.path.join(DIST, "not-found", "index.html")
+    if os.path.exists(nf):
+        shutil.copyfile(nf, os.path.join(DIST, "404.html")); shutil.rmtree(os.path.join(DIST, "not-found"))
+        built.remove("/not-found/")
+    # sitemap: every indexable page on the canonical domain
+    urls = [pth for pth, lab, frag, t, d in PAGES if pth in built and pth not in NOINDEX and frag not in STANDALONE_FRAGS] + [pth for pth, frag in STANDALONE if pth in built and pth not in NOINDEX]
+    urls = [u for u in urls if not u.startswith("/recycling-")]
+    today = datetime.date.today().isoformat()
+    open(os.path.join(DIST, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"  <url><loc>{DOMAIN}{u}</loc><lastmod>{today}</lastmod></url>\n" for u in dict.fromkeys(urls)) + '</urlset>\n')
+    open(os.path.join(DIST, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /tool/\nSitemap: {DOMAIN}/sitemap.xml\n")
     open(os.path.join(DIST, ".nojekyll"), "w").write("")
     print("built", len(built), "pages:", ", ".join(built), "| form:", FORM_MODE, "| base:", BASE_PATH or "/")
 
