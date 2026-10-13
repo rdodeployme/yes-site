@@ -23,6 +23,32 @@ window.YESR = window.YESR || {};
 
   R.monthsBetween = function(a, b){ var p=E.parse(a), q=E.parse(b); return (q.y*12+q.m)-(p.y*12+p.m); };
   R.ramp = function(start, month){ if(!start) return 0; return Math.max(0, Math.min(1, (R.monthsBetween(start, month)+1)/R.RAMP)); };
+  /* How long each kind of help takes, in months: lead = from the start until it first shows in the monthly figures,
+     ramp = from then until its full effect. Assumptions for discussion, published with the method. */
+  R.TIMING = {
+    hardwaste:{lead:1, ramp:6,  why:"New collections can start within a month; the share of bulky items recovered builds over about six months."},
+    contamination:{lead:1, ramp:4, why:"Signage and bin changes act quickly; the contamination rate settles over a few collection cycles."},
+    fleet:{lead:6, ramp:24, why:"Vehicles change only when they are due for replacement, and new ones take months to order. The pace comes from how many vehicles you retire each year."},
+    energy:{lead:3, ramp:12, why:"A GreenPower switch shows within a couple of billing cycles; solar, efficiency work and supply contracts take most of a year."},
+    dumping:{lead:1, ramp:6, why:"Faster removal closes reports within a month; the backlog clears over about six months."},
+    water:{lead:1, ramp:3, why:"Fixed leaks show on the next bills; other savings build over a quarter."},
+    evidence:{lead:1, ramp:3, why:"Better documents can start with next month's figures and cover every category within a quarter."},
+    procurement:{lead:6, ramp:12, why:"Recycled-content options come in as contracts renew, which for most organisations is once a year."},
+    planting:{lead:3, ramp:12, why:"Planting follows the season, and programs build up over a year."},
+    grants:{lead:0, ramp:1, why:"A funding application changes no figures on its own."}
+  };
+  R.timing = function(k){ return R.TIMING[k] || {lead:1, ramp:R.RAMP}; };
+  /* strength of an item's effect in a month: nothing until the lead time has passed, then building evenly to full */
+  R.rampFor = function(it, month){ if(!it || !it.start) return 0; var t=R.timing(it.k); return Math.max(0, Math.min(1, (R.monthsBetween(it.start, month)-t.lead+1)/t.ramp)); };
+  /* fleet: half of the light vehicles retired each year are replaced with electric ones, for two years. The retirement rate is
+     the client's own (fleet register), capped at a fifth of the fleet a year; with none recorded, a six-year cycle is assumed.
+     Trucks are left out: electric heavy vehicles are not yet a like-for-like replacement for most fleets. Fuel falls with the
+     vehicles replaced; where the fleet has trucks, a light vehicle is taken to use half the average fuel per vehicle. */
+  R.fleetGain = function(c){ var v=(c.m && c.m.values)||{}, n=num(c.m && c.m.fleet_n); if(!(n>0)) return {pts:0, fuel:0, perYr:0, assumed:false};
+    var light=num(v.veh_diesel)+num(v.veh_petrol)+num(v.veh_hybrid), trucks=num(v.trucks_diesel)+num(v.trucks_electric);
+    var ret=c.sum("veh_retired"), months=Math.max(1,(c.win||[]).length), perYr=ret>0 ? ret*12/months : n/6; perYr=Math.min(perYr, n*0.2);
+    var share=n>0 ? light/n : 0, pts=Math.min(100-(c.x.ev_pct||0), 2*0.5*perYr*share/n*100);
+    return {pts:pts, fuel:pts*(trucks>0?0.5:1), perYr:perYr, assumed:!(ret>0)}; };
   R.mean = function(S){ var v=[]; D.CATEGORIES.forEach(function(c){ if(S[c.k]!=null) v.push(S[c.k]); }); return v.length ? v.reduce(function(a,b){ return a+b; },0)/v.length : null; };
 
   R.PROVIDERS = {
@@ -68,10 +94,10 @@ window.YESR = window.YESR || {};
       who:"Fleet and electric-vehicle advisers.",
       modes:["Online","On site"], session:"Two-hour planning session",
       rule:"Fleet electrification is below your target.",
-      effectText:"Electric share up 8 percentage points and fuel use down 4% once the first stage is carried out. Fleet Scope 1 emissions fall in proportion.",
+      effectText:"Half of the cars and light vehicles you retire each year are replaced with electric ones, at your own rate of replacement (from your fleet register, at most a fifth of the fleet a year), for two years. Trucks are left out. Fuel use and fleet emissions fall with the vehicles replaced.",
       trigger:function(c){ var x=c.x, T=c.T; if(!x.has.fleet || (x.ev_pct||0)>=T.target_fleet_ev) return null;
         return {why:"Fleet electrification is "+pc(x.ev_pct||0)+" against your "+f0(T.target_fleet_ev)+"% target. The fleet bought "+f0(x.fuel/1000)+" kL of fuel in the last 12 months"+(x.fuel_base>0&&c.cmp?", "+vs(chg(x.fuel,x.fuel_base)):"")+"."}; },
-      effect:function(x,f){ x.ev_pct=cl((x.ev_pct||0)+8*f); x.fuel=x.fuel*(1-0.04*f); x.total=Math.max(0,x.total-0.04*f*(x.s1_fleet||0)); }
+      effect:function(x,f,c){ var g=c?R.fleetGain(c):{pts:8,fuel:4}; x.ev_pct=cl((x.ev_pct||0)+g.pts*f); x.fuel=x.fuel*(1-g.fuel/100*f); x.total=Math.max(0,x.total-g.fuel/100*f*(x.s1_fleet||0)); }
     },
     { k:"energy", cat:"energy", moves:["energy","carbon"], prov:"partner",
       title:"Energy and electrification audit",
@@ -193,9 +219,10 @@ window.YESR = window.YESR || {};
   /* What one item would change on its own, at full effect. */
   R.uplift = function(s, c){
     var x2=E.copyX(c.x); s.effect(x2, 1, c);
-    var S1=E.scoreParts(c.x, c.T), S2=E.scoreParts(x2, c.T), cats={};
+    var xl=E.copyX(c.x); s.effect(xl, 0.5, c);
+    var S1=E.scoreParts(c.x, c.T), S2=E.scoreParts(x2, c.T), SL=E.scoreParts(xl, c.T), cats={};
     (s.moves||[]).forEach(function(k){ if(S1[k]!=null && S2[k]!=null && Math.abs(S2[k]-S1[k])>=0.05) cats[k]=S2[k]-S1[k]; });
-    return {cats:cats, overall:R.mean(S2)-R.mean(S1), emis:Math.max(0,(c.x.total||0)-(x2.total||0))};
+    return {cats:cats, overall:R.mean(S2)-R.mean(S1), low:R.mean(SL)-R.mean(S1), emis:Math.max(0,(c.x.total||0)-(x2.total||0))};
   };
 
   /* Recommendations for month i, weakest category first; the grant pack last. */
@@ -245,13 +272,14 @@ window.YESR = window.YESR || {};
       if(it.k==="grants"){ it.start=anchor; return; }
       it.start=E.addMonths(anchor, Math.floor(n/2)*3); n++;
     });
+    items.forEach(function(it){ if(!it.start) return; var t=R.timing(it.k); it.shows=E.addMonths(it.start,t.lead); it.full=E.addMonths(it.start,t.lead+t.ramp-1); });
     var act=items.filter(function(it){ return !it.off && it.start; });
-    var last=E.addMonths(k,R.HORIZON); act.forEach(function(it){ var full=E.addMonths(it.start,R.RAMP-1); if(full>last) last=full; });
-    var H=Math.min(24, R.monthsBetween(k,last));
+    var last=E.addMonths(k,R.HORIZON); act.forEach(function(it){ if(it.k!=="grants" && it.full>last) last=it.full; });
+    var H=Math.min(48, R.monthsBetween(k,last));
     var proj=[];
     for(var j=1;j<=H;j++){
       var mk=E.addMonths(k,j), x2=E.copyX(c.x);
-      act.forEach(function(it){ var f=R.ramp(it.start, mk); if(f>0) it.s.effect(x2, f, c); });
+      act.forEach(function(it){ var f=R.rampFor(it, mk); if(f>0) it.s.effect(x2, f, c); });
       proj.push({month:mk, v:E.overall(E.scoreParts(x2,T))});
     }
     var xp=E.copyX(c.x); act.forEach(function(it){ it.s.effect(xp, 1, c); });
@@ -262,12 +290,13 @@ window.YESR = window.YESR || {};
       var pr=proj.filter(function(p){ return p.month===em; })[0];
       qs.push({q:q, label:R.qLabel(q), end:em,
         starts:act.filter(function(it){ return it.start>=q && it.start<=qe; }),
-        full:act.filter(function(it){ var fm=E.addMonths(it.start,R.RAMP-1); return fm>=q && fm<=qe && it.k!=="grants"; }),
+        full:act.filter(function(it){ return it.full>=q && it.full<=qe && it.k!=="grants"; }),
         score:pr?pr.v:null});
       q=E.addMonths(q,3);
     }
     var wt=c.x.waste_t||0, lfNow=c.x.diversion_pct!=null?wt*(1-c.x.diversion_pct/100):null, lfPot=xp.diversion_pct!=null?wt*(1-xp.diversion_pct/100):null;
     return {k:k, anchor:anchor, now:m.score, nowScores:m.scores, target:at.score, targetScores:at.scores, potential:E.overall(Sp), potScores:Sp,
+      full:act.filter(function(it){ return it.k!=="grants"; }).reduce(function(m,it){ return it.full>m?it.full:m; }, ""),
       items:items, active:act, done:done.map(function(b){ return {b:b, s:R.byKey[b.svc], since:R.since(S,b,i)}; }),
       proj:proj, quarters:qs,
       emis:{now:c.x.total||0, pot:xp.total||0, cut:Math.max(0,(c.x.total||0)-(xp.total||0))},
@@ -286,7 +315,7 @@ window.YESR = window.YESR || {};
   R.NUMBERS = [
     {k:"now", name:"Now", how:"The Yindyamarra Environmental Score for the latest verified month."},
     {k:"target", name:"At the eco standards", how:"The same month's figures with each published standard, or your target where it is tighter, in your profile treated as met: emissions reduction, renewable electricity, landfill diversion, fleet electrification, trees planted, hectares restored, land rehabilitated and program participants. Figures without a target stay as they are."},
-    {k:"potential", name:"With Yarta help (estimate)", how:"The same month's figures with the assumed effect of every recommended item in your plan applied in full. Items you switch off are left out."}
+    {k:"potential", name:"With Yarta help (estimate)", how:"The same month's figures with the assumed effect of every recommended item in your plan applied in full, once each has had time to take effect. An upper estimate: each item is also shown as a range from half its assumed effect to the full. Items you switch off are left out."}
   ];
-  R.ROADMAP_RULES = "Booked items start in the month booked. The others start from next month, two a quarter, weakest category first. Each change builds up evenly over "+R.RAMP+" months, and everything else is held at the latest 12 months. Work completed in the last "+R.RECENT+" months is not recommended again; its effect shows in your verified figures.";
+  R.ROADMAP_RULES = "Booked items start in the month booked. The others start from next month, two a quarter, weakest category first. Each kind of help has its own lead time before it shows in your figures and its own build-up to full effect: from three months for water leaks and evidence to two years for fleet replacement, at your own rate of retiring vehicles. Estimated changes run from half the assumed effect to the full effect. Everything else is held at the latest 12 months. Work completed in the last 6 months is not recommended again; its effect shows only in later verified figures.";
 })(window.YESR, window.YESD, window.YESE);

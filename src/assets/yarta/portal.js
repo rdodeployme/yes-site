@@ -498,7 +498,9 @@ function slotDate(v){ if(!v) return null; var p=v.split('T'), d=p[0].split('-'),
 function timeLabel(d){ var h=d.getHours(), mi=d.getMinutes(); return (h%12||12)+':'+pad2(mi)+' '+(h<12?'am':'pm'); }
 function slotLabel(v,other){ if(!v) return other?'Time to be arranged':'—'; var d=slotDate(v); return DOW[d.getDay()]+' '+d.getDate()+' '+MONTHS[d.getMonth()].slice(0,3)+' '+d.getFullYear()+', '+timeLabel(d); }
 function provOf(s){ return (R&&R.PROVIDERS[s.prov])||{label:'',note:''}; }
-function upText(u){ if(!u) return ''; var parts=Object.keys(u.cats).sort(function(a,b){ return u.cats[b]-u.cats[a]; }).slice(0,2).map(function(k){ var v=u.cats[k]; return esc(D.CAT[k].short)+' '+sgn(v,Math.abs(v)<1?1:0); }); if(u.overall>=0.05) parts.push('Score '+sgn(u.overall,1)); return parts.join(' · '); }
+function upText(u){ if(!u) return ''; var parts=Object.keys(u.cats).sort(function(a,b){ return u.cats[b]-u.cats[a]; }).slice(0,2).map(function(k){ var v=u.cats[k]; return esc(D.CAT[k].short)+' up to '+sgn(v,Math.abs(v)<1?1:0); }); if(u.overall>=0.05) parts.push('Score '+scoreRange(u)); return parts.join(' · '); }
+/* an estimate as a range: half the assumed effect to the full */
+function scoreRange(u){ if(!u || !(u.overall>=0.05)) return ''; var lo=u.low!=null?u.low:u.overall; return Math.abs(u.overall-lo)<0.1 ? sgn(u.overall,1) : sgn(lo,1)+' to '+sgn(u.overall,1).replace(/^\+/,''); }
 function grpDot(s){ return s.prov==='group'?' <span class="grp-dot" title="Delivered by a Recycle Group business">●</span>':''; }
 function itemName(it){ return esc(it.title)+grpDot(it.s); }
 function quarterRows(P){ return P.quarters.filter(function(q,ix){ return q.starts.length||q.full.length||ix===P.quarters.length-1; }); }
@@ -510,7 +512,7 @@ function threeNums(P,m,cls){
   return '<div class="three'+(cls?' '+cls:'')+'">'
     + '<div class="tn"><span class="k">Now</span><b>'+(P.now==null?'—':P.now)+'</b><span class="s">'+esc(E.band(P.now))+' · '+esc(mLabel(m.month))+'</span></div>'
     + '<div class="tn"><span class="k">At the eco standards</span><b>'+(P.target==null?'—':P.target)+'</b><span class="s">The published standards, or your target where it is tighter</span></div>'
-    + '<div class="tn hl"><span class="k">With Yarta help · estimate</span><b>'+(P.potential==null?'—':P.potential)+'</b><span class="s">'+n+' recommended item'+(n===1?'':'s')+(extra.length?' · '+extra.join(' · '):'')+'</span></div>'
+    + '<div class="tn hl"><span class="k">With Yarta help · up to</span><b>'+(P.potential==null?'—':P.potential)+'</b><span class="s">'+n+' recommended item'+(n===1?'':'s')+(extra.length?' · '+extra.join(' · '):'')+'</span></div>'
     + '</div>';
 }
 function roadChart(S,i,P,o){
@@ -540,7 +542,7 @@ function bookingRow(b,o,S,i){
   var act = (b.status==='requested'||b.status==='confirmed') ? (ui.confirmCancel===b.id
       ? '<div class="pill-row"><button class="btn btn-ink btn-sm" type="button" data-act="bk-cancel-go" data-id="'+esc(b.id)+'">Yes, cancel</button><button class="btn btn-ghost btn-sm" type="button" data-act="bk-cancel-no" style="color:var(--ink)">Keep</button></div>'
       : '<button class="btn btn-ghost btn-sm" type="button" data-act="bk-cancel" data-id="'+esc(b.id)+'" style="color:var(--ink)">Cancel</button>') : '';
-  return '<tr><td><b>'+esc(R.title(s,o.profile))+'</b>'+grpDot(s)+'<div class="small muted">'+esc(provOf(s).label)+(b.mode?' · '+esc(b.mode):'')+'</div></td><td>'+esc(b.status==='completed'&&b.completedMonth?'Done '+mLabel(b.completedMonth):slotLabel(b.slot,b.other))+'</td><td>'+bookingChip(b)+'</td><td class="small">'+since+'</td><td>'+act+'</td></tr>';
+  return '<tr><td><b>'+esc(R.title(s,o.profile))+'</b>'+grpDot(s)+'<div class="small muted">'+esc(provOf(s).label)+(b.mode?' · '+esc(b.mode):'')+'</div></td><td class="nw">'+esc(b.status==='completed'&&b.completedMonth?'Done '+mLabel(b.completedMonth):slotLabel(b.slot,b.other))+'</td><td>'+bookingChip(b)+'</td><td class="small">'+since+'</td><td>'+act+'</td></tr>';
 }
 
 function vRoadmap(){
@@ -555,7 +557,7 @@ function vRoadmap(){
     return '<tr'+(it.off?' class="off"':'')+'><td class="tg"><label class="tgl" title="'+(b?'Booked items stay in the plan':'Include in the plan')+'"><input type="checkbox" data-act="plan-toggle" data-svc="'+s.k+'"'+(it.off?'':' checked')+(b?' disabled':'')+'><span class="vh">Include '+esc(it.title)+' in the plan</span></label></td>'
       + '<td><b>'+itemName(it)+'</b><div class="small muted">'+esc(pv.label)+' · '+esc(s.session)+'</div><div class="small why">'+esc(it.why)+'</div>'+((R.PLAN||{})[s.k]?'<div class="small"><b>You get:</b> '+esc(R.PLAN[s.k].gets)+' <b>Owner:</b> '+esc(R.PLAN[s.k].owner)+'.</div>':'')+'</td>'
       + '<td class="small">'+(upText(it.uplift)||esc(s.effectText))+'</td>'
-      + '<td>'+(it.start?mShort(it.start):'<span class="muted">Not in plan</span>')+'</td>'
+      + '<td class="nw">'+(it.start?mShort(it.start)+(it.full&&it.k!=='grants'?'<div class="small muted">full effect '+mShort(it.full)+'</div>':''):'<span class="muted">Not in plan</span>')+'</td>'
       + '<td>'+st+'</td></tr>';
   }).join('');
   var plan='<h2 class="sec-t" style="margin-top:28px">Recommended help</h2><p class="sec-s">Weakest category first. Untick an item to see the estimate without it. The estimated change is for each item on its own, once it has taken full effect.</p>'
@@ -581,7 +583,7 @@ function vBook(key){
   var pv=provOf(s), title=R.title(s,o.profile);
   var body='<div class="pg-head"><div><p class="kicker"><a class="link" href="#/improvements">Improvements</a> · '+esc(s.cat?D.CAT[s.cat].name:'Funding')+'</p><h1>'+esc(title)+'</h1><p class="pg-sub">'+esc(s.what)+'</p></div></div>'
     + (open?'<div class="banner grey"><span>You already have a '+esc(BK_L[open.status].toLowerCase())+' booking for this: <b>'+esc(slotLabel(open.slot,open.other))+'</b>.</span><a class="btn btn-ghost btn-sm" href="#/improvements" style="color:var(--ink)">See it</a></div>':'')
-        + '<section class="panel imp-detail"><div class="imp-top"><div><p class="k">Estimated change</p><p class="imp-num">'+(r&&r.uplift&&r.uplift.overall>=0.05?'Score '+sgn(r.uplift.overall,1):(r?esc(upText(r.uplift)||s.effectText):'—'))+'</p>'+(r&&r.uplift&&r.uplift.overall>=0.05&&m?'<p class="small muted">from '+fmt(m.score,0)+' to about '+fmt(Math.min(100,m.score+r.uplift.overall),0)+', on its own, once it has taken full effect</p>':'<p class="small muted">Once it has taken full effect</p>')+'</div><div><p class="k">Why it is recommended</p><p>'+esc(r?r.why:'Your current figures do not call for this, but you can still book it.')+'</p></div></div>'
+        + '<section class="panel imp-detail"><div class="imp-top"><div><p class="k">Estimated change</p><p class="imp-num">'+(r&&r.uplift&&r.uplift.overall>=0.05?'Score '+scoreRange(r.uplift):(r?esc(upText(r.uplift)||s.effectText):'—'))+'</p>'+(r&&r.uplift&&r.uplift.overall>=0.05&&m?'<p class="small muted">From '+fmt(m.score,0)+', on its own, at full effect. The range runs from half the assumed effect to the full.</p>':'<p class="small muted">Once it has taken full effect</p>')+'</div><div><p class="k">Why it is recommended</p><p>'+esc(r?r.why:'Your current figures do not call for this, but you can still book it.')+'</p></div></div>'
     + '<div class="imp-cols"><div><h3>What is involved</h3><p class="small">'+esc(s.what)+'</p><p class="small muted">'+esc(s.session)+'</p></div><div><h3>Who delivers it</h3><p class="small">'+esc(s.who)+'</p>'+(s.prov==='group'?'<p class="small muted">'+esc(s.groupNames)+(s.groupNames.indexOf(' and ')>0?' are':' is')+' part of Recycle Group, like Yarta. Disclosed on your monthly report.</p>':'')+'</div><div><h3>The estimate</h3><p class="small">Assumed effect: '+esc(s.effectText)+'</p><p class="small muted">You can use any provider. Your score and the verification of your figures do not depend on who does the work.</p></div></div></section>'
     + planPanels(o,S,i,s,open)
     + '<h2 class="sec-t" style="margin-top:28px">Book the relevant expert</h2>'
@@ -603,11 +605,11 @@ function vBook(key){
 /* one step of the plan, made concrete: what the client gets, who owns it, when it shows, the brief, and the two ways to do it */
 function planPanels(o,S,i,s,open){
   var pl=(R.PLAN||{})[s.k]; if(!pl || i<0) return '';
-  var P=planFor(o,S,i), it=P?P.items.filter(function(x){ return x.k===s.k; })[0]:null, start=it&&it.start?it.start:E.addMonths(S.months[i].month,1);
+  var P=planFor(o,S,i), it=P?P.items.filter(function(x){ return x.k===s.k; })[0]:null, start=it&&it.start?it.start:E.addMonths(S.months[i].month,1), tm=R.timing(s.k);
   var brief=window.YARTA_VIEWS&&window.YARTA_VIEWS.brief?window.YARTA_VIEWS.brief(S,i,s.k,viewApi()):'';
   var own=orgBookings(o.id).filter(function(b){ return b.svc===s.k && b.mode==='Own provider' && b.status!=='cancelled'; })[0];
   return '<section class="panel imp-plan"><div class="imp-cols"><div><h3>What you get</h3><p class="small">'+esc(pl.gets)+'</p></div><div><h3>Who owns it at your end</h3><p class="small">'+esc(pl.owner)+'</p></div>'
-    + '<div><h3>When it shows in your figures</h3><p class="small">Planned to start '+esc(mLabel(start))+'. The change shows in the monthly figures after the work is done, and Yarta checks each month whether it moved.</p></div></div>'
+    + '<div><h3>When it shows in your figures</h3><p class="small">Planned to start '+esc(mLabel(start))+(s.k==='grants'?'.':'; first shows in your figures from about '+esc(mLabel(E.addMonths(start,tm.lead)))+', at full effect by '+esc(mLabel(E.addMonths(start,tm.lead+tm.ramp-1)))+'.')+' '+esc(tm.why||'')+' Yarta checks each month whether it moved.</p></div></div>'
     + (brief?'<h3 style="margin-top:22px">The brief Yarta sends ahead</h3><p class="small muted" style="margin:4px 0 10px">Your verified figures behind this step, so the work starts from your data instead of a questionnaire.</p>'+brief:'')+'</section>'
     + '<section class="imp-ways"><div class="panel"><h3>Book through Yarta</h3><ul class="plain small"><li>The brief above goes to the provider before the first meeting.</li><li>Yarta checks the provider\'s accreditation and shows it on the booking.</li><li>The before and after appears in your monthly report, with nothing more to do.</li><li>Every step of your plan stays in one place.</li></ul></div>'
     + '<div class="panel"><h3>Use your own provider</h3><p class="small">That is fine: your score and its verification do not depend on who does the work. Tell Yarta when it is done, and the change is confirmed and tracked in your figures the same way.</p>'
@@ -660,7 +662,7 @@ function sheet3(o,S,i,P,k){
   return '<section class="rp-sheet rp-road"><div class="rp-head"><div><div class="rp-title" style="font-size:22px">'+esc(p.org_name)+' · '+mLabel(k)+'</div>'+rpSteps(['improve'])+'</div><div class="rp-kv"><span>Report</span><b>Roadmap</b></div></div>'
     + threeNums(P,m,'rp')
     + '<div class="rp-h">Score by month, and projected with the plan</div>'+roadChart(S,i,P,{h:190,print:true})+'<p class="rp-leg"><span class="lg-i"><span class="lg-l solid"></span>Your score by month</span><span class="lg-i"><span class="lg-l dash"></span>Projected with the plan (estimate)</span><span class="lg-i"><span class="lg-l dot"></span>At the eco standards</span></p>'
-    + '<div class="rp-h">Plan by quarter</div>'+(P.active.length?'<div class="rp-tw"><table class="tbl compact"><thead><tr><th>Quarter</th><th>Starts (each builds up over '+R.RAMP+' months)</th><th class="r">Projected score at quarter end</th></tr></thead><tbody>'+qrows+'</tbody></table></div>':'<p class="rp-p">No help is in the plan.</p>')
+    + '<div class="rp-h">Plan by quarter</div>'+(P.active.length?'<div class="rp-tw"><table class="tbl compact"><thead><tr><th>Quarter</th><th>Starts (each with its own lead time and build-up)</th><th class="r">Projected score at quarter end</th></tr></thead><tbody>'+qrows+'</tbody></table></div>':'<p class="rp-p">No help is in the plan.</p>')
     + '<div class="rp-h">Progress so far</div>'+(prog?'<div class="rp-tw"><table class="tbl compact"><thead><tr><th>Help</th><th>Status</th><th>When</th><th>Change since</th></tr></thead><tbody>'+prog+'</tbody></table></div>':'<p class="rp-p">No help booked yet.</p>')
     + '<div class="rp-h">Disclosures and assumptions</div><p class="rp-p">'+esc(disc)+' The projection and the score with Yarta help are estimates from the published assumptions; they are not a promise or a guarantee. A change since completed work is a change in the figures, not proof that the work caused it.</p>'
     + '<div class="rp-foot">'+esc(R.ROADMAP_RULES)+' Rules and assumptions: yes.com.au/method. Page 3 of 3.</div></section>';

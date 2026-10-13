@@ -376,14 +376,14 @@ function heroRoad(S, i, o){
   steps.forEach(function(it,j){ var q=qOf(it.start); if(!byQ[q]){ byQ[q]=[]; order.push(q); } byQ[q].push({n:j+1, t:it.title}); });
   var pins=phone()?[]:order.map(function(q){ var g=byQ[q], a=g[0].n, b=g[g.length-1].n; return {k:E.addMonths(q,1), n:a===b?a:a+'–'+b, tip:R.qLabel(q)+': '+g.map(function(x){ return x.n+'. '+x.t; }).join('; ')}; });
   var stepList=steps.map(function(it,j){ var q=it.start.slice(0,5)+('0'+(Math.floor((+it.start.slice(5)-1)/3)*3+1)).slice(-2);
-    return '<li><span class="n">'+(j+1)+'</span><span class="when">'+esc(R.qLabel(q))+'</span><a href="#/improvements/'+it.s.k+'">'+esc(it.title)+'</a><span class="eff">'+doKey(it)+'</span>'+(it.booking?A.bookingChip(it.booking):'<a class="btn btn-primary btn-sm bk" href="#/improvements/'+it.s.k+'">Book</a>')+'</li>'; }).join('');
+    return '<li><span class="n">'+(j+1)+'</span><span class="when">'+esc(R.qLabel(q))+'</span><a href="#/improvements/'+it.s.k+'">'+esc(it.title)+'</a><span class="eff">'+doKey(it)+(it.full&&it.k!=='grants'?' <span class="nw">· full effect '+esc(A.mShort(it.full))+'</span>':'')+'</span>'+(it.booking?A.bookingChip(it.booking):'<a class="btn btn-primary btn-sm bk" href="#/improvements/'+it.s.k+'">Book</a>')+'</li>'; }).join('');
   var eCh=pctChg(r.total_t,r.base.total_t);
   var scoreBox='<a class="cx-score" href="#ten" aria-label="Your score, in its parts">'+A.ring(m.score,124,true)+'<span><b>'+esc(m.band)+'</b>'+(m.yoy!=null?(m.yoy>=0?'Up ':'Down ')+Math.round(Math.abs(m.yoy))+' on a year ago':'Change shows after 12 months')+'<br>'+m.scored+' of 10 categories scored</span></a>';
   var numbers='<p class="cx-c-nums"><b>'+nu(r.total_t,'t CO₂-e')+'</b> '+(r.n<12?'in the '+span(r)+' to '+A.mLabel(month):'over the last 12 months')+(eCh!=null&&!(st&&st.inBase)?', '+arrow(eCh,true)+' on '+esc(S.baseline.fy):'')+'. <span class="nw">Scope 1: '+fmt(r.scope1_t,0)+' t</span> · <span class="nw">Scope 2: '+fmt(r.scope2_t,0)+' t</span> · <span class="nw">Scope 3: '+fmt(r.scope3_t,0)+' t</span></p>';
   return '<section class="cx cx-c"><div class="cx-c-top"><div class="cx-c-head"><h2>'+head+'</h2><p>'+sub+'</p>'+numbers+'</div>'+scoreBox+'</div>'
     + '<div class="cx-c-road">'+trajectory(S,i,T,{w:1040,h:270,pins:pins})+'</div>'
     + '<div class="cx-c-key ov-key"><span><i class="ln"></i>Your emissions, % change on '+esc(S.baseline.fy)+'</span><span><i class="ln dash"></i>Straight-line path to your target</span>'+(pins.length?'<span><i class="k-pin"></i>When each step of your plan starts</span>':'')+'</div>'
-    + (stepList?'<h3 class="cx-c-plan">Your plan</h3><ol class="cx-steps">'+stepList+'</ol><p class="cx-foot">In the order the steps start. The effects are estimates from the published rules'+(P&&P.potential!=null?'; with every step done, the score could reach '+P.potential:'')+'. You can use any provider. <a class="link" href="#/roadmap">The full roadmap</a></p>':'')
+    + (stepList?'<h3 class="cx-c-plan">Your plan</h3><ol class="cx-steps">'+stepList+'</ol><p class="cx-foot">In the order the steps start. The effects are estimates from the published rules'+(P&&P.potential!=null?'; with every step done, the score could reach up to '+P.potential+(P.full?' by '+A.mLabel(P.full):''):'')+'. You can use any provider. <a class="link" href="#/roadmap">The full roadmap</a></p>':'')
     + '</section>';
 }
 
