@@ -323,7 +323,7 @@ a.ov-src-r:hover{background:var(--silver-0)}
 .cx-col .dl{font-size:12px;margin-top:4px;color:#C9B8A6;min-height:1.2em;text-align:center}
 .cx-col.na .val{color:#8C7B6A}
 .cx-b .delta{font-size:12px}
-.cx-b .delta.up{color:#F2C894}.cx-b .delta.down{color:#FFB4A2}.cx-b .delta.flat{color:#C9B8A6}
+.cx-b .delta.up{color:#F2C894}.cx-b .delta.down{color:#FFB4A2;background:rgba(255,180,162,.14)}.cx-b .delta.flat{color:#C9B8A6}
 .cx-line{position:absolute;right:0;top:calc(var(--h) - var(--h)*var(--s)/100 - 24px);font-size:12.5px;color:#E9A860;pointer-events:none}
 .cx-line span{background:#1E1712;padding:0 0 0 6px}
 .cx-b-key{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:18px;font-size:13px;color:#C9B8A6}

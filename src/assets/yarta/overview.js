@@ -42,7 +42,7 @@ function axis(max, maxN){ maxN=maxN||4; if(!(max>0)) return {top:1,step:0.5}; va
 function span(r){ return r && r.n<12 ? r.n+' month'+(r.n===1?'':'s') : '12 months'; }
 function spct(v, dp){ dp=dp==null?1:dp; var a=Math.abs(v); return a<Math.pow(10,-dp)/2 ? fmt(0,dp)+'%' : (v>0?'+':'−')+fmt(a,dp)+'%'; }
 function compact(v){ var a=Math.abs(v), k=function(d,u){ var x=v/d; return fmt(x, Math.abs(x)>=10||x%1===0?0:1)+u; }; return a>=1e6?k(1e6,'M'):a>=1000?k(1e3,'k'):fmt(v, a<10&&v%1?1:0); }
-function sig(v){ var a=Math.abs(v); return a>=100?fmt(v,0):a>=10?fmt(v,1):fmt(v,2); }
+function sig(v){ if(+v===0) return '0'; var a=Math.abs(v); return a>=100?fmt(v,0):a>=10?fmt(v,1):fmt(v,2); }
 function dir(ch, lowerBetter){ if(ch==null||Math.abs(ch)<0.5) return {w:'about the same as', cls:'flat', good:null}; var up=ch>0; return {w:(up?'up ':'down ')+fmt(Math.abs(ch),Math.abs(ch)<10?1:0)+'% on', cls:up?'up':'down', good: lowerBetter ? !up : up}; }
 function arrow(ch, lowerBetter){ return A.delta(ch,{lowerBetter:!!lowerBetter,dp:Math.abs(ch||0)<10?1:0,unit:'%'}); }
 function chipScore(m,k){ var v=m.scores[k]; return v==null?'':'<span class="ov-cs" title="'+esc(D.CAT[k].name)+' score">'+Math.round(v)+'</span>'; }
@@ -456,6 +456,9 @@ function fieldFigure(S, i, f){
   var have=w.filter(function(x){ return val(x)!=null && isFinite(val(x)); });
   if(!have.length) return null;
   var last=have[have.length-1], now=val(S.months[i]);
+  if(PEAK.test(f.id)){ var mx=Math.max.apply(null,have.map(val)), by=(S.baseline&&S.baseline.byCal)||{}, bm=null;
+    w.forEach(function(x){ var bx=by[E.parse(x.month).m]; var v=bx?+((bx.values||{})[f.id]):NaN; if(isFinite(v)) bm=bm==null?v:Math.max(bm,v); });
+    return {month:now, r12:mx, base:bm, ch:bm>0?pctChg(mx,bm):null, latest:false, peak:true}; }
   if(flow){ var tot=sum(have,val), b=baseSum(S,w,function(x){ return +(x.values||{})[f.id]||0; }); return {month:now, r12:tot, base:b>0?b:null, ch:pctChg(tot,b), latest:false}; }
   return {month:now, r12:val(last), base:null, ch:null, latest:true, asAt:last.month};
 }
@@ -584,22 +587,29 @@ function figuresTable(S,i,cat){
     if(f.type==='calc'){ return; }
     var fg=fieldFigure(S,i,f); if(!fg) return;
     var u=f.kind==='currency'?'':(f.unit||'');
-    rows.push('<tr><td>'+esc(f.name)+'<div class="fs">'+esc(f.src||'')+'</div></td><td class="num" data-l="'+esc(M)+'">'+fval(f,fg.month)+(fg.month==null||!u?'':'<span class="pu"> '+esc(u)+'</span>')+'</td><td class="num" data-l="'+esc(fg.latest?'Latest':N)+'">'+fval(f,fg.r12)+(fg.r12==null||!u?'':'<span class="pu"> '+esc(u)+'</span>')+(fg.latest&&fg.asAt?'<div class="fs">as at '+A.mShort(fg.asAt)+'</div>':'')+'</td><td class="un">'+esc(u)+'</td>'+(CUR_INBASE?'':'<td class="num" data-l="vs baseline">'+chgCell(f,fg.ch)+'</td>')+'</tr>');
+    rows.push('<tr><td>'+esc(f.name)+'<div class="fs">'+esc(f.src||'')+'</div></td><td class="num" data-l="'+esc(M)+'">'+fval(f,fg.month)+(fg.month==null||!u?'':'<span class="pu"> '+esc(u)+'</span>')+'</td><td class="num" data-l="'+esc(fg.latest?'Latest':fg.peak?'Highest month':N)+'">'+fval(f,fg.r12)+(fg.r12==null||!u?'':'<span class="pu"> '+esc(u)+'</span>')+(fg.latest&&fg.asAt?'<div class="fs">as at '+A.mShort(fg.asAt)+'</div>':'')+(fg.peak?'<div class="fs">highest month</div>':'')+'</td><td class="un">'+esc(u)+'</td>'+(CUR_INBASE?'':'<td class="num" data-l="vs baseline">'+chgCell(f,fg.ch)+'</td>')+'</tr>');
   });
+  // the same calculation over the rolling window: intensities add up month by month; shares come from the window's totals
+  var Rw=S.months[i].r12||{}, Wn=S.months.slice(Math.max(0,i-11),i+1);
+  var SHARE={renew_pct:1,diversion_pct:1,recovery_pct:1,reuse_pct:1,alt_water_pct:1,proc_recycled_pct:1};
+  function calc12(f){ if(SHARE[f.id]) return Rw[f.id]; if(/_per_/.test(f.id)) return Wn.reduce(function(a,x){ return a+(isFinite(x[f.id])?x[f.id]:0); },0);
+    if(f.id==='fleet_ev_pct') return S.months[i][f.id]; if(f.id==='fleet_eff'){ var km=Wn.reduce(function(a,x){ var v=+((x.raw||{}).fleet_km); return a+(isFinite(v)?v:0); },0); return km>0?Rw.fuel_l/km*100:null; } return null; }
   D.FIELDS.filter(function(f){ return f.cat===cat && f.type==='calc'; }).forEach(function(f){
-    var mv=S.months[i][f.id]; if(mv==null || !isFinite(mv)) return;
-    calc.push('<tr><td>'+esc(f.name)+'<div class="fs">'+esc(f.calc||'')+'</div></td><td class="num" data-l="'+esc(M)+'">'+sig(mv)+'<span class="pu"> '+esc(f.unit||'')+'</span></td><td class="un">'+esc(f.unit||'')+'</td></tr>');
+    var mv=S.months[i][f.id]; if(mv==null || !isFinite(mv)) return; var yv=calc12(f);
+    calc.push('<tr><td>'+esc(f.name)+'<div class="fs">'+esc(f.calc||'')+'</div></td><td class="num" data-l="'+esc(M)+'">'+sig(mv)+'<span class="pu"> '+esc(f.unit||'')+'</span></td><td class="num" data-l="'+esc(N)+'">'+(yv==null||!isFinite(yv)?'<span class="muted">—</span>':sig(yv)+'<span class="pu"> '+esc(f.unit||'')+'</span>')+'</td><td class="un">'+esc(f.unit||'')+'</td></tr>');
   });
   if(!rows.length && !calc.length) return '';
   return '<section class="panel ov-fig"><h2 class="sec-t">The figures</h2><p class="sec-s">From your documents, entered and verified by Yarta. '+esc(cap(CUR_SPAN))+' is a total for monthly figures and the latest value for registers.'+(CUR_INBASE?' Changes against the baseline year show once it ends.':' The arrow compares that total with the same months of the baseline year.')+'</p>'
     + (rows.length?'<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Figure</th><th class="num">'+esc(M)+'</th><th class="num">'+esc(cap(CUR_SPAN))+'</th><th>Unit</th>'+(CUR_INBASE?'':'<th class="num">vs baseline</th>')+'</tr></thead><tbody>'+rows.join('')+'</tbody></table></div>':'')
-    + (calc.length?'<h3 class="ov-sub">Calculated by Yarta, '+esc(M)+'</h3><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Figure and how it is calculated</th><th class="num">Value</th><th>Unit</th></tr></thead><tbody>'+calc.join('')+'</tbody></table></div>':'')
+    + (calc.length?'<h3 class="ov-sub">Calculated by Yarta</h3><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Figure and how it is calculated</th><th class="num">'+esc(M)+'</th><th class="num">'+esc(N)+'</th><th>Unit</th></tr></thead><tbody>'+calc.join('')+'</tbody></table></div>':'')
     + '</section>';
 }
 function fval(f, v){ if(v==null || !isFinite(v)) return '—'; if(f.kind==='count') return fmt(v,0); if(f.kind==='currency') return '$'+fmt(v,0); if(f.kind==='percent') return fmt(v,1); return sig(v); }
 /* which way is good for each figure; recovered streams and activity measures are neutral */
 /* quarterly figures that describe a state at the quarter's end, not an amount in it */
 var STATE=/^(habitat_projects|monitoring_sites|monitoring_species)$/;
+/* the highest month in the window, not a total */
+var PEAK=/^(peak_kw)$/;
 var LOWER=/^(diesel_l|petrol_l|lpg_l|idle_hours|flights_dom|flights_int|grid_kwh|gas_gj|peak_kw|street_kwh|potable_kl|ground_kl|waste_total_t|landfill_t|clinical_t|sharps_kg|contam_pct|complaints|veh_diesel|veh_petrol|trucks_diesel)$/;
 var NEUTRAL=/^(veh_retired|fleet_km|solar_exp_kwh|proc_total|complaints_closed|plant_count|recycling_t|organics_t|green_t|food_t|paper_t|glass_t|steel_t|alu_t|timber_t|timber_treated_t|concrete_t|rubble_t|soil_t|plaster_t|mattress_n|tyres_n|ewaste_t|whitegoods_n|batteries_kg|textiles_t|film_t|pallets_n|oil_l|problem_kg)$/;
 function chgCell(f, ch){ if(ch==null) return '<span class="muted">—</span>'; if(NEUTRAL.test(f.id)){ var a=Math.abs(ch); return '<span class="delta flat" title="Neither better nor worse on its own">'+(ch>0.5?'▲':ch<-0.5?'▼':'■')+' '+(a<0.05?'0.0':(ch>0?'+':'−')+fmt(a,a<10?1:0))+'%</span>'; } return arrow(ch, LOWER.test(f.id)); }

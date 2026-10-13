@@ -188,7 +188,7 @@ input:disabled,select:disabled,textarea:disabled{background:var(--silver-0);colo
 .score-ring.light .of{color:var(--steel)}
 .delta{display:inline-flex;align-items:center;gap:4px;font:600 13px var(--font-mono)}
 .delta.up{color:var(--green-2)} .dark .delta.up,.sec-dark .delta.up,.card-dark .delta.up{color:var(--green-3)}
-.delta.down{color:var(--red)} .dark .delta.down,.sec-dark .delta.down,.card-dark .delta.down{color:#E08A8A}
+.delta.down{color:var(--red);background:var(--red-soft);padding:1px 6px;border-radius:5px} .dark .delta.down,.sec-dark .delta.down,.card-dark .delta.down,.panel-dark .delta.down{color:#E08A8A;background:rgba(224,138,138,.14)}
 .delta.flat{color:var(--steel)}
 .subscores{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 @media(min-width:700px){.subscores{grid-template-columns:repeat(5,minmax(0,1fr))}}
