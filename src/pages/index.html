@@ -392,7 +392,7 @@
   try{
     var st=X.build(), o=st.orgs['demo-shire'], recs=o.records.filter(function(r){ return r.status==='verified'; });
     var S=E.series(recs,o.profile), i=S.months.length-1, m=S.months[i];
-    var PL=R.plan(S,i,o.profile,{bookings:[],off:{},anchor:E.addMonths(m.month,1)});
+    var PL=R.plan(S,i,o.profile,{bookings:(st.bookings||[]).filter(function(b){ return b.org==='demo-shire'; }),off:{},anchor:E.addMonths(m.month,1)});
     txt('h-org',o.profile.org_name);
     setCount('h-score',m.score,0); txt('h-band',m.band+' · '+E.label(m.month));
     setCount('h-eco',PL.target,0); setCount('h-help',PL.potential,0);
