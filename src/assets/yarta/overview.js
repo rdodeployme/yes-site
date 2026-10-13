@@ -316,13 +316,8 @@ V.reportEmissions = function(S, i, api){
     + '<p class="rp-emis-f">'+(inB?'Shares of your baseline year. ':'Change on the same months of '+esc(S.baseline.fy)+'. ')+'Avoided by recycling, never deducted: '+nu(r.avoided_t,'t CO₂-e')+'.</p></div></div>';
 };
 
-/* ------------------------------------------------------------------ concepts for the Overview's first screen (Oct 2026)
-   Three directions on the same figures, chosen with ?look=a|b|c on #/dashboard. The rest of the Overview is unchanged below. */
-var LOOKS = { a:'In plain words', b:'The ten parts of your score', c:'The road to 2030' };
-function lookBar(look, month){
-  return '<nav class="cx-bar" aria-label="Overview concepts"><span>Overview concepts</span>'
-    + ['a','b','c','0'].map(function(k){ return '<a href="#/dashboard?look='+k+'&m='+month+'"'+(k===look?' aria-current="page"':'')+'>'+(k==='0'?'Current':k.toUpperCase()+' · '+LOOKS[k])+'</a>'; }).join('')+'</nav>';
-}
+/* ------------------------------------------------------------------ the Overview's opening (chosen 14 Oct 2026 from concepts A, B and C):
+   the road to 2030 with the plan on it, then what the figures amount to drawn to scale; the ten-part score closes the page. */
 function you(p){ return p.org_name; }
 /* the biggest emission source that makes a sensible yardstick for an amount of CO2-e (between under one and 30 years of it) */
 function yardstick(S, i, amount){
@@ -334,31 +329,24 @@ function blocks(n, cls){ var full=Math.floor(n), part=n-full, h=''; for(var k=0;
 function waffle(pct){ var on=Math.round(clamp(pct||0,0,100)), h=''; for(var k=0;k<100;k++) h+='<i'+(k<on?' class="on"':'')+'></i>'; return '<div class="cx-waffle" aria-hidden="true">'+h+'</div>'; }
 function pools(n){ var unit=n>150?10:1, c=Math.round(n/unit), h=''; for(var k=0;k<Math.min(c,150);k++) h+='<i></i>'; return {html:'<div class="cx-pools" aria-hidden="true">'+h+'</div>', unit:unit}; }
 
-/* A · In plain words: the month told as two or three sentences, then what the numbers amount to, drawn to scale */
-function conceptA(S, i, o){
-  var m=S.months[i], r=m.r12, p=o.profile, T=S.targets, st=onTrack(S,i,T), inB=inBaseYear(S,i), fy=S.baseline.fy;
-  var eCh=pctChg(r.total_t, r.base.total_t), dt=r.total_t-r.base.total_t, lines=[];
-  if(inB){ lines.push('You emitted '+nu(r.total_t,'tonnes')+' of CO₂-e in '+(r.n<12?'your first '+span(r):'the last 12 months')+'.');
-    lines.push('This is your baseline year. From '+A.mLabel(E.addMonths(baseFyEnd(S),1))+', every month is measured against it.'); }
-  else { lines.push(Math.abs(eCh)<1 ? 'Your emissions held level with\u00a0'+fy+'.' : 'You '+(eCh<0?'cut':'added to')+' your emissions by '+fmt(Math.abs(eCh),0)+'% on\u00a0'+fy+'.');
-    if(st) lines.push(st.state==='on' ? 'That puts you ahead of the path to −'+fmt(st.tgt,0)+'% by 2030.' : st.state==='close' ? 'That leaves you just behind the path to −'+fmt(st.tgt,0)+'% by 2030.' : 'That leaves you behind the path to −'+fmt(st.tgt,0)+'% by 2030.'); }
-  lines.push('Your score is '+m.score+' out of 100'+(m.yoy!=null&&Math.abs(m.yoy)>=1?', '+(m.yoy>0?'up ':'down ')+Math.round(Math.abs(m.yoy))+' on a year ago.':'.'));
-  // what it amounts to
-  var facts=[];
+/* What the figures amount to, drawn against things people can picture: their own fleet-years, a 100-square grid, Olympic pools */
+function scaleFacts(S, i, o){
+  var m=S.months[i], r=m.r12, p=o.profile, inB=inBaseYear(S,i), fy=S.baseline.fy, dt=r.total_t-r.base.total_t, facts=[];
   if(!inB && Math.abs(dt)>=1){ var ys=yardstick(S,i,Math.abs(dt));
-    facts.push({big:nu(Math.abs(dt),'t CO₂-e'), what:(dt<0?'less':'more')+' than the same months of\u00a0'+fy, scale: ys ? blocks(ys.years) + '<p class="cx-key">Each block is a year of emissions from '+esc(ys.name)+' ('+nu(ys.perYear,'t')+'). '+(dt<0?'The cut':'The rise')+' equals '+fmt(ys.years,1)+' of them.</p>' : ''}); }
+    facts.push({big:nu(Math.abs(dt),'t CO₂-e'), what:(dt<0?'less':'more')+' than the same months of '+fy, scale: ys ? blocks(ys.years) + '<p class="cx-key">Each block is a year of emissions from '+esc(ys.name)+' ('+nu(ys.perYear,'t')+'). '+(dt<0?'The cut':'The rise')+' equals '+fmt(ys.years,1)+' of them.</p>' : ''}); }
+  if(inB && r.total_t>0){ var ys2=yardstick(S,i,r.total_t);
+    facts.push({big:nu(r.total_t,'t CO₂-e'), what:'in '+(r.n<12?'your first '+span(r):'your baseline year')+', the figure every later month is measured against', scale: ys2 ? blocks(Math.min(ys2.years,30)) + '<p class="cx-key">Each block is a year of emissions from '+esc(ys2.name)+'.</p>' : ''}); }
   if(r.diversion_pct!=null){ var kept=r.waste_total_t-r.landfill_t, per=num(p.residents)>0?{n:num(p.residents),l:'resident'}:num(p.employees)>0?{n:num(p.employees),l:'employee'}:null;
     facts.push({big:nu(kept,'t'), what:'of waste kept out of landfill'+(per?', '+(kept*1000/per.n>=1000?nu(kept/per.n,'t',1):nu(kept*1000/per.n,'kg'))+' for every '+per.l:''), scale: waffle(r.diversion_pct)+'<p class="cx-key">'+fmt(r.diversion_pct,0)+' of every 100 tonnes you threw away was recovered. The eco standard is 80.</p>'}); }
   if(r.potable_kl>0){ var pn=r.potable_kl/2500, pg=pools(pn);
-    facts.push({big:fmt(pn,pn<10?1:0)+' Olympic\u00a0pools', what:'of drinking water ('+nu(r.potable_kl,'kL')+')'+(r.alt_water_pct>=1?'. Another '+fmt(r.alt_water_pct,0)+'% of what you used came from rain, storm or recycled water':''), scale: pg.html+'<p class="cx-key">Each mark is '+(pg.unit===1?'one pool':pg.unit+' pools')+' of 2,500 kL.</p>'}); }
-  return '<section class="cx cx-a"><div class="cx-a-top"><div class="cx-say">'+lines.map(function(t){ return '<p>'+t+'</p>'; }).join('')+'</div>'
-    + '<div class="cx-a-score">'+A.ring(m.score,124,true)+'<div><p class="b">'+esc(m.band)+'</p><p>'+m.scored+' of 10 categories scored</p><p>'+A.statusChip(m.status)+'</p></div></div></div>'
-    + (facts.length?'<div class="cx-facts">'+facts.map(function(f){ return '<div class="cx-fact"><p class="cx-big">'+f.big+'</p><p class="cx-what">'+f.what+'</p>'+f.scale+'</div>'; }).join('')+'</div>':'')
-    + '<p class="cx-foot">'+(r.n<12?'Figures cover the '+span(r)+' to ':'Rolling 12 months to ')+A.mLabel(m.month)+', verified by Yarta.'+(inB?'':' Comparisons use the same calendar months of\u00a0'+esc(fy)+'.')+'</p></section>';
+    facts.push({big:fmt(pn,pn<10?1:0)+' Olympic pools', what:'of drinking water ('+nu(r.potable_kl,'kL')+')'+(r.alt_water_pct>=1?'. Another '+fmt(r.alt_water_pct,0)+'% of what you used came from rain, storm or recycled water':''), scale: pg.html+'<p class="cx-key">Each mark is '+(pg.unit===1?'one pool':pg.unit+' pools')+' of 2,500 kL.</p>'}); }
+  if(!facts.length) return '';
+  return '<section class="cx cx-a"><h2 class="sec-t">What it amounts to</h2><p class="sec-s">'+(r.n<12?'The '+span(r)+' to ':'Rolling 12 months to ')+A.mLabel(m.month)+', verified by Yarta.'+(inB?'':' Comparisons use the same calendar months of '+esc(fy)+'.')+'</p>'
+    + '<div class="cx-facts">'+facts.map(function(f){ return '<div class="cx-fact"><p class="cx-big">'+f.big+'</p><p class="cx-what">'+f.what+'</p>'+f.scale+'</div>'; }).join('')+'</div></section>';
 }
 
-/* B · The ten parts: the score is the average of ten categories, so show it as ten columns with the average as a line across them */
-function conceptB(S, i, o){
+/* The ten parts: the score is the average of the categories reported, so show them as columns with the average as a line across them */
+function tenParts(S, i, o){
   var m=S.months[i], r=m.r12, T=S.targets, st=onTrack(S,i,T), ly=S.months[i-12]||null, month=m.month;
   var cats=D.CATEGORIES.map(function(c){ return {c:c, v:m.scores[c.k], was:ly&&ly.scores?ly.scores[c.k]:null, d:m.cat_yoy[c.k]}; });
   var scored=cats.filter(function(x){ return x.v!=null; }).sort(function(a,b){ return b.v-a.v; });
@@ -368,16 +356,15 @@ function conceptB(S, i, o){
   var cols=cats.map(function(x){ var v=x.v;
     return '<a class="cx-col'+(v==null?' na':'')+'" href="#/category/'+x.c.k+'?m='+month+'" style="--v:'+(v==null?0:Math.round(v))+';--w:'+(x.was==null?-1:Math.round(x.was))+'" data-tip="'+esc(x.c.name+': '+(v==null?'not reported':Math.round(v)+' out of 100'+(x.d!=null?', '+(x.d>=0?'+':'−')+Math.round(Math.abs(x.d))+' on a year ago':'')))+'">'
       + '<span class="bar"><i></i>'+(x.was!=null&&v!=null?'<s></s>':'')+'</span><span class="val">'+(v==null?'—':Math.round(v))+'</span><span class="nm">'+esc(x.c.short)+'</span><span class="dl">'+(v==null?'Not reported':x.d==null?'':A.delta(x.d))+'</span></a>'; }).join('');
-  return '<section class="cx cx-b"><div class="cx-b-head"><div><p class="cx-b-score"><b>'+m.score+'</b><span>out of 100<br><em>'+esc(m.band)+'</em></span></p>'
-    + '<p class="cx-b-yoy">'+(m.yoy!=null?(m.yoy>=0?'Up ':'Down ')+Math.round(Math.abs(m.yoy))+' on '+A.mLabel(ly.month)+'.':'Year-on-year change shows after 12 months.')+' Your score is the average of the '+m.scored+' categories you report.</p></div>'
-    + '<div class="cx-b-side"><p><span class="lbl">Lifting your score</span>'+hi.map(link).join(', ')+'</p><p><span class="lbl">Holding it back</span>'+lo.map(link).join(', ')+'</p>'
-    + '<p><span class="lbl">Emissions</span>'+nu(r.total_t,'t CO₂-e')+(st&&!st.inBase&&eCh!=null?', '+(eCh<0?'down ':'up ')+fmt(Math.abs(eCh),0)+'% on '+esc(S.baseline.fy)+'. '+(st.state==='on'?'On track for 2030.':st.state==='close'?'Just behind the 2030 path.':'Behind the 2030 path.'):'. Baseline year.')+'</p></div></div>'
+  return '<section class="cx cx-b" id="ten"><div class="cx-b-head"><div><h2 class="cx-b-t">Your score of '+m.score+', in its '+m.scored+' parts</h2>'
+    + '<p class="cx-b-yoy">'+(m.yoy!=null?(m.yoy>=0?'Up ':'Down ')+Math.round(Math.abs(m.yoy))+' on '+A.mLabel(ly.month)+'. ':'Year-on-year change shows after 12 months. ')+'The score is the average of the categories you report, each out of 100.</p></div>'
+    + '<div class="cx-b-side"><p><span class="lbl">Lifting your score</span>'+hi.map(link).join(', ')+'</p><p><span class="lbl">Holding it back</span>'+lo.map(link).join(', ')+'</p></div></div>'
     + '<div class="cx-sky" style="--s:'+m.score+'">'+cols+'</div>'
-    + '<div class="cx-b-key"><span><i class="k-bar"></i>Category score, out of 100</span>'+(ly?'<span><i class="k-was"></i>A year ago</span>':'')+'<span><i class="k-line"></i>Your score: the average of the ten</span></div></section>';
+    + '<div class="cx-b-key"><span><i class="k-bar"></i>Category score, out of 100</span>'+(ly?'<span><i class="k-was"></i>A year ago</span>':'')+'<span><i class="k-line"></i>Your score, '+m.score+': the average</span></div></section>';
 }
 
-/* C · The road to 2030: where emissions are against the path, and the plan's steps on the same timeline */
-function conceptC(S, i, o){
+/* The opening: emissions against the road to 2030, the score beside it, and the plan's steps on the same timeline */
+function heroRoad(S, i, o){
   var m=S.months[i], r=m.r12, T=S.targets, st=onTrack(S,i,T), month=m.month, P=A.planFor(o,S,i);
   var head, sub;
   if(!st){ head='Your emissions'; sub=''; }
@@ -389,11 +376,14 @@ function conceptC(S, i, o){
   steps.forEach(function(it,j){ var q=qOf(it.start); if(!byQ[q]){ byQ[q]=[]; order.push(q); } byQ[q].push({n:j+1, t:it.title}); });
   var pins=phone()?[]:order.map(function(q){ var g=byQ[q], a=g[0].n, b=g[g.length-1].n; return {k:E.addMonths(q,1), n:a===b?a:a+'–'+b, tip:R.qLabel(q)+': '+g.map(function(x){ return x.n+'. '+x.t; }).join('; ')}; });
   var stepList=steps.map(function(it,j){ var q=it.start.slice(0,5)+('0'+(Math.floor((+it.start.slice(5)-1)/3)*3+1)).slice(-2);
-    return '<li><span class="n">'+(j+1)+'</span><span class="when">'+esc(R.qLabel(q))+'</span><a href="#/improvements/'+it.s.k+'">'+esc(it.title)+'</a><span class="eff">'+doKey(it)+'</span>'+(it.booking?A.bookingChip(it.booking):'')+'</li>'; }).join('');
-  return '<section class="cx cx-c"><div class="cx-c-head"><h2>'+head+'</h2><p>'+sub+'</p></div>'
+    return '<li><span class="n">'+(j+1)+'</span><span class="when">'+esc(R.qLabel(q))+'</span><a href="#/improvements/'+it.s.k+'">'+esc(it.title)+'</a><span class="eff">'+doKey(it)+'</span>'+(it.booking?A.bookingChip(it.booking):'<a class="btn btn-primary btn-sm bk" href="#/improvements/'+it.s.k+'">Book</a>')+'</li>'; }).join('');
+  var eCh=pctChg(r.total_t,r.base.total_t);
+  var scoreBox='<a class="cx-score" href="#ten" aria-label="Your score, in its parts">'+A.ring(m.score,124,true)+'<span><b>'+esc(m.band)+'</b>'+(m.yoy!=null?(m.yoy>=0?'Up ':'Down ')+Math.round(Math.abs(m.yoy))+' on a year ago':'Change shows after 12 months')+'<br>'+m.scored+' of 10 categories scored</span></a>';
+  var numbers='<p class="cx-c-nums"><b>'+nu(r.total_t,'t CO₂-e')+'</b> '+(r.n<12?'in the '+span(r)+' to '+A.mLabel(month):'over the last 12 months')+(eCh!=null&&!(st&&st.inBase)?', '+arrow(eCh,true)+' on '+esc(S.baseline.fy):'')+'. <span class="nw">Scope 1: '+fmt(r.scope1_t,0)+' t</span> · <span class="nw">Scope 2: '+fmt(r.scope2_t,0)+' t</span> · <span class="nw">Scope 3: '+fmt(r.scope3_t,0)+' t</span></p>';
+  return '<section class="cx cx-c"><div class="cx-c-top"><div class="cx-c-head"><h2>'+head+'</h2><p>'+sub+'</p>'+numbers+'</div>'+scoreBox+'</div>'
     + '<div class="cx-c-road">'+trajectory(S,i,T,{w:1040,h:270,pins:pins})+'</div>'
     + '<div class="cx-c-key ov-key"><span><i class="ln"></i>Your emissions, % change on '+esc(S.baseline.fy)+'</span><span><i class="ln dash"></i>Straight-line path to your target</span>'+(pins.length?'<span><i class="k-pin"></i>When each step of your plan starts</span>':'')+'</div>'
-    + (stepList?'<ol class="cx-steps">'+stepList+'</ol><p class="cx-foot">Your plan, in the order the steps start. The effects are estimates from the published rules. <a class="link" href="#/roadmap">The full roadmap</a></p>':'')
+    + (stepList?'<h3 class="cx-c-plan">Your plan</h3><ol class="cx-steps">'+stepList+'</ol><p class="cx-foot">In the order the steps start. The effects are estimates from the published rules'+(P&&P.potential!=null?'; with every step done, the score could reach '+P.potential:'')+'. You can use any provider. <a class="link" href="#/roadmap">The full roadmap</a></p>':'')
     + '</section>';
 }
 
@@ -445,10 +435,7 @@ V.dashboard = function(q, api){
       return '<a class="ov-cat-r" href="#/category/'+c.k+'?m='+month+'"><span class="nm">'+esc(c.name)+(m.prov[c.k]?' <span class="prov" data-tip="Provisional until 12 months of data">P</span>':'')+'</span>'
         + (v==null?'<span class="na">Not reported</span>':'<span class="tr"><i style="width:'+clamp(v,1,100)+'%"></i></span><span class="v">'+Math.round(v)+'</span><span class="d">'+A.delta(m.cat_yoy[c.k])+'</span>')+'</a>'; }).join('')+'</div></section>';
 
-  var look=String(q.look||'').toLowerCase(), top='<div class="ov-top">'+score+emis+'</div>';
-  if(look==='a') top=conceptA(S,i,o); else if(look==='b') top=conceptB(S,i,o); else if(look==='c') top=conceptC(S,i,o);
-  if(LOOKS[look]||look==='0') top=lookBar(look,month)+top;
-  return A.shell('dashboard', head + A.banner(o) + top + srcP + levP + '<div class="ov-two">'+chP+nx+'</div>' + cats);
+  return A.shell('dashboard', head + A.banner(o) + heroRoad(S,i,o) + scaleFacts(S,i,o) + srcP + levP + chP + tenParts(S,i,o));
 };
 
 /* ------------------------------------------------------------------ category pages */

@@ -354,7 +354,7 @@ a.ov-src-r:hover{background:var(--silver-0)}
 .ov-traj .pin text{font:700 11px var(--font-body);fill:#fff}
 .cx-c-key .k-pin{width:14px;height:14px;border-radius:50%;background:#1E1712}
 .cx-steps{list-style:none;margin:18px 0 0;padding:0;border-top:1px solid var(--silver-1)}
-.cx-steps li{display:grid;grid-template-columns:28px 9.5em minmax(0,1fr) auto auto;gap:4px 14px;align-items:center;padding:11px 0;border-bottom:1px solid var(--silver-1);font-size:14.5px}
+.cx-steps li{display:grid;grid-template-columns:28px 9.5em minmax(12em,1fr) minmax(0,20em) auto;gap:4px 14px;align-items:center;padding:11px 0;border-bottom:1px solid var(--silver-1);font-size:14.5px}
 .cx-steps .n{width:24px;height:24px;border-radius:50%;background:#1E1712;color:#fff;font:700 12px/24px var(--font-body);text-align:center}
 .cx-steps .when{color:var(--graphite);white-space:nowrap}
 .cx-steps a{color:var(--ink);font-weight:600;text-decoration:none}
@@ -366,3 +366,20 @@ a.ov-src-r:hover{background:var(--silver-0)}
 }
 .cx-steps li>.st{justify-self:start}
 @media(max-width:699px){.cx-steps li>.st{grid-area:st}}
+
+/* the chosen opening */
+.cx-c-top{display:grid;gap:18px 32px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:1000px){.cx-c-top{grid-template-columns:minmax(0,1fr) auto;align-items:start}}
+.cx-c-nums{margin:12px 0 0;font-size:14.5px;line-height:1.55;color:var(--graphite);max-width:70ch}
+.cx-c-nums b{color:var(--ink);font-weight:700}
+.cx-score{display:flex;gap:14px;align-items:center;text-decoration:none;color:var(--graphite);font-size:13.5px;line-height:1.5;border:1px solid var(--silver-2);border-radius:14px;padding:12px 16px;align-self:start}
+.cx-score:hover{border-color:var(--ink)}
+.cx-score .score-ring{flex:none}
+.cx-score b{display:block;font:800 21px/1.2 var(--font-display);color:var(--ink)}
+.cx-c-plan{font:800 19px/1.2 var(--font-display);margin:26px 0 0;color:var(--ink)}
+.cx-c-plan+.cx-steps{margin-top:10px}
+.cx-steps .bk{justify-self:end}
+.cx-b-t{font:800 clamp(22px,2.4vw,30px)/1.15 var(--font-display);color:#fff;margin:0;letter-spacing:-.02em}
+.cx-a{margin-top:28px}
+.cx-a .cx-facts{margin-top:14px}
+@media(max-width:699px){.cx-steps .bk{grid-area:st;justify-self:start}}
