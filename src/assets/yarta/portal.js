@@ -1001,9 +1001,12 @@ function splitSites(o,defs){
       var f=field(id), v=r.values[id]; if(!f) return;
       if(f.kind==='select'||f.kind==='text'){ r.sites[o.sites[0].id].values[id]=v; return; }
       if(f.kind==='percent'||!isNum(v)){ o.sites.forEach(function(s){ r.sites[s.id].values[id]=v; }); return; }
-      var w=o.sites.map(function(s,i){ return defs[i].share*(1+0.3*(hashStr(id+s.id+r.month)-0.5)); }), sum=w.reduce(function(a,b){ return a+b; },0);
+      // only the sites that report the category carry its figures: a store has no fuel card, the head office no weighbridge
+      var w=o.sites.map(function(s,i){ return (!s.cats||s.cats.indexOf(f.cat)>=0) ? defs[i].share*(1+0.3*(hashStr(id+s.id+r.month)-0.5)) : 0; }), sum=w.reduce(function(a,b){ return a+b; },0);
+      if(!(sum>0)){ w=o.sites.map(function(s,i){ return defs[i].share; }); sum=w.reduce(function(a,b){ return a+b; },0); }
       var left=+v, isCount=f.kind==='count'||f.kind==='currency';
-      o.sites.forEach(function(s,i){ var x; if(i===o.sites.length-1) x=left; else { x=+v*w[i]/sum; x=isCount?Math.round(x):r3(x); left-=x; } r.sites[s.id].values[id]=isCount?Math.round(x):r3(x); });
+      var lastI=-1; w.forEach(function(x,i){ if(x>0) lastI=i; });
+      o.sites.forEach(function(s,i){ if(!(w[i]>0)) return; var x; if(i===lastI) x=left; else { x=+v*w[i]/sum; x=isCount?Math.round(x):r3(x); left-=x; } r.sites[s.id].values[id]=isCount?Math.round(x):r3(x); });
     });
     aggregateInto(o,r);
   });
@@ -1336,7 +1339,7 @@ function carbonLines(values,p,siteName,ev,month,orgName){
   add('Scope 2','Purchased electricity (location-based, '+st+')','Grid electricity',n(values.grid_kwh),'kWh','',el.s2,'kg CO₂-e/kWh',n(values.grid_kwh)*el.s2/1000,'energy');
   add('Scope 3','Upstream electricity (transmission and distribution losses)','Grid electricity',n(values.grid_kwh),'kWh','',el.s3,'kg CO₂-e/kWh',n(values.grid_kwh)*el.s3/1000,'energy');
   add('Scope 3','Upstream natural gas','Natural gas',n(values.gas_gj),'GJ','',F.gas.s3[st]||4,'kg CO₂-e/GJ',n(values.gas_gj)*(F.gas.s3[st]||4)/1000,'energy');
-  var lf=F.landfill[p.org_type]||1.3; add('Scope 3','Waste generated in operations (Category 5)','Waste to landfill',n(values.landfill_t),'t','',lf,'t CO₂-e/t',n(values.landfill_t)*lf,'waste');
+  var lf=E.landF(p); add('Scope 3','Waste generated in operations (Category 5)','Waste to landfill',n(values.landfill_t),'t','',lf,'t CO₂-e/t',n(values.landfill_t)*lf,'waste');
   [['steel_t','Steel recycled',F.avoided.steel],['alu_t','Aluminium recycled',F.avoided.alu],['timber_t','Timber recycled',F.avoided.timber],['green_t','Green waste recycled',F.avoided.green],['concrete_t','Concrete recycled',F.avoided.concrete]].forEach(function(a){ var q=n(values[a[0]]); if(q) out.push([orgName,siteName||'All sites',month,'Avoided (reported separately, never deducted)','Modelled avoided emissions',a[1],r3(q),'t','',a[2],'t CO₂-e/t','NSW DECCW 2010','2010',r3(q*a[2]),'waste',(ev&&ev.waste&&ev.waste.name)||'',(ev&&ev.waste&&ev.waste.grade)||'none']); });
   return out;
 }

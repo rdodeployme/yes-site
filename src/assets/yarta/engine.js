@@ -23,6 +23,7 @@ window.YESE = window.YESE || {};
     },
     gas:{s1:51.53, s3:{VIC:4.0, TAS:4.0, NSW:13.1, ACT:13.1, QLD:8.8, SA:10.7, WA:4.1, NT:4.0}}, // kg CO2-e per GJ (metro)
     landfill:{Council:1.6, Business:1.3, "Government agency":1.3, Other:1.3}, // t CO2-e per t: MSW 1.6, C&I 1.3
+    landfillSector:{construction:0.2}, // construction businesses landfill mostly mixed construction and demolition waste: C&D 0.2
     avoided:{steel:0.44, alu:17.72, timber:1.35, green:0.32, concrete:0.02, tyres:1.07}, // t CO2-e per t recycled
     unit:{mattress:0.080, tyre:0.0095, whitegood:0.060, pallet:0.020, oil_l:0.0009} // tonnes per unit
   };
@@ -54,6 +55,8 @@ window.YESE = window.YESE || {};
   E.fyOf = function(k){ var p=E.parse(k); var s=p.m>=6?p.y:p.y-1; return s+"–"+String(s+1).slice(2); };
 
   /* One month: v = values (static fields already carried forward), p = profile. */
+  /* Landfill factor: by sector where the sector's waste is a different mix (construction), otherwise by organisation type. */
+  E.landF = function(p){ p=p||{}; var s=E.FACTORS.landfillSector||{}; return s[p.sector]!=null ? s[p.sector] : (E.FACTORS.landfill[p.org_type] || 1.3); };
   E.month = function(v, p){
     p = p||{};
     var st = E.FACTORS.elec[p.state] ? p.state : "VIC";
@@ -65,7 +68,7 @@ window.YESE = window.YESE || {};
     o.scope1_fleet = fuelS1; o.scope1_gas = gasS1;
     o.scope1_t = fuelS1 + gasS1;
     o.scope2_t = num(v.grid_kwh)*el.s2/1000;
-    var landF = E.FACTORS.landfill[p.org_type] || 1.3;
+    var landF = E.landF(p);
     o.scope3_waste = num(v.landfill_t)*landF;
     o.scope3_upstream = (num(v.diesel_l)*F.diesel.gj*F.diesel.s3 + num(v.petrol_l)*F.petrol.gj*F.petrol.s3 + num(v.lpg_l)*F.lpg.gj*F.lpg.s3)/1e6
                       + num(v.gas_gj)*(E.FACTORS.gas.s3[st]||4)/1000 + num(v.grid_kwh)*el.s3/1000;
@@ -251,7 +254,7 @@ window.YESE = window.YESE || {};
         proc_pct:R.proc_recycled_pct, reuse_pct:R.reuse_pct, stew:stew,
         rehab_ha:R.rehab_ha, trees:R.trees, native_ha:R.native_ha, participants:R.participants,
         complete:avgK(recent,"complete_pct"), evidence:avgK(recent,"evidence_pct"), closure:R.closure_pct,
-        s1_fleet:sumK(w,"scope1_fleet"), s2:R.scope2_t, waste_t:R.waste_total_t, landF:(E.FACTORS.landfill[profile.org_type]||1.3)
+        s1_fleet:sumK(w,"scope1_fleet"), s2:R.scope2_t, waste_t:R.waste_total_t, landF:E.landF(profile)
       };
       m.x = x;
       var S = E.scoreParts(x, T), P = {};

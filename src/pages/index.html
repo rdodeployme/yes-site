@@ -231,16 +231,12 @@
   <div class="wrap">
     <div class="section-head reveal"><div><span class="sec-idx">04</span><p class="eyebrow">Roadmap to improvement</p><h2>Where you are. Where the standards would put you. What to do first.</h2></div><p class="lead">Every report closes with three numbers and a plan by quarter. The suggestions come from published rules applied to your own figures, ranked by what would move the number most, and each one can be booked with a provider who holds the accreditation the work requires. The next report shows what changed.</p></div>
     <div class="rm-home reveal">
-      <div class="rm-nums" aria-label="Demo Shire Council, from the sample report">
-        <div class="n"><span class="k">Now</span><b>69</b><span class="s">Strong · July 2026</span></div>
-        <div class="n"><span class="k">At the eco standards</span><b>80</b><span class="s">80% recovery, 82% renewables, or your tighter targets</span></div>
-        <div class="n hl"><span class="k">With Yarta help · estimate</span><b>76</b><span class="s">About 2,470 t CO₂-e a year less and 1,350 t less to landfill</span></div>
+      <div class="rm-nums" id="rm-nums" aria-label="Demo Shire Council, from the sample report">
+        <div class="n"><span class="k">Now</span><b id="rm-now">—</b><span class="s" id="rm-now-s"></span></div>
+        <div class="n"><span class="k">At the eco standards</span><b id="rm-eco">—</b><span class="s">80% recovery, 82% renewables, or your tighter targets</span></div>
+        <div class="n hl"><span class="k">With Yarta help · up to</span><b id="rm-help">—</b><span class="s" id="rm-help-s"></span></div>
       </div>
-      <div class="rm-sugs">
-        <div class="sug"><span class="k">Suggestion 1 · Fleet +13</span><b>Fleet transition plan</b><p>Electrification is 15.8% against a 30% target. A replacement plan for the vehicles due in 2027 lifts the Fleet score and the Carbon score with it.</p></div>
-        <div class="sug"><span class="k">Suggestion 2 · Water +14</span><b>Water efficiency and leak hunt</b><p>Potable water is only 1.6% below the baseline. Alternative water is 24.7% of use; the score gives full marks at 50%.</p></div>
-        <div class="sug"><span class="k">Suggestion 3 · Carbon +9</span><b>Hard-waste and bulky-item recovery</b><p>Diversion is 64% against a 70% target with 16,140 t to landfill. The mattresses, whitegoods and furniture in the figures are the first tonnes to move.</p></div>
-      </div>
+      <div class="rm-sugs" id="rm-sugs"></div></div>
     </div>
     <p class="rm-note reveal">Demo Shire Council is fictional. The estimates come from the published assumptions on the <a href="/method/">method page</a>; they are not a promise. Any work delivered by a Recycle Group business is disclosed on the report.</p>
     <div class="btn-row mt-3 reveal"><a class="btn btn-primary" href="/report/">See the roadmap on the sample report {{ARROW}}</a><a class="btn btn-ghost" href="/how-it-works/#improve">How we help you improve</a><a class="btn btn-ghost" href="/demo/#/roadmap">Try it in the demo</a></div>
@@ -404,6 +400,11 @@
     var bars=document.getElementById('h-bars');
     bars.innerHTML=D.CATEGORIES.map(function(c,k){ var v=m.scores[c.k]; return '<div class="bar"><span class="n">'+c.short+'</span><div class="track"><div class="fill" data-w="'+(v==null?0:Math.max(2,Math.round(v)))+'"></div></div><span class="val">'+(v==null?'—':Math.round(v))+'</span></div>'; }).join('');
     requestAnimationFrame(function(){ requestAnimationFrame(function(){ Array.prototype.forEach.call(bars.querySelectorAll('.fill'),function(f){ f.style.width=f.getAttribute('data-w')+'%'; }); }); });
+    txt('rm-now',fmt(m.score,0)); txt('rm-now-s',m.band+' · '+E.label(m.month)); txt('rm-eco',fmt(PL.target,0)); txt('rm-help',fmt(PL.potential,0));
+    txt('rm-help-s','Once every step has had time to work'+(PL.full?', by '+E.label(PL.full):'')+(PL.emis.cut>=1?'. About '+fmt(PL.emis.cut,0)+' t CO₂-e a year less':'')+'.');
+    var sg=document.getElementById('rm-sugs'), sgn=function(v){ return (v>=0?'+':'−')+Math.abs(v).toFixed(1); };
+    if(sg) sg.innerHTML=PL.items.filter(function(it){ return it.k!=='grants' && it.uplift.overall>=0.05; }).slice(0,3).map(function(it,n){ var cat=it.s.cat&&D.CAT[it.s.cat]?D.CAT[it.s.cat].short:'Governance', u=it.uplift;
+      return '<div class="sug"><span class="k">Suggestion '+(n+1)+' · '+cat+' · score '+sgn(u.low)+' to '+sgn(u.overall).replace('+','')+'</span><b>'+R.title(it.s,o.profile)+'</b><p>'+String(it.why||'').replace(/<[^>]+>/g,'')+'</p></div>'; }).join('');
     var led=document.getElementById('h-sug');
     PL.items.slice(0,3).forEach(function(it){ var cat=it.s.cat&&D.CAT[it.s.cat]?D.CAT[it.s.cat].short:'Governance'; var d=document.createElement('div'); d.innerHTML='<span>+'+it.uplift.overall.toFixed(1)+' pts</span><span>'+R.title(it.s,o.profile)+'</span><span class="r">'+cat+'</span>'; led.appendChild(d); });
   }catch(e){ var dash=document.querySelector('.dash'); if(dash) dash.style.display='none'; }

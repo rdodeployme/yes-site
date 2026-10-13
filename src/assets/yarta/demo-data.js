@@ -24,18 +24,23 @@ window.YESDEMO = window.YESDEMO || {};
   function stepVal(steps, k){ var v=steps[0][1]; steps.forEach(function(s){ if(k>=s[0]) v=s[1]; }); return v; }
 
   /* Build a council-like organisation. sc scales volumes; start/end are month keys; seed fixes the noise. */
+  var COUNT = {}; (D.INPUTS||[]).forEach(function(f){ if(f.kind==="count") COUNT[f.id]=true; });
   function build(opt){
     var rnd = mulberry32(opt.seed);
     function n(sd){ return 1 + (rnd()*2-1)*sd; }  // multiplicative noise
     var sc = opt.scale, recs = [], k = opt.start, idx = 0;
     var fleetSteps = opt.fleet;
+    var LIGHT = ["vd","vp","vh","vphev","vbev"];
+    var cur = JSON.parse(JSON.stringify(fleetSteps[0][1])), fleetChanged = true;
+    var renewSteps = opt.renew || [["2000-01",0.20],["2025-01",0.45],["2025-07",0.65],["2026-07",0.80]];
     while(k <= opt.end){
       var p = E.parse(k), m = p.m, t = idx/12;           // t = years since start
       var fy25 = k >= "2025-07", fy26 = k >= "2026-07";
       var v = {};
       // ---- fleet (static composition carried as step changes)
-      var F = stepVal(fleetSteps, k);
-      if(idx===0 || fleetSteps.some(function(s){ return s[0]===k; })){
+      fleetSteps.forEach(function(s){ if(s[0]===k && idx>0){ Object.keys(s[1]).forEach(function(f){ if(LIGHT.indexOf(f)<0 && cur[f]!==s[1][f]){ cur[f]=s[1][f]; fleetChanged=true; } }); } });
+      var F = cur;
+      if(fleetChanged){ fleetChanged = false;
         v.veh_diesel=F.vd; v.veh_petrol=F.vp; v.veh_hybrid=F.vh; v.veh_phev=F.vphev; v.veh_bev=F.vbev;
         v.trucks_diesel=F.td; v.trucks_electric=F.te; v.plant_count=F.plant; v.plant_fuel="Diesel";
         v.ev_public_points=F.evp; v.ev_staff_points=F.evs; v.solar_kw=F.solar; v.solar_sites=F.solarSites; v.battery_kwh=F.batt;
@@ -52,7 +57,18 @@ window.YESDEMO = window.YESDEMO || {};
       v.ev_public_kwh = r0(F.evp*520*(1+t*0.35)*n(.12));
       v.ev_staff_kwh = r0((F.vbev+F.vphev*0.5+F.te*6)*175*n(.1));
       v.idle_hours = k>="2025-01" ? r0(1180*sc*Math.pow(0.86,t)*n(.08)) : "";
-      if(m%3===2){ v.veh_retired = r0(2+rnd()*4); v.veh_cleaner = Math.min(v.veh_retired, r0(v.veh_retired*(0.5+t*0.2))); }
+      if(m%3===2){
+        // replacements in proportion to the light fleet (about one in seven a year unless set), the cleaner share rising as the program matures
+        var light = F.vd+F.vp+F.vh+F.vphev+F.vbev;
+        v.veh_retired = Math.max(0, r0(light*(opt.retire||0.15)/4*n(.35)));
+        v.veh_cleaner = Math.min(v.veh_retired, r0(v.veh_retired*Math.min(0.9,(opt.cleaner0||0.45)+t*0.2)));
+        // each cleaner replacement swaps a petrol or diesel car for a battery electric or hybrid one, so the register moves with it
+        for(var cr=0; cr<v.veh_cleaner; cr++){
+          var from = F.vp>0 && (F.vd===0 || rnd()<F.vp/(F.vp+F.vd)) ? "vp" : (F.vd>0 ? "vd" : null);
+          if(!from) break;
+          F[from]--; F[rnd()<0.65?"vbev":"vh"]++; fleetChanged = true;
+        }
+      }
       // ---- energy
       var gridBase = 640000*sc*HEAT[m]*Math.pow(1-opt.elecDecline,t);
       var solarGen = F.solar*SOLAR[m]*n(.08);
@@ -60,8 +76,7 @@ window.YESDEMO = window.YESDEMO || {};
       v.solar_use_kwh = r0(solarGen*0.86);
       v.solar_exp_kwh = r0(solarGen*0.14);
       v.grid_kwh = r0((gridBase - solarGen*0.86)*n(.03));
-      var renShare = k<"2025-01" ? 0.20 : k<"2025-07" ? 0.45 : k<"2026-07" ? 0.65 : 0.80;
-      v.renew_kwh = r0(v.grid_kwh*renShare);
+      var renShare = stepVal(renewSteps, k);
       v.battery_cycled = F.batt>0 ? r0(F.batt*14*n(.1)) : "";
       v.gas_gj = r1(760*sc*GAS[m]*Math.pow(1-opt.gasDecline,t)*n(.05));
       v.peak_kw = r0(1460*sc*HEAT[m]*n(.03));
@@ -78,9 +93,9 @@ window.YESDEMO = window.YESDEMO || {};
       if(m%3===2) v.leaks_fixed = r0(2+rnd()*4);
       // ---- waste (municipal service: kerbside, transfer station and council operations)
       var fogo = fy25 ? 1 : 0;
-      v.landfill_t = r1((1640 - fogo*230 - t*40)*sc*n(.04));
-      v.recycling_t = r1(565*sc*n(.05));
-      v.organics_t = r1((455 + fogo*300)*sc*n(.05));
+      v.landfill_t = r1((1250 - fogo*200 - t*30)*sc*n(.04));
+      v.recycling_t = r1(480*sc*n(.05));
+      v.organics_t = r1((380 + fogo*240)*sc*n(.05));
       v.green_t = r1(255*sc*GREEN[m]*n(.08));
       v.food_t = r1(2.2*sc*n(.3));
       v.paper_t = r1(41*sc*n(.08));
@@ -132,11 +147,13 @@ window.YESDEMO = window.YESDEMO || {};
       v.complaints = r0((5.5 - t*0.8)*n(.4));
       v.complaints_closed = Math.max(0, v.complaints - (rnd()<0.3?1:0));
       if(m%3===2) v.improve_projects = r0(2 + t*0.8 + rnd()*2);
-      v.env_invest = r0((310000 + t*120000)*sc*n(.3));
+      v.env_invest = r0((140000 + t*50000)*sc*n(.3));
 
       // ---- sector shape: multipliers, fields the sector does not report, and sector-specific streams
-      if(opt.mix){ Object.keys(opt.mix).forEach(function(id){ if(typeof v[id]==="number") v[id] = (id.slice(-2)==="_n"||id==="trees"||id==="participants"||id==="events"||id==="complaints"||id==="complaints_closed"||id.slice(-3)==="_kg") ? r0(v[id]*opt.mix[id]) : r1(v[id]*opt.mix[id]); }); }
+      if(opt.mix){ Object.keys(opt.mix).forEach(function(id){ if(typeof v[id]==="number") v[id] = (COUNT[id]||id.slice(-2)==="_n"||id==="trees"||id==="participants"||id==="events"||id==="complaints"||id==="complaints_closed"||id.slice(-3)==="_kg") ? r0(v[id]*opt.mix[id]) : r1(v[id]*opt.mix[id]); }); }
+      if(typeof v.complaints_closed==="number" && typeof v.complaints==="number") v.complaints_closed = Math.min(v.complaints_closed, v.complaints);
       if(opt.omit){ opt.omit.forEach(function(id){ v[id] = ""; }); }
+      v.renew_kwh = r0(v.grid_kwh*renShare);
       if(opt.extra){ opt.extra(v, {m:m, t:t, sc:sc, n:n, rnd:rnd, r0:r0, r1:r1, k:k}); }
       var mo = E.month(v, opt.profile);
       v.waste_total_t = r1(mo.recovered_t + (mo.landfill_t||0) + (mo.treated_t||0) + 22*sc*(opt.mix&&opt.mix.landfill_t!=null?opt.mix.landfill_t:1)*n(.3));  // small unrecorded residual
@@ -215,45 +232,45 @@ window.YESDEMO = window.YESDEMO || {};
   X.ORGS.push(
     {id:"demo-office", profile:{org_name:"Demo Advisory Group", org_type:"Business", sector:"business", state:"NSW", residents:0, employees:650, floor_area:9500, facilities:3, sites:3, baseline_fy:"2025–26",
       target_emissions:30, target_renewable:100, target_diversion:80, target_fleet_ev:50, target_trees:0, target_rehab_ha:0, target_participants:1200, target_native_ha:0},
-     gen:{seed:20250711, scale:0.4, start:"2025-07", end:"2026-08", verifiedTo:"2026-07", draft:false, contact:"Priya Raman", fuelDecline:.08, petrolDecline:.15, elecDecline:.06, gasDecline:.2, waterDecline:.03,
-          fleet:fleet1({vd:2,vp:6,vh:8,vphev:2,vbev:6,td:0,te:0,plant:0,evp:0,evs:6,solar:120,solarSites:1,batt:0,stew:2}),
-          mix:{diesel_l:.05, petrol_l:.25, lpg_l:0, biodiesel_l:0, fleet_km:.12, flights_dom:4, idle_hours:0, grid_kwh:.35, gas_gj:.15, peak_kw:.3, potable_kl:.05, recycled_kl:0, rain_kl:.1, storm_kl:0,
-               landfill_t:.05, recycling_t:.06, organics_t:.02, green_t:0, food_t:3, paper_t:.6, glass_t:.03, steel_t:.01, alu_t:.05, timber_t:0, timber_treated_t:0, mattress_n:0, tyres_n:0, ewaste_t:.5, whitegoods_n:.02, batteries_kg:.15, textiles_t:.05, furniture_t:.4,
-               participants:.35, events:.5, complaints:.15, env_invest:.3, proc_total:.6, proc_recycled:.8},
+     gen:{renew:[["2000-01",0.2],["2026-01",0.5]], seed:20250711, scale:0.4, start:"2025-07", end:"2026-08", verifiedTo:"2026-07", draft:false, contact:"Priya Raman", fuelDecline:.08, petrolDecline:.15, elecDecline:.06, gasDecline:.2, waterDecline:.03,
+          fleet:fleet1({vd:2,vp:6,vh:8,vphev:2,vbev:6,td:0,te:0,plant:0,evp:0,evs:6,solar:40,solarSites:1,batt:0,stew:2}),
+          mix:{diesel_l:.05, petrol_l:.25, lpg_l:0, biodiesel_l:0, fleet_km:0.3, flights_dom:20, idle_hours:0, grid_kwh:0.2, gas_gj:.15, peak_kw:.3, potable_kl:.05, recycled_kl:0, rain_kl:.1, storm_kl:0,
+               landfill_t:0.011, recycling_t:0.0065, organics_t:0.002, green_t:0, food_t:0.85, paper_t:0.18, glass_t:0.003, steel_t:.01, alu_t:.05, timber_t:0, timber_treated_t:0, mattress_n:0, tyres_n:0, ewaste_t:0.07, whitegoods_n:.02, batteries_kg:.15, textiles_t:0.02, furniture_t:0.15,
+               participants:.35, events:.5, complaints:0.05, env_invest:.3, proc_total:.6, proc_recycled:.8},
           omit:NOT_COUNCIL.concat(NO_NATURE, NO_LAND, NO_CD), draftFields:[]}},
     {id:"demo-hospital", profile:{org_name:"Demo Health Network", org_type:"Business", sector:"health", state:"VIC", residents:0, employees:3200, beds:420, floor_area:78000, facilities:6, baseline_fy:"2024–25",
       target_emissions:30, target_renewable:100, target_diversion:60, target_fleet_ev:40, target_trees:400, target_rehab_ha:0, target_participants:2500, target_native_ha:2},
-     gen:{seed:20240715, scale:1.2, start:"2024-07", end:"2026-08", verifiedTo:"2026-07", draft:false, contact:"Dr Lena Okafor", fuelDecline:.05, petrolDecline:.1, elecDecline:.04, gasDecline:.08, waterDecline:.03,
+     gen:{renew:[["2000-01",0],["2025-07",0.15]], seed:20240715, scale:1.2, start:"2024-07", end:"2026-08", verifiedTo:"2026-07", draft:false, contact:"Dr Lena Okafor", fuelDecline:.05, petrolDecline:.1, elecDecline:.04, gasDecline:.08, waterDecline:.03,
           fleet:fleet1({vd:14,vp:30,vh:22,vphev:4,vbev:10,td:2,te:0,plant:0,evp:0,evs:10,solar:600,solarSites:3,batt:0,stew:3}),
-          mix:{diesel_l:.12, petrol_l:.35, lpg_l:0, biodiesel_l:0, fleet_km:.3, flights_dom:2, idle_hours:0, grid_kwh:2.4, gas_gj:3.2, peak_kw:2, potable_kl:1.6, recycled_kl:.2, rain_kl:.3, storm_kl:0,
-               landfill_t:.55, recycling_t:.35, organics_t:.12, green_t:.05, food_t:6, paper_t:1.1, glass_t:.1, steel_t:.15, alu_t:.2, timber_t:.05, timber_treated_t:.02, mattress_n:.15, tyres_n:0, ewaste_t:1.2, whitegoods_n:.1, batteries_kg:.6, textiles_t:.3, furniture_t:.5,
+          mix:{diesel_l:.12, petrol_l:.35, lpg_l:0, biodiesel_l:0, fleet_km:0.45, flights_dom:2, idle_hours:0, grid_kwh:2.4, gas_gj:5.5, peak_kw:2, potable_kl:0.8, recycled_kl:.2, rain_kl:.3, storm_kl:0,
+               landfill_t:0.032, recycling_t:0.013, organics_t:0.0034, green_t:0.015, food_t:0.95, paper_t:0.19, glass_t:0.01, steel_t:0.02, alu_t:0.05, timber_t:0.01, timber_treated_t:0.005, mattress_n:0.02, tyres_n:0, ewaste_t:0.1, whitegoods_n:0.02, batteries_kg:0.3, textiles_t:0.15, furniture_t:0.15,
                trees:.06, native_veg_ha:.05, habitat_projects:.2, habitat_ha:.05, wetland_ha:0, participants:.45, events:.7, complaints:.3, env_invest:.8, proc_total:1.4, proc_recycled:1.2},
           omit:NOT_COUNCIL.concat(NO_LAND, NO_CD),
-          extra:function(v,c){ v.clinical_t=c.r1(31*c.sc*(1+c.m%2*0.04)*c.n(.06)); v.sharps_kg=c.r0(760*c.sc*c.n(.1)); v.food_avoided_t=c.r1((0.9+c.t*0.6)*c.sc*c.n(.2)); },
+          extra:function(v,c){ v.clinical_t=c.r1(13*c.sc*(1+c.m%2*0.04)*c.n(.06)); v.sharps_kg=c.r0(760*c.sc*c.n(.1)); v.food_avoided_t=c.r1((0.9+c.t*0.6)*c.sc*c.n(.2)); },
           draftFields:[]}},
     {id:"demo-uni", profile:{org_name:"Demo University", org_type:"Other", sector:"education", state:"QLD", residents:0, employees:2400, students:28000, floor_area:210000, facilities:48, baseline_fy:"2024–25",
       target_emissions:50, target_renewable:100, target_diversion:75, target_fleet_ev:50, target_trees:4000, target_rehab_ha:4, target_participants:22000, target_native_ha:12},
-     gen:{seed:20240722, scale:1.6, start:"2024-07", end:"2026-08", verifiedTo:"2026-07", draft:false, contact:"Tom Whitaker", fuelDecline:.07, petrolDecline:.12, elecDecline:.06, gasDecline:.15, waterDecline:.05,
+     gen:{renew:[["2000-01",0.1],["2025-07",0.35]], seed:20240722, scale:1.6, start:"2024-07", end:"2026-08", verifiedTo:"2026-07", draft:false, contact:"Tom Whitaker", fuelDecline:.07, petrolDecline:.12, elecDecline:.06, gasDecline:.15, waterDecline:.05,
           fleet:[["2024-07",{vd:8,vp:26,vh:18,vphev:6,vbev:12,td:3,te:0,plant:6,evp:6,evs:20,solar:2400,solarSites:22,batt:500,stew:3}],["2026-01",{vd:6,vp:20,vh:18,vphev:6,vbev:22,td:3,te:1,plant:6,evp:10,evs:30,solar:3100,solarSites:27,batt:500,stew:4}]],
-          mix:{diesel_l:.14, petrol_l:.3, lpg_l:.1, biodiesel_l:0, fleet_km:.3, flights_dom:6, flights_int:1, idle_hours:0, grid_kwh:2.1, gas_gj:1.1, peak_kw:1.8, street_kwh:.3, potable_kl:1.3, recycled_kl:1.6, rain_kl:1.2, storm_kl:.8,
-               landfill_t:.6, recycling_t:.7, organics_t:.3, green_t:.6, food_t:5, paper_t:1.6, glass_t:.3, steel_t:.2, alu_t:.3, timber_t:.2, timber_treated_t:.1, mattress_n:.2, tyres_n:.05, ewaste_t:2.2, whitegoods_n:.15, batteries_kg:.8, textiles_t:.4, furniture_t:2.2,
-               trees:.6, native_veg_ha:.4, habitat_projects:.5, habitat_ha:.5, wetland_ha:.3, rehab_ha:.2, remediated_ha:0, remediated_t:0, soil_rehab_t:.1, participants:2.6, events:1.6, complaints:.3, env_invest:1.6, proc_total:1.5, proc_recycled:1.3},
+          mix:{diesel_l:.14, petrol_l:.3, lpg_l:.1, biodiesel_l:0, fleet_km:0.42, flights_dom:20, flights_int:1, idle_hours:0, grid_kwh:2.1, gas_gj:1.1, peak_kw:1.8, street_kwh:.3, potable_kl:1.3, recycled_kl:1.6, rain_kl:1.2, storm_kl:.8,
+               landfill_t:0.055, recycling_t:0.038, organics_t:0.01, green_t:0.061, food_t:2.4, paper_t:0.5, glass_t:0.022, steel_t:0.04, alu_t:0.1, timber_t:0.05, timber_treated_t:0.02, mattress_n:0.03, tyres_n:.05, ewaste_t:0.2, whitegoods_n:0.03, batteries_kg:0.3, textiles_t:0.1, furniture_t:0.3,
+               trees:.6, native_veg_ha:.4, habitat_projects:.5, habitat_ha:.5, wetland_ha:.3, rehab_ha:.2, remediated_ha:0, remediated_t:0, soil_rehab_t:.1, participants:2.6, events:1.6, complaints:.3, env_invest:0.8, proc_total:1.5, proc_recycled:1.3},
           omit:["street_led_pct","problem_kg","contam_pct","weeds_ha","protected_ha","ev_public_points","ev_public_kwh"].concat(NO_CD),
-          extra:function(v,c){ v.food_avoided_t=c.r1((0.6+c.t*0.5)*c.sc*c.n(.25)); },
+          extra:function(v,c){ v.food_avoided_t=c.r1((0.6+c.t*0.5)*c.sc*c.n(.25)); v.flights_int=c.r0(70*c.n(.3)); },
           draftFields:[]}},
     {id:"demo-maker", profile:{org_name:"Demo Metal Works", org_type:"Business", sector:"manufacturing", state:"SA", residents:0, employees:340, floor_area:41000, facilities:2, sites:2, baseline_fy:"2024–25",
       target_emissions:35, target_renewable:80, target_diversion:85, target_fleet_ev:30, target_trees:0, target_rehab_ha:0, target_participants:400, target_native_ha:0},
-     gen:{seed:20240729, scale:0.55, start:"2024-07", end:"2026-08", verifiedTo:"2026-07", draft:false, contact:"Marco Bellini", fuelDecline:.05, petrolDecline:.1, elecDecline:.05, gasDecline:.06, waterDecline:.04,
+     gen:{renew:[["2000-01",0],["2025-07",0.15]], seed:20240729, scale:0.55, start:"2024-07", end:"2026-08", verifiedTo:"2026-07", draft:false, contact:"Marco Bellini", fuelDecline:.05, petrolDecline:.1, elecDecline:.05, gasDecline:.06, waterDecline:.04,
           fleet:fleet1({vd:6,vp:5,vh:2,vphev:0,vbev:2,td:8,te:0,plant:9,evp:0,evs:2,solar:900,solarSites:1,batt:0,stew:2}),
-          mix:{diesel_l:.3, petrol_l:.15, lpg_l:6, biodiesel_l:0, fleet_km:.25, flights_dom:1.5, idle_hours:.5, grid_kwh:1.9, gas_gj:2.6, peak_kw:2.2, potable_kl:.55, recycled_kl:0, rain_kl:.4, storm_kl:0,
-               landfill_t:.5, recycling_t:.15, organics_t:.03, green_t:0, food_t:.5, paper_t:1.3, glass_t:.02, steel_t:7, alu_t:3.5, timber_t:.6, timber_treated_t:.2, mattress_n:0, tyres_n:.1, ewaste_t:.4, whitegoods_n:0, batteries_kg:.5, textiles_t:.05, furniture_t:.1,
-               participants:.15, events:.3, complaints:.4, env_invest:.7, proc_total:.9, proc_recycled:1.4},
+          mix:{diesel_l:.3, petrol_l:.15, lpg_l:6, biodiesel_l:0, fleet_km:.25, flights_dom:1.5, idle_hours:.5, grid_kwh:1.9, gas_gj:2.6, peak_kw:2.2, potable_kl:0.3, recycled_kl:0, rain_kl:.4, storm_kl:0,
+               landfill_t:0.115, recycling_t:0.06, organics_t:0.01, green_t:0, food_t:.5, paper_t:0.5, glass_t:.02, steel_t:7, alu_t:3.5, timber_t:.6, timber_treated_t:.2, mattress_n:0, tyres_n:.1, ewaste_t:0.15, whitegoods_n:0, batteries_kg:.5, textiles_t:.05, furniture_t:.1,
+               participants:.15, events:.3, complaints:.4, env_invest:0.5, proc_total:.9, proc_recycled:1.4},
           omit:NOT_COUNCIL.concat(NO_NATURE, NO_LAND, NO_CD),
           extra:function(v,c){ v.film_t=c.r1(4.2*c.sc*c.n(.15)); v.pallets_n=c.r0(1180*c.sc*c.n(.12)); v.oil_l=c.r0(640*c.sc*c.n(.2)); v.waste_water_kl=c.r0(420*c.sc*c.n(.15)); },
           draftFields:[]}},
     {id:"demo-builder", profile:{org_name:"Demo Build Group", org_type:"Business", sector:"construction", state:"WA", residents:0, employees:520, floor_area:6000, facilities:9, sites:9, baseline_fy:"2025–26",
       target_emissions:30, target_renewable:60, target_diversion:90, target_fleet_ev:20, target_trees:600, target_rehab_ha:14, target_participants:300, target_native_ha:5},
-     gen:{seed:20250705, scale:0.9, start:"2025-07", end:"2026-08", verifiedTo:"2026-07", draft:false, contact:"Kate Lindqvist", fuelDecline:.03, petrolDecline:.06, elecDecline:.02, gasDecline:.02, waterDecline:.02,
+     gen:{renew:[["2000-01",0]], seed:20250705, scale:0.9, start:"2025-07", end:"2026-08", verifiedTo:"2026-07", draft:false, contact:"Kate Lindqvist", fuelDecline:.03, petrolDecline:.06, elecDecline:.02, gasDecline:.02, waterDecline:.02,
           fleet:fleet1({vd:42,vp:18,vh:6,vphev:2,vbev:4,td:22,te:0,plant:38,evp:0,evs:4,solar:80,solarSites:1,batt:0,stew:1}),
           mix:{diesel_l:1.4, petrol_l:.5, lpg_l:.3, biodiesel_l:.5, fleet_km:1.2, flights_dom:1, idle_hours:1.6, grid_kwh:.22, gas_gj:.04, peak_kw:.2, potable_kl:.3, recycled_kl:.2, rain_kl:.6, storm_kl:0,
                landfill_t:1.2, recycling_t:.25, organics_t:.02, green_t:.3, food_t:.2, paper_t:.3, glass_t:.05, steel_t:1.6, alu_t:.6, timber_t:2.6, timber_treated_t:2.2, concrete_t:3.2, rubble_t:3, soil_t:4.2, plaster_t:3.4, mattress_n:0, tyres_n:.3, ewaste_t:.1, whitegoods_n:.05, batteries_kg:.3, textiles_t:0, furniture_t:.1,
@@ -263,10 +280,10 @@ window.YESDEMO = window.YESDEMO || {};
           draftFields:[]}},
     {id:"demo-retail", profile:{org_name:"Demo Grocers", org_type:"Business", sector:"retail", state:"NSW", residents:0, employees:1900, floor_area:52000, facilities:38, sites:38, baseline_fy:"2024–25",
       target_emissions:40, target_renewable:100, target_diversion:80, target_fleet_ev:40, target_trees:0, target_rehab_ha:0, target_participants:1600, target_native_ha:0},
-     gen:{seed:20240708, scale:1.1, start:"2024-07", end:"2026-08", verifiedTo:"2026-07", draft:false, contact:"Hannah Park", fuelDecline:.06, petrolDecline:.1, elecDecline:.05, gasDecline:.1, waterDecline:.03,
+     gen:{renew:[["2000-01",0],["2025-07",0.1]], seed:20240708, scale:1.1, start:"2024-07", end:"2026-08", verifiedTo:"2026-07", draft:false, contact:"Hannah Park", fuelDecline:.06, petrolDecline:.1, elecDecline:.05, gasDecline:.1, waterDecline:.03,
           fleet:fleet1({vd:12,vp:10,vh:8,vphev:2,vbev:6,td:16,te:2,plant:0,evp:0,evs:8,solar:1400,solarSites:12,batt:200,stew:4}),
-          mix:{diesel_l:.35, petrol_l:.2, lpg_l:.4, biodiesel_l:0, fleet_km:.4, flights_dom:.5, idle_hours:.3, grid_kwh:2.3, gas_gj:.3, peak_kw:2.4, potable_kl:.4, recycled_kl:0, rain_kl:.2, storm_kl:0,
-               landfill_t:.7, recycling_t:.45, organics_t:.8, green_t:0, food_t:24, paper_t:4.2, glass_t:.2, steel_t:.1, alu_t:.15, timber_t:.3, timber_treated_t:0, mattress_n:0, tyres_n:0, ewaste_t:.3, whitegoods_n:.3, batteries_kg:1.2, textiles_t:.2, furniture_t:.2,
+          mix:{diesel_l:.35, petrol_l:.2, lpg_l:.4, biodiesel_l:0, fleet_km:.4, flights_dom:.5, idle_hours:.3, grid_kwh:4.4, gas_gj:.3, peak_kw:4.4, potable_kl:.4, recycled_kl:0, rain_kl:.2, storm_kl:0,
+               landfill_t:0.18, recycling_t:0.047, organics_t:0.12, green_t:0, food_t:24, paper_t:8.3, glass_t:0.03, steel_t:.1, alu_t:.15, timber_t:.3, timber_treated_t:0, mattress_n:0, tyres_n:0, ewaste_t:.3, whitegoods_n:0.05, batteries_kg:1.2, textiles_t:0.05, furniture_t:0.05,
                participants:.3, events:.5, complaints:.4, env_invest:.9, proc_total:2.4, proc_recycled:1.6},
           omit:NOT_COUNCIL.concat(NO_NATURE, NO_LAND, NO_CD),
           extra:function(v,c){ v.film_t=c.r1(6.8*c.sc*c.n(.12)); v.pallets_n=c.r0(2600*c.sc*c.n(.1)); v.food_avoided_t=c.r1((9+c.t*5)*c.sc*c.n(.15)); },
@@ -274,8 +291,8 @@ window.YESDEMO = window.YESDEMO || {};
   );
   /* the freight operator gets its sector shape too */
   (function(){ var f=X.ORGS.filter(function(o){ return o.id==="demo-freight"; })[0]; f.profile.sector="logistics"; f.profile.vehicles=60;
-    f.gen.mix={grid_kwh:.25, gas_gj:.05, potable_kl:.08, organics_t:.02, green_t:0, paper_t:.4, glass_t:.02, concrete_t:0, rubble_t:0, soil_t:0, plaster_t:0, mattress_n:0, whitegoods_n:.02, tyres_n:3.2, batteries_kg:2.2, textiles_t:0, furniture_t:.05, landfill_t:.3, recycling_t:.15, participants:.1, events:.2, trees:.02, diesel_l:2.6, fleet_km:3.4, idle_hours:2.2};
-    f.gen.omit=NOT_COUNCIL.concat(NO_NATURE, NO_LAND);
+    f.gen.mix={grid_kwh:.25, gas_gj:.05, potable_kl:.08, organics_t:.02, green_t:0, paper_t:.4, glass_t:.02, concrete_t:0, rubble_t:0, soil_t:0, plaster_t:0, mattress_n:0, whitegoods_n:.02, tyres_n:0.5, batteries_kg:2.2, textiles_t:0, furniture_t:.05, landfill_t:0.08, recycling_t:0.07, participants:.1, events:.2, trees:.02, diesel_l:3.6, fleet_km:2.8, idle_hours:2.2, recycled_kl:0, storm_kl:0, rain_kl:0.5, steel_t:0.1, alu_t:0.1, timber_t:0.1, timber_treated_t:0.05, ewaste_t:0.2, env_invest:0.25, complaints:0.2};
+    f.gen.omit=NOT_COUNCIL.concat(NO_NATURE, NO_LAND); f.gen.renew=[["2000-01",0]];
     f.gen.extra=function(v,c){ v.oil_l=c.r0(2400*c.sc*c.n(.15)); v.pallets_n=c.r0(1500*c.sc*c.n(.15)); };
   })();
   /* councils carry the sector key too */
