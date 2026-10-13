@@ -403,6 +403,9 @@ function benchTable(p,tg,BM){
     + '<p class="rp-bmnote">'+keepUnits(esc(BM.edition)+'. '+(BM.none?esc(BM.none)+' ':'')+'Benchmarks come from public sources only; Yarta never pools customer data. Sources: '+srcs+'.')+'</p>';
 }
 var RB=window.REPORT_BRAND||{mark:'<span class="mark">Yarta</span>', full:'Yindyamarra Environmental Sustainability', score:'Yindyamarra Environmental Score', title:'Environmental<br>Sustainability Report'};
+/* the public check for a report: its ID, and a QR code that opens the check page */
+function verifyUrl(id){ try{ return new URL('../verify/?id='+encodeURIComponent(id), location.href).href; }catch(e){ return '/verify/?id='+encodeURIComponent(id); } }
+function qrSvg(text){ if(!window.qrcode) return ''; try{ var q=window.qrcode(0,'M'); q.addData(text); q.make(); return q.createSvgTag({cellSize:2, margin:0, scalable:true}); }catch(e){ return ''; } }
 function sheetCover(o,S,i,PL,k,nP,provTxt,issuedTxt){
   var m=S.months[i], R12=m.r12, B=R12.base||{}, p=o.profile, T=S.targets, ly=S.months[i-12]||null;
   if(inBaselineFY(S,p,k)) B={};
@@ -431,6 +434,7 @@ function sheetCover(o,S,i,PL,k,nP,provTxt,issuedTxt){
   var subs=D.CATEGORIES.map(function(c){ var v=m.scores[c.k]; return '<div class="rp-sub"><span>'+esc(c.name)+(m.prov[c.k]?' <span class="muted">(P)</span>':'')+'</span><span class="v">'+(v==null?'—':Math.round(v))+'</span><span class="d">'+(v==null?'<span class="muted small">not reported</span>':delta(m.cat_yoy[c.k]))+'</span><div class="bar"><i style="width:'+(v||0)+'%"></i></div></div>'; }).join('');
   var BM=benchFor(p);
   var tgH=tg.filter(function(t){ return !(window.YARTA_VIEWS && window.YARTA_VIEWS.reportEmissions) || t.k!=='emissions'; }).map(function(t){ var w=(t.actual==null||!(t.target>0))?0:Math.max(0,Math.min(100,t.actual/t.target*100)); var met=t.actual!=null&&t.actual>=t.target; var b=BM&&BM[t.k]; var bw=(b&&t.target>0)?Math.max(0,Math.min(100,b.v/t.target*100)):null; return '<div class="rp-tg'+(met?' met':'')+'"><span class="n">'+esc(t.name)+(b?' <span class="muted">· industry '+pct(b.v,0)+'</span>':'')+'</span><span class="r">'+(t.actual==null?'—':pct(t.actual,0))+' <span class="muted">of '+pct(t.target,0)+'</span></span><div class="bar"><i style="width:'+w.toFixed(0)+'%"></i>'+(bw==null?'':'<b class="bm" style="left:'+bw.toFixed(0)+'%" title="Industry benchmark"></b>')+'</div></div>'; }).join('');
+  var rid=E.reportId(o.id, k, m.score, (rec(o,k)||{}).values), vurl=verifyUrl(rid);
   var photo = p.country_photo ? ' style="background-image:linear-gradient(90deg,rgba(11,40,24,.96) 0%,rgba(11,40,24,.78) 55%,rgba(11,40,24,.35) 100%),url('+esc(p.country_photo)+')"' : '';
   var wyc = PL ? '<div class="rp-wyc"><div><span class="k">Now</span><b>'+(PL.now==null?'—':PL.now)+'</b></div><div><span class="k">At the eco standards</span><b>'+(PL.target==null?'—':PL.target)+'</b></div><div class="hl"><span class="k">With Yarta help</span><b>'+(PL.potential==null?'—':PL.potential)+'</b><span class="s">estimate · plan on page '+nP+'</span></div></div>' : '';
   return '<section class="rp-sheet rp-cover">'
@@ -442,7 +446,8 @@ function sheetCover(o,S,i,PL,k,nP,provTxt,issuedTxt){
     + (window.YARTA_VIEWS && window.YARTA_VIEWS.reportEmissions ? window.YARTA_VIEWS.reportEmissions(S,i,viewApi()) : '<div class="rp-cards">'+cardsH+'</div>')
     + '<div class="rp-cols"><div><div class="rp-h">Category scores · change on last year</div><div class="rp-subs one">'+subs+'</div></div>'
     + '<div><div class="rp-h">At real-world scale · rolling '+win+'</div><div class="rp-scale">'+scaleH+'</div><div class="rp-h">Progress towards the eco standards · rolling '+win+'</div><div class="rp-tgs">'+tgH+'</div>'+(BM?'<p class="rp-bmnote">The mark on each bar is the published industry benchmark; figures and sources are on page 2. No other organisation\'s data is used.</p>':'')+'</div></div>'
-    + '<div class="rp-foot">Headline figures are rolling '+win+' totals; the change is against the same calendar months of the baseline year'+(inBaselineFY(S,p,k)?' ('+esc(S.baseline.fy||p.baseline_fy)+' is the baseline year, so there is no earlier year to compare with yet)':'')+'. (P) provisional: a target-based category with less than 12 months of data.'+(operatorOf(o)?' Your Yarta data operator: '+esc(operatorOf(o).name)+'.':'')+' The score is self-declared under the published Yarta method v0.1 (draft); it is not an accredited rating, certification or offset. Page 1 of '+nP+'.</div></section>';
+    + '<div class="rp-foot rp-foot-v"><div>Headline figures are rolling '+win+' totals; the change is against the same calendar months of the baseline year'+(inBaselineFY(S,p,k)?' ('+esc(S.baseline.fy||p.baseline_fy)+' is the baseline year, so there is no earlier year to compare with yet)':'')+'. (P) provisional: a target-based category with less than 12 months of data.'+(operatorOf(o)?' Your Yarta data operator: '+esc(operatorOf(o).name)+'.':'')+' The score is self-declared under the published Yarta method v0.1 (draft); it is not an accredited rating, certification or offset. Page 1 of '+nP+'.</div>'
+    + '<a class="rp-verify" href="'+esc(vurl)+'">'+qrSvg(vurl)+'<span><b>Check this report</b>Scan, or enter <span class="nw">'+esc(rid)+'</span> at <span class="nw">yes.com.au/verify</span></span></a></div></section>';
 }
 
 function vReport(k){
@@ -480,7 +485,7 @@ function reportSheets(o,S,k){
     + '</tbody></table></div>'
     + benchTable(p,tg,BM2)
     + '<div class="rp-h">Data quality and evidence</div><div class="rp-tw"><table class="tbl compact nowrap-first"><tbody><tr><td>Required figures supplied</td><td class="num">'+pct(m.complete_pct)+'</td></tr><tr><td>Figures backed by evidence</td><td class="num">'+pct(m.evidence_pct)+'</td></tr><tr><td>Evidence grades</td><td>'+D.CATEGORIES.filter(function(c){return c.k!=='carbon';}).map(function(c){ var e=(r.evidence||{})[c.k]; return esc(c.short)+' '+(e?(e.grade||'…'):'—'); }).join(' · ')+'</td></tr></tbody></table></div>'
-    + '<div class="rp-foot">Method: emissions use the National Greenhouse Accounts Factors 2024 (DCCEEW), location-based electricity for '+esc(p.state)+'. Scope 3 covers waste to landfill and upstream fuel and electricity only. Flights are recorded but not yet converted. Avoided emissions use NSW DECCW (2010) factors, flagged as dated, and are never netted against emissions. Comparisons with the baseline use the same calendar months of '+esc(S.baseline.fy||p.baseline_fy)+'. Figures are entered by Yarta from the organisation\'s source documents and verified by a second Yarta analyst. Full method: yes.com.au/method. Page 2 of '+nP+'.</div></section>';
+    + '<div class="rp-foot">Method: emissions use the National Greenhouse Accounts Factors 2024 (DCCEEW), location-based electricity for '+esc(p.state)+'. Scope 3 covers waste to landfill and upstream fuel and electricity only. Flights are recorded but not yet converted. Avoided emissions use NSW DECCW (2010) factors, flagged as dated, and are never netted against emissions. Comparisons with the baseline use the same calendar months of '+esc(S.baseline.fy||p.baseline_fy)+'. Figures are entered by Yarta from the organisation\'s source documents and verified by a second Yarta analyst. Yarta is part of Recycle Group: work by a Recycle Group business is disclosed on the roadmap page, and it changes the score only through figures Yarta enters and verifies later, like any other change. Full method: yes.com.au/method. Page 2 of '+nP+'.</div></section>';
   return sheet1+sheet2+(PL?sheet3(o,S,i,PL,k):'');
 }
 
@@ -1726,6 +1731,8 @@ document.addEventListener('click', function(e){
 
 /* for pages that embed a report outside the app (the Yarta sample on the Yarta site) */
 window.YESPortal={reportSheets:reportSheets, org:org, seriesOf:seriesOf, mLabel:mLabel, get state(){ return state; },
+  /* the demo as first seeded, for the public report check */
+  demoState:function(){ var s=X.build(); seedOps(s); return s; },
   currentOrgId:ctxOrgId,
   /* sign in as the customer of an organisation (the public demo and the sample report use this) */
   signInAsOperator:function(userId, hash){ var u=state.users.filter(function(x){ return x.role==='operator' && x.id===userId; })[0]; if(!u) return false; state.session={user:u.id, viewOrg:(state.session&&state.session.viewOrg)||'demo-shire'}; ui.loginTab='operator'; save(); if(location.hash===(hash||'#/ops/home')) render(); else location.hash=hash||'#/ops/home'; return true; },

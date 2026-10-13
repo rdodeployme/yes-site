@@ -43,6 +43,14 @@ window.YESE = window.YESE || {};
   E.parse = function(k){ var p=k.split("-"); return {y:+p[0], m:+p[1]-1}; };
   E.addMonths = function(k,n){ var p=E.parse(k); var t=p.y*12+p.m+n; return E.key(Math.floor(t/12), t%12); };
   E.label = function(k){ var p=E.parse(k); return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][p.m]+" "+p.y; };
+  /* A report's ID: a fingerprint of the organisation, the month, the score and every figure entered for it.
+     Change any figure and the ID changes, so an ID that checks out means the report is the one Yarta issued. */
+  E.reportId = function(orgId, month, score, values){
+    var v=values||{}, keys=Object.keys(v).sort(), str=String(orgId)+"|"+month+"|"+score+"|"+keys.map(function(k){ return k+"="+v[k]; }).join(";");
+    function fnv(s, seed){ var h=seed>>>0; for(var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619)>>>0; } return ("0000000"+h.toString(16)).slice(-8).toUpperCase(); }
+    var a=fnv(str,2166136261), b=fnv(str.split("").reverse().join(""),2166136261^0x9e3779b9), p=E.parse(month);
+    return "YR-"+String(p.y).slice(2)+("0"+(p.m+1)).slice(-2)+"-"+a.slice(0,4)+"-"+b.slice(0,4);
+  };
   E.fyOf = function(k){ var p=E.parse(k); var s=p.m>=6?p.y:p.y-1; return s+"–"+String(s+1).slice(2); };
 
   /* One month: v = values (static fields already carried forward), p = profile. */

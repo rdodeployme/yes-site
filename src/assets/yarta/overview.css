@@ -391,3 +391,12 @@ a.ov-src-r:hover{background:var(--silver-0)}
 .imp-ways .panel{margin-top:0}
 .imp-ways ul.plain li{margin:6px 0}
 @media(max-width:699px){.ov-fig .tbl.compact.brief td.num{grid-column:auto}.ov-fig .tbl td.per{display:none}}
+
+/* the public check for a report */
+.rp-foot-v{display:flex;gap:18px;align-items:flex-start;justify-content:space-between}
+.rp-foot-v>div{min-width:0}
+.rp-verify{flex:none;display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--graphite);max-width:200px;font-size:11px;line-height:1.35}
+.rp-verify svg{width:56px;height:56px;flex:none}
+.rp-verify b{display:block;color:var(--ink);font-size:12px}
+@media print{.rp-verify svg{width:46px;height:46px}.rp-verify{font-size:8.5px;max-width:150px}.rp-verify b{font-size:9.5px}}
+@media print{.rp-score .kicker{font-size:8px;letter-spacing:.08em}}

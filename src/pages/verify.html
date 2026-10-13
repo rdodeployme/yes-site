@@ -1,0 +1,67 @@
+<style>
+/* Check a Yarta report (scoped) */
+.page-verify h1,.page-verify h2{text-wrap:balance}
+.page-verify p{text-wrap:pretty}
+.vf{padding:clamp(36px,5vw,64px) 0 clamp(48px,6vw,80px)}
+.vf-grid{display:grid;gap:clamp(24px,4vw,48px);grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){.vf-grid{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}}
+.vf form{display:grid;gap:12px;max-width:520px}
+.vf label{font-weight:600;font-size:15px}
+.vf input{font:600 20px/1.2 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;padding:14px 16px;border:1px solid var(--mist);border-radius:10px;width:100%;background:var(--white)}
+.vf .hint{font-size:14px;color:var(--graphite);margin:0}
+.vf-out{margin-top:24px;max-width:620px;border-radius:14px;padding:20px 22px;border:1px solid var(--mist);background:var(--white)}
+.vf-out h2{font-size:clamp(22px,2.4vw,28px);margin:0 0 8px}
+.vf-out p{margin:6px 0 0;font-size:15.5px;line-height:1.55}
+.vf-out.ok{border-color:var(--green-2)}
+.vf-out.ok h2::before{content:"✓ ";color:var(--green-2)}
+.vf-out.no h2::before{content:"! ";color:var(--red,#B42318)}
+.vf-out dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 18px;margin:14px 0 0;font-size:15px}
+.vf-out dt{color:var(--graphite)}
+.vf-out dd{margin:0;font-weight:600}
+.vf-side h2{font-size:clamp(20px,2vw,24px)}
+.vf-side ol{padding-left:1.2em;line-height:1.6}
+.vf-side li{margin:6px 0}
+.vf-note{font-size:13.5px;color:var(--graphite);margin-top:18px}
+</style>
+
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">Check a report</p>
+    <h1>Is this Yarta report genuine?</h1>
+    <p class="lead">Every Yarta report carries an ID made from its figures. Enter it here, or scan the code on page 1, to confirm the report is the one Yarta issued and has not been changed since.</p>
+  </div>
+</section>
+
+<section class="vf page-verify">
+  <div class="wrap vf-grid">
+    <div>
+      <form id="vf-form" novalidate>
+        <label for="vf-id">Report ID</label>
+        <input id="vf-id" name="id" placeholder="YR-2607-XXXX-XXXX" autocomplete="off" spellcheck="false" maxlength="40">
+        <p class="hint">Printed at the foot of page 1 of the report, next to the code.</p>
+        <div><button class="btn btn-primary" type="submit">Check report</button></div>
+      </form>
+      <div id="vf-out" class="vf-out" hidden tabindex="-1" aria-live="polite"></div>
+    </div>
+    <aside class="vf-side">
+      <h2>What the check confirms</h2>
+      <ol>
+        <li>The organisation, month and score on the report are the ones Yarta issued.</li>
+        <li>No figure behind the report has changed since: the ID is made from every figure, so changing one changes the ID.</li>
+        <li>Whether the month was verified by a second Yarta analyst, and when the report was&nbsp;issued.</li>
+      </ol>
+      <p class="vf-note">A Yarta report is self-declared under the published <a href="/method/">Yarta method</a>. It is not an accredited rating, a certification or an offset. On this site, the check covers the demo reports.</p>
+    </aside>
+  </div>
+</section>
+<!--scripts-->
+<div id="app" hidden></div>
+<script src="/assets/yarta/live-config.js"></script>
+<script src="/assets/yarta/dictionary.js"></script>
+<script src="/assets/yarta/engine.js"></script>
+<script src="/assets/yarta/demo-data.js"></script>
+<script src="/assets/yarta/recommend.js"></script>
+<script src="/assets/yarta/sectors.js"></script>
+<script src="/assets/yarta/benchmarks.js"></script>
+<script src="/assets/yarta/portal.js"></script>
+<script src="/assets/verify.js"></script>

@@ -35,6 +35,7 @@ PAGES = [
     ("/councils/",        None,           "councils.html",     "Yarta for councils — whole-of-council environmental sustainability", "One score for the kerbside service, transfer stations, depots, buildings, fleet, water, Country and community programs, with a roadmap to improvement. Switched on in 30 days."),
     ("/climate-reporting/", None,         "climate-reporting.html", "Mandatory climate reporting — is your waste number ready?", "Australia's mandatory climate reporting is live. Scope 3 is reported from each company's second year and reviewed by an auditor. Check your group and your first Scope 3 year, and get your waste number from the processor."),
     ("/sectors/",         "Sectors",      "sectors.html",      "Sectors — what councils, hospitals, universities, manufacturers, builders, retailers and transport operators report on", "The same ten categories, shaped by sector: what each kind of organisation reports on, the eco standards that apply, and a demo and sample report for each."),
+    ("/verify/",         None,           "verify.html", "Check a Yarta report — is it genuine and unchanged?", "Every Yarta report carries an ID made from its figures. Enter it to confirm the report is genuine and unchanged since Yarta issued it."),
     ("/readiness/",      None,           "readiness.html", "Reporting Readiness Check — how ready are you to report?", "Five minutes on your organisation and the records you hold. See straight away what you have, what to sort first and what Yarta would cost."),
     ("/onboarding/",     None,           "onboarding.html", "Onboarding — switched on in 30 days", "The 30-day plan for a new Yarta customer: thirteen steps over four weeks, what you do, what Yarta does, and what you have on day 30."),
     ("/checklist/",      None,           "checklist.html", "What to send Yarta — the data checklist for your sector", "The documents Yarta works from for a council, business, hospital, university, manufacturer, builder, retailer or transport operator: what to send, who holds it, how often."),
@@ -118,6 +119,7 @@ def footer():
         <li><a href="/business/">Business</a></li>
         <li><a href="/pricing/">Pricing</a></li>
         <li><a href="/readiness/">Readiness Check</a></li>
+        <li><a href="/verify/">Check a report</a></li>
         <li><a href="/pricing/#foundation">Foundation Members</a></li>
         <li><a href="/onboarding/">Onboarding</a></li>
         <li><a href="/checklist/">What to send</a></li>
