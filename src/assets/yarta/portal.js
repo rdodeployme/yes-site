@@ -491,7 +491,7 @@ function bkById(id){ return (state.bookings||[]).filter(function(b){ return b.id
 function anchorFor(k){ var a=E.addMonths(k,1), b=E.addMonths(nowKey(),1); return a>b?a:b; }
 function planFor(o,S,i){ if(!R || i<0 || !S.months[i]) return null; o.plan=o.plan||{off:{}}; return R.plan(S,i,o.profile,{bookings:orgBookings(o.id), off:o.plan.off||{}, anchor:anchorFor(S.months[i].month)}); }
 var BK_L={requested:'Requested',confirmed:'Confirmed',completed:'Done',cancelled:'Cancelled'};
-function bookingChip(b){ return '<span class="st st-bk-'+esc(b.status)+'">'+(BK_L[b.status]||esc(b.status))+'</span>'; }
+function bookingChip(b){ if(b.mode==='Own provider' && b.status==='requested') return '<span class="st st-bk-requested">Reported done</span>'; return '<span class="st st-bk-'+esc(b.status)+'">'+(BK_L[b.status]||esc(b.status))+'</span>'; }
 var DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 function pad2(n){ return (n<10?'0':'')+n; }
 function slotDate(v){ if(!v) return null; var p=v.split('T'), d=p[0].split('-'), t=(p[1]||'09:00').split(':'); return new Date(+d[0],+d[1]-1,+d[2],+t[0],+t[1]); }
@@ -553,7 +553,7 @@ function vRoadmap(){
     var s=it.s, b=it.booking, pv=provOf(s);
     var st = b ? bookingChip(b)+'<div class="small muted">'+esc(slotLabel(b.slot,b.other))+'</div>' : '<a class="btn btn-primary btn-sm" href="#/improvements/'+s.k+'">Details and booking</a>';
     return '<tr'+(it.off?' class="off"':'')+'><td class="tg"><label class="tgl" title="'+(b?'Booked items stay in the plan':'Include in the plan')+'"><input type="checkbox" data-act="plan-toggle" data-svc="'+s.k+'"'+(it.off?'':' checked')+(b?' disabled':'')+'><span class="vh">Include '+esc(it.title)+' in the plan</span></label></td>'
-      + '<td><b>'+itemName(it)+'</b><div class="small muted">'+esc(pv.label)+' · '+esc(s.session)+'</div><div class="small why">'+esc(it.why)+'</div></td>'
+      + '<td><b>'+itemName(it)+'</b><div class="small muted">'+esc(pv.label)+' · '+esc(s.session)+'</div><div class="small why">'+esc(it.why)+'</div>'+((R.PLAN||{})[s.k]?'<div class="small"><b>You get:</b> '+esc(R.PLAN[s.k].gets)+' <b>Owner:</b> '+esc(R.PLAN[s.k].owner)+'.</div>':'')+'</td>'
       + '<td class="small">'+(upText(it.uplift)||esc(s.effectText))+'</td>'
       + '<td>'+(it.start?mShort(it.start):'<span class="muted">Not in plan</span>')+'</td>'
       + '<td>'+st+'</td></tr>';
@@ -561,7 +561,7 @@ function vRoadmap(){
   var plan='<h2 class="sec-t" style="margin-top:28px">Recommended help</h2><p class="sec-s">Weakest category first. Untick an item to see the estimate without it. The estimated change is for each item on its own, once it has taken full effect.</p>'
     + (rows?'<div class="tbl-wrap"><table class="tbl compact plan"><thead><tr><th><span class="vh">Include</span></th><th>Help</th><th>Estimated change</th><th>Starts</th><th>Booking</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<div class="empty">Nothing is recommended from your current figures.</div>');
   var qrows=quarterRows(P).map(function(q){ return '<tr><td><b>'+esc(q.label)+'</b></td><td>'+(q.starts.length?q.starts.map(function(it){ return itemName(it)+(it.booking?' <span class="muted small">('+(it.booking.status==='requested'?'requested':'booked')+')</span>':''); }).join('<br>'):'<span class="muted">—</span>')+'</td><td>'+(q.full.length?q.full.map(itemName).join('<br>'):'<span class="muted">—</span>')+'</td><td class="num"><b>'+(q.score==null?'—':q.score)+'</b></td></tr>'; }).join('');
-  var qs='<h2 class="sec-t" style="margin-top:28px">Plan by quarter</h2><p class="sec-s">'+esc(R.ROADMAP_RULES)+'</p>'+(P.active.length?'<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Quarter</th><th>Starts</th><th>Full effect</th><th class="r">Projected score</th></tr></thead><tbody>'+qrows+'</tbody></table></div>':'<div class="empty">Nothing in the plan. Tick an item above to add it.</div>');
+  var qs='<h2 class="sec-t" style="margin-top:28px">Plan by quarter</h2><p class="sec-s">'+esc(R.ROADMAP_RULES)+'</p>'+(P.active.length?'<div class="tbl-wrap"><table class="tbl compact nowrap-first"><thead><tr><th>Quarter</th><th>Starts</th><th>Full effect</th><th class="r">Projected score</th></tr></thead><tbody>'+qrows+'</tbody></table></div>':'<div class="empty">Nothing in the plan. Tick an item above to add it.</div>');
   var bl=orgBookings(o.id).slice().sort(function(a,b){ return (b.slot||b.createdAt||'')<(a.slot||a.createdAt||'')?-1:1; });
   var bk='<h2 class="sec-t" style="margin-top:28px">Your bookings and progress</h2>'+(bl.length?'<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Help</th><th>When</th><th>Status</th><th>Since then</th><th></th></tr></thead><tbody>'+bl.map(function(b){ return bookingRow(b,o,S,i); }).join('')+'</tbody></table></div><p class="small muted" style="margin-top:10px">Since then: the change in the category score from the month the work was done to your latest month. Other changes affect it too, so it does not show that the work caused it.</p>':'<div class="empty">No help booked yet.</div>');
   var ind='<div class="panel" style="margin-top:28px"><h3>How the recommendations stay independent</h3><ul class="plain">'+R.INDEPENDENCE.map(function(t){ return '<li><b>'+esc(t.k)+'.</b> '+esc(t.d)+'</li>'; }).join('')+'</ul></div>';
@@ -583,6 +583,7 @@ function vBook(key){
     + (open?'<div class="banner grey"><span>You already have a '+esc(BK_L[open.status].toLowerCase())+' booking for this: <b>'+esc(slotLabel(open.slot,open.other))+'</b>.</span><a class="btn btn-ghost btn-sm" href="#/improvements" style="color:var(--ink)">See it</a></div>':'')
         + '<section class="panel imp-detail"><div class="imp-top"><div><p class="k">Estimated change</p><p class="imp-num">'+(r&&r.uplift&&r.uplift.overall>=0.05?'Score '+sgn(r.uplift.overall,1):(r?esc(upText(r.uplift)||s.effectText):'—'))+'</p>'+(r&&r.uplift&&r.uplift.overall>=0.05&&m?'<p class="small muted">from '+fmt(m.score,0)+' to about '+fmt(Math.min(100,m.score+r.uplift.overall),0)+', on its own, once it has taken full effect</p>':'<p class="small muted">Once it has taken full effect</p>')+'</div><div><p class="k">Why it is recommended</p><p>'+esc(r?r.why:'Your current figures do not call for this, but you can still book it.')+'</p></div></div>'
     + '<div class="imp-cols"><div><h3>What is involved</h3><p class="small">'+esc(s.what)+'</p><p class="small muted">'+esc(s.session)+'</p></div><div><h3>Who delivers it</h3><p class="small">'+esc(s.who)+'</p>'+(s.prov==='group'?'<p class="small muted">'+esc(s.groupNames)+(s.groupNames.indexOf(' and ')>0?' are':' is')+' part of Recycle Group, like Yarta. Disclosed on your monthly report.</p>':'')+'</div><div><h3>The estimate</h3><p class="small">Assumed effect: '+esc(s.effectText)+'</p><p class="small muted">You can use any provider. Your score and the verification of your figures do not depend on who does the work.</p></div></div></section>'
+    + planPanels(o,S,i,s,open)
     + '<h2 class="sec-t" style="margin-top:28px">Book the relevant expert</h2>'
 + '<div class="book"><div class="panel"><h3>Choose a time</h3><p class="sec-s" style="margin-top:4px">'+esc(s.session)+'. The next ten business days, in your local time.</p>'
     + '<div class="slots" role="group" aria-label="Available times">'+grid+'<div class="sday"><div class="sd">Other</div><button type="button" class="slot" data-act="slot" data-slot="other" aria-pressed="false">Another time</button></div></div>'
@@ -599,6 +600,19 @@ function vBook(key){
   return shell('improve', body);
 }
 
+/* one step of the plan, made concrete: what the client gets, who owns it, when it shows, the brief, and the two ways to do it */
+function planPanels(o,S,i,s,open){
+  var pl=(R.PLAN||{})[s.k]; if(!pl || i<0) return '';
+  var P=planFor(o,S,i), it=P?P.items.filter(function(x){ return x.k===s.k; })[0]:null, start=it&&it.start?it.start:E.addMonths(S.months[i].month,1);
+  var brief=window.YARTA_VIEWS&&window.YARTA_VIEWS.brief?window.YARTA_VIEWS.brief(S,i,s.k,viewApi()):'';
+  var own=orgBookings(o.id).filter(function(b){ return b.svc===s.k && b.mode==='Own provider' && b.status!=='cancelled'; })[0];
+  return '<section class="panel imp-plan"><div class="imp-cols"><div><h3>What you get</h3><p class="small">'+esc(pl.gets)+'</p></div><div><h3>Who owns it at your end</h3><p class="small">'+esc(pl.owner)+'</p></div>'
+    + '<div><h3>When it shows in your figures</h3><p class="small">Planned to start '+esc(mLabel(start))+'. The change shows in the monthly figures after the work is done, and Yarta checks each month whether it moved.</p></div></div>'
+    + (brief?'<h3 style="margin-top:22px">The brief Yarta sends ahead</h3><p class="small muted" style="margin:4px 0 10px">Your verified figures behind this step, so the work starts from your data instead of a questionnaire.</p>'+brief:'')+'</section>'
+    + '<section class="imp-ways"><div class="panel"><h3>Book through Yarta</h3><ul class="plain small"><li>The brief above goes to the provider before the first meeting.</li><li>Yarta checks the provider\'s accreditation and shows it on the booking.</li><li>The before and after appears in your monthly report, with nothing more to do.</li><li>Every step of your plan stays in one place.</li></ul></div>'
+    + '<div class="panel"><h3>Use your own provider</h3><p class="small">That is fine: your score and its verification do not depend on who does the work. Tell Yarta when it is done, and the change is confirmed and tracked in your figures the same way.</p>'
+    + (own?'<p class="small"><b>'+(own.status==='completed'?'Confirmed by Yarta.':'Reported done. Yarta will confirm it.')+'</b></p>':'<button class="btn btn-ghost btn-sm" type="button" data-act="own-done" data-svc="'+s.k+'" style="color:var(--ink)"'+(open?' disabled':'')+'>I have done this with my own provider</button>')+'</div></section>';
+}
 function vImprove(){
   var o=org(), S=seriesOf(o), m=monthOf(S);
   if(!m || !R) return shell('improve','<div class="pg-head"><div><p class="kicker">Improvements</p><h1>Improvements</h1></div></div><div class="empty">Suggested improvements appear once your first month is verified.</div>');
@@ -1608,6 +1622,13 @@ function previewImport(file){
 }
 
 function bkDesc(b){ var s=R&&R.byKey[b.svc], o=state.orgs[b.org]; return (o?o.profile.org_name+' · ':'')+(s?R.title(s,o?o.profile:{}):b.svc)+' · '+slotLabel(b.slot,b.other); }
+/* the client did a step with their own provider: recorded as a request for Yarta to confirm, then tracked like any other */
+function ownDone(key){
+  var o=org(), s=R&&R.byKey[key]; if(!s) return; var u=me(), S=seriesOf(o), m=monthOf(S);
+  var b={id:'bk-'+Date.now().toString(36), org:o.id, svc:key, status:'requested', slot:null, other:true, mode:'Own provider', location:'', contact:u.name||'', email:u.email||'', notes:'Done with our own provider. Please confirm and track it.', share:false, why:'', month:m?m.month:null, group:false, createdAt:isoNow(), createdBy:u.name||''};
+  state.bookings=state.bookings||[]; state.bookings.push(b); log('Step reported done with own provider',R.title(s,o.profile),o.id); save();
+  flash('Thanks. Yarta will confirm it and track the change in your figures.'); render();
+}
 function bookSubmit(key){
   var o=org(), s=R&&R.byKey[key]; if(!s) return;
   var sl=ui.bookSlot; if(!sl){ flash('Choose a time, or Another time.','err'); var g=$('.slots'); if(g) g.scrollIntoView({block:'center'}); return; }
@@ -1655,6 +1676,7 @@ document.addEventListener('click', function(e){
     case 'verify': var ov=state.orgs[t.getAttribute('data-org')], rv=rec(ov,t.getAttribute('data-month')); if(rv.enteredBy && rv.enteredBy===me().name){ flash('You entered this month, so a different analyst must verify it.','err'); return; } var ungraded=Object.keys(rv.evidence||{}).filter(function(cat){ return !rv.evidence[cat].grade; }); if(ungraded.length){ flash('Grade every attached document first ('+ungraded.map(function(c){ return D.CAT[c].short; }).join(', ')+').','err'); return; } rv.status='verified'; rv.verifiedAt=isoNow().slice(0,10); rv.verifiedBy=me().name; var note=($('#rv-note')||{}).value; if(note){ rv.notes=rv.notes||[]; rv.notes.push({by:me().name,at:isoNow(),text:note}); } log('Month verified',mLabel(rv.month),ov.id); save(); flash(ov.profile.org_name+' · '+mLabel(rv.month)+' verified.'); go('#/ops'); break;
     case 'slot': ui.bookSlot=t.getAttribute('data-slot'); $$('.slot',app).forEach(function(x){ x.setAttribute('aria-pressed', x===t?'true':'false'); }); break;
     case 'book-submit': bookSubmit(t.getAttribute('data-svc')); break;
+    case 'own-done': ownDone(t.getAttribute('data-svc')); break;
     case 'bk-confirm': var bc=bkById(t.getAttribute('data-id')); if(!bc) return; bc.status='confirmed'; bc.confirmedAt=isoNow(); bc.confirmedBy=me().name; log('Booking confirmed',bkDesc(bc),bc.org); save(); flash('Confirmed: '+bkDesc(bc)+'.'); render(); break;
     case 'bk-done': var bd=bkById(t.getAttribute('data-id')); if(!bd) return; var sm=bd.slot?bd.slot.slice(0,7):nowKey(); bd.status='completed'; bd.completedMonth=sm<=nowKey()?sm:nowKey(); bd.completedAt=isoNow(); bd.completedBy=me().name; log('Help marked done',bkDesc(bd)+' · '+mLabel(bd.completedMonth),bd.org); save(); flash('Marked done. The change shows as later months are verified.'); render(); break;
     case 'bk-cancel-op': case 'bk-cancel-go': var bx=bkById(t.getAttribute('data-id')); if(!bx) return; bx.status='cancelled'; bx.cancelledAt=isoNow(); bx.cancelledBy=me().name; ui.confirmCancel=null; log('Booking cancelled',bkDesc(bx),bx.org); save(); flash('Booking cancelled.'); render(); break;

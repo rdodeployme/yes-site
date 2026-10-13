@@ -163,6 +163,21 @@ window.YESR = window.YESR || {};
     }
   ];
   R.byKey = {}; R.SERVICES.forEach(function(s){ R.byKey[s.k]=s; });
+
+  /* What each step of a plan means for the client: who owns it on their side, what they get, and the figures
+     Yarta already holds that go into the brief, so the work starts from their verified data. */
+  R.PLAN = {
+    hardwaste:{ owner:"Waste or operations manager", gets:"A collection plan for mattresses, whitegoods, furniture and e-waste: what goes where, how often, and who collects it.", needs:["mattress_n","whitegoods_n","furniture_t","ewaste_t","landfill_t","waste_total_t"] },
+    contamination:{ owner:"Waste or operations manager", gets:"A bin-by-bin contamination check and a fix list: signage, bin placement and collection changes.", needs:["contam_pct","recycling_t","landfill_t"] },
+    fleet:{ owner:"Fleet manager", gets:"A written fleet transition plan: which vehicles to replace, with what, and when, timed to your leases and replacement cycle.", needs:["veh_diesel","veh_petrol","veh_hybrid","veh_phev","veh_bev","trucks_diesel","trucks_electric","diesel_l","petrol_l","fleet_km","veh_retired"] },
+    energy:{ owner:"Facilities or property manager", gets:"An energy audit scope: where your electricity goes, and the options (GreenPower, a power purchase agreement, solar, efficiency) in the order to do them.", needs:["grid_kwh","renew_kwh","solar_gen_kwh","solar_exp_kwh","gas_gj","peak_kw"] },
+    dumping:{ owner:"Local laws or waste services team", gets:"A hot-spot review of dumping reports and a removal response plan.", needs:["complaints","complaints_closed"] },
+    water:{ owner:"Facilities or parks manager", gets:"A site walk-through that finds leaks and the largest uses, with a fix list.", needs:["potable_kl","recycled_kl","rain_kl","storm_kl","leaks_fixed"] },
+    evidence:{ owner:"Whoever sends Yarta your documents", gets:"A list of the documents to send in place of estimates, and how to get each one.", needs:[] },
+    procurement:{ owner:"Procurement lead", gets:"A review of your main contracts with the recycled-content options for each.", needs:["proc_total","proc_recycled","recycled_products"] },
+    planting:{ owner:"Parks, environment or community team", gets:"A planting and habitat day program set to your agreed targets.", needs:["trees","native_veg_ha","habitat_ha","participants","events"] },
+    grants:{ owner:"Grants or finance lead", gets:"A funding application backed by your verified figures.", needs:[] }
+  };
   R.title = function(s, p){ return typeof s.title==="function" ? s.title(p||{}) : s.title; };
 
   R.context = function(S, i, profile){

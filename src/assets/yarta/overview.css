@@ -383,3 +383,11 @@ a.ov-src-r:hover{background:var(--silver-0)}
 .cx-a{margin-top:28px}
 .cx-a .cx-facts{margin-top:14px}
 @media(max-width:699px){.cx-steps .bk{grid-area:st;justify-self:start}}
+
+/* a plan step made concrete */
+.imp-plan{margin-top:18px}
+.imp-ways{display:grid;gap:18px;grid-template-columns:minmax(0,1fr);margin-top:18px}
+@media(min-width:900px){.imp-ways{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.imp-ways .panel{margin-top:0}
+.imp-ways ul.plain li{margin:6px 0}
+@media(max-width:699px){.ov-fig .tbl.compact.brief td.num{grid-column:auto}.ov-fig .tbl td.per{display:none}}

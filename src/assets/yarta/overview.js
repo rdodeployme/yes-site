@@ -387,6 +387,16 @@ function heroRoad(S, i, o){
     + '</section>';
 }
 
+/* The brief: the client's own verified figures behind one step of the plan, as the provider receives them */
+V.brief = function(S, i, key, api){
+  A=api; E=api.E; D=api.D; R=api.R; CUR_SPAN=span(S.months[i].r12);
+  var pl=(R.PLAN||{})[key]; if(!pl) return '';
+  var rows=pl.needs.map(function(id){ var f=D.FIELD[id]; if(!f) return ''; var fg=fieldFigure(S,i,f); if(!fg || fg.r12==null) return '';
+    var u=f.kind==='currency'?'':(f.unit||''), per=fg.latest?'As at '+A.mShort(fg.asAt):'Last '+CUR_SPAN;
+    return '<tr><td>'+esc(f.name)+'</td><td class="num" data-l="'+esc(per)+'">'+fval(f,fg.r12)+(u?'<span class="pu"> '+esc(u)+'</span>':'')+'</td><td class="un">'+esc(u)+'</td><td class="small muted per">'+esc(per)+'</td></tr>'; }).join('');
+  return rows ? '<div class="ov-fig brief"><div class="tbl-wrap"><table class="tbl compact brief"><tbody>'+rows+'</tbody></table></div></div>' : '';
+};
+
 /* ------------------------------------------------------------------ the Overview */
 V.dashboard = function(q, api){
   A=api; E=api.E; D=api.D; R=api.R; tip();
