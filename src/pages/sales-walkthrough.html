@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yarta guided walkthrough (internal)</title>
+<meta name="description" content="A step-by-step guided walkthrough of the Yarta demo for the sales team.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B0B0B">
+<link rel="icon" href="/assets/favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B0B0B; --ink-2:#141210; --line-d:#2b2724; --paper:#F4F4F2; --paper-2:#ECEDE8; --white:#fff;
+  --charcoal:#2A2A2A; --graphite:#4B4F52; --slate:#7C8184; --mist:#D6D8D3; --mist-2:#E7E8E3;
+  --or:#CF7A2E; --or-d:#B8641F; --or-l:#E9A860; --or-t:#FBF0E3; --or-ink:#8A4A14;
+  --fd:"Archivo",system-ui,sans-serif; --fb:"Inter",system-ui,sans-serif; --fm:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --top:62px; --panel:420px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--paper);color:var(--ink);font:16px/1.55 var(--fb);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+h1,h2,h3{font-family:var(--fd);letter-spacing:-.02em;margin:0;text-wrap:balance}
+p,li{text-wrap:pretty}
+button{font:inherit;cursor:pointer}
+.nw{white-space:nowrap}
+
+/* top bar */
+.wt-top{height:var(--top);display:flex;align-items:center;gap:16px;padding:0 16px;background:var(--ink);color:var(--paper);border-bottom:1px solid #222}
+.wt-logo{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0}
+.wt-logo img{width:34px;height:37px;flex:none}
+.wt-logo b{display:block;font:800 16px/1 var(--fd);letter-spacing:.06em;text-transform:uppercase}
+.wt-logo span{display:block;font:500 11px/1.3 var(--fm);letter-spacing:.06em;text-transform:uppercase;color:var(--or-l);margin-top:4px;white-space:nowrap}
+.wt-top .sp{flex:1}
+.wt-tl{display:flex;gap:8px;align-items:center}
+.wt-tl a{font:500 13.5px/1 var(--fb);text-decoration:none;color:var(--paper);padding:10px 14px;border-radius:999px;border:1px solid #3a3530;white-space:nowrap}
+.wt-tl a:hover{border-color:var(--or-l)}
+.wt-tl a.pri{background:var(--or);border-color:var(--or);color:var(--ink)}
+
+/* layout */
+.wt{display:grid;grid-template-columns:var(--panel) minmax(0,1fr);height:calc(100% - var(--top))}
+.wt-panel{display:flex;flex-direction:column;min-height:0;background:var(--white);border-right:1px solid var(--mist)}
+.wt-scroll{flex:1;overflow-y:auto;padding:22px 24px 28px;min-height:0}
+.wt-stage{position:relative;min-width:0;background:#d9d8d3}
+.wt-stage{overflow:hidden}
+.wt-stage iframe{position:absolute;left:0;top:0;width:100%;height:100%;border:0;background:var(--paper);transform-origin:0 0}
+.wt-load{position:absolute;left:50%;top:18px;transform:translateX(-50%);font:500 12px/1 var(--fm);letter-spacing:.06em;text-transform:uppercase;background:var(--ink);color:var(--or-l);padding:9px 14px;border-radius:999px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:2}
+.wt-load.on{opacity:1}
+
+/* progress */
+.wt-prog{height:4px;background:var(--mist-2)}
+.wt-prog i{display:block;height:100%;background:var(--or);width:0;transition:width .35s cubic-bezier(.2,.7,.2,1)}
+.wt-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 14px}
+.wt-ch{font:500 12px/1.3 var(--fm);letter-spacing:.07em;text-transform:uppercase;color:var(--or-ink)}
+.wt-count{font:500 12px/1 var(--fm);color:var(--slate);white-space:nowrap}
+.wt-scroll h1{font-size:clamp(25px,2.2vw,31px);line-height:1.08;margin:0 0 16px;max-width:18ch}
+.wt-k{font:500 11.5px/1 var(--fm);letter-spacing:.08em;text-transform:uppercase;color:var(--slate);margin:20px 0 8px}
+.wt-see{margin:0;color:var(--charcoal);font-size:15.5px}
+.wt-see p{margin:0 0 .7em}
+.wt-say{margin:0;border-left:3px solid var(--or);background:var(--or-t);padding:14px 16px;border-radius:0 10px 10px 0;font-size:16px;line-height:1.55;color:var(--ink)}
+.wt-ask details{border-top:1px solid var(--mist-2)}
+.wt-ask details:last-child{border-bottom:1px solid var(--mist-2)}
+.wt-ask summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:14px;padding:12px 0;font-weight:600;font-size:15px;line-height:1.4}
+.wt-ask summary::-webkit-details-marker{display:none}
+.wt-ask summary::after{content:"+";font:500 18px/1 var(--fm);color:var(--or);flex:none}
+.wt-ask details[open] summary::after{content:"–"}
+.wt-ask details p{margin:0 0 12px;font-size:15px;color:var(--graphite)}
+.wt-tip{margin:20px 0 0;font-size:14.5px;color:var(--graphite);background:var(--paper);border-radius:10px;padding:12px 14px}
+.wt-tip b{color:var(--ink)}
+.wt-act{margin-top:16px}
+.wt-act button{border:1px solid var(--mist);background:var(--white);border-radius:999px;padding:9px 14px;font-size:14px;font-weight:600;white-space:nowrap}
+.wt-act button:hover{border-color:var(--ink)}
+
+/* controls */
+.wt-ctl{display:flex;align-items:center;gap:8px;padding:12px 16px;border-top:1px solid var(--mist);background:var(--white)}
+.wt-ctl .sp{flex:1}
+.wt-btn{border:1px solid var(--mist);background:var(--white);color:var(--ink);border-radius:999px;padding:12px 18px;font-weight:600;font-size:15px;white-space:nowrap}
+.wt-btn:hover{border-color:var(--ink)}
+.wt-btn.next{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.wt-btn.next:hover{background:var(--charcoal)}
+.wt-btn[disabled]{opacity:.35;cursor:default}
+.wt-btn.all{padding:12px 14px}
+.wt-keys{font:500 11.5px/1 var(--fm);color:var(--slate);white-space:nowrap}
+
+/* all steps drawer */
+.wt-list{position:absolute;inset:0;background:var(--white);overflow-y:auto;padding:18px 20px 24px;transform:translateX(-100%);transition:transform .25s cubic-bezier(.2,.7,.2,1);z-index:5}
+.wt-list.open{transform:none}
+.wt-panel{position:relative}
+.wt-list h2{font-size:20px;margin:0 0 6px}
+.wt-list .grp{font:500 11.5px/1.3 var(--fm);letter-spacing:.07em;text-transform:uppercase;color:var(--or-ink);margin:18px 0 6px}
+.wt-list ol{list-style:none;margin:0;padding:0}
+.wt-list li button{display:grid;grid-template-columns:30px minmax(0,1fr);gap:8px;width:100%;text-align:left;border:0;background:none;padding:9px 8px;border-radius:8px;font-size:15px;color:var(--charcoal)}
+.wt-list li button:hover{background:var(--paper)}
+.wt-list li button[aria-current]{background:var(--or-t);color:var(--ink);font-weight:600}
+.wt-list li button span{font:500 12px/1.6 var(--fm);color:var(--slate)}
+.wt-close{float:right;border:1px solid var(--mist);background:var(--white);border-radius:999px;padding:8px 12px;font-size:13.5px;font-weight:600}
+
+@media (max-width:1360px){ :root{--panel:360px} }
+@media (max-width:1100px){ .wt-keys{display:none} }
+@media (max-width:899px){
+  :root{--top:56px}
+  html,body{height:auto}
+  #wt-open{display:none}
+  .wt-logo span{display:none}
+  .wt{display:block;height:auto}
+  .wt-panel{border-right:0;border-bottom:1px solid var(--mist)}
+  .wt-scroll{padding:18px 16px 8px;overflow:visible}
+  .wt-stage{height:78vh;min-height:520px}
+  .wt-ctl{position:sticky;bottom:0;z-index:6;box-shadow:0 -8px 20px rgba(0,0,0,.06)}
+  .wt-list{position:fixed;inset:var(--top) 0 0 0}
+}
+</style>
+</head>
+<body>
+<header class="wt-top">
+  <a class="wt-logo" href="/sales/"><img src="/assets/yarta/yarta-logo.webp" alt="" width="66" height="72"><div><b>Yarta</b><span>Guided walkthrough · internal</span></div></a>
+  <div class="sp"></div>
+  <nav class="wt-tl"><a id="wt-open" href="/demo/" target="_blank" rel="noopener">Open this screen in a new tab</a><a class="pri" href="/sales/">The sales guide</a></nav>
+</header>
+<div class="wt">
+  <aside class="wt-panel" aria-label="Walkthrough">
+    <div class="wt-prog" aria-hidden="true"><i id="wt-bar"></i></div>
+    <div class="wt-scroll" id="wt-body" aria-live="polite"></div>
+    <div class="wt-ctl">
+      <button class="wt-btn all" id="wt-all" type="button" aria-expanded="false">All steps</button>
+      <span class="sp"></span>
+      <span class="wt-keys">← → keys</span>
+      <button class="wt-btn" id="wt-prev" type="button">Back</button>
+      <button class="wt-btn next" id="wt-next" type="button">Next</button>
+    </div>
+    <div class="wt-list" id="wt-list" aria-label="All steps"></div>
+  </aside>
+  <main class="wt-stage">
+    <div class="wt-load" id="wt-load">Loading the screen</div>
+    <iframe id="wt-frame" title="The Yarta demo, as the customer sees it"></iframe>
+  </main>
+</div>
+<script>
+(function(){
+  var CH = {
+    0:'Start here', 1:'01 · The front door', 2:'02 · The road to 2030', 3:'03 · Where the numbers come from',
+    4:'04 · Down to the document', 5:'05 · The roadmap', 6:'06 · Reports, documents, sectors',
+    7:'07 · Behind the scenes', 8:'08 · Report, price and the ask'
+  };
+  var C='/demo/?sector=council';
+  var STEPS = [
+    {c:0, t:'How to use this walkthrough', u:C+'#/dashboard', s:null,
+     see:['On the right is the real demo, exactly as a prospect sees it. Each step opens the right screen and outlines the part to point at.',
+          'On the left: what is on screen, what to say, and the questions you will get at that point, with the answers.',
+          'The demo stays live, so click around whenever you like. The next step puts the screen back where it needs to be.'],
+     tip:'<b>Before a real call:</b> pick the prospect’s sector with the buttons along the top of the demo. Every organisation in the demo is fictional, so never present its figures as real results.'},
+
+    {c:1, t:'The Reporting Readiness Check', u:'/readiness/', s:'#check',
+     see:['Five short steps: their organisation, what is driving it, the records they hold, how they report today, and where to send the result. The panel on the right moves as they answer.',
+          'When they finish, they get a result straight away: what they already hold, what to sort first, which plan fits and what it costs.'],
+     say:'“Before we talk, this takes five minutes and gives you a straight answer on where you stand, even if you never buy anything.”',
+     ask:[['Do we have to give an email address?','The result shows on screen when they finish. Contact details are only for us to follow up. There is no mailing list.'],
+          ['Is this a sales form?','It is the start of the conversation. It also tells them what to sort first, which is useful whatever they decide.']],
+     tip:'<b>Use their answers.</b> Read them before the discovery call and quote them back: “You said your fleet and waste records sit with two different people…”'},
+
+    {c:2, t:'The first question: are we going to make it?', u:C+'#/dashboard', s:'.cx-c-top',
+     see:['The dashboard opens on the question a mayor, a CEO or a board asks first: are we on track for our 2030 target? Underneath: how much they have cut so far, and the pace needed each year from here.',
+          'On the right is the Yarta Score out of 100, its band, and the change on a year ago.'],
+     say:'“This is the first thing your councillors will ask, so it is the first thing you see.”',
+     ask:[['Where does the 2030 target come from?','It is their own target, agreed during onboarding. Where they don’t have one, the published eco standard is the floor.'],
+          ['What is the score, exactly?','The average of their category scores, each measured against the eco standards under our published method. It is self-declared, not an accredited rating.']]},
+
+    {c:2, t:'The road to 2030', u:C+'#/dashboard', s:'.cx-c-road',
+     see:['The orange line is their emissions, shown as the change on their baseline year. The dashed line is a straight path from the baseline to their target.',
+          'Below the line they are ahead; above it they are behind. The numbered markers along the bottom show when each step of their plan starts.'],
+     say:'“Below the dashed line, you are ahead. The numbers along the bottom are when your plan kicks in.”',
+     ask:[['What is the grey band at the start?','The baseline year. Every later month is compared with the same months of that year, so seasons don’t distort it.']]},
+
+    {c:2, t:'Their plan, in the order it starts', u:C+'#/dashboard', s:'.cx-steps',
+     see:['Each step shows when it starts, what it is, the estimated effect as a range, when the full effect should show, and whether it is booked. One is already confirmed here.'],
+     say:'“Each of these comes from your own figures. The effect is a range, not a promise, and the next report shows what actually happened.”',
+     ask:[['Do we have to use your providers?','No. Any provider counts, and the score doesn’t depend on who does the work. Yarta takes no fee for introductions. Where a Recycle Group business does the work, the report says so.'],
+          ['Is the work included in the subscription?','No. The work is a separate contract with whoever does it. The subscription covers the measuring, the reporting and the roadmap.']]},
+
+    {c:2, t:'What it amounts to', u:C+'#/dashboard', s:'.cx-a',
+     see:['The big numbers, drawn to a scale people can picture: the emissions cut as years of their own fleet’s fuel emissions, the waste kept out of landfill as a 100-square grid, drinking water in Olympic pools of 2,500 kL.',
+          'Every comparison uses either their own figures or a fixed, stated measure.'],
+     say:'“These are the numbers that land in a council meeting.”',
+     tip:'<b>Don’t add your own comparisons</b>, like cars off the road or trees planted. We only use comparisons with a stated source.'},
+
+    {c:3, t:'Where the emissions come from', u:C+'#/dashboard', s:'.ov-srcp',
+     see:['Emissions by source, each labelled Scope 1, 2 or 3, with its share and the change on the baseline year.',
+          'The note underneath gives the avoided emissions from their recycling: a modelled estimate, reported separately and never taken off the total.'],
+     say:'“Scope 1 is the fuel and gas you burn. Scope 2 is your electricity. Scope 3 is the rest of your value chain, like waste sent to landfill.”',
+     ask:[['Why isn’t the recycling benefit taken off our total?','Because the greenhouse gas reporting rules say avoided emissions must be reported separately and never deducted. Netting them off is exactly what gets organisations into trouble.'],
+          ['Which factors do you use?','The National Greenhouse Accounts factors for the year. “Emissions in detail” shows the factor, source and edition on every line.']]},
+
+    {c:3, t:'The four levers', u:C+'#/dashboard', s:'.ov-levs',
+     see:['Energy, fleet, water and waste: where most organisations can move fastest. Each shows where they are, the standard, the published industry figure where one exists, and twelve months of trend.'],
+     say:'“These four are where you can move fastest. Each one shows you, the standard and the industry figure side by side.”',
+     ask:[['Is “industry” other councils’ data?','No. It is a published figure from a named public source, printed with its source and year. We never use or share other customers’ data.']]},
+
+    {c:3, t:'The score, in its ten parts', u:C+'#/dashboard', s:'#ten',
+     see:['Each column is one category’s score out of 100. The dashed line is their overall score, the average of the categories they report. The small tick on each column is where it was a year ago.',
+          'The top lists what is lifting the score and what is holding it back. Clicking a column opens that category.'],
+     say:'“Your score is the average of these. These two are lifting it; these two are holding it back.”',
+     ask:[['What if we don’t report a category?','It is marked “not reported” and left out of the score. We never guess a figure.']]},
+
+    {c:4, t:'One category: waste', u:C+'#/category/waste', s:'.ov-cat-top',
+     see:['The category score with its headline figures and the change on the baseline year. Further down: where the waste goes, stream by stream, month by month, and how it sits against the standard of 80% recovery by 2030.'],
+     say:'“Any category opens up like this. Here is waste: where it goes, and how you compare with the 2030 standard.”'},
+
+    {c:4, t:'Every figure, and where it came from', u:C+'#/category/waste', s:'.ov-fig',
+     see:['Every figure for the month, the kind of document it was taken from, the twelve-month total and the change on the baseline. Calculated figures show their formula.',
+          'This is what an auditor, or a sceptical councillor, will ask to see.'],
+     say:'“Pick any number on the dashboard, and we can show you the document behind it and how it was calculated.”',
+     ask:[['Who enters these?','A named Yarta data operator, from the documents they send. A second analyst then checks the month before it is published.'],
+          ['What are the evidence grades?','Every document is graded A, B or C, from strongest to weakest. The grade shows on the report so readers can see how firm each figure is.']]},
+
+    {c:5, t:'Now, at the standards, and with help', u:C+'#/roadmap', s:'.rm-top',
+     see:['Three numbers: the score now, the score they would have at the eco standards, and an estimate of where the recommended help could take them. The chart projects the score month by month.'],
+     say:'“This is the gap between where you are and the standard, and how much of it the plan would close.”',
+     ask:[['Will our score really go up by that much?','It is an estimate from published rules applied to their figures, never a promise. Each item states its assumption, and the next report shows what actually changed.']]},
+
+    {c:5, t:'The recommended help', u:C+'#/roadmap', s:'.rm-top ~ .tbl-wrap',
+     see:['The suggestions, weakest category first. Each one says why it is recommended (from their own figures), what they get, who owns it at their end, the estimated change and when it starts.',
+          'Unticking an item shows the estimate without it.'],
+     say:'“None of this is generic advice. Each line is built from your figures.”'},
+
+    {c:5, t:'One improvement in detail', u:C+'#/improvements/fleet', s:'.imp-detail',
+     see:['The estimated change as a range, why it is recommended, what is involved, who delivers it and the assumption behind the estimate.',
+          'Below that: what they get, who owns it, when it should show in their figures, and the brief Yarta sends the provider ahead, so the work starts from their data instead of a questionnaire. Booking is at the bottom.'],
+     say:'“The fleet plan works from your own vehicle register and replacement cycle, so the timing is realistic.”',
+     ask:[['Can we use our own fleet adviser?','Yes. The result still shows up in their report either way.'],
+          ['Is the written plan part of the subscription?','Don’t answer this yet. Check with Ryan, and never quote it as an extra.']]},
+
+    {c:6, t:'Reports for every period', u:C+'#/reports', s:'.content > .tbl-wrap',
+     see:['A report for every verified month, plus quarterly and annual roll-ups on the financial year. Each carries the method version and a report ID.'],
+     say:'“Every month we verify becomes a report you can hand to anyone.”'},
+
+    {c:6, t:'The report itself', u:C+'#/report/2026-07', s:'.rp-cover',
+     see:['Page one: the score, now against the standards and with help, emissions against the 2030 path, and the headline figures. Page two has the figures behind them. Page three is the roadmap by quarter.',
+          'It prints as three A4 pages. Once issued, a report can’t be changed.'],
+     say:'“This is what goes to your councillors, your board or your auditor.”',
+     ask:[['Can we publish it?','Yes, as issued. They can’t alter it and present it as Yarta’s, or describe the score as accredited or verified by a third party.']]},
+
+    {c:6, t:'How the data gets in', u:C+'#/documents', s:'.content > .panel',
+     see:['The customer uploads the bills and reports they already hold. If they have nothing for a category, they can declare it “not reported” with a note. Each month lists what has arrived.',
+          'The customer never keys in a figure.'],
+     say:'“Your job each month is to send documents. Ours is everything after that.”',
+     ask:[['What if we miss a month?','On the 1st of each month, an email lists what is still needed. Missing figures are never guessed.']]},
+
+    {c:6, t:'What to send', u:C+'#/checklist', s:'.content > .panel',
+     see:['The list of documents for their sector, category by category: what to send, who usually holds it and how often.'],
+     say:'“Here is exactly what we need, and who in your organisation usually has it.”',
+     tip:'<b>Print this for the prospect</b> after the walkthrough. It turns “send us your data” into a list someone can act on.'},
+
+    {c:6, t:'Same product, their sector', u:'/demo/?sector=logistics#/dashboard', s:'.cx-c-top',
+     see:['The sector buttons along the top switch the whole demo: the organisation, its categories, the standards that apply and its roadmap. This is a freight company still in its baseline year.',
+          'There are eight sectors: councils, business and offices, hospitals and aged care, universities and schools, manufacturing, construction and property, retail and hospitality, and logistics and transport.'],
+     say:'“Here is the same thing for a transport operator in its first year with us.”',
+     tip:'<b>On a real call, start here:</b> switch to their sector before you show anything else.'},
+
+    {c:7, t:'The Yarta team’s workbench', u:'/tool/#/ops/home', s:'.ops-grid',
+     see:['This is what the Yarta team sees, not the customer: gap emails to send, documents due, months to enter, months waiting for a second analyst, reports to issue, bookings and provider checks.'],
+     say:'“Behind your dashboard there is a named analyst who enters your figures, and a second analyst who checks them.”',
+     tip:'<b>Show this only if it builds trust.</b> It is the team’s own tool, shown here on demo data.'},
+
+    {c:7, t:'Four eyes on every month', u:'/tool/#/ops', s:'.content > .tbl-wrap',
+     see:['Months waiting for verification. The person who entered a month can’t verify it. A verified month is frozen; to change it, it has to be reopened, and the change is logged.'],
+     say:'“No figure reaches your dashboard until a second person has checked it against the document.”'},
+
+    {c:8, t:'The sample report, by sector', u:'/report/?sector=council', s:'#yarta',
+     see:['The sample report, with a version for each sector. It prints as three A4 pages and there is a PDF of each.'],
+     say:'“Send this to whoever signs. It shows them exactly what they would get.”'},
+
+    {c:8, t:'The price', u:'/pricing/', s:'#plans',
+     see:['Councils up to 50,000 residents: $1,999 a month. Larger councils are priced on application. Business: $999, $1,999 or $2,999 a month by staff numbers. Every plan is an annual subscription.',
+          'Foundation Members who join in the first 12 months pay no establishment fee, normally $5,000 to $15,000, and keep their price for the first term.'],
+     say:'“Because we are in our first year, Foundation Members pay no set-up fee, and the price you join at is held.”',
+     ask:[['Can you do a better price?','Not on the monthly fee: the Foundation saving is the offer. Take anything else to Ryan.'],
+          ['We are a council over 50,000 residents.','Get their population, sites and services, and get the price from Ryan before putting a number in writing.']]},
+
+    {c:8, t:'The ask', u:'/pricing/', s:'#included',
+     see:['Finish on what is included and what isn’t, then make one clear ask.'],
+     say:'“The best next step is to send us one month of your records. We’ll show you what Yarta makes of them, and we can go through it together on [date].”',
+     tip:'<b>Before you hang up:</b> agree the date to review their figures, and who will send the records. Then send the “after the walkthrough” email from the sales guide the same day.'}
+  ];
+
+  var base=location.pathname.replace(/\/sales\/walkthrough\/.*$/,''), frame=document.getElementById('wt-frame'), body=document.getElementById('wt-body'),
+      bar=document.getElementById('wt-bar'), prev=document.getElementById('wt-prev'), next=document.getElementById('wt-next'),
+      list=document.getElementById('wt-list'), allBtn=document.getElementById('wt-all'), open=document.getElementById('wt-open'), load=document.getElementById('wt-load');
+  var cur=0, token=0;
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function initial(){ var m=/[?&]step=(\d+)/.exec(location.search); var n=m?+m[1]-1:0; return n>=0&&n<STEPS.length?n:0; }
+
+  function renderPanel(){
+    var st=STEPS[cur], h='';
+    h+='<div class="wt-meta"><span class="wt-ch">'+esc(CH[st.c])+'</span><span class="wt-count">Step '+(cur+1)+' of '+STEPS.length+'</span></div>';
+    h+='<h1>'+esc(st.t)+'</h1>';
+    h+='<p class="wt-k">On screen</p><div class="wt-see">'+st.see.map(function(p){ return '<p>'+esc(p)+'</p>'; }).join('')+'</div>';
+    if(st.say) h+='<p class="wt-k">Say</p><p class="wt-say">'+esc(st.say)+'</p>';
+    if(st.ask&&st.ask.length) h+='<p class="wt-k">They’ll ask</p><div class="wt-ask">'+st.ask.map(function(q){ return '<details><summary>'+esc(q[0])+'</summary><p>'+esc(q[1])+'</p></details>'; }).join('')+'</div>';
+    if(st.tip) h+='<p class="wt-tip">'+st.tip+'</p>';
+    if(st.s) h+='<div class="wt-act"><button type="button" id="wt-show">Show me again</button></div>';
+    body.innerHTML=h; body.scrollTop=0;
+    var again=document.getElementById('wt-show'); if(again) again.addEventListener('click',function(){ highlight(st.s, ++token); });
+    bar.style.width=((cur+1)/STEPS.length*100)+'%';
+    prev.disabled=cur===0;
+    next.textContent=cur===STEPS.length-1?'Back to the guide':'Next';
+    open.href=base+st.u;
+    Array.prototype.forEach.call(list.querySelectorAll('button[data-i]'),function(b){ if(+b.getAttribute('data-i')===cur) b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current'); });
+    document.title=st.t+' · Yarta guided walkthrough';
+    if(history.replaceState) history.replaceState(null,'',location.pathname+'?step='+(cur+1));
+  }
+
+  function frameLoc(){ try{ return frame.contentWindow.location; }catch(e){ return null; } }
+  function splitU(u){ var i=u.indexOf('#'); return i<0?{p:u,h:''}:{p:u.slice(0,i),h:u.slice(i)}; }
+  function go(n){
+    cur=Math.max(0,Math.min(STEPS.length-1,n)); renderPanel();
+    var st=STEPS[cur], want=splitU(base+st.u), loc=frameLoc(), t=++token;
+    if(loc && loc.href!=='about:blank' && (loc.pathname+loc.search)===want.p){
+      if(loc.hash!==want.h){ loc.hash=want.h; setTimeout(function(){ highlight(st.s,t); },200); }
+      else highlight(st.s,t);
+    } else {
+      load.classList.add('on');
+      frame.onload=function(){
+        if(t!==token) return;
+        load.classList.remove('on');
+        var l=frameLoc(); if(l && want.h && l.hash!==want.h) l.hash=want.h;   // the page may land on its default screen first
+        highlight(st.s,t);
+      };
+      frame.src=base+st.u;
+    }
+  }
+
+  function highlight(sel,t){
+    var tries=0;
+    (function poll(){
+      if(t!==token) return;
+      var d; try{ d=frame.contentDocument; }catch(e){ return; }
+      if(!d||!d.body){ if(tries++<40) setTimeout(poll,100); return; }
+      if(!d.getElementById('wt-hl-css')){ var s=d.createElement('style'); s.id='wt-hl-css';
+        s.textContent='.wt-hl{outline:3px solid #CF7A2E!important;outline-offset:6px!important;border-radius:12px;scroll-margin-top:90px;animation:wtpulse 1.4s ease-out 2}@keyframes wtpulse{0%{box-shadow:0 0 0 0 rgba(207,122,46,.5)}100%{box-shadow:0 0 0 22px rgba(207,122,46,0)}}@media (prefers-reduced-motion:reduce){.wt-hl{animation:none}}';
+        (d.head||d.body).appendChild(s); }
+      Array.prototype.forEach.call(d.querySelectorAll('.wt-hl'),function(x){ x.classList.remove('wt-hl'); });
+      if(!sel){ try{ frame.contentWindow.scrollTo(0,0); }catch(e){} return; }
+      var el=d.querySelector(sel);
+      if(!el || !el.offsetHeight){ if(tries++<50) setTimeout(poll,100); return; }
+      el.classList.add('wt-hl');
+      // a router may still replace the screen after a hash change: if the outlined element goes, find it again
+      setTimeout(function(){ if(t===token && !el.isConnected && tries<60){ tries+=5; poll(); } },450);
+      setTimeout(function(){ if(t===token && !el.isConnected && tries<60){ tries+=5; poll(); } },1300);
+      var vh=frame.clientHeight||700, r=el.getBoundingClientRect(), w=frame.contentWindow;
+      var y=w.pageYOffset+r.top-(r.height>vh*0.7?90:Math.max(90,(vh-r.height)/2));
+      var smooth=!(w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').matches);
+      w.scrollTo({top:Math.max(0,y),behavior:smooth?'smooth':'auto'});
+    })();
+  }
+
+  // all steps
+  var lh='<button class="wt-close" type="button" id="wt-x">Close</button><h2>All steps</h2>', last=-1;
+  STEPS.forEach(function(st,i){ if(st.c!==last){ if(last>-1) lh+='</ol>'; lh+='<p class="grp">'+esc(CH[st.c])+'</p><ol>'; last=st.c; }
+    lh+='<li><button type="button" data-i="'+i+'"><span>'+(i<9?'0':'')+(i+1)+'</span>'+esc(st.t)+'</button></li>'; });
+  list.innerHTML=lh+'</ol>';
+  function toggle(on){ list.classList.toggle('open',on); allBtn.setAttribute('aria-expanded',on?'true':'false'); }
+  allBtn.addEventListener('click',function(){ toggle(!list.classList.contains('open')); });
+  list.addEventListener('click',function(e){ if(e.target.closest('#wt-x')){ toggle(false); return; } var b=e.target.closest('button[data-i]'); if(b){ toggle(false); go(+b.getAttribute('data-i')); } });
+
+  prev.addEventListener('click',function(){ go(cur-1); });
+  next.addEventListener('click',function(){ if(cur===STEPS.length-1){ location.href=base+'/sales/'; return; } go(cur+1); });
+  document.addEventListener('keydown',function(e){
+    if(e.target.closest && e.target.closest('input,textarea,select,[contenteditable]')) return;
+    if(e.key==='ArrowRight'&&cur<STEPS.length-1){ go(cur+1); } else if(e.key==='ArrowLeft'&&cur>0){ go(cur-1); } else if(e.key==='Escape'){ toggle(false); }
+  });
+  /* show the screens at desktop width (1180px, where the customer's menu is visible), scaled to fit the space */
+  var VW=1180, stage=frame.parentNode;
+  function fit(){
+    var w=stage.clientWidth, h=stage.clientHeight;
+    if(window.innerWidth>=900 && w<VW){ var k=w/VW; frame.style.width=VW+'px'; frame.style.height=(h/k)+'px'; frame.style.transform='scale('+k+')'; }
+    else { frame.style.width=''; frame.style.height=''; frame.style.transform=''; }
+  }
+  window.addEventListener('resize',fit); fit();
+  go(initial());
+})();
+</script>
+</body>
+</html>

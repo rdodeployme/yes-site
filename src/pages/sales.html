@@ -1,0 +1,510 @@
+<style>
+.page-sales h1,.page-sales h2,.page-sales h3,.page-sales h4{text-wrap:balance;hyphens:manual}
+.page-sales p,.page-sales li,.page-sales td{text-wrap:pretty}
+.page-sales .btn,.page-sales .chip,.page-sales .tag{white-space:nowrap}
+.page-sales .nw{white-space:nowrap}
+.page-sales a.link{color:var(--green);text-decoration:underline;text-underline-offset:3px}
+.page-sales .dark a.link{color:var(--green-3)}
+.page-sales .hero-sub h1{max-width:16ch}
+.page-sales section{padding:clamp(48px,7vw,96px) 0}
+.page-sales .hero-sub{padding:clamp(56px,8vw,112px) 0 clamp(40px,6vw,72px)}
+.page-sales .internal{display:inline-flex;align-items:center;gap:8px;font:500 12px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--green-3);border:1px solid #3a2c20;border-radius:999px;padding:7px 12px;margin:0 0 22px}
+.page-sales .internal i{width:7px;height:7px;border-radius:50%;background:var(--green-2)}
+
+/* jump bar */
+.sx-jump{position:sticky;top:74px;z-index:20;background:rgba(244,244,242,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--mist)}
+.sx-jump .wrap{display:flex;gap:6px;overflow-x:auto;padding-top:10px;padding-bottom:10px;scrollbar-width:none}
+.sx-jump .wrap::-webkit-scrollbar{display:none}
+.sx-jump a{flex:none;font:500 13.5px/1 var(--font-body);color:var(--charcoal);padding:9px 12px;border-radius:999px;border:1px solid transparent;white-space:nowrap}
+.sx-jump a:hover{border-color:var(--mist);background:var(--white)}
+.sx-jump a.on{background:var(--ink);color:var(--paper)}
+
+html{scroll-padding-top:140px}
+/* section heads */
+.sx-h{display:grid;gap:10px 48px;grid-template-columns:minmax(0,1fr);margin-bottom:clamp(24px,3.5vw,40px)}
+@media(min-width:960px){.sx-h{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:end}}
+.sx-h h2{font-size:clamp(28px,3.4vw,44px);max-width:20ch}
+.sx-h p{margin:0;color:var(--graphite);font-size:17.5px;max-width:56ch}
+.dark .sx-h p{color:var(--mist)}
+
+/* the pitch */
+.sx-pitch{font:700 clamp(24px,2.9vw,38px)/1.22 var(--font-display);letter-spacing:-.02em;max-width:30ch;margin:0 0 clamp(28px,4vw,44px);color:var(--paper)}
+.sx-pitch em{font-style:normal;color:var(--green-3)}
+.sx-script{border-left:3px solid var(--green-2);padding:4px 0 4px 22px;max-width:70ch}
+.sx-script p{font-size:18.5px;line-height:1.6;color:#E9E6E0}
+.sx-script .k{display:block;font:500 12px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--green-3);margin:0 0 12px}
+.sx-three{display:grid;gap:1px;background:#2b2724;border:1px solid #2b2724;border-radius:14px;overflow:hidden;margin-top:clamp(32px,4vw,48px);grid-template-columns:minmax(0,1fr)}
+@media(min-width:820px){.sx-three{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.sx-three div{background:var(--ink-2);padding:22px 22px 20px}
+.sx-three b{display:block;font:700 19px/1.25 var(--font-display);color:var(--paper);margin-bottom:8px}
+.sx-three p{margin:0;color:var(--mist);font-size:15.5px;line-height:1.55}
+.sx-three .n{font:500 12px/1 var(--font-mono);color:var(--green-3);display:block;margin-bottom:14px}
+
+/* tables */
+.sx-t{width:100%;border-collapse:collapse;font-size:15.5px;background:var(--white);border:1px solid var(--mist);border-radius:14px;overflow:hidden}
+.sx-t th{font:500 12px/1.3 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--slate);text-align:left;padding:14px 16px;border-bottom:1px solid var(--mist);background:var(--paper)}
+.sx-t td{padding:14px 16px;border-bottom:1px solid var(--mist-2);vertical-align:top;line-height:1.5;color:var(--charcoal)}
+.sx-t tr:last-child td{border-bottom:0}
+.sx-t td:first-child{font-weight:600;color:var(--ink)}
+@media(min-width:1180px){.sx-t.stack td:first-child{width:19%}}
+@media(max-width:559px){.sx-t .yr{display:none}.sx-t td,.sx-t th{padding:12px 12px}}
+.sx-t .r{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.sx-tw{overflow-x:auto;border-radius:14px}
+@media(max-width:1179px){
+  .sx-t.stack thead{display:none}
+  .sx-t.stack,.sx-t.stack tbody,.sx-t.stack tr,.sx-t.stack td{display:block;width:100%}
+  .sx-t.stack tr{border-bottom:1px solid var(--mist);padding:6px 0}
+  .sx-t.stack tr:last-child{border-bottom:0}
+  .sx-t.stack td{border:0;padding:6px 16px}
+  .sx-t.stack td[data-l]::before{content:attr(data-l);display:block;font:500 11.5px/1.4 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--slate);margin-bottom:2px}
+}
+
+/* two columns: fit / not fit, say / never say */
+.sx-two{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:880px){.sx-two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.sx-box{background:var(--white);border:1px solid var(--mist);border-radius:14px;padding:clamp(20px,2.6vw,28px)}
+.sx-box h3{font-size:clamp(20px,1.8vw,24px);margin:0 0 14px}
+.sx-box ul{list-style:none;padding:0;margin:0}
+.sx-box li{position:relative;padding:10px 0 10px 28px;border-top:1px solid var(--mist-2);font-size:15.5px;line-height:1.5;color:var(--charcoal)}
+.sx-box li:first-child{border-top:0}
+.sx-box li::before{content:"";position:absolute;left:2px;top:17px;width:12px;height:2px;background:var(--green-2)}
+.sx-box.no li::before{content:"×";top:9px;width:auto;height:auto;background:none;font:600 16px/1 var(--font-mono);color:var(--charcoal)}
+.sx-box.no{background:var(--paper-2)}
+.sx-box li b{color:var(--ink)}
+.sx-box .sub{margin:-6px 0 12px;color:var(--graphite);font-size:15px}
+
+/* stages */
+.sx-stages{list-style:none;padding:0;margin:0;counter-reset:st;border-top:1px solid var(--mist)}
+.sx-stages>li{counter-increment:st;display:grid;gap:8px 28px;grid-template-columns:minmax(0,1fr);padding:clamp(20px,2.6vw,28px) 0;border-bottom:1px solid var(--mist);margin:0}
+@media(min-width:960px){.sx-stages>li{grid-template-columns:72px minmax(0,1.05fr) minmax(0,1fr)}}
+.sx-stages>li::before{content:counter(st,decimal-leading-zero);font:500 13px/1 var(--font-mono);color:var(--green);padding-top:6px}
+.sx-stages h3{font-size:clamp(20px,1.9vw,25px);margin:0 0 8px}
+.sx-stages p{margin:0 0 8px;color:var(--charcoal);font-size:16px}
+.sx-stages .meta{font-size:14.5px;color:var(--graphite);background:var(--white);border:1px solid var(--mist);border-radius:12px;padding:14px 16px;align-self:start}
+.sx-stages .meta b{display:block;font:500 11.5px/1.3 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--slate);margin:0 0 4px}
+.sx-stages .meta p{font-size:14.5px;color:var(--charcoal);margin:0 0 10px}
+.sx-stages .meta p:last-child{margin:0}
+
+/* discovery */
+.sx-q{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:760px){.sx-q{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1180px){.sx-q{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.sx-q section{padding:0}
+.sx-q h3{font:500 12.5px/1.3 var(--font-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--green);margin:0 0 10px}
+.sx-q ol{margin:0;padding-left:1.25em}
+.sx-q li{font-size:16px;line-height:1.5;margin-bottom:10px;color:var(--ink)}
+.sx-q li span{display:block;color:var(--graphite);font-size:14.5px;margin-top:2px}
+
+/* walkthrough promo */
+.sx-wt{display:grid;gap:28px;grid-template-columns:minmax(0,1fr);align-items:center}
+@media(min-width:960px){.sx-wt{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)}}
+.sx-wt ol{margin:0;padding:0;list-style:none;border-top:1px solid #2b2724}
+.sx-wt ol li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;padding:12px 0;border-bottom:1px solid #2b2724;margin:0;font-size:15.5px;color:var(--mist)}
+.sx-wt ol li b{color:var(--paper);font-weight:600}
+.sx-wt ol li .n{font:500 12px/1.6 var(--font-mono);color:var(--green-3)}
+.sx-wt ol li .m{font:500 12px/1.6 var(--font-mono);color:var(--slate);white-space:nowrap}
+
+/* pricing */
+.sx-price{display:grid;gap:18px;grid-template-columns:minmax(0,1fr);margin-bottom:24px}
+@media(min-width:880px){.sx-price{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.sx-price .sx-box p{font-size:15.5px;color:var(--charcoal)}
+.sx-rules{counter-reset:r;list-style:none;padding:0;margin:0;display:grid;gap:0;grid-template-columns:minmax(0,1fr)}
+@media(min-width:880px){.sx-rules{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:36px}}
+.sx-rules li{counter-increment:r;position:relative;padding:14px 0 14px 40px;border-top:1px solid var(--mist);font-size:15.5px;line-height:1.5;margin:0}
+.sx-rules li::before{content:counter(r);position:absolute;left:0;top:13px;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--paper);font:600 12px/26px var(--font-mono);text-align:center}
+.sx-rules li b{color:var(--ink)}
+
+/* objections */
+.page-sales .faq summary{font-size:18px}
+.page-sales .faq summary span{text-wrap:balance;min-width:0}
+.page-sales .faq .a{padding:0 0 16px;max-width:76ch}
+.page-sales .faq .a p{color:var(--charcoal);margin:0 0 .7em;font-size:16px}
+.page-sales .faq .a .say{border-left:3px solid var(--green-2);padding:2px 0 2px 16px;color:var(--ink);font-size:16.5px}
+.sx-obj{display:grid;gap:0 48px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:1080px){.sx-obj{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+
+/* emails */
+.sx-mails{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:960px){.sx-mails{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.sx-mail{background:var(--white);border:1px solid var(--mist);border-radius:14px;display:flex;flex-direction:column;min-width:0}
+.sx-mail header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--mist-2)}
+.sx-mail header b{font:700 17px/1.25 var(--font-display);color:var(--ink)}
+.sx-mail header span{display:block;font-size:13.5px;color:var(--graphite);font-weight:400;font-family:var(--font-body);margin-top:2px}
+.sx-mail pre{margin:0;padding:16px 18px 20px;white-space:pre-wrap;word-break:normal;overflow-wrap:anywhere;font:15px/1.6 var(--font-body);color:var(--charcoal);flex:1}
+.sx-copy{flex:none;font:600 13px/1 var(--font-body);background:var(--ink);color:var(--paper);border:0;border-radius:999px;padding:10px 14px;cursor:pointer;white-space:nowrap}
+.sx-copy:hover{background:var(--charcoal)}
+.sx-copy.done{background:var(--green-2)}
+
+/* status */
+.sx-status{display:grid;gap:1px;background:var(--mist);border:1px solid var(--mist);border-radius:14px;overflow:hidden;grid-template-columns:minmax(0,1fr)}
+@media(min-width:880px){.sx-status{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.sx-status div{background:var(--white);padding:18px 20px}
+.sx-status .st{display:inline-block;font:500 11.5px/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;padding:6px 9px;border-radius:999px;margin-bottom:10px;white-space:nowrap}
+.sx-status .live{background:var(--green-tint);color:var(--green-ink)}
+.sx-status .check{background:var(--ink);color:var(--paper)}
+.sx-status b{display:block;font:700 17.5px/1.3 var(--font-display);margin-bottom:6px;color:var(--ink)}
+.sx-status p{margin:0;font-size:15px;color:var(--graphite)}
+
+.sx-hand{columns:1;column-gap:40px;padding:0;margin:0;list-style:none}
+@media(min-width:880px){.sx-hand{columns:2}}
+.sx-hand li{break-inside:avoid;padding:12px 0 12px 30px;border-top:1px solid var(--mist);position:relative;font-size:15.5px;margin:0}
+.sx-hand li::before{content:"";position:absolute;left:0;top:15px;width:16px;height:16px;border:1.5px solid var(--charcoal);border-radius:4px}
+.sx-hand li b{color:var(--ink)}
+.sx-foot{font-size:14px;color:var(--slate);margin-top:18px;max-width:80ch}
+@media print{.sx-jump,.sx-copy,.ann,header.nav,footer{display:none!important}.page-sales section{padding:24px 0}}
+</style>
+
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="internal"><i></i>Internal · for the Yarta sales team</p>
+    <h1>How to sell Yarta.</h1>
+    <p class="lead">What it is, who buys it, how the sale runs, what it costs, how to answer the hard questions and what never to say. Read it once end to end, then click through the guided walkthrough before your first call.</p>
+    <div class="btn-row"><a class="btn btn-primary" href="/sales/walkthrough/">Start the guided walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/demo/">Open the live demo</a></div>
+  </div>
+</section>
+
+<nav class="sx-jump" aria-label="On this page"><div class="wrap">
+  <a href="#pitch">The pitch</a><a href="#who">Who buys</a><a href="#fit">Fit</a><a href="#stages">The sale</a><a href="#discovery">Questions</a><a href="#demo">The demo</a><a href="#price">Pricing</a><a href="#objections">Objections</a><a href="#words">Say / never say</a><a href="#emails">Emails</a><a href="#handover">Handover</a><a href="#status">Check first</a>
+</div></nav>
+
+<section class="dark" id="pitch">
+  <div class="wrap">
+    <div class="sx-h"><div><p class="eyebrow">01 · The pitch</p><h2>One sentence, then thirty seconds.</h2></div><p>Learn the sentence word for word. The thirty seconds can be in your own words, as long as the three points stay in.</p></div>
+    <p class="sx-pitch">Yarta takes the environmental records an organisation already holds, <em>does the data entry and checking for them</em>, and gives them one score, a live dashboard and a roadmap of what would lift it.</p>
+    <div class="sx-script">
+      <span class="k">Thirty seconds</span>
+      <p>“Most councils and businesses have their energy bills, fuel cards, water bills and waste reports sitting in different places, and someone spends days each year stitching them together. Yarta takes those records as they are. Our analysts enter every figure, attach the document it came from, and a second analyst checks the month. You get one score out of 100 across ten categories, measured against the 2030 eco standards, with your emissions by scope and a roadmap that says what would lift your score and by roughly how much. You never key a number in. It’s an annual subscription, and Foundation Members who join in the first 12 months pay no set-up fee.”</p>
+    </div>
+    <div class="sx-three">
+      <div><span class="n">01</span><b>We do the data entry.</b><p>They send documents they already hold. A named Yarta data operator enters them and a second analyst verifies the month. This is the biggest difference from software they run themselves.</p></div>
+      <div><span class="n">02</span><b>Every figure can be traced.</b><p>Each number points to a document and an evidence grade. The method, the emission factors and the benchmarks are published. That is what holds up in a council meeting or with an auditor.</p></div>
+      <div><span class="n">03</span><b>It says what to do next.</b><p>The roadmap ranks the improvements by what would move the score, with an estimated range, when it would show up, and accredited providers they can book. Any provider they choose still counts.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="who">
+  <div class="wrap">
+    <div class="sx-h"><div><p class="eyebrow">02 · Who buys</p><h2>Find the person who has to answer for the numbers.</h2></div><p>Councils and businesses are equal targets. In each, the buyer is the person who gets asked “where are we against our target?” and has to pull the answer together by hand.</p></div>
+    <div class="sx-tw"><table class="sx-t stack">
+      <thead><tr><th>Who</th><th>Who you talk to</th><th>What makes it urgent</th><th>What they care about</th></tr></thead>
+      <tbody>
+        <tr><td data-l="Who">Councils</td><td data-l="Who you talk to">Sustainability or environment coordinator, waste and resource recovery manager, their director</td><td data-l="What makes it urgent">Their own 2030 emissions and waste targets, councillors asking for progress, the annual report, the state waste return</td><td data-l="What they care about">One answer for the whole council, not just one contract. Something they can put in front of councillors. Not adding work for a small team.</td></tr>
+        <tr><td data-l="Who">Businesses in a climate reporting group</td><td data-l="Who you talk to">Head of sustainability or ESG, CFO or financial controller, operations manager</td><td data-l="What makes it urgent">Mandatory climate reporting: Scope 3 is reported from each group’s second year and reviewed by an auditor. Check their group on the <a class="link" href="/climate-reporting/">climate reporting page</a>.</td><td data-l="What they care about">Figures that survive an auditor’s questions, with the factor and source on every line, without hiring a team.</td></tr>
+        <tr><td data-l="Who">Businesses outside the groups</td><td data-l="Who you talk to">Owner, general manager, operations or sustainability lead</td><td data-l="What makes it urgent">Big customers and tender panels asking for environmental figures, a board wanting a number, grant conditions</td><td data-l="What they care about">Being able to answer a customer or tender question in a day, with a document behind it.</td></tr>
+        <tr><td data-l="Who">Hospitals, universities, builders, manufacturers, retail, transport</td><td data-l="Who you talk to">Sustainability, facilities or environment manager</td><td data-l="What makes it urgent">Sector targets, funding and accreditation requirements, multi-site&nbsp;reporting</td><td data-l="What they care about">Each site reported the same way, with the categories that matter for their sector. Each sector has its own demo.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="sx-foot">Most councils are not in the mandatory climate reporting groups. Lead councils with their own targets and the eco standards, not with the climate reporting law.</p>
+  </div>
+</section>
+
+<section class="paper-2" id="fit">
+  <div class="wrap">
+    <div class="sx-h"><div><p class="eyebrow">03 · Is it a fit</p><h2>Qualify honestly. A wrong-fit customer costs more than a lost sale.</h2></div><p>Our own comparison page tells prospects when something else is the better fit. Say the same thing on the phone.</p></div>
+    <div class="sx-two">
+      <div class="sx-box"><h3>Good fit</h3><ul>
+        <li><b>Records in several places</b>, with no one person or system pulling them together.</li>
+        <li><b>A target with a date</b>: 2030 emissions, waste diversion, renewable electricity.</li>
+        <li><b>Someone asks for the numbers</b>: councillors, a board, an auditor, a customer or a tender panel.</li>
+        <li><b>A small team</b> that doesn’t want to key data in every month.</li>
+        <li><b>More than one supplier</b> for waste, energy or fuel, so no single portal shows the whole picture.</li>
+        <li><b>Wants to know what to do next</b>, not only where they stand.</li>
+      </ul></div>
+      <div class="sx-box no"><h3>Not a fit, or not yet</h3><ul>
+        <li><b>They have a data team</b> and only need an emissions inventory. Their own carbon software may be enough.</li>
+        <li><b>They need financial-statement assurance.</b> We don’t provide it. They still need an assurance provider; we make that provider’s job easier.</li>
+        <li><b>They want a bespoke strategy</b> written for them. That is consulting work.</li>
+        <li><b>They only need one contractor’s tonnage.</b> The contractor’s portal does that.</li>
+        <li><b>They want a certificate or a “carbon neutral” badge.</b> We don’t issue either.</li>
+        <li><b>No one owns the outcome.</b> Without a named contact the monthly documents won’t arrive.</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="stages">
+  <div class="wrap">
+    <div class="sx-h"><div><p class="eyebrow">04 · The sale</p><h2>Six steps from first contact to switched on.</h2></div><p>Each step has one job. Don’t move on until it is done, and always leave a call with the next step in the diary.</p></div>
+    <ol class="sx-stages">
+      <li><div><h3>First contact</h3><p>An email or call that sends them to the Reporting Readiness Check, or straight to a 30-minute walkthrough. Use the templates in section 10.</p></div>
+        <div class="meta"><b>Done when</b><p>They have completed the Readiness Check, or a walkthrough is booked.</p><b>Use</b><p><a class="link" href="/readiness/">Readiness Check</a> · <a class="link" href="/demo/">live demo</a></p></div></li>
+      <li><div><h3>Readiness Check</h3><p>Five minutes for them, no obligation. It tells them what records they hold, what to sort first, and which plan and price fits. It tells you their size, their timing, what is driving it and what they already hold.</p></div>
+        <div class="meta"><b>Done when</b><p>You have read their answers before you call.</p><b>Use</b><p>Their result. Refer to it on the call: “You said fleet and waste records are with two different people…”</p></div></li>
+      <li><div><h3>Discovery call, 15 to 20 minutes</h3><p>Ask, don’t pitch. Use the questions in section 05. You are finding out who asks for the numbers, where the records live, what target they are chasing, who signs, and when.</p></div>
+        <div class="meta"><b>Done when</b><p>You know the buyer, the signer, the trigger and the timing.</p><b>Then</b><p>Book the walkthrough with the person who will use it and, ideally, the person who signs.</p></div></li>
+      <li><div><h3>Walkthrough, 30 minutes</h3><p>Show the demo in their sector. Open on the road to 2030, show where the numbers come from, then the roadmap and one improvement in detail. Finish on the sample report and price. The guided walkthrough is the script.</p></div>
+        <div class="meta"><b>Done when</b><p>They have agreed to send one month of records, or asked for a proposal.</p><b>Use</b><p><a class="link" href="/sales/walkthrough/">Guided walkthrough</a> · <a class="link" href="/report/">sample report</a></p></div></li>
+      <li><div><h3>One month of their own data</h3><p>The strongest close we have: “Send us one month of bills and reports and we’ll show you what Yarta makes of it.” Their own figures beat any demo. Agree the date to review it together before you hang up.</p></div>
+        <div class="meta"><b>Done when</b><p>The review meeting is held with their figures on screen.</p><b>Check first</b><p>Confirm with Ryan who will enter the month and when, before you offer it.</p></div></li>
+      <li><div><h3>Proposal, agreement, onboarding</h3><p>Send the proposal with the plan, the term, the price and the Foundation Member saving. Once signed, onboarding takes four weeks: scope, baseline year, targets, method sheet, first month entered and verified, dashboard live, handover call.</p></div>
+        <div class="meta"><b>Done when</b><p>The agreement is signed and the handover notes in section 11 are with the data operator.</p><b>Use</b><p><a class="link" href="/onboarding/">The 30-day onboarding plan</a></p></div></li>
+    </ol>
+    <div class="sx-box" style="margin-top:28px"><h3>Councils buy by quote, so sell a 12-month term</h3>
+      <p style="margin:0 0 10px;font-size:15.5px;color:var(--charcoal)">A council plan up to 50,000 residents is $23,988 a year. In the procurement policies we checked in September 2026, a spend at that level needs one or two written quotes (for example, Hobsons Bay needs two quotes from $15,000 to $50,000, and Wyndham needs one quote up to $50,000). A three-year deal is about $72,000, which usually moves into the three-quote band and slows everything down. Lead with a 12-month term.</p>
+      <p style="margin:0;font-size:15.5px;color:var(--charcoal)">Ask early: “What does your procurement policy need for a purchase of about $24,000 a year?” Each council’s policy is different, so check theirs.</p>
+    </div>
+  </div>
+</section>
+
+<section class="paper-2" id="discovery">
+  <div class="wrap">
+    <div class="sx-h"><div><p class="eyebrow">05 · Discovery</p><h2>Twelve questions. Ask them, then listen.</h2></div><p>You won’t need all of them. The ones in bold type matter most: if you can’t answer those after the call, the call isn’t finished.</p></div>
+    <div class="sx-q">
+      <section><h3>Today</h3><ol>
+        <li><b>Who asks you for environmental figures, and how often?</b><span>Councillors, the board, the state, customers, tender panels, an auditor.</span></li>
+        <li>How long does it take to pull a report together, and who does it?<span>Days of someone’s time is the cost Yarta removes.</span></li>
+        <li>Where do the records live?<span>Energy and water bills, fuel cards, waste contractor reports, fleet register, planting and program records.</span></li>
+        <li>Which suppliers send you waste, energy and fuel data?<span>More than one supplier means no single portal shows the whole picture.</span></li>
+      </ol></section>
+      <section><h3>Targets and pressure</h3><ol start="5">
+        <li><b>What targets have you committed to, and by when?</b><span>Emissions, waste diversion, renewable electricity. Most say 2030.</span></li>
+        <li>Do you have a baseline year?<span>If not, onboarding sets one with them.</span></li>
+        <li>For a business: are you in a climate reporting group, and when is your first Scope 3 year?<span>If they don’t know, send them the checker on the climate reporting page.</span></li>
+        <li>If your figures showed you were behind, what would happen next?<span>This is where the roadmap sells itself.</span></li>
+      </ol></section>
+      <section><h3>The decision</h3><ol start="9">
+        <li><b>Who else needs to say yes, and who signs a spend of this size?</b><span>Get the name and the role.</span></li>
+        <li>How many residents, staff or sites?<span>This sets the plan and the price.</span></li>
+        <li><b>When do you need your first report?</b><span>Work back from it: onboarding takes four weeks.</span></li>
+        <li>What would make this a clear yes for you?<span>Write their words down and use them in the proposal.</span></li>
+      </ol></section>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="demo">
+  <div class="wrap">
+    <div class="sx-wt">
+      <div>
+        <p class="eyebrow">06 · The demo</p>
+        <h2 style="font-size:clamp(28px,3.4vw,44px);max-width:22ch">Learn the demo with the guided walkthrough.</h2>
+        <p class="lead" style="margin-top:16px">The walkthrough opens the real demo beside a step-by-step guide. Each step highlights the part of the screen to point at, tells you what to say, and gives you the questions you’ll get there. It takes about 15 minutes to click through.</p>
+        <div class="btn-row" style="margin-top:22px"><a class="btn btn-primary" href="/sales/walkthrough/">Start the walkthrough {{ARROW}}</a><a class="btn btn-ghost" href="/report/">The sample report</a></div>
+        <p style="margin-top:18px;color:var(--mist);font-size:15px;max-width:52ch">On a real call, always switch the demo to the prospect’s sector first with the buttons along the top. Every organisation in the demo is fictional, so never present its figures as real results.</p>
+      </div>
+      <ol>
+        <li><span class="n">01</span><b>Readiness Check, the front door</b><span class="m">2 min</span></li>
+        <li><span class="n">02</span><b>The road to 2030 and the plan</b><span class="m">4 min</span></li>
+        <li><span class="n">03</span><b>Where the numbers come from</b><span class="m">3 min</span></li>
+        <li><span class="n">04</span><b>One category, down to the document</b><span class="m">2 min</span></li>
+        <li><span class="n">05</span><b>The roadmap and one improvement</b><span class="m">4 min</span></li>
+        <li><span class="n">06</span><b>Reports, documents and other sectors</b><span class="m">3 min</span></li>
+        <li><span class="n">07</span><b>Behind the scenes: the Yarta team</b><span class="m">2 min</span></li>
+        <li><span class="n">08</span><b>The sample report, price and the ask</b><span class="m">3 min</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="price">
+  <div class="wrap">
+    <div class="sx-h"><div><p class="eyebrow">07 · Pricing</p><h2>Quote the list price. Sell the saving that already exists.</h2></div><p>Every plan is an annual subscription, priced by the month. There is no charge per report, per site or per category, and no fee for introducing a provider.</p></div>
+    <div class="sx-tw" style="margin-bottom:24px"><table class="sx-t">
+      <thead><tr><th>Plan</th><th>Size</th><th class="r">A month</th><th class="r yr">A year</th></tr></thead>
+      <tbody>
+        <tr><td>Council</td><td>Up to 50,000&nbsp;residents</td><td class="r">$1,999</td><td class="r yr">$23,988</td></tr>
+        <tr><td>Council</td><td>More than 50,000&nbsp;residents</td><td class="r" colspan="2">On application</td></tr>
+        <tr><td>Business</td><td>Up to 30&nbsp;staff</td><td class="r">$999</td><td class="r yr">$11,988</td></tr>
+        <tr><td>Business</td><td>31 to 100&nbsp;staff</td><td class="r">$1,999</td><td class="r yr">$23,988</td></tr>
+        <tr><td>Business</td><td>More than 100&nbsp;staff</td><td class="r">$2,999</td><td class="r yr">$35,988</td></tr>
+      </tbody>
+    </table></div>
+    <div class="sx-price">
+      <div class="sx-box"><h3>Foundation Members</h3><p>The establishment fee is normally $5,000 to $15,000, depending on sites, categories and streams. It covers scoping, the baseline year, targets, the method sheet and the four weeks of onboarding.</p><p style="margin:0">Customers who join in the first 12 months pay none of it, ever. Their monthly fee is held for the first term, they are consulted before a method change is published, and they can choose to be named as a founding customer. This is your reason to sign now.</p></div>
+      <div class="sx-box"><h3>What’s in, what isn’t</h3><p><b>Included:</b> the dashboard, every figure entered and evidence-graded by Yarta, the monthly gap email, a report per period (and per site for business), CSV and PDF exports, the carbon table by scope, benchmarks, the roadmap updated each quarter, a named data operator and onboarding.</p><p style="margin:0"><b>Not included:</b> the work on the roadmap (solar, a fleet change, an audit) which is a separate contract with the provider; offsets or credits; and assurance.</p></div>
+    </div>
+    <ol class="sx-rules">
+      <li><b>Never discount the monthly fee yourself.</b> The Foundation saving is the offer. Anything else goes to Ryan.</li>
+      <li><b>Councils over 50,000 residents are priced on application.</b> Get their population, sites and services, then get the price from Ryan before you put a number in writing.</li>
+      <li><b>The price doesn’t change when they add categories or sites.</b> Starting with fewer categories doesn’t make it cheaper either.</li>
+      <li><b>Business price is set by total staff</b>, across every site.</li>
+      <li><b>Compare against what they spend today:</b> consultant fees, or the staff days spent pulling reports together. The pricing page shows indicative market prices; call them indicative.</li>
+      <li><b>Don’t quote the written improvement plans as an extra.</b> Whether they sit inside the subscription or are a paid add-on hasn’t been decided yet.</li>
+    </ol>
+  </div>
+</section>
+
+<section class="paper-2" id="objections">
+  <div class="wrap">
+    <div class="sx-h"><div><p class="eyebrow">08 · Objections</p><h2>The hard questions, and the honest answers.</h2></div><p>Agree with what is true in the objection first, then answer it. Never claim more than the product does: an overclaim that wins the sale loses the customer at the first audit.</p></div>
+    <div class="sx-obj">
+      <div class="faq">
+        <details><summary><span>“We already report to the state, and our contractor has a portal.”</span></summary><div class="a"><p>Keep doing both. The contractor’s portal shows that contractor’s waste. The state return covers kerbside. Neither covers energy, fleet, water, land, nature and community, or shows them against the 2030 standards.</p><p class="say">“We use the same records, so there’s nothing extra for you to key in. What you get on top is the whole organisation in one score, and what to do about it.”</p></div></details>
+        <details><summary><span>“We already have carbon software.”</span></summary><div class="a"><p>Ask who keys the data in each month. If they have a data team and only need an emissions inventory, their software may be enough; say so. If a small team is keying in invoices, Yarta does that work and adds the other categories, the benchmarks and the roadmap. Yarta’s exports can feed their software.</p></div></details>
+        <details><summary><span>“Our data’s a mess.”</span></summary><div class="a"><p class="say">“That’s normal, and it’s why we do the entry. Send what exists. Anything with no record is marked ‘not reported’ and left out of the score. We never guess it. The monthly email tells you what’s still missing.”</p></div></details>
+        <details><summary><span>“Our auditor won’t accept a self-declared score.”</span></summary><div class="a"><p>Agree: they shouldn’t. The score is a management summary. What an auditor looks at is the figures behind it, and every one comes with its document, its evidence grade, and the factor, source and edition on the carbon table. Yarta doesn’t provide assurance. It makes the assurance provider’s job faster.</p></div></details>
+        <details><summary><span>“Isn’t this just Recycle Group selling recycling?”</span></summary><div class="a"><p>No. They can use any provider for any improvement, and their score doesn’t depend on who does the work. Yarta takes no fee for introductions. Where a Recycle Group business does work, the report says so. Where their material passes through Recycle Group, the recycling figures come from the recycler’s own weighbridge and processing records, which is the strongest kind of evidence for that line.</p></div></details>
+        <details><summary><span>“It’s too expensive,” or “there’s no budget this year.”</span></summary><div class="a"><p>Compare it with what they spend now: staff days pulling reports together, or a consultant’s fees for one report a year. Then the Foundation saving: no establishment fee, up to $15,000, only for the first 12 months. For councils, a 12-month term usually needs only one or two quotes.</p><p class="say">“If budget is the blocker, send us one month of records and look at what you’d get before you decide.”</p></div></details>
+        <details><summary><span>“Can we start with just a few categories?”</span></summary><div class="a"><p>Yes. Most start with energy, fleet and waste and add the rest as records come together. Be clear the price is the same either way: it is set by size, not by category.</p></div></details>
+      </div>
+      <div class="faq">
+        <details><summary><span>“Benchmarking means you share our data.”</span></summary><div class="a"><p class="say">“It doesn’t. Your data is never shared with, shown to or pooled with another customer. The benchmarks are published figures from named public sources, printed on the report with the source and the year.”</p></div></details>
+        <details><summary><span>“How do we know the improvement estimates are real?”</span></summary><div class="a"><p>They are estimates, shown as a range with the date the effect should show. They come from published rules applied to their own figures, and each one states its assumption. The next report shows what actually changed. Never promise a score.</p></div></details>
+        <details><summary><span>“Can we say we’re carbon neutral, or use this in our marketing?”</span></summary><div class="a"><p>They can’t claim carbon neutral from a Yarta report: we don’t issue offsets or credits. They can publish the report as issued, as long as they don’t alter it or describe the score as accredited or third-party verified. Avoided emissions from recycling are an estimate, shown separately, never subtracted from their total.</p></div></details>
+        <details><summary><span>“Who are your customers? Can we speak to one?”</span></summary><div class="a"><p>Be straight: Yarta is new, and the Foundation Members are its first customers. That is why the establishment fee is waived and the price is held. Offer the one-month trial on their own data instead of a reference. Never name a company as a customer unless Ryan confirms it in writing.</p></div></details>
+        <details><summary><span>“What happens if we stop?”</span></summary><div class="a"><p>They keep every report issued and can export all their data for 90 days after the subscription ends. After that, reports and evidence are kept for the retention period in the privacy policy, then deleted.</p></div></details>
+        <details><summary><span>“Where is our data stored?”</span></summary><div class="a"><p>Don’t answer from memory, and don’t promise Australian-only hosting. Say you’ll send the current hosting statement in writing, and get it from Ryan. Councils often ask this; take it seriously.</p></div></details>
+        <details><summary><span>“How long until we’re live?”</span></summary><div class="a"><p>The plan is four weeks from signing: scope and agreement in week 1, baseline and targets in week 2, the first month entered and verified in week 3, the dashboard live and a handover call in week 4. Confirm current start dates with Ryan before you commit to one.</p></div></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="words">
+  <div class="wrap">
+    <div class="sx-h"><div><p class="eyebrow">09 · Say / never say</p><h2>The words that keep us out of trouble.</h2></div><p>Environmental claims are a regulator priority in Australia, and the law applies between businesses too. These rules protect the customer and us. If you aren’t sure a claim is allowed, don’t make it.</p></div>
+    <div class="sx-two">
+      <div class="sx-box"><h3>Say</h3><ul>
+        <li><b>“The Yarta Score”</b>: a score out of 100 under our own published method.</li>
+        <li><b>“Self-declared, under a published, versioned method.”</b></li>
+        <li><b>“Evidence-graded”</b>: every figure has its document and a grade.</li>
+        <li><b>“Avoided emissions: an estimate, reported separately”</b>, never part of their total.</li>
+        <li><b>“Built to support your assurance provider.”</b></li>
+        <li><b>“Published industry benchmarks for your sector.”</b></li>
+        <li><b>“An estimated range”</b> for every improvement, with the date it should show.</li>
+        <li><b>“The first step towards being ready for your auditor.”</b></li>
+        <li><b>“A Recycle Group initiative.”</b></li>
+      </ul></div>
+      <div class="sx-box no"><h3>Never say</h3><ul>
+        <li><b>Certified, accredited, rated, approved, audited or verified by a third party</b>, about the score or the report.</li>
+        <li><b>“Makes you compliant”</b> with climate reporting or any standard.</li>
+        <li><b>Carbon neutral, offset, net zero or carbon saved</b> as something the report gives them.</li>
+        <li><b>“Compared with other councils”</b> or “peers”. We never use other customers’ data.</li>
+        <li><b>“Your score will go up by…”</b> as a promise.</li>
+        <li><b>The demo figures as real results.</b> Every demo organisation is fictional.</li>
+        <li><b>Any company’s name as a customer</b>, unless Ryan has confirmed it in writing.</li>
+        <li><b>Best, leading, first, revolutionary</b> or anything we can’t prove.</li>
+        <li><b>“Free.”</b> Say “no establishment fee for Foundation Members”.</li>
+      </ul></div>
+    </div>
+    <p class="sx-foot">Some demo screens show a working name, “Yindyamarra”. Say “the Yarta Score”. If a prospect asks about the names, say they are being confirmed with the language custodians, and leave it there.</p>
+  </div>
+</section>
+
+<section class="paper-2" id="emails">
+  <div class="wrap">
+    <div class="sx-h"><div><p class="eyebrow">10 · Emails</p><h2>Four emails to start from.</h2></div><p>Change the bracketed parts and anything that doesn’t sound like you. Keep them short. The links are already filled in.</p></div>
+    <div class="sx-mails">
+      <article class="sx-mail"><header><div><b>First contact: council</b><span>To the sustainability or waste lead</span></div><button class="sx-copy" type="button">Copy</button></header>
+<pre>Subject: [Council name]'s environmental figures, in one place
+
+Hi [first name],
+
+I'm [your name] from Yarta, a Recycle Group initiative.
+
+Most councils hold their energy, fleet, water and waste records in different places, and pulling them together for councillors takes days. Yarta takes the records you already hold, our analysts enter and check every figure, and you get one score against the 2030 eco standards, a live dashboard and a roadmap of what would lift it. Your team never keys anything in.
+
+Two quick ways to see it:
+- the five-minute Reporting Readiness Check, which shows what you hold, what to sort first and what it would cost: <span data-u="/readiness/"></span>
+- the live demo on a fictional council: <span data-u="/demo/?sector=council"></span>
+
+Would 30 minutes in the next fortnight suit for a walkthrough?
+
+Kind regards,
+[your name]
+[phone]</pre></article>
+      <article class="sx-mail"><header><div><b>First contact: business</b><span>To the sustainability, ESG or finance lead</span></div><button class="sx-copy" type="button">Copy</button></header>
+<pre>Subject: Your Scope 3 figures, and what's behind them
+
+Hi [first name],
+
+I'm [your name] from Yarta, a Recycle Group initiative.
+
+Under mandatory climate reporting, Scope 3 is reported from each group's second year, and an auditor will ask what sits behind every figure. Yarta takes the bills and reports you already hold, our analysts enter and check every line, and you get your emissions by scope with the factor and source on each one, a score across ten categories and a roadmap of what would improve it.
+
+If you're not sure which group you're in, this checker takes a minute: <span data-u="/climate-reporting/"></span>
+And this shows what you hold today and what it would cost: <span data-u="/readiness/"></span>
+
+Could we find 30 minutes for a walkthrough?
+
+Kind regards,
+[your name]
+[phone]</pre></article>
+      <article class="sx-mail"><header><div><b>After the Readiness Check</b><span>Within one working day</span></div><button class="sx-copy" type="button">Copy</button></header>
+<pre>Subject: Your Readiness Check result
+
+Hi [first name],
+
+Thanks for completing the Readiness Check. From your answers, you already hold [what they hold], and the first thing to sort is [what to sort first].
+
+The quickest way to see what that turns into is a 30-minute walkthrough of the dashboard in your sector. I can show you how [their trigger, e.g. your 2030 target] would look, and what would move it.
+
+Does [day] at [time] or [day] at [time] suit?
+
+Kind regards,
+[your name]</pre></article>
+      <article class="sx-mail"><header><div><b>After the walkthrough</b><span>Same day</span></div><button class="sx-copy" type="button">Copy</button></header>
+<pre>Subject: Next step: one month of your own figures
+
+Hi [first name],
+
+Thanks for your time today. You mentioned [their words on what matters].
+
+As discussed, the best next step is to send us one month of records, and we'll show you what Yarta makes of them. This is the list of what to send for your sector: <span data-u="/checklist/"></span>
+The sample report is here if [signer's name] would like to see it: <span data-u="/report/"></span>
+
+On price: the [plan] is $[price] a month on an annual subscription. As a Foundation Member joining in the first 12 months, there is no establishment fee, which is normally $5,000 to $15,000.
+
+I've pencilled in [date] to go through your figures together. Does that still work?
+
+Kind regards,
+[your name]</pre></article>
+    </div>
+  </div>
+</section>
+
+<section id="handover">
+  <div class="wrap">
+    <div class="sx-h"><div><p class="eyebrow">11 · Handover</p><h2>What the data operator needs from you on day one.</h2></div><p>Onboarding moves only as fast as this list. Send it with the signed agreement, and attach their Readiness Check answers.</p></div>
+    <ul class="sx-hand">
+      <li><b>Organisation details:</b> legal name, type, sector, state, and residents or staff.</li>
+      <li><b>Sites</b> in scope, with an address and a contact for each.</li>
+      <li><b>The reporting contact</b>: name, role, email and phone.</li>
+      <li><b>Who signed</b>, the term, the plan and the monthly fee.</li>
+      <li><b>Foundation Member</b>: yes or no, and the date they joined.</li>
+      <li><b>Which categories</b> they want to start with, and which come later.</li>
+      <li><b>The records they hold</b>, who holds each one and their suppliers.</li>
+      <li><b>Baseline year</b> if they have one, and any targets they have already committed to.</li>
+      <li><b>When they need their first report</b>, and who it is for.</li>
+      <li><b>Anything you promised</b>, in writing. If it isn’t written down, onboarding can’t deliver it.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="paper-2" id="status">
+  <div class="wrap">
+    <div class="sx-h"><div><p class="eyebrow">12 · Check first</p><h2>What’s ready today, and what to confirm first.</h2></div><p>Show everything marked ready with confidence. For the rest, check with Ryan before you put it in writing.</p></div>
+    <div class="sx-status">
+      <div><span class="st live">Ready to show</span><b>The live demo, all eight sectors</b><p>Fictional organisations with demo data. Nothing a prospect clicks is sent anywhere.</p></div>
+      <div><span class="st live">Ready to show</span><b>Sample reports and the Readiness Check</b><p>The sample report prints as three A4 pages for each sector. The Readiness Check gives an instant result.</p></div>
+      <div><span class="st check">Check first</span><b>Start dates and “switched on in 30 days”</b><p>The client portal and the team’s tool are being switched on. Confirm the start date before you commit to one.</p></div>
+      <div><span class="st check">Check first</span><b>Council prices above 50,000 residents</b><p>Not yet set. Get each quote from Ryan. Most large metropolitan councils are above this size.</p></div>
+      <div><span class="st check">Check first</span><b>Hosting, security and data location</b><p>Get the written statement from Ryan for any council or business that asks.</p></div>
+      <div><span class="st check">Check first</span><b>Customer names and references</b><p>There are none to quote yet. Never name an organisation as a customer.</p></div>
+    </div>
+  </div>
+</section>
+
+<!--scripts-->
+<script>
+(function(){
+  /* fill every email link with this site's real address, wherever it is hosted */
+  var base=location.origin+location.pathname.replace(/\/sales\/.*$/,'');
+  Array.prototype.forEach.call(document.querySelectorAll('.page-sales [data-u]'),function(s){ s.textContent=base+s.getAttribute('data-u'); });
+  Array.prototype.forEach.call(document.querySelectorAll('.sx-copy'),function(b){
+    b.addEventListener('click',function(){
+      var t=b.closest('.sx-mail').querySelector('pre').innerText;
+      function ok(){ b.textContent='Copied'; b.classList.add('done'); setTimeout(function(){ b.textContent='Copy'; b.classList.remove('done'); },1800); }
+      if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(ok,function(){ fallback(t); ok(); }); } else { fallback(t); ok(); }
+    });
+  });
+  function fallback(t){ var a=document.createElement('textarea'); a.value=t; a.style.position='fixed'; a.style.opacity='0'; document.body.appendChild(a); a.select(); try{ document.execCommand('copy'); }catch(e){} document.body.removeChild(a); }
+  /* highlight the section in view on the jump bar */
+  var links=Array.prototype.slice.call(document.querySelectorAll('.sx-jump a')), bar=document.querySelector('.sx-jump .wrap');
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(!e.isIntersecting) return; links.forEach(function(a){ var on=a.getAttribute('href')==='#'+e.target.id; a.classList.toggle('on',on); if(on && bar){ var l=a.offsetLeft-bar.clientWidth/2+a.offsetWidth/2; bar.scrollTo({left:Math.max(0,l),behavior:'smooth'}); } }); }); },{rootMargin:'-45% 0px -50% 0px'});
+    links.forEach(function(a){ var s=document.querySelector(a.getAttribute('href')); if(s) io.observe(s); });
+  }
+})();
+</script>

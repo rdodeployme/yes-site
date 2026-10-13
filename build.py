@@ -54,10 +54,12 @@ PAGES = [
     ("/contact/",         None,           "contact.html",      "Talk to Yarta",                                          "Book a walkthrough or ask a question. contact@yes.com.au"),
     ("/report/",     None,           "report.html",  "Sample Yarta Report — environmental sustainability, by sector (demo)", "A sample Yarta Environmental Sustainability Report for each sector, print-ready: summary, figures and the roadmap to improvement."),
     ("/recycling-report/", None,      "recycling-report.html", "Sample recycling report — Hepburn Shire Council (demo)", "The recycling report sample, print-ready: summary, figures and roadmap."),
+    ("/sales/",      None,           "sales.html", "How to sell Yarta — the sales guide (internal)", "Internal guide for the Yarta sales team: the pitch, who buys, the sale step by step, pricing, objections, what never to say, emails and handover."),
+    ("/sales/walkthrough/", None,    "sales-walkthrough.html", "Yarta guided walkthrough (internal)", "A step-by-step guided walkthrough of the Yarta demo for the sales team."),
     ("/language/",   None,           "language.html", "Language on this site — proposed names and their status (internal)", "The First Nations words proposed for Yarta products, which language each comes from, the dictionary check and whether the custodians have confirmed it."),
 ]
-NOINDEX = {"/language/", "/tool/", "/portal/", "/not-found/"}   # internal pages: built and linkable, not indexed
-STANDALONE = [("/report/", "report.html"), ("/demo/", "demo.html"), ("/tool/", "tool.html"), ("/portal/", "portal.html")]   # the portal-based pages: their own document, not the site shell
+NOINDEX = {"/language/", "/tool/", "/portal/", "/not-found/", "/sales/", "/sales/walkthrough/"}   # internal pages: built and linkable, not indexed
+STANDALONE = [("/report/", "report.html"), ("/demo/", "demo.html"), ("/tool/", "tool.html"), ("/portal/", "portal.html"), ("/sales/walkthrough/", "sales-walkthrough.html")]   # the portal-based pages: their own document, not the site shell
 STANDALONE_FRAGS = {f for _, f in STANDALONE}
 REDIRECTS = {"/yarta/": "/report/", "/certificate/": "/recycling-report/"}   # old paths that keep working
 
@@ -251,7 +253,7 @@ def build():
     urls = [u for u in urls if not u.startswith("/recycling-")]
     today = datetime.date.today().isoformat()
     open(os.path.join(DIST, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"  <url><loc>{DOMAIN}{u}</loc><lastmod>{today}</lastmod></url>\n" for u in dict.fromkeys(urls)) + '</urlset>\n')
-    open(os.path.join(DIST, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /tool/\nSitemap: {DOMAIN}/sitemap.xml\n")
+    open(os.path.join(DIST, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /tool/\nDisallow: /sales/\nSitemap: {DOMAIN}/sitemap.xml\n")
     open(os.path.join(DIST, ".nojekyll"), "w").write("")
     print("built", len(built), "pages:", ", ".join(built), "| form:", FORM_MODE, "| base:", BASE_PATH or "/")
 
