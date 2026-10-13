@@ -1,0 +1,16 @@
+{
+  "name": "yarta-backend",
+  "private": true,
+  "description": "Yarta live backend: Firebase security rules, rule tests and the browser data layer bundle",
+  "scripts": {
+    "test:rules": "env -u HTTPS_PROXY -u https_proxy -u HTTP_PROXY -u http_proxy -u JAVA_TOOL_OPTIONS firebase emulators:exec --only firestore,storage --project demo-yarta \"node --test --test-reporter=spec test/rules.test.mjs\"",
+    "build:live": "node build-live.mjs",
+    "emulators": "env -u HTTPS_PROXY -u https_proxy -u HTTP_PROXY -u http_proxy -u JAVA_TOOL_OPTIONS firebase emulators:start --only auth,firestore,storage --project demo-yarta"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.2",
+    "esbuild": "^0.28.2",
+    "firebase": "^12.19.0",
+    "firebase-tools": "^15.33.0"
+  }
+}

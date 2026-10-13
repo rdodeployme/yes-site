@@ -31,9 +31,13 @@
 <script src="/assets/yarta/recommend.js"></script>
 <script src="/assets/yarta/sectors.js"></script>
 <script src="/assets/yarta/benchmarks.js"></script>
+<script>window.YARTA_PAGE='tool';</script>
+<script src="/assets/yarta/live-config.js"></script>
+<script src="/assets/yarta/yarta-live.js"></script>
 <script src="/assets/yarta/portal.js"></script>
 <script>
 (function(){
+  if(window.YARTA_LIVE && window.YARTA_LIVE.enabled) return;   /* live: real sign-in, no demo accounts */
   var P=window.YESPortal, who=document.getElementById('who');
   var opsU=P.state.users.filter(function(u){ return u.role==='operator'; });
   function cur(){ var s=P.state.session; return s && opsU.filter(function(u){ return u.id===s.user; })[0]; }

@@ -231,6 +231,7 @@ section.tight{padding:clamp(40px,6vw,80px) 0}
 footer{background:var(--ink);color:var(--mist);padding:64px 0 32px;border-top:1px solid #202220}
 .foot-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:40px}
 @media(min-width:800px){.foot-grid{grid-template-columns:minmax(0,5fr) repeat(3,minmax(0,2fr))}}
+@media(min-width:800px) and (max-width:1279px){.foot-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.foot-grid>div:first-child{grid-column:1/-1}}
 .foot-grid h5{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin:0 0 14px;font-weight:500}
 .foot-grid ul{list-style:none;padding:0;margin:0}
 .foot-grid li{margin:0 0 10px}

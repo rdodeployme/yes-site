@@ -1,0 +1,51 @@
+rules_version = '2';
+
+// Yarta live backend: Cloud Storage security rules.
+// Same split as the database: customers can add documents to their own inbox and read their own
+// issued report files; evidence files and everything else are Yarta staff only.
+// Roles come from the users/{uid} documents in Firestore (cross-service rules).
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function verified() { return request.auth != null && request.auth.token.email_verified == true; }
+    function userPath() { return /databases/(default)/documents/users/$(request.auth.uid); }
+    function hasMe() { return verified() && firestore.exists(userPath()); }
+    function me() { return firestore.get(userPath()).data; }
+    function isStaff() { return hasMe() && me().active == true && me().role in ['owner', 'staff']; }
+    function isClientOf(orgId) { return hasMe() && me().active == true && me().role == 'client' && me().orgId == orgId; }
+
+    function monthKey(m) { return m.matches('^[0-9]{4}-(0[1-9]|1[0-2])$'); }
+    function okSize() { return request.resource.size > 0 && request.resource.size <= 15 * 1024 * 1024; }
+    // Documents people actually send: PDFs, photos, spreadsheets, Word files, CSV and text. Never HTML or SVG.
+    function okType() {
+      return request.resource.contentType.matches(
+        '^(application/pdf|image/(png|jpeg|webp|gif|heic|heif)|text/csv|text/plain|application/vnd\\.ms-excel|application/msword|application/vnd\\.openxmlformats-officedocument\\.(spreadsheetml\\.sheet|wordprocessingml\\.document))$');
+    }
+
+    // Documents sent in for a month. Added, never overwritten (an upload over an existing file counts as create, hence resource == null).
+    match /orgs/{orgId}/inbox/{month}/{file} {
+      allow read: if isStaff() || isClientOf(orgId);
+      allow create: if resource == null && (isStaff() || isClientOf(orgId)) && monthKey(month) && okSize() && okType();
+      allow update: if false;
+      allow delete: if isStaff();
+    }
+
+    // Evidence attached by Yarta analysts during data entry.
+    match /orgs/{orgId}/evidence/{month}/{file} {
+      allow read, delete: if isStaff();
+      allow create, update: if isStaff() && monthKey(month) && okSize() && okType();
+    }
+
+    // Issued report files. Kept for good.
+    match /orgs/{orgId}/reports/{file} {
+      allow read: if isStaff() || isClientOf(orgId);
+      allow create: if resource == null && isStaff() && request.resource.contentType == 'application/pdf' && request.resource.size <= 25 * 1024 * 1024;
+      allow update, delete: if false;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

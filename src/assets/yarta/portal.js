@@ -9,6 +9,8 @@
 'use strict';
 var D = window.YESD, E = window.YESE, X = window.YESDEMO, R = window.YESR;
 var KEY = 'yes-es-portal-v3';
+/* Live mode: when a Firebase project is configured, yarta-live.js signs people in and holds the data; this file only renders. */
+var LIVE = (window.YARTA_LIVE && window.YARTA_LIVE.enabled) ? window.YARTA_LIVE : null;
 var app = document.getElementById('app');
 var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 var SITE = null; /* site id in play during entry; null = the whole organisation */
@@ -38,10 +40,12 @@ function field(id){ return D.FIELD[id] || (D.PROFILE.filter(function(f){return f
 
 /* ------------------------------------------------------------------ store */
 function load(){
+  if(LIVE) return LIVE.emptyState();
   try{ var s=JSON.parse(localStorage.getItem(KEY)); if(s && s.v===4 && s.orgs && s.users){ s.bookings=s.bookings||[]; seedOps(s); return s; } }catch(e){}
   var fresh = X.build(); seedOps(fresh); persist(fresh); return fresh;
 }
 function persist(s){
+  if(LIVE) return LIVE.sync(s||state);
   try{ localStorage.setItem(KEY, JSON.stringify(s||state)); return true; }
   catch(e){ flash('This browser would not save the change (storage is full or blocked).','err'); return false; }
 }
@@ -71,10 +75,10 @@ function withCarry(o,k,vals){ var v={}; for(var key in vals) v[key]=vals[key]; D
 var dbp=null;
 function idb(){ if(dbp) return dbp; dbp=new Promise(function(res,rej){ if(!window.indexedDB){ rej('no idb'); return; } var q=indexedDB.open('yes-es-evidence',1); q.onupgradeneeded=function(){ q.result.createObjectStore('files'); }; q.onsuccess=function(){ res(q.result); }; q.onerror=function(){ rej(q.error); }; }); return dbp; }
 function idbDo(mode,fn){ return idb().then(function(db){ return new Promise(function(res,rej){ var tx=db.transaction('files',mode); var st=tx.objectStore('files'); var r=fn(st); tx.oncomplete=function(){ res(r && r.result); }; tx.onerror=function(){ rej(tx.error); }; }); }); }
-function putFile(key,file){ return idbDo('readwrite',function(st){ return st.put(file,key); }); }
-function getFile(key){ return idbDo('readonly',function(st){ return st.get(key); }); }
-function delFile(key){ return idbDo('readwrite',function(st){ return st.delete(key); }); }
-function clearFiles(){ return idbDo('readwrite',function(st){ return st.clear(); }).catch(function(){}); }
+function putFile(key,file){ if(LIVE) return LIVE.putFile(key,file); return idbDo('readwrite',function(st){ return st.put(file,key); }); }
+function getFile(key){ if(LIVE) return LIVE.getFile(key); return idbDo('readonly',function(st){ return st.get(key); }); }
+function delFile(key){ if(LIVE) return LIVE.delFile(key); return idbDo('readwrite',function(st){ return st.delete(key); }); }
+function clearFiles(){ if(LIVE) return Promise.resolve(); return idbDo('readwrite',function(st){ return st.clear(); }).catch(function(){}); }
 function evKey(orgId,k,cat){ return orgId+'/'+k+'/'+cat; }
 
 /* ------------------------------------------------------------------ routing */
@@ -174,15 +178,16 @@ function shell(active, body){
       ['#/organisation','Organisation','organisation'],
       ['#/data','Data and export','data']
     ];
+  if(LIVE && op){ var gi=links.map(function(l){ return l[0]; }).indexOf('grp',1); [].splice.apply(links,[gi,0].concat(LIVE.navExtras())); if(!o){ var cv=links.map(function(l){ return l[0]; }).indexOf('grp',1+LIVE.navExtras().length); links=links.slice(0,cv); } }
   if(multisite(o)){ var ri=links.map(function(l){ return l[2]; }).indexOf('reports'); links.splice(ri+1,0,['#/sites','Sites','sites']); }
   var nav = links.map(function(l){ if(l[0]==='grp') return '<div class="grp">'+esc(l[1])+'</div>'; return '<a href="'+l[0]+'"'+(l[2]===active?' aria-current="page"':'')+'><span>'+esc(l[1])+'</span>'+(l[3]?'<span class="cnt">'+l[3]+'</span>':'')+'</a>'; }).join('');
   return '<div class="mtop"><a class="brand" href="#/dashboard"><span class="mark silver">Yarta</span></a><span class="o">'+esc(o?o.profile.org_name:'')+'</span><button class="menu-btn" type="button" data-act="side-open" style="display:block">MENU</button></div>'
    + '<div class="app"><aside class="side" id="side" aria-label="Portal navigation">'
    + '<button class="menu-btn side-close" type="button" data-act="side-close">CLOSE</button>'
-   + '<a class="brand" href="../"><span class="mark silver">Yarta</span><span class="full">Yindyamarra<br>Environmental Sustainability</span></a>'
+   + '<a class="brand" href="../"><span class="mark silver">Yarta</span><span class="full">'+(LIVE?'Environmental<br>Sustainability':'Yindyamarra<br>Environmental Sustainability')+'</span></a>'
    + '<div class="who"><div class="o">'+esc(op?'Yarta operator':(o?o.profile.org_name:''))+'</div><div class="u">'+esc(u.name)+' · '+esc(u.title)+'</div><div class="role"><span class="chip">'+(op?'Yarta team':'Customer')+'</span></div></div>'
    + '<nav class="snav">'+nav+'</nav>'
-   + '<div class="foot">Prototype. Your data stays in this browser.<br><button class="btn btn-ghost btn-sm" type="button" data-act="signout" style="color:var(--silver-2)">Sign out</button></div>'
+   + '<div class="foot">'+(LIVE?LIVE.footHtml():'Prototype. Your data stays in this browser.<br><button class="btn btn-ghost btn-sm" type="button" data-act="signout" style="color:var(--silver-2)">Sign out</button>')+'</div>'
    + '</aside><main class="main" id="main"><div class="content">'
    + (op && ['dashboard','reports','roadmap','documents','organisation','category','report','data'].indexOf(active)>=0 ? '<div class="banner grey no-print"><span>Viewing <b>'+esc(o.profile.org_name)+'</b> as the Yarta team. The customer sees verified months only; months waiting for verification show here as provisional.</span><a class="btn btn-ghost btn-sm" href="#/ops/customers">Switch customer</a></div>' : '')
    + body + '</div></main></div>';
@@ -190,6 +195,7 @@ function shell(active, body){
 
 /* ------------------------------------------------------------------ login */
 function vLogin(){
+  if(LIVE) return LIVE.loginHtml();
   if(window.YESPORTAL_CLIENT) ui.loginTab='customer';
   var accts = state.users.filter(function(u){ return ui.loginTab==='operator' ? u.role==='operator' : u.role==='customer'; });
   var list = accts.map(function(u){ var o=u.org?state.orgs[u.org]:null; return '<button class="acct" type="button" data-act="login" data-user="'+esc(u.id)+'"><span class="av">'+esc(initials(u.name))+'</span><span class="nm">'+esc(u.name)+'</span><span class="go" aria-hidden="true">→</span><span class="ds">'+esc(u.title)+(o?' · '+esc(o.profile.org_name):'')+'</span></button>'; }).join('');
@@ -397,7 +403,7 @@ function vDocuments(){
   var list=withDocs.map(function(r){ var st=r.status==='verified'?'Entered and verified by Yarta':r.status==='submitted'?'Entered by Yarta, awaiting verification':'With Yarta for entry'; return '<div class="panel" style="margin-top:14px"><div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:center"><h3>'+mLabel(r.month)+'</h3>'+statusChip(r.status)+'</div><p class="sec-s" style="margin:6px 0 0">'+st+'</p>'+inboxList(r)+'</div>'; }).join('');
   var intro = isOp() ? 'Documents '+esc(o.profile.org_name)+' has sent. Upload anything that arrived by email so it sits with the month for data entry.' : 'Send the month\'s bills, dockets, statements and registers. Yarta enters every figure from them; you never key numbers yourself. Documents are due by the 15th of the following month. You can also email them to <a class="link" href="mailto:contact@yes.com.au">contact@yes.com.au</a>.';
   var body='<div class="pg-head"><div><p class="kicker">Documents</p><h1>'+(isOp()?'Customer documents':'Send documents')+'</h1><p class="pg-sub">'+intro+'</p></div></div>'
-    + '<div class="panel"><h3>Upload</h3><div class="inline-form" style="margin-top:14px"><div class="field"><label for="up-m">Month</label><select id="up-m">'+opts+'</select></div><div class="field"><label for="up-c">What is it about?</label><select id="up-c">'+cats+'</select></div>'+siteSel(o)+'<label class="btn btn-primary">Choose files<input type="file" data-act="inbox-file" multiple accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx,.xls,.doc,.docx,.txt" style="display:none"></label></div><p class="small muted" style="margin:12px 0 0">PDF, images, spreadsheets or documents, up to 15 MB each. In this prototype files stay in this browser.</p></div>'
+    + '<div class="panel"><h3>Upload</h3><div class="inline-form" style="margin-top:14px"><div class="field"><label for="up-m">Month</label><select id="up-m">'+opts+'</select></div><div class="field"><label for="up-c">What is it about?</label><select id="up-c">'+cats+'</select></div>'+siteSel(o)+'<label class="btn btn-primary">Choose files<input type="file" data-act="inbox-file" multiple accept=".pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx,.xls,.doc,.docx,.txt" style="display:none"></label></div><p class="small muted" style="margin:12px 0 0">PDF, images, spreadsheets or documents, up to 15 MB each.'+(LIVE?' Files go straight to Yarta and only your organisation and the Yarta team can open them.':' In this prototype files stay in this browser.')+'</p></div>'
     + (isOp()?'':declarePanel(o,months.filter(function(k){ var r=rec(o,k); return !r||r.status==='draft'||r.status==='returned'; })))
     + '<p class="small" style="margin-top:14px"><a class="link" href="#/checklist">What to send: the checklist for your sector</a></p><h2 class="sec-t" style="margin-top:28px">Sent so far</h2>'+(list||'<div class="empty">Nothing sent yet.</div>')+(withDocsAll.length>3?'<p class="small muted" style="margin-top:14px">Showing the latest three months. Every earlier document is kept with its month.</p>':'');
   return shell('documents', body);
@@ -758,7 +764,7 @@ function parseCSV(t){ var rows=[],row=[],cell='',q=false; for(var i=0;i<t.length
 function vData(){
   var o=org(), n=o.records.length, ev=0; o.records.forEach(function(r){ ev+=Object.keys(r.evidence||{}).length; });
   var pv=ui.importPreview;
-  var body='<div class="pg-head"><div><p class="kicker">Data and export</p><h1>Your data</h1><p class="pg-sub">Download everything, bring figures in from a spreadsheet, or start the demo again. In this prototype the data lives only in this browser.</p></div></div>'
+  var body='<div class="pg-head"><div><p class="kicker">Data and export</p><h1>Your data</h1><p class="pg-sub">'+(LIVE?'Download everything, or bring figures in from a spreadsheet.':'Download everything, bring figures in from a spreadsheet, or start the demo again. In this prototype the data lives only in this browser.')+'</p></div></div>'
     + '<div class="row2"><div class="panel"><h3>Download</h3><p class="sec-s" style="margin-top:6px">'+n+' months · '+ev+' evidence records.</p><div class="stack" style="margin-top:8px">'
     + '<button class="btn btn-ink" type="button" data-act="csv-all">Monthly figures (CSV, one row per figure)</button>'
     + '<button class="btn btn-ghost" type="button" data-act="carbon-csv" style="color:var(--ink)">Carbon table by scope (CSV: activity, quantity, factor, source, evidence)</button>'
@@ -768,8 +774,8 @@ function vData(){
     + '<label class="btn btn-ghost" style="color:var(--ink)">Choose a CSV or JSON file<input type="file" data-act="import-file" accept=".csv,.json,text/csv,application/json" style="display:none"></label>'
     + (pv?'<div class="callout" style="margin-top:14px"><b>'+esc(pv.name)+'</b>: '+pv.ok+' figures across '+pv.months.length+' month'+(pv.months.length===1?'':'s')+' ready'+(pv.skip?' · '+pv.skip+' skipped (locked months or unknown fields)':'')+'.<div class="btn-row" style="margin-top:12px"><button class="btn btn-primary btn-sm" type="button" data-act="import-go">Import into drafts</button><button class="btn btn-ghost btn-sm" type="button" data-act="import-cancel" style="color:var(--ink)">Cancel</button></div></div>':'')
     + '</div>':'<div class="panel"><h3>Your figures are entered by Yarta</h3><p class="sec-s" style="margin-top:6px">Send your documents and Yarta keys every figure. Download everything here whenever you need it: for your annual report, an auditor or your own systems.</p><a class="btn btn-ink" href="#/documents">Send documents</a></div>')+'</div>'
-    + '<div class="panel" style="margin-top:22px"><h3>Start the demo again</h3><p class="sec-s" style="margin-top:6px">Replaces everything in this browser with the original demo organisations and removes attached files.</p>'
-    + (ui.confirmReset?'<div class="btn-row"><button class="btn btn-ink" type="button" data-act="reset-go">Yes, reset the demo</button><button class="btn btn-ghost" type="button" data-act="reset-cancel" style="color:var(--ink)">Keep my changes</button></div>':'<button class="btn btn-ghost" type="button" data-act="reset-ask" style="color:var(--ink)">Reset demo data</button>')+'</div>';
+    + (LIVE?'':'<div class="panel" style="margin-top:22px"><h3>Start the demo again</h3><p class="sec-s" style="margin-top:6px">Replaces everything in this browser with the original demo organisations and removes attached files.</p>'
+    + (ui.confirmReset?'<div class="btn-row"><button class="btn btn-ink" type="button" data-act="reset-go">Yes, reset the demo</button><button class="btn btn-ghost" type="button" data-act="reset-cancel" style="color:var(--ink)">Keep my changes</button></div>':'<button class="btn btn-ghost" type="button" data-act="reset-ask" style="color:var(--ink)">Reset demo data</button>')+'</div>');
   return shell('data', body);
 }
 
@@ -1571,11 +1577,14 @@ function vNotFound(){ return shell('', '<div class="empty">That page does not ex
 /* ------------------------------------------------------------------ render */
 function render(){
   var appEl=document.getElementById('app'); if(!appEl || appEl.hidden) return; /* pages that only use the engine (the sample report) keep #app hidden */
+  if(LIVE && !LIVE.ready){ appEl.innerHTML=LIVE.loadingHtml(); return; }
   SITE=null; var h=parseHash(), P=h.parts, q=h.q, html;
   var u=me();
   if(u && window.YESPORTAL_CLIENT && isOp()){ state.session=null; save(); u=null; }   /* the client portal never shows the team's screens */
   if(!u){ html=vLogin(); }
   else if(!P.length){ go(isOp()?(u.home||'#/ops'):'#/dashboard'); return; }
+  else if(LIVE && (html=LIVE.route(P,q))!=null){ /* team and access, leads */ }
+  else if(isOp() && !org() && ['dashboard','category','documents','sites','sitereport','period','reports','roadmap','book','improvements','report','organisation','data','checklist'].indexOf(P[0])>=0){ html=shell('', '<div class="empty">No customers yet. <a class="link" href="#/ops/customers/new">Create the first customer</a>.</div>'); }
   else {
     var a=P[0];
     if(a==='dashboard') html=vDashboard(q);
@@ -1598,8 +1607,9 @@ function render(){
     else html=vNotFound();
   }
   app.innerHTML=html;
-  document.title = (u?(isOp()?'Yarta team':org().profile.org_name)+' · ':'')+'Yarta portal (prototype)';
+  document.title = (u?(isOp()?'Yarta team':org().profile.org_name)+' · ':'')+(LIVE?'Yarta':'Yarta portal (prototype)');
   bindMedia();
+  if(LIVE) LIVE.afterRender(P,q);
 }
 function bindMedia(){ // ambient video on the sign-in screen
   var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches, conn=navigator.connection||{};
@@ -1608,7 +1618,7 @@ function bindMedia(){ // ambient video on the sign-in screen
 
 /* ------------------------------------------------------------------ events */
 var saveT=null;
-function scheduleSave(){ clearTimeout(saveT); var s=$('#saved'); if(s) s.textContent='Saving…'; saveT=setTimeout(function(){ if(save()){ var s2=$('#saved'); if(s2) s2.textContent='Saved in this browser · '+new Date().toLocaleTimeString('en-AU',{hour:'numeric',minute:'2-digit'}); } },350); }
+function scheduleSave(){ clearTimeout(saveT); var s=$('#saved'); if(s) s.textContent='Saving…'; saveT=setTimeout(function(){ if(save() && !LIVE){ var s2=$('#saved'); if(s2) s2.textContent='Saved in this browser · '+new Date().toLocaleTimeString('en-AU',{hour:'numeric',minute:'2-digit'}); } },350); }
 function currentSubmit(){ var h=parseHash(); if(h.parts[0]!=='entry'||!h.parts[2]) return null; var o=state.orgs[h.parts[1]]; if(!o) return null; var r=rec(o,h.parts[2]); return r?{o:o,r:r,k:h.parts[2]}:null; }
 
 app.addEventListener('input', function(e){
@@ -1696,13 +1706,13 @@ document.addEventListener('click', function(e){
   var act=t.getAttribute('data-act'), o;
   if(t.tagName==='INPUT'||t.tagName==='SELECT') return;
   switch(act){
-    case 'login': state.session={user:t.getAttribute('data-user')}; if(isOp()) state.session.viewOrg='demo-shire'; save(); go(isOp()?(me().home||'#/ops'):'#/dashboard'); break;
+    case 'login': if(LIVE) return; state.session={user:t.getAttribute('data-user')}; if(isOp()) state.session.viewOrg='demo-shire'; save(); go(isOp()?(me().home||'#/ops'):'#/dashboard'); break;
     case 'ltab': ui.loginTab=t.getAttribute('data-tab'); render(); break;
-    case 'signout': state.session=null; ui.loginTab='customer'; save(); go('#/'); render(); break;
+    case 'signout': if(LIVE){ LIVE.signOut(); return; } state.session=null; ui.loginTab='customer'; save(); go('#/'); render(); break;
     case 'side-open': $('#side').classList.add('open'); break;
     case 'side-close': $('#side').classList.remove('open'); break;
-    case 'reset-demo': case 'reset-go': var sess=state.session; state=X.build(); if(act==='reset-go') state.session=sess; save(); clearFiles(); ui.confirmReset=false; ui.importPreview=null; flash('Demo data reset.'); render(); break;
-    case 'reset-ask': ui.confirmReset=true; render(); break;
+    case 'reset-demo': case 'reset-go': if(LIVE) return; var sess=state.session; state=X.build(); if(act==='reset-go') state.session=sess; save(); clearFiles(); ui.confirmReset=false; ui.importPreview=null; flash('Demo data reset.'); render(); break;
+    case 'reset-ask': if(LIVE) return; ui.confirmReset=true; render(); break;
     case 'reset-cancel': ui.confirmReset=false; render(); break;
     case 'view-org': state.session.viewOrg=t.getAttribute('data-org'); save(); go('#/dashboard'); break;
     case 'print': window.print(); break;
@@ -1729,7 +1739,7 @@ document.addEventListener('click', function(e){
     case 'bk-cancel-no': ui.confirmCancel=null; render(); break;
     case 'in-copy': copyText('Subject: '+($('#in-subj')||{}).value+'\n\n'+($('#in-body')||{}).value); break;
     case 'view-report': state.session.viewOrg=t.getAttribute('data-org'); save(); go('#/report/'+t.getAttribute('data-month')); break;
-    case 'issue-report': var io=state.orgs[t.getAttribute('data-org')], ir=rec(io,t.getAttribute('data-month')); if(!ir||ir.status!=='verified') return; ir.issuedAt=isoNow().slice(0,10); ir.issuedBy=me().name; log('Report issued',mLabel(ir.month),io.id); queueMail('issued',io.id,customerEmails(io),'Your Yarta Report for '+mLabel(ir.month)+' is ready','Hi,\n\nYour Yarta Report for '+io.profile.org_name+' · '+mLabel(ir.month)+' has been issued. Sign in to read it, print it or save it as a PDF, and to see the roadmap and what to do next.\n\nThe score is self-declared under the published Yarta Method; the report states the method version and the benchmark edition it was calculated under.\n\nThanks,\n'+((operatorOf(io)||me()).name)+'\nYarta',ir.month); save(); flash(io.profile.org_name+' · '+mLabel(ir.month)+' report issued.'); render(); break;
+    case 'issue-report': var io=state.orgs[t.getAttribute('data-org')], ir=rec(io,t.getAttribute('data-month')); if(!ir||ir.status!=='verified') return; ir.issuedAt=isoNow().slice(0,10); ir.issuedBy=me().name; ir.issueRev=(ir.issueRev||0)+1; log('Report issued',mLabel(ir.month),io.id); queueMail('issued',io.id,customerEmails(io),'Your Yarta Report for '+mLabel(ir.month)+' is ready','Hi,\n\nYour Yarta Report for '+io.profile.org_name+' · '+mLabel(ir.month)+' has been issued. Sign in to read it, print it or save it as a PDF, and to see the roadmap and what to do next.\n\nThe score is self-declared under the published Yarta Method; the report states the method version and the benchmark edition it was calculated under.\n\nThanks,\n'+((operatorOf(io)||me()).name)+'\nYarta',ir.month); save(); flash(io.profile.org_name+' · '+mLabel(ir.month)+' report issued.'); render(); break;
     case 'prov-check': var pc=provById(t.getAttribute('data-id')); if(!pc) return; pc.checkedAt=today(); pc.checkedBy=me().name; log('Provider accreditation checked',pc.name,null); save(); flash(pc.name+' marked as checked today.'); render(); break;
     case 'prov-save': var pid=t.getAttribute('data-id'), pv2=pid?provById(pid):null; var pn=($('#pv-name').value||'').trim(); if(!pn){ flash('Add the provider name.','err'); return; } var svcs=$$('[data-psvc]').filter(function(x){ return x.checked; }).map(function(x){ return x.getAttribute('data-psvc'); }); if(!svcs.length){ flash('Tick at least one kind of help.','err'); return; } var acc=($('#pv-acc').value||'').trim(); if(!acc){ flash('Record the accreditation or licence held.','err'); return; } if(!pv2){ pv2={id:'pv-'+Date.now().toString(36), checkedAt:today(), checkedBy:me().name}; state.providers.push(pv2); } pv2.name=pn; pv2.kind=$('#pv-kind').value; pv2.svc=svcs; pv2.accreditation=acc; pv2.licence=($('#pv-lic').value||'').trim(); pv2.expiry=$('#pv-exp').value||''; pv2.contact=($('#pv-contact').value||'').trim(); pv2.email=($('#pv-email').value||'').trim(); pv2.phone=($('#pv-phone').value||'').trim(); pv2.notes=($('#pv-notes').value||'').trim(); pv2.demo=false; log(pid?'Provider updated':'Provider added',pn,null); save(); flash('Saved '+pn+'.'); go('#/ops/providers'); break;
     case 'prov-remove': var prid=t.getAttribute('data-id'); if((state.bookings||[]).some(function(b){ return b.provider===prid && b.status!=='cancelled'; })){ flash('This provider is assigned to a booking. Reassign it first.','err'); return; } state.providers=(state.providers||[]).filter(function(x){ return x.id!==prid; }); log('Provider removed',prid,null); save(); go('#/ops/providers'); break;
@@ -1768,11 +1778,12 @@ document.addEventListener('click', function(e){
 });
 
 /* for pages that embed a report outside the app (the Yarta sample on the Yarta site) */
-window.YESPortal={reportSheets:reportSheets, org:org, seriesOf:seriesOf, mLabel:mLabel, state:state,
+window.YESPortal={reportSheets:reportSheets, org:org, seriesOf:seriesOf, mLabel:mLabel, get state(){ return state; },
   currentOrgId:ctxOrgId,
   /* sign in as the customer of an organisation (the public demo and the sample report use this) */
   signInAsOperator:function(userId, hash){ var u=state.users.filter(function(x){ return x.role==='operator' && x.id===userId; })[0]; if(!u) return false; state.session={user:u.id, viewOrg:(state.session&&state.session.viewOrg)||'demo-shire'}; ui.loginTab='operator'; save(); if(location.hash===(hash||'#/ops/home')) render(); else location.hash=hash||'#/ops/home'; return true; },
   signInAs:function(orgId, hash){ var u=state.users.filter(function(x){ return x.role==='customer' && x.org===orgId; })[0]; if(!u) return false; state.session={user:u.id}; ui.loginTab='customer'; save(); if(hash!==false){ if(location.hash===(hash||'#/dashboard')) render(); else location.hash=hash||'#/dashboard'; } return true; }
 };
+if(LIVE) LIVE.attach({ getState:function(){ return state; }, setState:function(s){ state=s; }, render:render, flash:flash, shell:shell, log:log, save:save, go:go, defaultImportMaps:defaultImportMaps });
 render();
 })();

@@ -1,0 +1,317 @@
+rules_version = '2';
+
+// Yarta live backend: Firestore security rules.
+//
+// The split that makes Yarta safe lives here, not in the front end.
+//   Working side  (orgs/**, providers, outbox, gaplog, ops, leads): Yarta staff only.
+//   Published side (views/{orgId}/**): written by staff, readable by that organisation's clients.
+//   Client inputs  (inbox, declarations, bookings, settings, audit): narrow, validated, own organisation only.
+//
+// Accounts are invite-only. A person can create their own users/{uid} document only when
+// an invite exists for their verified email, and only with exactly the role and organisation
+// on the invite. Nobody can change their own role or organisation.
+//
+// Integrity rules:
+//   - Four eyes: whoever marks a month verified must not be the person who entered it.
+//   - A verified month's figures cannot change; it has to be reopened and verified again.
+//   - A published month must match the verified working month, figure for figure.
+//   - Issued report snapshots can never be changed or deleted, by anyone.
+//   - The activity log is append-only.
+//
+// Tests: backend/test/rules.test.mjs (npm run test:rules).
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------------------------------------------------------------- who is asking
+    function signedIn() { return request.auth != null; }
+    function emailVerified() { return signedIn() && request.auth.token.email_verified == true; }
+    function myPath() { return /databases/$(database)/documents/users/$(request.auth.uid); }
+    function hasMe() { return emailVerified() && exists(myPath()); }
+    function me() { return get(myPath()).data; }
+    function active() { return hasMe() && me().active == true; }
+    function isOwner() { return active() && me().role == 'owner'; }
+    function isStaff() { return active() && me().role in ['owner', 'staff']; }
+    function isClientOf(orgId) { return active() && me().role == 'client' && me().orgId == orgId; }
+    function myEmail() { return request.auth.token.email.lower(); }
+
+    // ---------------------------------------------------------------- small validators
+    function str(v, max) { return v is string && v.size() <= max; }
+    function strReq(v, max) { return v is string && v.size() > 0 && v.size() <= max; }
+    function optStr(d, k, max) { return !(k in d) || d[k] == null || str(d[k], max); }
+    function monthKey(v) { return v is string && v.matches('^[0-9]{4}-(0[1-9]|1[0-2])$'); }
+    function email(v) { return v is string && v.size() <= 200 && v.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$'); }
+    function same(after, before, k) { return after.get(k, null) == before.get(k, null); }
+
+    // ---------------------------------------------------------------- people
+    match /users/{uid} {
+      allow read: if (signedIn() && request.auth.uid == uid) || isStaff();
+
+      // Accepting an invite: the only way a users document comes into existence.
+      allow create: if emailVerified() && request.auth.uid == uid
+        && exists(/databases/$(database)/documents/invites/$(myEmail()))
+        && acceptsInvite(request.resource.data, get(/databases/$(database)/documents/invites/$(myEmail())).data);
+
+      allow update: if (isOwner() && validUser(request.resource.data))
+        || (isStaff() && resource.data.role == 'client'
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['active', 'name', 'title', 'updatedAt', 'updatedByUid'])
+            && request.resource.data.active is bool)
+        || (signedIn() && request.auth.uid == uid
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'title', 'lastSeenAt'])
+            && str(request.resource.data.name, 120) && str(request.resource.data.title, 120));
+
+      allow delete: if isOwner();
+    }
+
+    function acceptsInvite(d, inv) {
+      return d.keys().hasOnly(['email', 'name', 'title', 'role', 'orgId', 'active', 'createdAt'])
+        && d.email == myEmail()
+        && d.role == inv.role
+        && d.orgId == inv.orgId
+        && d.active == true
+        && d.createdAt == request.time
+        && strReq(d.name, 120) && str(d.title, 120)
+        && (!('expiresAt' in inv) || inv.expiresAt > request.time);
+    }
+
+    function validUser(d) {
+      return d.role in ['owner', 'staff', 'client'] && d.active is bool
+        && ((d.role == 'client' && d.orgId is string) || (d.role != 'client' && d.orgId == null))
+        && strReq(d.name, 120) && str(d.title, 120) && email(d.email);
+    }
+
+    match /invites/{inviteEmail} {
+      allow read: if isStaff() || (emailVerified() && myEmail() == inviteEmail);
+      allow create, update: if validInvite(inviteEmail, request.resource.data)
+        && (isOwner() || (isStaff() && request.resource.data.role == 'client'
+                          && (resource == null || resource.data.role == 'client')));
+      allow delete: if isOwner() || (isStaff() && resource.data.role == 'client');
+    }
+
+    function validInvite(inviteEmail, d) {
+      return d.keys().hasOnly(['email', 'name', 'title', 'role', 'orgId', 'invitedByUid', 'invitedBy', 'invitedAt', 'expiresAt'])
+        && d.email == inviteEmail && email(inviteEmail) && inviteEmail == inviteEmail.lower()
+        && d.role in ['owner', 'staff', 'client']
+        && ((d.role == 'client' && d.orgId is string && existsAfter(/databases/$(database)/documents/orgs/$(d.orgId)))
+            || (d.role != 'client' && d.orgId == null))
+        && strReq(d.name, 120) && str(d.title, 120)
+        && d.invitedByUid == request.auth.uid && str(d.invitedBy, 120)
+        && d.invitedAt == request.time
+        && d.expiresAt is timestamp && d.expiresAt > request.time
+        && d.expiresAt < request.time + duration.value(31, 'd');
+    }
+
+    // ---------------------------------------------------------------- the working side (staff only)
+    match /orgs/{orgId} {
+      allow read: if isStaff();
+      allow create, update: if isStaff() && request.resource.data.id == orgId;
+      allow delete: if isOwner();
+
+      // A month of figures as Yarta works on it: draft → submitted → verified (or returned).
+      match /months/{ym} {
+        allow read: if isStaff();
+        allow create: if isStaff() && monthKey(ym) && request.resource.data.month == ym
+          && request.resource.data.status in ['draft', 'submitted', 'returned']
+          && (request.resource.data.status != 'submitted' || request.resource.data.enteredByUid == request.auth.uid);
+        allow update: if isStaff() && request.resource.data.month == ym
+          && honestEntry(request.resource.data, resource.data)
+          && fourEyes(request.resource.data, resource.data)
+          && verifiedIsFrozen(request.resource.data, resource.data);
+        allow delete: if isOwner();
+      }
+
+      // Documents sent in, by the customer or by Yarta on their behalf.
+      match /inbox/{itemId} {
+        allow read: if isStaff() || isClientOf(orgId);
+        allow create: if (isStaff() || isClientOf(orgId)) && validInboxItem(orgId, itemId, request.resource.data);
+        allow update: if isStaff();
+        allow delete: if isStaff();
+      }
+
+      // "Not reported" declarations. Only while the month is open for data entry.
+      match /declarations/{declId} {
+        allow read: if isStaff() || isClientOf(orgId);
+        allow create, update: if (isStaff() || isClientOf(orgId))
+          && validDeclaration(declId, request.resource.data)
+          && monthOpen(orgId, request.resource.data.month);
+        allow delete: if (isStaff() || isClientOf(orgId)) && monthOpen(orgId, resource.data.month);
+      }
+
+      // Requests for help. Customers can ask and can cancel; Yarta does the rest.
+      match /bookings/{bookingId} {
+        allow read: if isStaff() || isClientOf(orgId);
+        allow create: if (isStaff() && request.resource.data.org == orgId && request.resource.data.id == bookingId)
+          || (isClientOf(orgId) && validBookingRequest(orgId, bookingId, request.resource.data));
+        allow update: if (isStaff() && request.resource.data.org == orgId && request.resource.data.id == bookingId)
+          || (isClientOf(orgId) && resource.data.status in ['requested', 'confirmed']
+              && request.resource.data.status == 'cancelled'
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'cancelledAt', 'cancelledBy', 'cancelledByUid'])
+              && request.resource.data.cancelledByUid == request.auth.uid);
+        allow delete: if isOwner();
+      }
+
+      // The two things a customer sets for themselves: their targets and which roadmap items are in play.
+      match /settings/{settingId} {
+        allow read: if isStaff() || isClientOf(orgId);
+        allow write: if (isStaff() || isClientOf(orgId)) && validSetting(settingId, request.resource.data);
+      }
+    }
+
+    function honestEntry(after, before) {
+      // whoever moves a month to "submitted" is recorded as the person who entered it
+      return after.status != 'submitted' || before.status == 'submitted' || after.enteredByUid == request.auth.uid;
+    }
+    function fourEyes(after, before) {
+      return after.status != 'verified' || before.status == 'verified'
+        || (after.verifiedByUid == request.auth.uid && before.get('enteredByUid', null) != null
+            && after.enteredByUid == before.enteredByUid && after.enteredByUid != request.auth.uid);
+    }
+    function verifiedIsFrozen(after, before) {
+      // a verified month can be reopened (status changes) or annotated, but its figures cannot be edited in place
+      return before.status != 'verified' || after.status != 'verified'
+        || (same(after, before, 'values') && same(after, before, 'sites') && same(after, before, 'evidence')
+            && same(after, before, 'enteredByUid') && same(after, before, 'verifiedByUid')
+            && same(after, before, 'verifiedAt') && same(after, before, 'verifiedBy'));
+    }
+    function monthOpen(orgId, ym) {
+      return !exists(/databases/$(database)/documents/orgs/$(orgId)/months/$(ym))
+        || get(/databases/$(database)/documents/orgs/$(orgId)/months/$(ym)).data.status in ['draft', 'returned'];
+    }
+    function validInboxItem(orgId, itemId, d) {
+      return d.keys().hasOnly(['id', 'kind', 'month', 'cat', 'site', 'siteName', 'key', 'path', 'name', 'size', 'type', 'at', 'by', 'byUid'])
+        && d.id == itemId && d.byUid == request.auth.uid && monthKey(d.month)
+        && d.path is string && d.path.matches('^orgs/' + orgId + '/inbox/[^/]+/[^/]+$')
+        && strReq(d.name, 240) && d.size is int && d.size > 0 && d.size <= 15 * 1024 * 1024
+        && str(d.type, 120) && str(d.cat, 40) && str(d.site, 40) && str(d.siteName, 160)
+        && str(d.key, 300) && str(d.at, 40) && str(d.by, 120);
+    }
+    function validDeclaration(declId, d) {
+      return d.keys().hasOnly(['month', 'cat', 'by', 'byUid', 'role', 'at', 'note'])
+        && monthKey(d.month) && strReq(d.cat, 40) && declId == d.month + '_' + d.cat
+        && d.byUid == request.auth.uid && str(d.by, 120) && str(d.role, 20) && str(d.at, 40) && str(d.note, 1000);
+    }
+    function validBookingRequest(orgId, bookingId, d) {
+      return d.keys().hasOnly(['id', 'org', 'svc', 'status', 'slot', 'other', 'mode', 'location', 'contact', 'email', 'notes',
+                               'share', 'why', 'month', 'group', 'createdAt', 'createdBy', 'createdByUid'])
+        && d.id == bookingId && d.org == orgId && d.status == 'requested' && d.createdByUid == request.auth.uid
+        && strReq(d.svc, 60) && (d.slot == null || str(d.slot, 40)) && d.other is bool
+        && str(d.mode, 40) && str(d.location, 300) && strReq(d.contact, 120) && email(d.email)
+        && str(d.notes, 2000) && d.share is bool && str(d.why, 2000)
+        && (d.month == null || monthKey(d.month)) && d.group is bool && str(d.createdAt, 40) && str(d.createdBy, 120);
+    }
+    function validSetting(settingId, d) {
+      return ((settingId == 'targets'
+               && d.keys().hasOnly(['values', 'updatedAt', 'updatedBy', 'updatedByUid'])
+               && d.values is map
+               && d.values.keys().hasOnly(['target_emissions', 'target_renewable', 'target_diversion', 'target_fleet_ev',
+                                           'target_trees', 'target_rehab_ha', 'target_native_ha', 'target_participants']))
+           || (settingId == 'plan'
+               && d.keys().hasOnly(['off', 'updatedAt', 'updatedBy', 'updatedByUid'])
+               && d.off is map && d.off.size() <= 80))
+        && d.updatedByUid == request.auth.uid && d.updatedAt == request.time && str(d.updatedBy, 120);
+    }
+
+    // ---------------------------------------------------------------- the published side
+    // What a customer can see: written by Yarta when a report is issued, never by the customer.
+    match /views/{orgId} {
+      allow read: if isStaff() || isClientOf(orgId);
+      allow create, update: if isStaff() && request.resource.data.orgId == orgId;
+      allow delete: if isOwner();
+
+      match /months/{ym} {
+        allow read: if isStaff() || isClientOf(orgId);
+        allow create, update: if isStaff() && publishable(orgId, ym, request.resource.data);
+        allow delete: if isOwner();
+      }
+
+      // One immutable record per issue of a report.
+      match /reports/{reportId} {
+        allow read: if isStaff() || isClientOf(orgId);
+        allow create: if isStaff() && validReport(orgId, reportId, request.resource.data);
+        allow update, delete: if false;
+      }
+    }
+
+    function publishable(orgId, ym, d) {
+      let work = getAfter(/databases/$(database)/documents/orgs/$(orgId)/months/$(ym)).data;
+      return d.month == ym && work.status == 'verified' && d.status == 'verified'
+        && d.issuedAt is string && d.issueRev is int
+        && same(d, work, 'values') && same(d, work, 'sites')
+        && d.verifiedByUid == work.verifiedByUid && d.enteredByUid == work.enteredByUid;
+    }
+    function validReport(orgId, reportId, d) {
+      let pub = getAfter(/databases/$(database)/documents/views/$(orgId)/months/$(d.month)).data;
+      return d.keys().hasOnly(['month', 'rev', 'issuedAt', 'issuedBy', 'issuedByUid', 'method', 'dictionary', 'score', 'hash', 'createdAt'])
+        && monthKey(d.month) && d.rev is int && reportId == d.month + '-r' + string(d.rev)
+        && d.issuedByUid == request.auth.uid && d.createdAt == request.time
+        && d.hash == pub.hash && d.rev == pub.issueRev;
+    }
+
+    // ---------------------------------------------------------------- team-only records
+    match /providers/{providerId} {
+      allow read, write: if isStaff();
+    }
+    match /outbox/{messageId} {
+      allow read, create, update: if isStaff();
+      allow delete: if isOwner();
+    }
+    match /gaplog/{entryId} {
+      allow read, create: if isStaff();
+      allow update, delete: if false;
+    }
+    match /ops/{docId} {
+      allow read, write: if isStaff();
+    }
+
+    // Append-only activity log. Customers can add their own lines; only Yarta can read it.
+    match /audit/{entryId} {
+      allow read: if isStaff();
+      allow create: if validAudit(entryId, request.resource.data)
+        && (isStaff() || isClientOf(request.resource.data.org));
+      allow update, delete: if false;
+    }
+    function validAudit(entryId, d) {
+      return d.keys().hasOnly(['id', 'at', 'by', 'byUid', 'role', 'org', 'action', 'detail'])
+        && d.id == entryId && d.byUid == request.auth.uid && str(d.at, 40) && str(d.by, 120) && str(d.role, 20)
+        && (d.org == null || str(d.org, 80)) && strReq(d.action, 120) && str(d.detail, 2000);
+    }
+
+    // ---------------------------------------------------------------- the public Readiness Check
+    // Anyone can submit one; nobody outside Yarta can read one back.
+    match /leads/{leadId} {
+      allow create: if validLead(request.resource.data);
+      allow read, update: if isStaff();
+      allow delete: if isOwner();
+    }
+    function validLead(d) {
+      return d.keys().hasOnly(['v', 'created', 'status', 'source', 'org_name', 'sector', 'state', 'employees', 'residents', 'sites',
+                               'drivers', 'group', 'timeline', 'records', 'holder', 'approach', 'baseline',
+                               'contact_name', 'contact_role', 'email', 'phone', 'consent', 'score', 'band', 'page', 'notes'])
+        && d.keys().hasAll(['v', 'created', 'status', 'org_name', 'sector', 'contact_name', 'email', 'consent', 'records'])
+        && d.v == 1 && d.created == request.time && d.status == 'new' && optStr(d, 'source', 40)
+        && strReq(d.org_name, 160) && strReq(d.contact_name, 120) && email(d.email) && d.consent == true
+        && d.sector in ['council', 'business', 'health', 'education', 'manufacturing', 'construction', 'retail', 'logistics', 'government', 'other']
+        && (!('state' in d) || d.state in ['VIC', 'NSW', 'ACT', 'QLD', 'SA', 'WA', 'TAS', 'NT', 'National'])
+        && (!('employees' in d) || d.employees in ['', '1-30', '31-100', '101-500', '500+'])
+        && (!('residents' in d) || d.residents in ['', 'under-10k', '10-50k', '50-100k', '100k+'])
+        && (!('sites' in d) || d.sites in ['', '1', '2-5', '6-20', '20+'])
+        && (!('drivers' in d) || (d.drivers is list && d.drivers.size() <= 8
+              && d.drivers.hasOnly(['climate', 'target', 'funding', 'tender', 'board', 'improve', 'unsure'])))
+        && (!('group' in d) || d.group in ['', '1', '2', '3', 'unsure', 'none'])
+        && (!('timeline' in d) || d.timeline in ['', '3m', '6m', '12m', 'exploring'])
+        && d.records is map && d.records.size() <= 12
+        && d.records.keys().hasOnly(['electricity', 'gas', 'fuel', 'vehicles', 'water', 'waste', 'solar', 'travel', 'kerbside', 'procurement'])
+        && d.records.values().hasOnly(['monthly', 'patchy', 'no', 'unsure', 'na'])
+        && (!('holder' in d) || d.holder in ['', 'finance', 'facilities', 'sustainability', 'fleet', 'operations', 'unsure'])
+        && (!('approach' in d) || d.approach in ['', 'none', 'spreadsheet', 'consultant', 'software', 'contractor'])
+        && (!('baseline' in d) || d.baseline in ['', 'yes', 'no', 'unsure'])
+        && optStr(d, 'contact_role', 120) && optStr(d, 'phone', 40) && optStr(d, 'page', 200) && optStr(d, 'notes', 1000)
+        && optStr(d, 'band', 40) && (!('score' in d) || (d.score is int && d.score >= 0 && d.score <= 100));
+    }
+
+    // Everything else: no.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

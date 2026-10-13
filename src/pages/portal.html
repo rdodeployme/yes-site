@@ -32,9 +32,13 @@
 <script src="/assets/yarta/sectors.js"></script>
 <script src="/assets/yarta/benchmarks.js"></script>
 <script>window.__hash0=location.hash; window.YESPORTAL_CLIENT=true;</script>
+<script>window.YARTA_PAGE='portal';</script>
+<script src="/assets/yarta/live-config.js"></script>
+<script src="/assets/yarta/yarta-live.js"></script>
 <script src="/assets/yarta/portal.js"></script>
 <script>
 (function(){
+  if(window.YARTA_LIVE && window.YARTA_LIVE.enabled) return;   /* live: real sign-in, no demo accounts */
   /* Arriving at /portal/ with no deep link shows the sign-in screen, not whichever demo session was open last. */
   var P=window.YESPortal;
   var h0=window.__hash0;

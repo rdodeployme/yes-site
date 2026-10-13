@@ -1,0 +1,7 @@
+[
+  {
+    "origin": ["https://rdodeployme.github.io", "https://yes.com.au", "https://www.yes.com.au"],
+    "method": ["GET"],
+    "maxAgeSeconds": 3600
+  }
+]

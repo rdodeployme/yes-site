@@ -1,0 +1,265 @@
+<style>
+/* Reporting Readiness Check (scoped) */
+.page-readiness h1,.page-readiness h2,.page-readiness h3{text-wrap:balance}
+.page-readiness p,.page-readiness li,.page-readiness td{text-wrap:pretty}
+.page-readiness .nw{white-space:nowrap}
+.page-readiness .hero-sub h1{max-width:16ch}
+.page-readiness .hero-meta{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:26px;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mist)}
+.page-readiness .hero-meta span{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.page-readiness .hero-meta span::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green-3)}
+.rc-layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:clamp(28px,4vw,56px);align-items:start}
+@media(max-width:980px){.rc-layout{grid-template-columns:minmax(0,1fr)}}
+.rc-step{border-top:1px solid var(--mist);padding:clamp(28px,3.5vw,40px) 0}
+.rc-step:first-child{border-top:0;padding-top:0}
+.rc-step-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:baseline;margin-bottom:22px}
+.rc-step-head .n{font-family:var(--font-display);font-weight:800;font-size:clamp(32px,3.6vw,48px);letter-spacing:-.04em;line-height:.9;color:var(--mist)}
+.rc-step-head h2{font-size:clamp(24px,2.4vw,32px)}
+.rc-step-head p{margin:8px 0 0;color:var(--graphite);font-size:15.5px;max-width:58ch}
+.rc .form{gap:18px}
+.rc fieldset{border:0;margin:0;padding:0;min-width:0}
+.rc legend,.rc .lbl{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--graphite);padding:0;margin:0 0 8px}
+.rc .opt{color:var(--slate);text-transform:none;letter-spacing:.04em;margin-left:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.rc .chip-in{position:relative;display:inline-flex;font-family:var(--font-body);font-size:14.5px;letter-spacing:0;text-transform:none;color:var(--ink);gap:0}
+.chip-in input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.chip-in span{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--mist);border-radius:999px;background:var(--white);font-size:14.5px;line-height:1.1;color:var(--ink);cursor:pointer;white-space:nowrap;transition:border-color .15s,background .15s,color .15s}
+.chip-in span:hover{border-color:var(--slate)}
+.chip-in input:checked+span{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.chip-in input:focus-visible+span{outline:2px solid var(--green-2);outline-offset:2px}
+.chip-in input[type=checkbox]:checked+span::before{content:"✓";font-size:12px;color:var(--green-3)}
+.rc-records{display:grid;gap:0;border:1px solid var(--mist);border-radius:10px;background:var(--white);overflow:hidden}
+.rc-rec{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;padding:16px 18px;border-top:1px solid var(--mist-2)}
+.rc-rec:first-child{border-top:0}
+.rc-rec .t{font-weight:600;font-size:15.5px;margin:0}
+.rc-rec .h{margin:3px 0 0;font-size:13.5px;color:var(--slate);line-height:1.45}
+.rc-rec .core{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-left:8px;white-space:nowrap;vertical-align:text-top;line-height:1.9}
+.seg{display:inline-flex;border:1px solid var(--mist);border-radius:8px;overflow:hidden;background:var(--paper)}
+.rc .seg label{position:relative;display:block;border-left:1px solid var(--mist);font-family:var(--font-body);font-size:13px;letter-spacing:0;text-transform:none;gap:0}
+.rc .seg label:first-child{border-left:0}
+.seg input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.seg span{display:block;padding:9px 12px;font-size:13px;line-height:1.1;cursor:pointer;white-space:nowrap;color:var(--graphite)}
+.seg span:hover{background:var(--mist-2)}
+.seg input:checked+span{background:var(--ink);color:var(--paper)}
+.seg input[value=monthly]:checked+span{background:var(--green-2);color:var(--white)}
+.seg input:focus-visible+span{outline:2px solid var(--green-2);outline-offset:-2px}
+.rc-rec.missing{background:var(--green-tint)}
+@media(max-width:760px){.rc-rec{grid-template-columns:minmax(0,1fr)}.seg{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));width:100%}.seg span{padding:10px 4px;text-align:center;font-size:12.5px}}
+.rc-side{position:sticky;top:96px;border:1px solid var(--mist);border-radius:12px;background:var(--white);padding:22px 22px 20px}
+@media(max-width:980px){.rc-side{position:static}}
+.rc-side .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0 0 6px}
+.rc-side .big{font-family:var(--font-display);font-weight:800;font-size:56px;letter-spacing:-.04em;line-height:1;margin:6px 0 4px}
+.rc-side .big small{font-size:22px;color:var(--slate);margin-left:2px}
+.rc-side .big .na{font-size:26px;letter-spacing:-.02em;color:var(--slate)}
+.rc-side .band{font-weight:600;margin:0 0 14px}
+.rc-bar{height:8px;border-radius:99px;background:var(--mist-2);overflow:hidden;margin:4px 0 16px}
+.rc-bar i{display:block;height:100%;width:0;background:var(--green-2);border-radius:99px;transition:width .35s var(--ease)}
+.rc-side ol{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:8px;font-size:14px}
+.rc-side li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;color:var(--graphite)}
+.rc-side li::before{content:"";width:12px;height:12px;border-radius:50%;border:1.5px solid var(--mist);margin-top:4px}
+.rc-side li.done::before{background:var(--green-2);border-color:var(--green-2)}
+.rc-side .note{font-size:13px;color:var(--slate);margin:16px 0 0;line-height:1.5}
+.rc .consent{display:grid;grid-template-columns:20px minmax(0,1fr);gap:12px;align-items:start;font-family:var(--font-body);font-size:15px;letter-spacing:0;text-transform:none;color:var(--ink)}
+.rc .consent input{width:18px;height:18px;margin:3px 0 0;padding:0;accent-color:var(--green-2)}
+.rc .hp{display:none}
+.rc textarea{min-height:110px;resize:vertical}
+.rc .err{color:#A3361A;font-size:14.5px;margin:0}
+.rc .err:empty{display:none}
+.rc-submit{display:flex;flex-wrap:wrap;gap:14px 20px;align-items:center;margin-top:10px}
+.rc-submit .small{font-size:13.5px;color:var(--slate);max-width:44ch;margin:0}
+/* result */
+.rc-result[hidden]{display:none}
+.rc-result{scroll-margin-top:90px}
+.rc-res-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(24px,4vw,48px);align-items:center;padding:clamp(26px,3.5vw,40px);border-radius:14px;background:var(--ink);color:var(--paper)}
+@media(max-width:640px){.rc-res-head{grid-template-columns:minmax(0,1fr)}}
+.rc-ring{--p:0;width:168px;height:168px;border-radius:50%;background:conic-gradient(var(--green-3) calc(var(--p)*1%),#2A2C2A 0);display:grid;place-items:center}
+.rc-ring>div{width:136px;height:136px;border-radius:50%;background:var(--ink);display:grid;place-items:center;text-align:center}
+.rc-ring b{font-family:var(--font-display);font-weight:800;font-size:46px;letter-spacing:-.04em;line-height:1;display:block}
+.rc-ring small{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate)}
+.rc-res-head .eyebrow{margin-bottom:6px}
+.rc-res-head p.rc-org{font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin:0 0 12px}
+.rc-res-head h2{font-size:clamp(28px,3vw,40px);color:var(--paper)}
+.rc-res-head p{color:var(--mist);margin:12px 0 0;max-width:56ch}
+.rc-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}
+@media(max-width:760px){.rc-cols{grid-template-columns:minmax(0,1fr)}}
+.rc-card{border:1px solid var(--mist);border-radius:12px;background:var(--white);padding:22px}
+.rc-card h3{font-size:20px;margin:0 0 4px}
+.rc-card .sub{font-size:14px;color:var(--slate);margin:0 0 12px}
+.rc-card ul{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.rc-card li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;font-size:15px;line-height:1.45}
+.rc-card li .i{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;margin-top:2px}
+.rc-card li .i.ok{background:var(--green-tint);color:var(--green-ink)}
+.rc-card li .i.todo{background:var(--paper-2);color:var(--graphite)}
+.rc-card li small{display:block;color:var(--slate);font-size:13.5px;margin-top:2px}
+.rc-plan{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center}
+@media(max-width:640px){.rc-plan{grid-template-columns:minmax(0,1fr)}}
+.rc-plan .amt{font-family:var(--font-display);font-weight:800;font-size:clamp(30px,3vw,40px);letter-spacing:-.03em;line-height:1;white-space:nowrap}
+.rc-plan .amt small{font-family:var(--font-body);font-weight:500;font-size:15px;letter-spacing:0;color:var(--slate);margin-left:6px}
+.rc-saved{margin-top:18px;border:1px solid var(--mist);border-left:3px solid var(--green-2);border-radius:8px;padding:16px 18px;background:var(--white);font-size:15px}
+.rc-saved b{display:block;margin-bottom:4px}
+.rc-next{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+.rc-next .btn-ghost{color:var(--ink);border-color:var(--mist)}
+.rc-next .btn-ghost:hover{border-color:var(--ink)}
+.rc-how{font-size:13.5px;color:var(--slate);margin:16px 0 0;max-width:72ch}
+</style>
+
+<!-- HERO -->
+<section class="dark hero-sub"><div class="hero-bg"></div><div class="hero-grid-lines"></div>
+  <div class="wrap">
+    <p class="eyebrow">Reporting Readiness Check</p>
+    <h1>How ready are you to report?</h1>
+    <p class="lead">Five minutes on your organisation and the records you already hold. You get your result straight away: what you have, what to sort first, and what Yarta would cost.</p>
+    <div class="hero-meta"><span>About 5 minutes</span><span>Instant result</span><span>Free, no obligation</span></div>
+  </div>
+</section>
+
+<section class="rc" id="check">
+  <div class="wrap">
+    <div class="rc-layout">
+      <form class="form" id="rc-form" novalidate data-to="{{EMAIL}}">
+        <p class="hp" aria-hidden="true"><label>Leave this empty <input name="website" tabindex="-1" autocomplete="off"></label></p>
+
+        <div class="rc-step" data-step="1">
+          <div class="rc-step-head"><span class="n">01</span><div><h2>Your organisation</h2><p>Who you are and how big. This sets which records matter and which plan fits.</p></div></div>
+          <div class="form">
+            <label>Organisation name<input type="text" name="org_name" autocomplete="organization" maxlength="160" required></label>
+            <div class="row2">
+              <label>Type of organisation<select name="sector" required>
+                <option value="">Choose one</option>
+                <option value="council">Council</option>
+                <option value="business">Business or office</option>
+                <option value="health">Hospital or aged care</option>
+                <option value="education">University or school</option>
+                <option value="manufacturing">Manufacturing or industry</option>
+                <option value="construction">Construction or property</option>
+                <option value="retail">Retail or hospitality</option>
+                <option value="logistics">Logistics or transport</option>
+                <option value="government">Government agency</option>
+                <option value="other">Something else</option>
+              </select></label>
+              <label>State or territory<select name="state">
+                <option value="">Choose one</option>
+                <option value="VIC">Victoria</option><option value="NSW">New South Wales</option><option value="QLD">Queensland</option>
+                <option value="SA">South Australia</option><option value="WA">Western Australia</option><option value="TAS">Tasmania</option>
+                <option value="ACT">Australian Capital Territory</option><option value="NT">Northern Territory</option>
+                <option value="National">Several states</option>
+              </select></label>
+            </div>
+            <fieldset><legend>Employees</legend><div class="chips">
+              <label class="chip-in"><input type="radio" name="employees" value="1-30"><span>Up to 30</span></label>
+              <label class="chip-in"><input type="radio" name="employees" value="31-100"><span>31 to 100</span></label>
+              <label class="chip-in"><input type="radio" name="employees" value="101-500"><span>101 to 500</span></label>
+              <label class="chip-in"><input type="radio" name="employees" value="500+"><span>More than 500</span></label>
+            </div></fieldset>
+            <fieldset data-only="council" hidden><legend>Residents</legend><div class="chips">
+              <label class="chip-in"><input type="radio" name="residents" value="under-10k"><span>Under 10,000</span></label>
+              <label class="chip-in"><input type="radio" name="residents" value="10-50k"><span>10,000 to 50,000</span></label>
+              <label class="chip-in"><input type="radio" name="residents" value="50-100k"><span>50,000 to 100,000</span></label>
+              <label class="chip-in"><input type="radio" name="residents" value="100k+"><span>More than 100,000</span></label>
+            </div></fieldset>
+            <fieldset><legend>Sites or buildings</legend><div class="chips">
+              <label class="chip-in"><input type="radio" name="sites" value="1"><span>One</span></label>
+              <label class="chip-in"><input type="radio" name="sites" value="2-5"><span>2 to 5</span></label>
+              <label class="chip-in"><input type="radio" name="sites" value="6-20"><span>6 to 20</span></label>
+              <label class="chip-in"><input type="radio" name="sites" value="20+"><span>More than 20</span></label>
+            </div></fieldset>
+          </div>
+        </div>
+
+        <div class="rc-step" data-step="2">
+          <div class="rc-step-head"><span class="n">02</span><div><h2>Why now</h2><p>Tick everything that applies.</p></div></div>
+          <div class="form">
+            <fieldset><legend>What is driving it</legend><div class="chips">
+              <label class="chip-in"><input type="checkbox" name="drivers" value="climate"><span>Mandatory climate reporting</span></label>
+              <label class="chip-in"><input type="checkbox" name="drivers" value="target"><span>A council or company target</span></label>
+              <label class="chip-in"><input type="checkbox" name="drivers" value="funding"><span>Grant or funding conditions</span></label>
+              <label class="chip-in"><input type="checkbox" name="drivers" value="tender"><span>A customer or tender asks</span></label>
+              <label class="chip-in"><input type="checkbox" name="drivers" value="board"><span>Board or executive reporting</span></label>
+              <label class="chip-in"><input type="checkbox" name="drivers" value="improve"><span>To improve, not just report</span></label>
+              <label class="chip-in"><input type="checkbox" name="drivers" value="unsure"><span>Not sure yet</span></label>
+            </div></fieldset>
+            <fieldset data-not="council"><legend>Mandatory climate reporting group <span class="opt">if you know it · <a class="link" href="/climate-reporting/" target="_blank" rel="noopener">check yours</a></span></legend><div class="chips">
+              <label class="chip-in"><input type="radio" name="group" value="1"><span>Group 1</span></label>
+              <label class="chip-in"><input type="radio" name="group" value="2"><span>Group 2</span></label>
+              <label class="chip-in"><input type="radio" name="group" value="3"><span>Group 3</span></label>
+              <label class="chip-in"><input type="radio" name="group" value="none"><span>Not covered</span></label>
+              <label class="chip-in"><input type="radio" name="group" value="unsure"><span>Not sure</span></label>
+            </div></fieldset>
+            <fieldset><legend>When you need your first report</legend><div class="chips">
+              <label class="chip-in"><input type="radio" name="timeline" value="3m"><span>Within 3 months</span></label>
+              <label class="chip-in"><input type="radio" name="timeline" value="6m"><span>3 to 6 months</span></label>
+              <label class="chip-in"><input type="radio" name="timeline" value="12m"><span>6 to 12 months</span></label>
+              <label class="chip-in"><input type="radio" name="timeline" value="exploring"><span>Just exploring</span></label>
+            </div></fieldset>
+          </div>
+        </div>
+
+        <div class="rc-step" data-step="3">
+          <div class="rc-step-head"><span class="n">03</span><div><h2>The records you hold</h2><p>Monthly means you get it every month, for every site. Patchy means some months or some sites. Yarta works from these documents; you never key numbers yourself.</p></div></div>
+          <div class="rc-records" id="rc-records"></div>
+          <p class="err" id="rc-rec-err" role="alert"></p>
+        </div>
+
+        <div class="rc-step" data-step="4">
+          <div class="rc-step-head"><span class="n">04</span><div><h2>How you report today</h2></div></div>
+          <div class="form">
+            <fieldset><legend>Today you mostly use</legend><div class="chips">
+              <label class="chip-in"><input type="radio" name="approach" value="none"><span>Nothing yet</span></label>
+              <label class="chip-in"><input type="radio" name="approach" value="spreadsheet"><span>Spreadsheets</span></label>
+              <label class="chip-in"><input type="radio" name="approach" value="consultant"><span>A consultant</span></label>
+              <label class="chip-in"><input type="radio" name="approach" value="software"><span>Carbon software</span></label>
+              <label class="chip-in"><input type="radio" name="approach" value="contractor"><span>A contractor's portal</span></label>
+            </div></fieldset>
+            <fieldset><legend>Who holds most of the records</legend><div class="chips">
+              <label class="chip-in"><input type="radio" name="holder" value="finance"><span>Finance</span></label>
+              <label class="chip-in"><input type="radio" name="holder" value="facilities"><span>Facilities or property</span></label>
+              <label class="chip-in"><input type="radio" name="holder" value="sustainability"><span>Sustainability</span></label>
+              <label class="chip-in"><input type="radio" name="holder" value="fleet"><span>Fleet</span></label>
+              <label class="chip-in"><input type="radio" name="holder" value="operations"><span>Operations</span></label>
+              <label class="chip-in"><input type="radio" name="holder" value="unsure"><span>Not sure</span></label>
+            </div></fieldset>
+            <fieldset><legend>A year of records to compare against (a baseline)</legend><div class="chips">
+              <label class="chip-in"><input type="radio" name="baseline" value="yes"><span>Yes, we have one</span></label>
+              <label class="chip-in"><input type="radio" name="baseline" value="no"><span>No</span></label>
+              <label class="chip-in"><input type="radio" name="baseline" value="unsure"><span>Not sure</span></label>
+            </div></fieldset>
+          </div>
+        </div>
+
+        <div class="rc-step" data-step="5">
+          <div class="rc-step-head"><span class="n">05</span><div><h2>Where to send your result</h2><p>Your result shows on this page as soon as you submit.</p></div></div>
+          <div class="form">
+            <div class="row2">
+              <label>Your name<input type="text" name="contact_name" autocomplete="name" maxlength="120" required></label>
+              <label><span>Your role <span class="opt">optional</span></span><input type="text" name="contact_role" autocomplete="organization-title" maxlength="120"></label>
+            </div>
+            <div class="row2">
+              <label>Work email<input type="email" name="email" autocomplete="email" maxlength="200" required></label>
+              <label><span>Phone <span class="opt">optional</span></span><input type="tel" name="phone" autocomplete="tel" maxlength="40"></label>
+            </div>
+            <label><span>Anything else we should know <span class="opt">optional</span></span><textarea name="notes" maxlength="1000"></textarea></label>
+            <label class="consent"><input type="checkbox" name="consent" required><span>Yarta can email me about this check. My answers stay with Yarta and are never shared (<a class="link" href="/privacy/" target="_blank" rel="noopener">privacy</a>).</span></label>
+            <p class="err" id="rc-err" role="alert"></p>
+            <div class="rc-submit"><button class="btn btn-primary" type="submit" id="rc-go">See my result {{ARROW}}</button><p class="small">Free. No obligation. No mailing list.</p></div>
+          </div>
+        </div>
+      </form>
+
+      <aside class="rc-side" aria-live="polite">
+        <p class="k">Your records so far</p>
+        <div class="big" id="rc-score"><span class="na">Not started</span></div>
+        <p class="band" id="rc-band">Answer step 3 to see it move.</p>
+        <div class="rc-bar"><i id="rc-bar"></i></div>
+        <p class="k">Progress</p>
+        <ol id="rc-progress">
+          <li data-p="1">Your organisation</li><li data-p="2">Why now</li><li data-p="3">The records you hold</li><li data-p="4">How you report today</li><li data-p="5">Where to send your result</li>
+        </ol>
+        <p class="note">The full result, with what to sort first and the plan that fits, shows when you submit.</p>
+      </aside>
+    </div>
+
+    <div class="rc-result" id="rc-result" hidden tabindex="-1"></div>
+  </div>
+</section>
+<!--scripts-->
+<script src="/assets/yarta/live-config.js"></script>
+<script src="/assets/readiness.js"></script>
