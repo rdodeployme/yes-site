@@ -42,7 +42,7 @@
   function pick(){ var q=/[?&]sector=([a-z]+)/.exec(location.search); if(q && S.BY[q[1]]) return q[1]; var cur=P.currentOrgId(); var s=cur && S.forOrg(cur); return s ? s.k : 'council'; }
   function mark(){ var cur=P.currentOrgId(), s=cur && S.forOrg(cur); Array.prototype.forEach.call(chips.querySelectorAll('button'),function(b){ b.setAttribute('aria-pressed', s && b.getAttribute('data-k')===s.k ? 'true':'false'); }); }
   chips.innerHTML=S.SECTORS.map(function(s){ return '<button type="button" data-k="'+s.k+'" aria-pressed="false">'+s.name+'</button>'; }).join('');
-  chips.addEventListener('click',function(e){ var b=e.target.closest('button[data-k]'); if(!b) return; var k=b.getAttribute('data-k'); P.signInAs(S.BY[k].org,'#/dashboard'); if(history.replaceState) history.replaceState(null,'',location.pathname+'?sector='+k+location.hash); mark(); });
+  chips.addEventListener('click',function(e){ var b=e.target.closest('button[data-k]'); if(!b) return; var k=b.getAttribute('data-k'); var lk=/[?&]look=([a-z0-9]+)/.exec(location.hash); P.signInAs(S.BY[k].org,'#/dashboard'+(lk?'?look='+lk[1]:'')); if(history.replaceState) history.replaceState(null,'',location.pathname+'?sector='+k+location.hash); mark(); });
   var k=pick(); var cur=P.currentOrgId(), curSec=cur && S.forOrg(cur);
   var opSession = !!(P.state.session && P.state.users.some(function(u){ return u.id===P.state.session.user && u.role==='operator'; }));
   if(opSession || !cur || !curSec || curSec.k!==k || !location.hash || location.hash==='#/') P.signInAs(S.BY[k].org, location.hash && location.hash!=='#/' && !opSession ? location.hash : '#/dashboard');

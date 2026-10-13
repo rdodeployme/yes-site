@@ -1561,7 +1561,7 @@ app.addEventListener('input', function(e){
 });
 app.addEventListener('change', function(e){
   var t=e.target, act=t.getAttribute('data-act');
-  if(act==='dash-month'){ go('#/dashboard?m='+t.value); }
+  if(act==='dash-month'){ var lk=/[?&]look=([a-z0-9]+)/.exec(location.hash); go('#/dashboard?m='+t.value+(lk?'&look='+lk[1]:'')); }
   else if(act==='cat-month'){ go('#/category/'+t.getAttribute('data-cat')+'?m='+t.value); }
   else if(act==='imp-file' && t.files && t.files[0]){ impLoad(t.files[0]); }
   else if(act==='imp-tpl'){ if(ui.imp){ ui.imp.tpl=t.value; var mp=state.importMaps[t.value]||{}; ui.imp.unit=mp.unit||ui.imp.unit; var cn2=mp.colNames||{}; ['date','material','qty','unit','site','ref'].forEach(function(k){ if(cn2[k]){ var ix=ui.imp.headers.indexOf(cn2[k]); if(ix>=0) ui.imp.cols[k]=ix; } }); ui.imp.preview=null; render(); } }
