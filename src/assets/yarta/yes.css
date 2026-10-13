@@ -152,6 +152,7 @@ h4{font-size:17px;letter-spacing:-.01em;line-height:1.25}
 input[type=text],input[type=email],input[type=number],input[type=search],input[type=month],select,textarea{width:100%;font:15px/1.4 var(--font-body);color:var(--ink);background:var(--white);border:1px solid var(--silver-3);border-radius:9px;padding:11px 12px;transition:border-color .15s,box-shadow .15s}
 input:focus,select:focus,textarea:focus{outline:0;border-color:var(--green-2);box-shadow:0 0 0 3px rgba(79,193,122,.22)}
 input[type=number]{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+input:disabled,select:disabled,textarea:disabled{background:var(--silver-0);color:var(--graphite);border-color:var(--silver-2);cursor:not-allowed;opacity:1;-webkit-text-fill-color:var(--graphite)}
 .in-unit{display:flex;align-items:stretch}
 .in-unit input{border-top-right-radius:0;border-bottom-right-radius:0}
 .in-unit .u{display:flex;align-items:center;padding:0 12px;border:1px solid var(--silver-3);border-left:0;border-radius:0 9px 9px 0;background:var(--silver-0);font:12.5px var(--font-mono);color:var(--graphite);white-space:nowrap}

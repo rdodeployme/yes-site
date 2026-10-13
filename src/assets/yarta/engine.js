@@ -216,7 +216,7 @@ window.YESE = window.YESE || {};
         all_kl: w.reduce(function(s,x){var r=x.raw;return s+num(r.potable_kl)+num(r.recycled_kl)+num(r.rain_kl)+num(r.storm_kl)+num(r.waste_water_kl)+num(r.ground_kl);},0)
       };
       var lastContam = null; for(var j=i;j>=0;j--){ if(has(out[j].raw,"contam_pct")){ lastContam=+out[j].raw.contam_pct; break; } }
-      R.renew_pct = R.elec_all_kwh>0 ? R.renew_kwh/R.elec_all_kwh*100 : null;
+      R.renew_pct = R.elec_all_kwh>0 ? Math.min(100, R.renew_kwh/R.elec_all_kwh*100) : null;   // a share: renewable bought beyond what was used does not count twice
       R.diversion_pct = R.waste_total_t>0 ? clamp((R.waste_total_t-R.landfill_t)/R.waste_total_t*100) : null;
       R.recovery_pct = R.waste_total_t>0 ? Math.min(100,R.recovered_t/R.waste_total_t*100) : null;
       R.reuse_pct = R.waste_total_t>0 ? R.furniture_t/R.waste_total_t*100 : null;

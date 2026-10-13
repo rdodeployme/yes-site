@@ -318,7 +318,8 @@ fieldset.field legend{padding:0;margin-bottom:6px}
 .rp-steps span.on{color:var(--green-ink)}
 .rp-steps i{width:14px;height:1px;background:var(--silver-3)}
 .rp-score{display:grid;gap:18px 24px;grid-template-columns:minmax(0,1fr);align-items:center;margin-top:24px}
-@media(min-width:760px){.rp-score{grid-template-columns:auto minmax(0,1fr) auto}}
+@media(min-width:760px){.rp-score{grid-template-columns:auto minmax(0,1fr)}.rp-score .rp-wyc{grid-column:1/-1}}
+@media(min-width:1180px){.rp-score{grid-template-columns:auto minmax(0,1fr) auto}.rp-score .rp-wyc{grid-column:auto}}
 .rp-score .kicker{margin:0 0 6px}
 .rp-score-t .band{font:800 30px/1 var(--font-display);letter-spacing:-.03em}
 .rp-score-d{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px;font-size:13.5px;color:var(--graphite)}

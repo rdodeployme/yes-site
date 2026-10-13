@@ -199,12 +199,22 @@ service cloud.firestore {
         && str(d.notes, 2000) && d.share is bool && str(d.why, 2000)
         && (d.month == null || monthKey(d.month)) && d.group is bool && str(d.createdAt, 40) && str(d.createdBy, 120);
     }
+    // Land, nature and community are scored against targets agreed with Yarta at onboarding. A customer's save
+    // carries them unchanged; only staff can set or change them, so a score cannot be raised by lowering a target.
+    function agreedTargetsUnchanged(d) {
+      return (resource == null
+              && !d.values.keys().hasAny(['target_trees', 'target_rehab_ha', 'target_native_ha', 'target_participants']))
+          || (resource != null
+              && !d.values.diff(resource.data.get('values', {})).affectedKeys()
+                   .hasAny(['target_trees', 'target_rehab_ha', 'target_native_ha', 'target_participants']));
+    }
     function validSetting(settingId, d) {
       return ((settingId == 'targets'
                && d.keys().hasOnly(['values', 'updatedAt', 'updatedBy', 'updatedByUid'])
                && d.values is map
                && d.values.keys().hasOnly(['target_emissions', 'target_renewable', 'target_diversion', 'target_fleet_ev',
-                                           'target_trees', 'target_rehab_ha', 'target_native_ha', 'target_participants']))
+                                           'target_trees', 'target_rehab_ha', 'target_native_ha', 'target_participants'])
+               && (isStaff() || agreedTargetsUnchanged(d)))
            || (settingId == 'plan'
                && d.keys().hasOnly(['off', 'updatedAt', 'updatedBy', 'updatedByUid'])
                && d.off is map && d.off.size() <= 80))

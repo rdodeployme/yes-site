@@ -220,6 +220,25 @@ describe('A customer (Shire A)', () => {
     await assertSucceeds(setDoc(doc(d, 'orgs/orgA/settings/targets'), { values: { target_emissions: 50, target_diversion: 80 }, updatedAt: serverTimestamp(), updatedBy: 'Ava', updatedByUid: 'clientA' }));
     await assertSucceeds(setDoc(doc(d, 'orgs/orgA/settings/plan'), { off: { audit: true }, updatedAt: serverTimestamp(), updatedBy: 'Ava', updatedByUid: 'clientA' }));
   });
+  test('ALLOWED: change their own four targets while carrying the agreed ones unchanged', async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'orgs/orgA/settings/targets'), { values: { target_emissions: 40, target_trees: 3500, target_participants: 5000 }, updatedAt: PAST, updatedBy: 'Morgan', updatedByUid: 'staffA' });
+    });
+    const d = db(as(people.clientA));
+    await assertSucceeds(setDoc(doc(d, 'orgs/orgA/settings/targets'), { values: { target_emissions: 50, target_renewable: 90, target_trees: 3500, target_participants: 5000 }, updatedAt: serverTimestamp(), updatedBy: 'Ava', updatedByUid: 'clientA' }));
+  });
+  test('BLOCKED: change, add or drop a land, nature or community target (agreed with Yarta)', async () => {
+    const d = db(as(people.clientA));
+    await assertFails(setDoc(doc(d, 'orgs/orgB/settings/targets'), { values: { target_trees: 10 }, updatedAt: serverTimestamp(), updatedBy: 'Ava', updatedByUid: 'clientA' }));
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'orgs/orgA/settings/targets'), { values: { target_emissions: 40, target_trees: 3500, target_participants: 5000 }, updatedAt: PAST, updatedBy: 'Morgan', updatedByUid: 'staffA' });
+    });
+    await assertFails(setDoc(doc(d, 'orgs/orgA/settings/targets'), { values: { target_emissions: 40, target_trees: 100, target_participants: 5000 }, updatedAt: serverTimestamp(), updatedBy: 'Ava', updatedByUid: 'clientA' }));
+    await assertFails(setDoc(doc(d, 'orgs/orgA/settings/targets'), { values: { target_emissions: 40, target_trees: 3500, target_participants: 5000, target_rehab_ha: 1 }, updatedAt: serverTimestamp(), updatedBy: 'Ava', updatedByUid: 'clientA' }));
+    await assertFails(setDoc(doc(d, 'orgs/orgA/settings/targets'), { values: { target_emissions: 40, target_trees: 3500 }, updatedAt: serverTimestamp(), updatedBy: 'Ava', updatedByUid: 'clientA' }));
+    await env.withSecurityRulesDisabled(async (ctx) => { await deleteDoc(doc(ctx.firestore(), 'orgs/orgA/settings/targets')); });
+    await assertFails(setDoc(doc(d, 'orgs/orgA/settings/targets'), { values: { target_emissions: 40, target_native_ha: 2 }, updatedAt: serverTimestamp(), updatedBy: 'Ava', updatedByUid: 'clientA' }));
+  });
   test('BLOCKED: smuggle other fields in through targets, or write another setting', async () => {
     const d = db(as(people.clientA));
     await assertFails(setDoc(doc(d, 'orgs/orgA/settings/targets'), { values: { target_emissions: 50, score: 100 }, updatedAt: serverTimestamp(), updatedBy: 'Ava', updatedByUid: 'clientA' }));
@@ -290,6 +309,9 @@ describe('Accepting an invite', () => {
 
 // ------------------------------------------------------------------------------------------
 describe('Yarta staff', () => {
+  test('ALLOWED: set the agreed land, nature and community targets', async () => {
+    await assertSucceeds(setDoc(doc(db(as(people.staffA)), 'orgs/orgA/settings/targets'), { values: { target_emissions: 40, target_trees: 3000, target_rehab_ha: 12, target_native_ha: 16, target_participants: 5000 }, updatedAt: serverTimestamp(), updatedBy: 'Morgan', updatedByUid: 'staffA' }));
+  });
   test('ALLOWED: read every customer, every month, providers, leads and the activity log', async () => {
     const d = db(as(people.staffA));
     for (const p of ['orgs/orgA', 'orgs/orgB', 'orgs/orgA/months/2026-07', 'providers/p1', 'leads/l1', 'audit/a1', 'outbox/m1', 'invites/newclient@shire-a.test']) {

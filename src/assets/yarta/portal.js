@@ -26,7 +26,7 @@ function auto(n){ if(n==null||!isFinite(n)) return '—'; var a=Math.abs(n); ret
 function fmtF(f,v){ if(v==null||!isFinite(v)) return '—'; if(f && (f.kind==='count'||f.kind==='currency')) return fmt(v,0); if(+v===0) return '0'; return auto(v); }
 function pct(n,dp){ return n==null||!isFinite(n) ? '—' : fmt(n,dp==null?0:dp)+'%'; }
 function sgn(n,dp){ if(n==null||!isFinite(n)) return '—'; var s=fmt(Math.abs(n),dp||0); return (n>0?'+':n<0?'−':'±')+s; }
-function delta(n,opts){ opts=opts||{}; if(n==null||!isFinite(n)) return '<span class="delta flat">—</span>'; var good = opts.lowerBetter ? n<0 : n>0; var cls = Math.abs(n)<0.5 ? 'flat' : good ? 'up' : 'down'; var arrow = n>0.5?'▲':n<-0.5?'▼':'■'; return '<span class="delta '+cls+'">'+arrow+' '+sgn(n,opts.dp||0)+(opts.unit||'')+'</span>'; }
+function delta(n,opts){ opts=opts||{}; if(n==null||!isFinite(n)) return '<span class="delta flat">—</span>'; var good = opts.lowerBetter ? n<0 : n>0; var cls = Math.abs(n)<0.5 ? 'flat' : good ? 'up' : 'down'; var arrow = n>0.5?'▲':n<-0.5?'▼':'■'; var zero = Math.abs(n) < 0.5*Math.pow(10,-(opts.dp||0)); return '<span class="delta '+cls+'">'+arrow+' '+(zero?fmt(0,opts.dp||0):sgn(n,opts.dp||0))+(opts.unit||'')+'</span>'; }
 function mLabel(k){ var p=E.parse(k); return MONTHS[p.m]+' '+p.y; }
 function mShort(k){ var p=E.parse(k); return MONTHS[p.m].slice(0,3)+' '+String(p.y).slice(2); }
 function dueDate(k){ var p=E.parse(E.addMonths(k,1)); return new Date(p.y,p.m,15); }
@@ -210,15 +210,9 @@ function vLogin(){
    + '</div></div></div>';
 }
 
-/* ------------------------------------------------------------------ dashboard */
-function vDashboard(q){
-  var o=org(), S=seriesOf(o), m=monthOf(S,q.m);
-  if(!m) return shell('dashboard','<div class="pg-head"><div><h1>'+esc(o.profile.org_name)+'</h1></div></div><div class="empty">'+(isOp()?'No month has been verified or entered yet. <a class="link" href="#/ops/entry">Open data entry</a>.':'Your first verified month will appear here. <a class="link" href="#/documents">Send your documents</a> and Yarta will enter them.')+'</div>');
-  var i=idxOf(S,m.month), R12=m.r12, T=S.targets, p=o.profile;
-  var opts = S.months.slice().reverse().map(function(x){ return '<option value="'+x.month+'"'+(x.month===m.month?' selected':'')+'>'+mLabel(x.month)+(x.status!=='verified'?' · provisional':'')+'</option>'; }).join('');
-  var head = '<div class="pg-head"><div><p class="kicker">Dashboard</p><h1>'+esc(p.org_name)+'</h1><p class="pg-sub">'+esc((window.YESS&&p.sector&&window.YESS.BY[p.sector])?window.YESS.BY[p.sector].one:p.org_type)+' · '+esc(p.state)+(p.residents?' · '+fmt(p.residents)+' residents':'')+' · '+fmt(p.employees)+' FTE · baseline '+esc(p.baseline_fy)+'</p></div>'
-    + '<div class="pg-actions"><label class="vh" for="dm">Month</label><select id="dm" data-act="dash-month">'+opts+'</select><a class="btn btn-ink btn-sm" href="#/report/'+m.month+'">Monthly report</a></div></div>';
-  // where the next month stands
+/* ------------------------------------------------------------------ dashboard
+   The Overview and the category pages live in overview.js (window.YARTA_VIEWS); this file keeps the banners they share. */
+function dashBanner(o){
   var banner='';
   var pend=sorted(o).filter(function(r){ return r.status!=='verified'; });
   if(isOp()){
@@ -230,95 +224,14 @@ function vDashboard(q){
     else if(lastP) banner='<div class="banner grey no-print"><span><b>Yarta is entering '+mLabel(lastP.month)+'</b> from the '+((lastP.inbox||[]).length)+' document'+(((lastP.inbox||[]).length)===1?'':'s')+' you sent.</span><a class="btn btn-ghost btn-sm" href="#/documents" style="color:var(--ink)">Send documents</a></div>';
     var rsAll=sorted(o), dueK=rsAll.length?E.addMonths(rsAll[rsAll.length-1].month,1):E.addMonths(nowKey(),-1); if(dueK<=nowKey() && !rec(o,dueK)) banner+='<div class="banner no-print"><span><b>Documents for '+mLabel(dueK)+' are due '+longDate(dueDate(dueK))+'.</b> Fuel card statements, energy and water bills, waste dockets and registers.</span><a class="btn btn-primary btn-sm" href="#/documents">Send documents</a></div>';
   }
-  // hero
-  var yoyTxt = m.yoy!=null ? delta(m.yoy)+' <span>on '+mLabel(S.months[i-12].month)+'</span>' : '<span class="muted">Year-on-year change after 12 months</span>';
-  var momTxt = m.mom!=null ? delta(m.mom)+' <span>on '+mLabel(S.months[i-1].month)+'</span>' : '';
-  var stTxt = m.status==='verified' ? 'Verified by Yarta'+(rec(o,m.month).verifiedAt?' on '+longDate(rec(o,m.month).verifiedAt):'') : 'Provisional: awaiting Yarta verification';
-  var basePts = S.months.map(function(x){ return {label:mShort(x.month), v:x.score, prov:x.status!=='verified'}; });
-  var bIdx=[]; S.months.forEach(function(x,j){ if(E.fyOf(x.month)===S.baseline.fy) bIdx.push(j); });
-  var hero = '<section class="panel-dark"><div class="dhero"><div class="dh-score">'+ring(m.score,176)+'<div class="dh-meta"><div class="lbl">Yindyamarra Environmental Score · '+mLabel(m.month)+'</div><div class="band">'+esc(m.band)+'</div>'
-    + '<div class="dl"><span>Year on year</span><b>'+yoyTxt+'</b><span>Month on month</span><b>'+(momTxt||'—')+'</b><span>Status</span><b>'+statusChip(m.status)+'</b><span>Coverage</span><b>'+m.scored+' of 10 categories</b></div>'
-    + '<p class="small" style="color:var(--silver-5);margin:14px 0 0;max-width:40ch">'+esc(stTxt)+'. Self-declared under the published Yarta method; not an accredited rating.</p></div></div>'
-    + '<div class="dh-chart">'+lineChart(basePts,{dark:true,label:'Score by month',band:bIdx.length?[bIdx[0],bIdx[bIdx.length-1]]:null,bandLabel:bIdx.length?'Baseline '+S.baseline.fy:'',h:230})+'</div></div></section>';
-  // where you could be, and recommended help
-  var P=planFor(o,S,i), help='';
-  if(P){
-    var top3=P.items.filter(function(it){ return it.k!=='grants' && !it.off; }).slice(0,3);
-    help='<section class="wyc no-print" aria-labelledby="wyc-h"><div class="wyc-top"><div><h2 class="sec-t" id="wyc-h">Where you could be</h2><p class="sec-s">Your score now, at the eco standards, and an estimate with the recommended help done.</p></div><a class="btn btn-ghost btn-sm" href="#/roadmap" style="color:var(--ink)">See your roadmap</a></div>'+threeNums(P,m)
-      + (top3.length?'<h2 class="sec-t" style="margin-top:26px">Recommended for you</h2><p class="sec-s">From your figures to '+mLabel(m.month)+', by the published rules. You can use any provider.</p><div class="recs">'+top3.map(recCard).join('')+'</div>':'')+'</section>';
-  }
-  // tiles
-  var tiles = '<section><h2 class="sec-t" style="margin-top:28px">Ten categories</h2><p class="sec-s">Rolling 12 months to '+mLabel(m.month)+'. Change is against the same month last year. Select a category for its figures.</p><div class="tiles">'
-    + D.CATEGORIES.map(function(c){ var v=m.scores[c.k]; var hist=S.months.slice(Math.max(0,i-12),i+1).map(function(x){ return x.scores[c.k]; }); return '<a class="tile" href="#/category/'+c.k+'?m='+m.month+'"><div class="n">'+esc(c.short)+'</div>'+(v==null?'<div class="v na">Not reported</div>':'<div class="v">'+Math.round(v)+' '+delta(m.cat_yoy[c.k])+'</div>'+spark(hist,{min:0,max:100}))+(m.prov[c.k]?'<span class="prov" title="Provisional until 12 months of data">P</span>':'')+'</a>'; }).join('')
-    + '</div></section>';
-  // emissions
-  var tot=R12.total_t, base=R12.base.total_t, chg=base>0?(tot-base)/base*100:null;
-  var s1=R12.scope1_t/tot*100, s2=R12.scope2_t/tot*100, s3=R12.scope3_t/tot*100;
-  var last13=S.months.slice(Math.max(0,i-12),i+1).map(function(x){ return {label:mShort(x.month), parts:[x.scope1_t,x.scope2_t,x.scope3_t]}; });
-  var emis = '<div class="panel"><div class="metric"><div class="k">Operational emissions · rolling 12 months</div><div class="v">'+fmt(tot,0)+'<span class="u">t CO₂-e</span></div><div class="s">'+(chg!=null?delta(chg,{lowerBetter:true,dp:1,unit:'%'})+' against the same months of the baseline year':'')+'</div></div>'
-    + '<div class="split-bar" aria-hidden="true"><i class="s1" style="width:'+s1+'%"></i><i class="s2" style="width:'+s2+'%"></i><i class="s3" style="width:'+s3+'%"></i></div>'
-    + '<div class="legend"><span><i class="s1"></i>Scope 1 · '+fmt(R12.scope1_t,0)+' t</span><span><i class="s2"></i>Scope 2 · '+fmt(R12.scope2_t,0)+' t</span><span><i class="s3"></i>Scope 3 (reported categories) · '+fmt(R12.scope3_t,0)+' t</span></div>'
-    + '<div style="margin-top:16px">'+stackBars(last13,{colors:['#8A4A14','#CF7A2E','#F2C894'],names:['Scope 1','Scope 2','Scope 3'],unit:'t CO₂-e',label:'Emissions by month',h:190})+'</div>'
-    + '<p class="small muted" style="margin:10px 0 0">Avoided emissions from recycling, reported separately and never deducted: <b>'+fmt(R12.avoided_t,0)+' t CO₂-e</b> (modelled estimate). '+(R12.flights?'':'')+'Flights are recorded but not yet in the totals.</p></div>';
-  // targets
-  var tg = E.targets(S.months.length ? {months:S.months.slice(0,i+1), targets:T, baseline:S.baseline} : S);
-  var BMd=benchFor(o.profile);
-  var targ = '<div class="panel"><h3>Eco standards, benchmarks and actuals</h3><p class="sec-s" style="margin-top:4px">Rolling 12 months to '+mLabel(m.month)+'. Targets are set on the Organisation page.</p>'
-    + tg.map(function(t){ var a=t.actual, max=Math.max(100,t.target||0), b=BMd&&BMd[t.k]; return '<div style="margin-top:18px"><div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><b style="font-weight:600">'+esc(t.name)+'</b><span class="mono">'+(a==null?'—':fmt(a,1)+'%')+' <span class="muted">/ '+fmt(t.target,0)+'%</span></span></div><div class="tbar" aria-hidden="true"><i style="width:'+clamp((a||0)/max*100,0,100)+'%"></i><b style="left:'+clamp(t.target/max*100,0,100)+'%"></b>'+(b?'<s class="bm" style="left:'+clamp(b.v/max*100,0,100)+'%"></s>':'')+'</div>'+(b?'<p class="small muted" style="margin:6px 0 0">Industry benchmark '+fmt(b.v,0)+'%: '+esc(b.label)+'.</p>':'')+'</div>'; }).join('')
-    + '<p class="small muted" style="margin:16px 0 0">The black mark is the eco standard or your target, whichever is higher. The dark orange mark is the published industry benchmark for your sector; no other organisation\'s data is used.'+(tg[0]&&tg[0].note?' Emissions: '+esc(tg[0].note.toLowerCase())+'.':'')+'</p></div>';
-  // key metrics
-  function mc(k,v,u,s){ return '<div class="panel metric"><div class="k">'+k+'</div><div class="v">'+v+(u?'<span class="u">'+u+'</span>':'')+'</div><div class="s">'+s+'</div></div>'; }
-  var fuelChg = R12.base.fuel_l>0 ? (R12.fuel_l-R12.base.fuel_l)/R12.base.fuel_l*100 : null;
-  var elecChg = R12.base.grid_kwh>0 ? (R12.grid_kwh-R12.base.grid_kwh)/R12.base.grid_kwh*100 : null;
-  var watChg = R12.base.potable_kl>0 ? (R12.potable_kl-R12.base.potable_kl)/R12.base.potable_kl*100 : null;
-  var metrics = '<section><h2 class="sec-t" style="margin-top:28px">Key figures</h2><p class="sec-s">Rolling 12 months to '+mLabel(m.month)+', calculated by Yarta from the figures you entered.</p><div class="row3">'
-    + mc('Renewable electricity',pct(R12.renew_pct,1),'','Target '+fmt(T.target_renewable,0)+'% · purchased renewables and solar used on site')
-    + mc('Fleet electrification',pct(m.fleet_ev_pct,1),'',fmt(m.fleet_n,0)+' vehicles · target '+fmt(T.target_fleet_ev,0)+'%')
-    + mc('Landfill diversion',pct(R12.diversion_pct,1),'','Recovery rate '+pct(R12.recovery_pct,1)+' · target '+fmt(T.target_diversion,0)+'%')
-    + mc('Fuel purchased',fmt(R12.fuel_l/1000,0),'kL',delta(fuelChg,{lowerBetter:true,dp:1,unit:'%'})+' on the baseline months')
-    + mc('Grid electricity',fmt(R12.grid_kwh/1000,0),'MWh',delta(elecChg,{lowerBetter:true,dp:1,unit:'%'})+' on the baseline months')
-    + mc('Potable water',fmt(R12.potable_kl,0),'kL',delta(watChg,{lowerBetter:true,dp:1,unit:'%'})+' · alternative water '+pct(R12.alt_water_pct,1))
-    + mc('Trees planted',fmt(R12.trees,0),'','Target '+fmt(T.target_trees,0)+' a year')
-    + mc('Habitat restored',fmt(R12.native_ha,1),'ha','Native vegetation, habitat and wetland · target '+fmt(T.target_native_ha,0)+' ha')
-    + mc('Program participants',fmt(R12.participants,0),'','Target '+fmt(T.target_participants,0)+' a year')
-    + '</div></section>';
-  // fleet
-  var v=m.values, fleet=[['Diesel cars',v.veh_diesel,'lg-ice'],['Petrol cars',v.veh_petrol,'lg-petrol'],['Hybrids',v.veh_hybrid,'lg-hyb'],['Plug-in hybrids',v.veh_phev,'lg-phev'],['Battery electric',v.veh_bev,'lg-bev'],['Diesel trucks',v.trucks_diesel,'lg-truck'],['Electric trucks',v.trucks_electric,'lg-etruck']];
-  var fn=fleet.reduce(function(a,f){ return a+(+f[1]||0); },0)||1;
-  var fuelRows=S.months.slice(Math.max(0,i-12),i+1).map(function(x){ return {label:mShort(x.month), parts:[+x.values.diesel_l||0,+x.values.petrol_l||0,(+x.values.lpg_l||0)+(+x.values.biodiesel_l||0)]}; });
-  var fleetP = '<div class="panel"><h3>Fleet</h3><p class="sec-s" style="margin-top:4px">Register as at '+mLabel(m.month)+'. Plug-in hybrids count as half electric.</p>'
-    + '<div class="split-bar" style="height:22px;border-radius:6px" aria-hidden="true">'+fleet.map(function(f){ return (+f[1]||0)>0?'<i class="'+f[2]+'" style="width:'+((+f[1])/fn*100)+'%" title="'+esc(f[0])+': '+f[1]+'"></i>':''; }).join('')+'</div>'
-    + '<div class="legend">'+fleet.map(function(f){ return '<span><i class="'+f[2]+'"></i>'+esc(f[0])+' · '+fmt(+f[1]||0)+'</span>'; }).join('')+'</div>'
-    + '<div style="margin-top:18px">'+stackBars(fuelRows,{colors:['#2A2A2A','#8E9396','#C4C8CA'],names:['Diesel','Petrol','LPG and biodiesel'],unit:'L',label:'Fuel purchased by month',h:170})+'</div>'
-    + '<div class="legend"><span><i class="lg-diesel"></i>Diesel</span><span><i class="lg-petrol"></i>Petrol</span><span><i class="lg-other"></i>LPG and biodiesel</span></div></div>';
-  // quality
-  var r=rec(o,m.month), ev=r.evidence||{};
-  var qual = '<div class="panel"><h3>Data quality · '+mLabel(m.month)+'</h3><dl class="kv" style="margin-top:14px"><dt>Required figures supplied</dt><dd>'+pct(m.complete_pct,0)+'</dd><dt>Figures backed by evidence</dt><dd>'+pct(m.evidence_pct,0)+'</dd><dt>Entered by Yarta</dt><dd>'+longDate(r.enteredAt||r.submittedAt)+'</dd><dt>Verified by Yarta</dt><dd>'+(r.verifiedAt?longDate(r.verifiedAt):'Not yet')+'</dd></dl>'
-    + '<div class="pill-row" style="margin-top:16px">'+D.CATEGORIES.filter(function(c){ return c.k!=='carbon'; }).map(function(c){ var e=ev[c.k]; var g=e&&e.grade?e.grade:(e?'…':'—'); return '<span class="chip" title="'+esc(e?(e.name||''):'No evidence attached')+'"><span class="grade '+(e&&e.grade?e.grade:'none')+'" style="width:20px;height:20px;font-size:11px">'+g+'</span>'+esc(c.short)+'</span>'; }).join('')+'</div>'
-    + '<p class="small muted" style="margin:12px 0 0">Evidence grades: A primary document (bill, docket, certificate) · B system extract or reconciled record · C estimate or unsupported · … awaiting Yarta.</p></div>';
-  return shell('dashboard', head + banner + hero + help + tiles + '<div class="row2" style="margin-top:28px">'+emis+targ+'</div>' + metrics + '<div class="row2" style="margin-top:22px">'+fleetP+qual+'</div>');
+  return banner;
 }
+function viewApi(){ return {E:E, D:D, R:R, org:org, seriesOf:seriesOf, monthOf:monthOf, idxOf:idxOf, isOp:isOp, me:me, rec:rec, shell:shell, esc:esc, fmt:fmt, pct:pct, sgn:sgn, delta:delta,
+  mLabel:mLabel, mShort:mShort, longDate:longDate, statusChip:statusChip, ring:ring, lineChart:lineChart, planFor:planFor, benchFor:benchFor, upText:upText, bookingChip:bookingChip, banner:dashBanner}; }
+function vDashboard(q){ return window.YARTA_VIEWS.dashboard(q, viewApi()); }
 
 /* ------------------------------------------------------------------ category detail */
-var CALCMAP = {data_complete_pct:'complete_pct'};
-function vCategory(cat,q){
-  var o=org(), S=seriesOf(o), m=monthOf(S,q.m); var c=D.CAT[cat]; if(!c||!m) return vNotFound();
-  var i=idxOf(S,m.month), prev=S.months[i-1]||null, ly=S.months[i-12]||null;
-  var pts=S.months.map(function(x){ return {label:mShort(x.month), v:x.scores[cat]==null?null:Math.round(x.scores[cat]), prov:x.status!=='verified'||!!x.prov[cat]}; });
-  var how=(E.SCORE_METHOD.filter(function(h){ return h.k===cat; })[0]||{}).how||'';
-  var inputs=D.INPUTS.filter(function(f){ return f.cat===cat; });
-  var calcs=D.CALCS.filter(function(f){ return f.cat===cat; });
-  function val(mm,f){ if(!mm) return null; var x=mm.values[f.id]; return isNum(x)?+x:(x||null); }
-  function row(f){ var a=val(m,f), b=val(prev,f), c2=val(ly,f); var ch=(isNum(a)&&isNum(c2)&&+c2>0)?(a-c2)/c2*100:null; var flag=ch!=null&&Math.abs(ch)>35; return '<tr'+(flag?' class="flag"':'')+'><td><b style="font-weight:600">'+esc(f.name)+'</b><div class="id">'+esc(f.id)+' · '+D.FREQ[f.freq]+(f.req?' · required':'')+'</div></td><td class="num">'+(isNum(a)?fmtF(f,a):(a?esc(a):'—'))+'</td><td>'+esc(f.unit)+'</td><td class="num">'+(isNum(b)?fmtF(f,b):'—')+'</td><td class="num">'+(isNum(c2)?fmtF(f,c2):'—')+'</td><td class="num">'+(ch==null?'—':sgn(ch,1)+'%')+'</td></tr>'; }
-  function crow(f){ var k=CALCMAP[f.id]||f.id; var a=m[k], b=prev?prev[k]:null, c2=ly?ly[k]:null; return '<tr><td><b style="font-weight:600">'+esc(f.name)+'</b><div class="id">'+esc(f.calc)+'</div></td><td class="num">'+auto(a)+'</td><td>'+esc(f.unit)+'</td><td class="num">'+auto(b)+'</td><td class="num">'+auto(c2)+'</td><td></td></tr>'; }
-  var th='<thead><tr><th>Figure</th><th class="r">'+mShort(m.month)+'</th><th>Unit</th><th class="r">'+(prev?mShort(prev.month):'Last month')+'</th><th class="r">'+(ly?mShort(ly.month):'Last year')+'</th><th class="r">Change on last year</th></tr></thead>';
-  var body='<div class="pg-head"><div><p class="kicker"><a class="link" href="#/dashboard?m='+m.month+'">Dashboard</a> · Category</p><h1>'+esc(c.name)+'</h1><p class="pg-sub">'+esc(c.what)+'</p></div><div class="pg-actions"><span class="chip">'+mLabel(m.month)+'</span></div></div>'
-    + '<div class="row2 w37"><div class="panel-dark"><div class="dh-meta"><div class="lbl">Category score</div></div>'+ring(m.scores[cat]==null?null:Math.round(m.scores[cat]),150)+'<div class="dh-meta" style="margin-top:16px"><div class="dl"><span>Year on year</span><b>'+delta(m.cat_yoy[cat])+'</b><span>Band</span><b>'+esc(E.band(m.scores[cat]==null?null:Math.round(m.scores[cat])))+'</b></div></div>'+(m.prov[cat]?'<p class="small" style="color:var(--silver-4);margin:14px 0 0">Provisional until 12 months of data.</p>':'')+'</div>'
-    + '<div class="panel"><h3>Score by month</h3><p class="sec-s" style="margin-top:4px">How it is scored: '+esc(how)+'</p>'+lineChart(pts,{label:c.name+' score by month',h:200})+'</div></div>'
-    + (inputs.length?'<h2 class="sec-t" style="margin-top:28px">Figures entered</h2><p class="sec-s">Rows more than 35% away from the same month last year are shaded for a second look.</p><div class="tbl-wrap"><table class="tbl compact">'+th+'<tbody>'+inputs.map(row).join('')+'</tbody></table></div>':'')
-    + (calcs.length?'<h2 class="sec-t" style="margin-top:28px">Calculated by Yarta</h2><p class="sec-s">Never typed. Recalculated whenever a figure changes.</p><div class="tbl-wrap"><table class="tbl compact">'+th+'<tbody>'+calcs.map(crow).join('')+'</tbody></table></div>':'');
-  return shell('category', body);
-}
+function vCategory(cat,q){ var h=window.YARTA_VIEWS.category(cat, q, viewApi()); return h==null ? vNotFound() : h; }
 
 /* ------------------------------------------------------------------ submit */
 function isFirst(o,k){ var rs=sorted(o); return !rs.length || rs[0].month===k; }
@@ -477,15 +390,17 @@ function inBaselineFY(S,p,k){ var fy=String(S.baseline.fy||p.baseline_fy||''), y
 /* the brand on the report cover: a page can override window.REPORT_BRAND before portal.js loads */
 /* industry benchmarks: published figures for the organisation's sector, never other customers' data (benchmarks.js) */
 function benchFor(p){ return (window.YESB && p) ? window.YESB.forSector(p.sector||'business') : null; }
+/* a number never parts from its unit at a line end */
+function keepUnits(h){ return String(h).replace(/(\d) (m²|m³|m|km|kL|L|t|kg|kWh|MWh|GJ|ha|%)(?=[\s,.;)]|$)/g, '$1\u00a0$2'); }
 function benchTable(p,tg,BM){
   if(!BM) return '';
   var Bx=window.YESB, rows='', codes={}, n=0;
   function code(c){ if(!codes[c]){ n++; codes[c]=n; } return codes[c]; }
-  tg.forEach(function(t){ var b=BM[t.k]; if(!b) return; rows+='<tr><td>'+esc(t.name)+'</td><td class="num">'+(t.actual==null?'—':pct(t.actual,0))+'</td><td class="num">'+pct(b.v,0)+'</td><td class="small">'+esc(b.label)+' <span class="muted">['+code(b.src)+']</span></td></tr>'; });
-  BM.extra.slice(0,4).forEach(function(x){ rows+='<tr><td>'+esc(x.k)+'</td><td class="num muted">—</td><td class="num">'+esc(x.v)+'</td><td class="small">'+esc(x.label)+' <span class="muted">['+code(x.src)+']</span></td></tr>'; });
+  tg.forEach(function(t){ var b=BM[t.k]; if(!b) return; rows+='<tr><td>'+esc(t.name)+'</td><td class="num">'+(t.actual==null?'—':pct(t.actual,0))+'</td><td class="num">'+pct(b.v,0)+'</td><td class="small">'+esc(b.label)+'\u00a0<span class="muted">['+code(b.src)+']</span></td></tr>'; });
+  BM.extra.slice(0,4).forEach(function(x){ rows+='<tr><td>'+esc(x.k)+'</td><td class="num muted">—</td><td class="num">'+esc(x.v)+'</td><td class="small">'+esc(x.label)+'\u00a0<span class="muted">['+code(x.src)+']</span></td></tr>'; });
   var srcs=Object.keys(codes).sort(function(a,b){ return codes[a]-codes[b]; }).map(function(c){ return '['+codes[c]+'] '+esc(Bx.src(c)); }).join(' · ');
-  return '<div class="rp-h">Industry benchmarks · published figures for your sector</div><div class="rp-tw"><table class="tbl compact"><thead><tr><th>Figure</th><th class="r">You</th><th class="r">Benchmark</th><th>What the benchmark is</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
-    + '<p class="rp-bmnote">'+esc(BM.edition)+'. '+(BM.none?esc(BM.none)+' ':'')+'Benchmarks come from public sources only; Yarta never pools customer data. Sources: '+srcs+'.</p>';
+  return '<div class="rp-h">Industry benchmarks · published figures for your sector</div><div class="rp-tw"><table class="tbl compact nowrap-first"><thead><tr><th>Figure</th><th class="r">You</th><th class="r">Benchmark</th><th>What the benchmark is</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+    + '<p class="rp-bmnote">'+keepUnits(esc(BM.edition)+'. '+(BM.none?esc(BM.none)+' ':'')+'Benchmarks come from public sources only; Yarta never pools customer data. Sources: '+srcs+'.')+'</p>';
 }
 var RB=window.REPORT_BRAND||{mark:'<span class="mark">Yarta</span>', full:'Yindyamarra Environmental Sustainability', score:'Yindyamarra Environmental Score', title:'Environmental<br>Sustainability Report'};
 function sheetCover(o,S,i,PL,k,nP,provTxt,issuedTxt){
@@ -507,15 +422,15 @@ function sheetCover(o,S,i,PL,k,nP,provTxt,issuedTxt){
   var scale=[];
   if(per && divT>0) scale.push({ic:'scale', v:fmt(divT*1000/per.n,0)+' kg', t:'of waste diverted from landfill for every '+per.l});
   if(R12.potable_kl>0){ var pools=R12.potable_kl/2500; scale.push({ic:'pool', v:fmt(pools,pools<10?1:0), t:'Olympic swimming pools of drinking water (2,500 kL each)'}); }
-  if(B.total_t>0 && R12.total_t!=null){ var d=B.total_t-R12.total_t; scale.push({ic:'carbon', v:fmt(Math.abs(d),0)+' t CO₂-e', t:(d>=0?'less':'more')+' than the same months of the baseline year ('+esc(S.baseline.fy||p.baseline_fy)+')'}); }
+  if(!(window.YARTA_VIEWS && window.YARTA_VIEWS.reportEmissions) && B.total_t>0 && R12.total_t!=null){ var d=B.total_t-R12.total_t; scale.push({ic:'carbon', v:fmt(Math.abs(d),0)+' t CO₂-e', t:(d>=0?'less':'more')+' than the same months of the baseline year ('+esc(S.baseline.fy||p.baseline_fy)+')'}); }
   if(R12.trees>0||R12.native_ha>0) scale.push({ic:'leaf', v:fmt(R12.trees,0)+' trees', t:'planted, and '+fmt(R12.native_ha,1)+' ha of native vegetation, habitat or wetland restored'});
   if(per && R12.total_t>0) scale.push({ic:'carbon', v:fmt(R12.total_t*1000/per.n,0)+' kg CO₂-e', t:'of operational emissions for every '+per.l});
   if(R12.participants>0) scale.push({ic:'people', v:fmt(R12.participants,0)+' people', t:'took part in environment programs'});
   if(m.r12.n && R12.treated_t>0) scale.push({ic:'scale', v:fmt(R12.treated_t,0)+' t', t:'of clinical and related waste sent for treatment, counted in the total but never as recovered'});
-  var scaleH=scale.slice(0,6).map(function(x){ return '<div class="rp-sc">'+rpIco(x.ic)+'<div><b>'+x.v+'</b> '+esc(x.t)+'</div></div>'; }).join('') || '<p class="rp-p muted">No figures yet.</p>';
+  var scaleH=scale.slice(0,(window.YARTA_VIEWS && window.YARTA_VIEWS.reportEmissions)?4:6).map(function(x){ return '<div class="rp-sc">'+rpIco(x.ic)+'<div><b>'+x.v+'</b> '+esc(x.t)+'</div></div>'; }).join('') || '<p class="rp-p muted">No figures yet.</p>';
   var subs=D.CATEGORIES.map(function(c){ var v=m.scores[c.k]; return '<div class="rp-sub"><span>'+esc(c.name)+(m.prov[c.k]?' <span class="muted">(P)</span>':'')+'</span><span class="v">'+(v==null?'—':Math.round(v))+'</span><span class="d">'+(v==null?'<span class="muted small">not reported</span>':delta(m.cat_yoy[c.k]))+'</span><div class="bar"><i style="width:'+(v||0)+'%"></i></div></div>'; }).join('');
   var BM=benchFor(p);
-  var tgH=tg.map(function(t){ var w=(t.actual==null||!(t.target>0))?0:Math.max(0,Math.min(100,t.actual/t.target*100)); var met=t.actual!=null&&t.actual>=t.target; var b=BM&&BM[t.k]; var bw=(b&&t.target>0)?Math.max(0,Math.min(100,b.v/t.target*100)):null; return '<div class="rp-tg'+(met?' met':'')+'"><span class="n">'+esc(t.name)+(b?' <span class="muted">· industry '+pct(b.v,0)+'</span>':'')+'</span><span class="r">'+(t.actual==null?'—':pct(t.actual,0))+' <span class="muted">of '+pct(t.target,0)+'</span></span><div class="bar"><i style="width:'+w.toFixed(0)+'%"></i>'+(bw==null?'':'<b class="bm" style="left:'+bw.toFixed(0)+'%" title="Industry benchmark"></b>')+'</div></div>'; }).join('');
+  var tgH=tg.filter(function(t){ return !(window.YARTA_VIEWS && window.YARTA_VIEWS.reportEmissions) || t.k!=='emissions'; }).map(function(t){ var w=(t.actual==null||!(t.target>0))?0:Math.max(0,Math.min(100,t.actual/t.target*100)); var met=t.actual!=null&&t.actual>=t.target; var b=BM&&BM[t.k]; var bw=(b&&t.target>0)?Math.max(0,Math.min(100,b.v/t.target*100)):null; return '<div class="rp-tg'+(met?' met':'')+'"><span class="n">'+esc(t.name)+(b?' <span class="muted">· industry '+pct(b.v,0)+'</span>':'')+'</span><span class="r">'+(t.actual==null?'—':pct(t.actual,0))+' <span class="muted">of '+pct(t.target,0)+'</span></span><div class="bar"><i style="width:'+w.toFixed(0)+'%"></i>'+(bw==null?'':'<b class="bm" style="left:'+bw.toFixed(0)+'%" title="Industry benchmark"></b>')+'</div></div>'; }).join('');
   var photo = p.country_photo ? ' style="background-image:linear-gradient(90deg,rgba(11,40,24,.96) 0%,rgba(11,40,24,.78) 55%,rgba(11,40,24,.35) 100%),url('+esc(p.country_photo)+')"' : '';
   var wyc = PL ? '<div class="rp-wyc"><div><span class="k">Now</span><b>'+(PL.now==null?'—':PL.now)+'</b></div><div><span class="k">At the eco standards</span><b>'+(PL.target==null?'—':PL.target)+'</b></div><div class="hl"><span class="k">With Yarta help</span><b>'+(PL.potential==null?'—':PL.potential)+'</b><span class="s">estimate · plan on page '+nP+'</span></div></div>' : '';
   return '<section class="rp-sheet rp-cover">'
@@ -524,7 +439,7 @@ function sheetCover(o,S,i,PL,k,nP,provTxt,issuedTxt){
     + '<div class="rp-band-r"><div class="rp-kv light"><span>Organisation</span><b>'+esc(p.org_name)+'</b>'+(sectorName?'<span>Sector</span><b>'+esc(sectorName)+'</b>':'')+'<span>Month</span><b>'+mLabel(k)+'</b><span>Status</span><b>'+esc(provTxt)+'</b><span>Issued</span><b>'+(issuedTxt||longDate(new Date()))+'</b></div>'+(p.traditional_owners?'<div class="rp-country">On '+esc(p.traditional_owners)+' Country</div>':'')+'</div></div>'
     + (p.country_photo?'<div class="rp-photo-credit">Photo: '+esc(p.country_photo_credit||'supplied by the organisation and approved by Traditional Owners')+'</div>':'')
     + '<div class="rp-score">'+ring(m.score,150,true)+'<div class="rp-score-t"><p class="kicker">'+RB.score+' · '+esc(mLabel(k))+'</p><div class="band">'+esc(m.band)+'</div><div class="rp-score-d">'+(m.yoy==null?'':'<span>'+delta(m.yoy,{unit:' pts'})+' year on year'+(ly?' ('+esc(mLabel(ly.month))+')':'')+'</span>')+(m.mom==null?'':'<span>'+delta(m.mom,{unit:' pts'})+' month on month</span>')+'<span>'+m.scored+' of 10 categories scored</span></div></div>'+wyc+'</div>'
-    + '<div class="rp-cards">'+cardsH+'</div>'
+    + (window.YARTA_VIEWS && window.YARTA_VIEWS.reportEmissions ? window.YARTA_VIEWS.reportEmissions(S,i,viewApi()) : '<div class="rp-cards">'+cardsH+'</div>')
     + '<div class="rp-cols"><div><div class="rp-h">Category scores · change on last year</div><div class="rp-subs one">'+subs+'</div></div>'
     + '<div><div class="rp-h">At real-world scale · rolling '+win+'</div><div class="rp-scale">'+scaleH+'</div><div class="rp-h">Progress towards the eco standards · rolling '+win+'</div><div class="rp-tgs">'+tgH+'</div>'+(BM?'<p class="rp-bmnote">The mark on each bar is the published industry benchmark; figures and sources are on page 2. No other organisation\'s data is used.</p>':'')+'</div></div>'
     + '<div class="rp-foot">Headline figures are rolling '+win+' totals; the change is against the same calendar months of the baseline year'+(inBaselineFY(S,p,k)?' ('+esc(S.baseline.fy||p.baseline_fy)+' is the baseline year, so there is no earlier year to compare with yet)':'')+'. (P) provisional: a target-based category with less than 12 months of data.'+(operatorOf(o)?' Your Yarta data operator: '+esc(operatorOf(o).name)+'.':'')+' The score is self-declared under the published Yarta method v0.1 (draft); it is not an accredited rating, certification or offset. Page 1 of '+nP+'.</div></section>';
@@ -564,7 +479,7 @@ function reportSheets(o,S,k){
     + kvrow('Trees planted',fmt(v.trees),'trees') + kvrow('Program participants',fmt(v.participants),'people')
     + '</tbody></table></div>'
     + benchTable(p,tg,BM2)
-    + '<div class="rp-h">Data quality and evidence</div><div class="rp-tw"><table class="tbl compact"><tbody><tr><td>Required figures supplied</td><td class="num">'+pct(m.complete_pct)+'</td></tr><tr><td>Figures backed by evidence</td><td class="num">'+pct(m.evidence_pct)+'</td></tr><tr><td>Evidence grades</td><td>'+D.CATEGORIES.filter(function(c){return c.k!=='carbon';}).map(function(c){ var e=(r.evidence||{})[c.k]; return esc(c.short)+' '+(e?(e.grade||'…'):'—'); }).join(' · ')+'</td></tr></tbody></table></div>'
+    + '<div class="rp-h">Data quality and evidence</div><div class="rp-tw"><table class="tbl compact nowrap-first"><tbody><tr><td>Required figures supplied</td><td class="num">'+pct(m.complete_pct)+'</td></tr><tr><td>Figures backed by evidence</td><td class="num">'+pct(m.evidence_pct)+'</td></tr><tr><td>Evidence grades</td><td>'+D.CATEGORIES.filter(function(c){return c.k!=='carbon';}).map(function(c){ var e=(r.evidence||{})[c.k]; return esc(c.short)+' '+(e?(e.grade||'…'):'—'); }).join(' · ')+'</td></tr></tbody></table></div>'
     + '<div class="rp-foot">Method: emissions use the National Greenhouse Accounts Factors 2024 (DCCEEW), location-based electricity for '+esc(p.state)+'. Scope 3 covers waste to landfill and upstream fuel and electricity only. Flights are recorded but not yet converted. Avoided emissions use NSW DECCW (2010) factors, flagged as dated, and are never netted against emissions. Comparisons with the baseline use the same calendar months of '+esc(S.baseline.fy||p.baseline_fy)+'. Figures are entered by Yarta from the organisation\'s source documents and verified by a second Yarta analyst. Full method: yes.com.au/method. Page 2 of '+nP+'.</div></section>';
   return sheet1+sheet2+(PL?sheet3(o,S,i,PL,k):'');
 }
@@ -724,7 +639,7 @@ function sheet3(o,S,i,P,k){
   var p=o.profile, m=S.months[i];
   var qrows=quarterRows(P).map(function(q){ return '<tr><td>'+esc(q.label)+'</td><td>'+(q.starts.length?q.starts.map(function(it){ return itemName(it)+(it.booking?' <span class="muted">('+(it.booking.status==='requested'?'requested':'booked')+')</span>':''); }).join(' · '):'<span class="muted">No new starts</span>')+'</td><td class="num">'+(q.score==null?'—':q.score)+'</td></tr>'; }).join('');
   var bl=orgBookings(o.id).filter(function(b){ return b.status!=='cancelled' && R.byKey[b.svc]; });
-  var prog=bl.map(function(b){ var s=R.byKey[b.svc]; return '<tr><td>'+itemName({title:R.title(s,p), s:s})+'</td><td>'+esc(BK_L[b.status])+'</td><td>'+esc(b.status==='completed'&&b.completedMonth?mLabel(b.completedMonth):slotLabel(b.slot,b.other))+'</td><td>'+(b.status==='completed'?sinceText(S,b,i):'—')+'</td></tr>'; }).join('');
+  var prog=bl.map(function(b){ var s=R.byKey[b.svc]; return '<tr><td>'+itemName({title:R.title(s,p), s:s})+'</td><td>'+esc(BK_L[b.status])+'</td><td class="nw">'+esc(b.status==='completed'&&b.completedMonth?mLabel(b.completedMonth):slotLabel(b.slot,b.other))+'</td><td>'+(b.status==='completed'?sinceText(S,b,i):'—')+'</td></tr>'; }).join('');
   var names={}; P.items.concat(bl.map(function(b){ return {s:R.byKey[b.svc]}; })).forEach(function(it){ if(it.s && it.s.prov==='group') names[it.s.groupNames]=1; });
   var nm=Object.keys(names);
   var disc = nm.length ? 'Items marked ● are delivered by a Recycle Group business ('+nm.join('; ')+'). Yarta is part of Recycle Group. You can use any provider; your score and its verification do not depend on who does the work.' : 'No item in this plan is delivered by a Recycle Group business. Yarta is part of Recycle Group.';
@@ -748,10 +663,13 @@ function vOrganisation(){
       : '<div class="in-unit"><input type="number" step="any" min="0" id="p-'+f.id+'" data-pf="'+f.id+'" value="'+esc(v)+'"'+(roF(f)?' disabled':'')+'>'+(f.unit?'<span class="u">'+esc(f.unit)+'</span>':'')+'</div>';
     return '<div class="field"><label for="p-'+f.id+'">'+esc(f.name)+(f.req?' <span class="req">*</span>':'')+'</label>'+input+'<span class="hint">'+esc(f.def)+'</span></div>';
   });
+  function pick(fn){ return D.PROFILE.map(function(f,j){ return fn(f)?fields[j]:''; }).join(''); }
   var users=state.users.filter(function(u){ return u.org===o.id; }).map(function(u){ return '<tr><td>'+esc(u.name)+'</td><td>'+esc(u.title)+'</td><td class="mono small">'+esc(u.email)+'</td></tr>'; }).join('');
   var body='<div class="pg-head"><div><p class="kicker">Organisation</p><h1>'+esc(p.org_name)+'</h1><p class="pg-sub">Details used for intensities, the baseline and targets. Changing them recalculates every month.'+(ro?' Yarta keeps these up to date: to change anything other than your targets, email <a class="link" href="mailto:contact@yes.com.au">contact@yes.com.au</a>.':'')+'</p></div>'+('<div class="pg-actions"><button class="btn btn-primary btn-sm" type="button" data-act="save-profile">Save changes</button></div>')+'</div>'
-    + '<div class="row2"><div class="panel"><h3>Profile</h3><div class="stack" style="margin-top:16px">'+fields.slice(0,8).join('')+'</div></div><div class="panel"><h3>Targets</h3>'+(ro?'<p class="sec-s" style="margin-top:6px">These are yours. Set your own; the eco standard stays the floor, so the higher of the two is what the report measures against.</p>':'')+'<div class="stack" style="margin-top:16px">'+fields.slice(8).join('')+'</div></div></div>'
-    + '<h2 class="sec-t" style="margin-top:28px">Your Yarta data operator</h2><p class="sec-s">'+(operatorOf(o)?esc(operatorOf(o).name)+' · '+esc(operatorOf(o).title)+' · <a class="link" href="mailto:'+esc(operatorOf(o).email)+'">'+esc(operatorOf(o).email)+'</a>. Enters your figures, sends the monthly gap email and answers for the month.':'Not yet assigned.')+'</p><h2 class="sec-t" style="margin-top:28px">People with access</h2><p class="sec-s">In production each person has their own sign-in. Demo accounts only here.</p><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Name</th><th>Role</th><th>Email</th></tr></thead><tbody>'+(users||'<tr><td colspan="3" class="muted">No demo users for this organisation.</td></tr>')+'</tbody></table></div>';
+    + '<div class="row2"><div class="panel"><h3>Profile</h3><div class="stack" style="margin-top:16px">'+pick(function(f){ return f.id.indexOf('target_')!==0 && (!SECTOR_FIELD[f.id] || isOp() || (p[f.id]!=null && p[f.id]!=='') || SECTOR_FIELD[f.id].indexOf(p.sector)>=0); })+'</div></div>'
+      +'<div class="panel"><h3>Your targets</h3><p class="sec-s" style="margin-top:6px">'+(ro?'Yours to set. ':'')+'The eco standard stays the floor, so the higher of the two is what the report measures against.</p><div class="stack" style="margin-top:16px">'+pick(function(f){ return OWN_TARGETS.indexOf(f.id)>=0; })+'</div>'
+      +'<h3 style="margin-top:28px">Agreed with Yarta</h3><p class="sec-s" style="margin-top:6px">Land, nature and community are scored against annual targets agreed with Yarta at onboarding, from your plans and past years, so a score cannot be raised by lowering a target.'+(ro?' To change one, email <a class="link" href="mailto:contact@yes.com.au">contact@yes.com.au</a> with the reason; it applies from the next report.':' Only the Yarta team can change them.')+'</p><div class="stack" style="margin-top:16px">'+pick(function(f){ return f.id.indexOf('target_')===0 && OWN_TARGETS.indexOf(f.id)<0; })+'</div></div></div>'
+    + '<h2 class="sec-t" style="margin-top:28px">Your Yarta data operator</h2><p class="sec-s">'+(operatorOf(o)?esc(operatorOf(o).name)+' · '+esc(operatorOf(o).title)+' · <a class="link" href="mailto:'+esc(operatorOf(o).email)+'">'+esc(operatorOf(o).email)+'</a>. Enters your figures, sends the monthly gap email and answers for the month.':'Not yet assigned.')+'</p><h2 class="sec-t" style="margin-top:28px">People with access</h2><p class="sec-s">In production each person has their own sign-in. Demo accounts only here.</p><div class="tbl-wrap"><table class="tbl compact nowrap-cells"><thead><tr><th>Name</th><th>Role</th><th>Email</th></tr></thead><tbody>'+(users||'<tr><td colspan="3" class="muted">No demo users for this organisation.</td></tr>')+'</tbody></table></div>';
   return shell('organisation', body);
 }
 function fyOptions(o){ var set={}; sorted(o).forEach(function(r){ set[E.fyOf(r.month)]=1; }); var a=Object.keys(set).sort(); if(o.profile.baseline_fy && a.indexOf(o.profile.baseline_fy)<0) a.unshift(o.profile.baseline_fy); return a; }
@@ -1551,7 +1469,11 @@ function importApply(){
 }
 
 function currentSite(o){ var q=parseHash().q; if(!multisite(o)) return null; if(q.s && siteById(o,q.s)) return q.s; var a=o.sites.filter(function(x){ return x.active!==false; })[0]; return a?a.id:o.sites[0].id; }
-function roF(f){ return !isOp() && f.id.indexOf('target_')!==0; }
+/* A customer sets the four targets that are theirs to choose (the eco standard stays the floor). Land, nature and
+   community are scored against targets agreed with Yarta at onboarding, so a score cannot be raised by lowering them. */
+var OWN_TARGETS=['target_emissions','target_renewable','target_diversion','target_fleet_ev'];
+var SECTOR_FIELD={beds:['health'], students:['education'], vehicles:['logistics'], sites:['retail','business','manufacturing','construction']};
+function roF(f){ return !isOp() && OWN_TARGETS.indexOf(f.id)<0; }
 function siteSel(o){ return multisite(o) ? '<div class="field"><label for="up-s">Site</label><select id="up-s"><option value="">Whole organisation</option>'+o.sites.filter(function(s){ return s.active!==false; }).map(function(s){ return '<option value="'+esc(s.id)+'">'+esc(s.name)+'</option>'; }).join('')+'</select></div>' : ''; }
 function declBox(o,r,k,cur,editable){
   var d=declaredCats(r)[cur];
@@ -1640,6 +1562,7 @@ app.addEventListener('input', function(e){
 app.addEventListener('change', function(e){
   var t=e.target, act=t.getAttribute('data-act');
   if(act==='dash-month'){ go('#/dashboard?m='+t.value); }
+  else if(act==='cat-month'){ go('#/category/'+t.getAttribute('data-cat')+'?m='+t.value); }
   else if(act==='imp-file' && t.files && t.files[0]){ impLoad(t.files[0]); }
   else if(act==='imp-tpl'){ if(ui.imp){ ui.imp.tpl=t.value; var mp=state.importMaps[t.value]||{}; ui.imp.unit=mp.unit||ui.imp.unit; var cn2=mp.colNames||{}; ['date','material','qty','unit','site','ref'].forEach(function(k){ if(cn2[k]){ var ix=ui.imp.headers.indexOf(cn2[k]); if(ix>=0) ui.imp.cols[k]=ix; } }); ui.imp.preview=null; render(); } }
   else if(act==='imp-map'){ if(ui.imp){ var mkey=t.getAttribute('data-mat').toLowerCase(); ui.imp.matAdd=ui.imp.matAdd||{}; if(t.value) ui.imp.matAdd[mkey]=t.value; else delete ui.imp.matAdd[mkey]; ui.imp.preview=buildImportPreview(ui.imp); render(); } }
@@ -1722,7 +1645,7 @@ document.addEventListener('click', function(e){
     case 'submit-month': var c=currentSubmit(); if(!c) return; var pr=progressOf(c.o,c.r); if(pr.missing.length){ flash('Some required figures are still missing.','err'); return; } if(!$('#attest')||!$('#attest').checked){ flash('Please tick the confirmation first.','err'); return; } c.r.status='submitted'; c.r.submittedAt=isoNow().slice(0,10); c.r.enteredAt=c.r.submittedAt; c.r.enteredBy=me().name; Object.keys(c.r.evidence||{}).forEach(function(cat){ if(!c.r.evidence[cat].grade) c.r.evidence[cat].pending=true; }); log('Month entered and sent for verification',mLabel(c.k)+' · '+pr.req+' required figures',c.o.id); save(); ui.confirmSubmit=false; flash(c.o.profile.org_name+' · '+mLabel(c.k)+' sent for verification.'); go('#/ops/entry'); break;
     case 'ev-remove': var c2=currentSubmit(); if(!c2) return; var cat=t.getAttribute('data-cat'), ek=evKey(c2.o.id,c2.k,cat), cur2=c2.r.evidence[cat]; if(cur2 && cur2.key===ek) delFile(ek).catch(function(){}); delete c2.r.evidence[cat]; save(); render(); break;
     case 'ev-open': getFile(t.getAttribute('data-key')).then(function(f){ if(!f){ flash('That file is not stored in this browser.','err'); return; } var u=URL.createObjectURL(f); window.open(u,'_blank'); setTimeout(function(){ URL.revokeObjectURL(u); },60000); }).catch(function(){ flash('That file is not stored in this browser.','err'); }); break;
-    case 'save-profile': o=org(); var errs=[]; $$('[data-pf]').forEach(function(el){ var id=el.getAttribute('data-pf'), f=field(id), v=el.value; if(!isOp() && id.indexOf('target_')!==0) return; if(f.kind==='number'||f.kind==='count'||f.kind==='percent'){ if(v===''){ if(f.req) errs.push(f.name); else delete o.profile[id]; } else if(!isFinite(+v)||+v<0){ errs.push(f.name); } else o.profile[id]=+v; } else { if(v===''&&f.req) errs.push(f.name); else o.profile[id]=v; } }); if(errs.length){ flash('Check: '+errs.join(', '),'err'); return; } log('Profile updated',''); save(); flash('Saved. Every month has been recalculated.'); render(); break;
+    case 'save-profile': o=org(); var errs=[]; $$('[data-pf]').forEach(function(el){ var id=el.getAttribute('data-pf'), f=field(id), v=el.value; if(!isOp() && OWN_TARGETS.indexOf(id)<0) return; if(f.kind==='number'||f.kind==='count'||f.kind==='percent'){ if(v===''){ if(f.req) errs.push(f.name); else delete o.profile[id]; } else if(!isFinite(+v)||+v<0){ errs.push(f.name); } else o.profile[id]=+v; } else { if(v===''&&f.req) errs.push(f.name); else o.profile[id]=v; } }); if(errs.length){ flash('Check: '+errs.join(', '),'err'); return; } log('Profile updated',''); save(); flash('Saved. Every month has been recalculated.'); render(); break;
     case 'csv-all': o=org(); download(o.id+'-monthly-figures.csv', longRows(o), 'text/csv'); break;
     case 'csv-month': o=org(); var mk=t.getAttribute('data-month'); download(o.id+'-'+mk+'.csv', longRows(o,[mk]), 'text/csv'); break;
     case 'json-all': o=org(); download(o.id+'-yes-export.json', JSON.stringify({exported:isoNow(), method:E.VERSION, dictionary:D.VERSION, profile:o.profile, records:o.records},null,2), 'application/json'); break;
