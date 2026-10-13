@@ -161,6 +161,7 @@ function shell(active, body){
       ['grp','Customer view · '+(o?o.profile.org_name:'')],
       ['#/dashboard','Dashboard','dashboard'],
       ['#/reports','Reports','reports'],
+      ['#/summary','Monthly summary','summary'],
       ['#/roadmap','Roadmap','roadmap'],
       ['#/improvements','Improvements','improve'],
       ['#/documents','Documents','documents'],
@@ -170,6 +171,7 @@ function shell(active, body){
       ['grp','Reporting'],
       ['#/dashboard','Dashboard','dashboard'],
       ['#/reports','Reports','reports'],
+      ['#/summary','Monthly summary','summary'],
       ['#/roadmap','Roadmap','roadmap'],
       ['#/improvements','Improvements','improve'],
       ['#/documents','Send documents','documents'],
@@ -189,7 +191,7 @@ function shell(active, body){
    + '<nav class="snav">'+nav+'</nav>'
    + '<div class="foot">'+(LIVE?LIVE.footHtml():'Prototype. Your data stays in this browser.<br><button class="btn btn-ghost btn-sm" type="button" data-act="signout" style="color:var(--silver-2)">Sign out</button>')+'</div>'
    + '</aside><main class="main" id="main"><div class="content">'
-   + (op && ['dashboard','reports','roadmap','documents','organisation','category','report','data'].indexOf(active)>=0 ? '<div class="banner grey no-print"><span>Viewing <b>'+esc(o.profile.org_name)+'</b> as the Yarta team. The customer sees verified months only; months waiting for verification show here as provisional.</span><a class="btn btn-ghost btn-sm" href="#/ops/customers">Switch customer</a></div>' : '')
+   + (op && ['dashboard','reports','summary','roadmap','documents','organisation','category','report','data'].indexOf(active)>=0 ? '<div class="banner grey no-print"><span>Viewing <b>'+esc(o.profile.org_name)+'</b> as the Yarta team. The customer sees verified months only; months waiting for verification show here as provisional.</span><a class="btn btn-ghost btn-sm" href="#/ops/customers">Switch customer</a></div>' : '')
    + body + '</div></main></div>';
 }
 
@@ -227,7 +229,9 @@ function dashBanner(o){
   return banner;
 }
 function viewApi(){ return {E:E, D:D, R:R, org:org, seriesOf:seriesOf, monthOf:monthOf, idxOf:idxOf, isOp:isOp, me:me, rec:rec, shell:shell, esc:esc, fmt:fmt, pct:pct, sgn:sgn, delta:delta,
-  mLabel:mLabel, mShort:mShort, longDate:longDate, statusChip:statusChip, ring:ring, lineChart:lineChart, planFor:planFor, benchFor:benchFor, upText:upText, bookingChip:bookingChip, banner:dashBanner}; }
+  mLabel:mLabel, mShort:mShort, longDate:longDate, statusChip:statusChip, ring:ring, lineChart:lineChart, planFor:planFor, benchFor:benchFor, upText:upText, bookingChip:bookingChip, banner:dashBanner,
+  verifyUrl:verifyUrl, slotLabel:slotLabel, scoreRange:scoreRange}; }
+function vSummary(q){ return window.YARTA_VIEWS.summary(q, viewApi()); }
 function vDashboard(q){ return window.YARTA_VIEWS.dashboard(q, viewApi()); }
 
 /* ------------------------------------------------------------------ category detail */
@@ -1576,7 +1580,7 @@ function render(){
   if(!u){ html=vLogin(); }
   else if(!P.length){ go(isOp()?(u.home||'#/ops'):'#/dashboard'); return; }
   else if(LIVE && (html=LIVE.route(P,q))!=null){ /* team and access, leads */ }
-  else if(isOp() && !org() && ['dashboard','category','documents','sites','sitereport','period','reports','roadmap','book','improvements','report','organisation','data','checklist'].indexOf(P[0])>=0){ html=shell('', '<div class="empty">No customers yet. <a class="link" href="#/ops/customers/new">Create the first customer</a>.</div>'); }
+  else if(isOp() && !org() && ['dashboard','category','documents','sites','sitereport','period','reports','summary','roadmap','book','improvements','report','organisation','data','checklist'].indexOf(P[0])>=0){ html=shell('', '<div class="empty">No customers yet. <a class="link" href="#/ops/customers/new">Create the first customer</a>.</div>'); }
   else {
     var a=P[0];
     if(a==='dashboard') html=vDashboard(q);
@@ -1590,6 +1594,7 @@ function render(){
     else if(a==='checklist') html=vChecklist();
     else if(a==='reports') html=vReports();
     else if(a==='roadmap') html=vRoadmap();
+    else if(a==='summary') html=vSummary(q);
     else if(a==='book') html=vBook(P[1]);
     else if(a==='improvements') html=P[1]?vBook(P[1]):vImprove();
     else if(a==='report') html=vReport(P[1]);
@@ -1631,6 +1636,7 @@ app.addEventListener('input', function(e){
 });
 app.addEventListener('change', function(e){
   var t=e.target, act=t.getAttribute('data-act');
+  if(act==='summary-month'){ go('#/summary?m='+t.value); }
   if(act==='dash-month'){ var lk=/[?&]look=([a-z0-9]+)/.exec(location.hash); go('#/dashboard?m='+t.value+(lk?'&look='+lk[1]:'')); }
   else if(act==='cat-month'){ go('#/category/'+t.getAttribute('data-cat')+'?m='+t.value); }
   else if(act==='imp-file' && t.files && t.files[0]){ impLoad(t.files[0]); }
@@ -1716,6 +1722,7 @@ document.addEventListener('click', function(e){
     case 'reset-cancel': ui.confirmReset=false; render(); break;
     case 'view-org': state.session.viewOrg=t.getAttribute('data-org'); save(); go('#/dashboard'); break;
     case 'print': window.print(); break;
+    case 'copy-summary': var smt=document.getElementById('sm-text'); if(smt) copyText(smt.value); break;
     case 'start-month': o=state.orgs[t.getAttribute('data-org')]||org(); var nk=t.getAttribute('data-month'); if(!rec(o,nk)){ o.records.push({month:nk, values:{}, evidence:{}, status:'draft', inbox:[], enteredBy:me().name}); log('Month opened for data entry',mLabel(nk),o.id); save(); } go('#/entry/'+o.id+'/'+nk); break;
     case 'submit-ask': ui.confirmSubmit=true; render(); var sb=$('#submit-box'); if(sb) sb.scrollIntoView({block:'center'}); break;
     case 'submit-cancel': ui.confirmSubmit=false; render(); break;
@@ -1740,7 +1747,8 @@ document.addEventListener('click', function(e){
     case 'bk-cancel-no': ui.confirmCancel=null; render(); break;
     case 'in-copy': copyText('Subject: '+($('#in-subj')||{}).value+'\n\n'+($('#in-body')||{}).value); break;
     case 'view-report': state.session.viewOrg=t.getAttribute('data-org'); save(); go('#/report/'+t.getAttribute('data-month')); break;
-    case 'issue-report': var io=state.orgs[t.getAttribute('data-org')], ir=rec(io,t.getAttribute('data-month')); if(!ir||ir.status!=='verified') return; ir.issuedAt=isoNow().slice(0,10); ir.issuedBy=me().name; ir.issueRev=(ir.issueRev||0)+1; log('Report issued',mLabel(ir.month),io.id); queueMail('issued',io.id,customerEmails(io),'Your Yarta Report for '+mLabel(ir.month)+' is ready','Hi,\n\nYour Yarta Report for '+io.profile.org_name+' · '+mLabel(ir.month)+' has been issued. Sign in to read it, print it or save it as a PDF, and to see the roadmap and what to do next.\n\nThe score is self-declared under the published Yarta Method; the report states the method version and the benchmark edition it was calculated under.\n\nThanks,\n'+((operatorOf(io)||me()).name)+'\nYarta',ir.month); save(); flash(io.profile.org_name+' · '+mLabel(ir.month)+' report issued.'); render(); break;
+    case 'issue-report': var io=state.orgs[t.getAttribute('data-org')], ir=rec(io,t.getAttribute('data-month')); if(!ir||ir.status!=='verified') return; ir.issuedAt=isoNow().slice(0,10); ir.issuedBy=me().name; ir.issueRev=(ir.issueRev||0)+1; log('Report issued',mLabel(ir.month),io.id); var iS=seriesOf(io), iI=idxOf(iS,ir.month), iSum=''; try{ iSum=window.YARTA_VIEWS.summaryData(iS,iI,io,viewApi()).text; }catch(e){}
+      queueMail('issued',io.id,customerEmails(io),'Your Yarta Report for '+mLabel(ir.month)+' is ready','Hi,\n\nYour Yarta Report for '+io.profile.org_name+' · '+mLabel(ir.month)+' has been issued. Sign in to read it, print it or save it as a PDF. The summary below is also on the Monthly summary page, ready to forward.\n\n'+(iSum?iSum+'\n\n':'')+'Thanks,\n'+((operatorOf(io)||me()).name)+'\nYarta',ir.month); save(); flash(io.profile.org_name+' · '+mLabel(ir.month)+' report issued.'); render(); break;
     case 'prov-check': var pc=provById(t.getAttribute('data-id')); if(!pc) return; pc.checkedAt=today(); pc.checkedBy=me().name; log('Provider accreditation checked',pc.name,null); save(); flash(pc.name+' marked as checked today.'); render(); break;
     case 'prov-save': var pid=t.getAttribute('data-id'), pv2=pid?provById(pid):null; var pn=($('#pv-name').value||'').trim(); if(!pn){ flash('Add the provider name.','err'); return; } var svcs=$$('[data-psvc]').filter(function(x){ return x.checked; }).map(function(x){ return x.getAttribute('data-psvc'); }); if(!svcs.length){ flash('Tick at least one kind of help.','err'); return; } var acc=($('#pv-acc').value||'').trim(); if(!acc){ flash('Record the accreditation or licence held.','err'); return; } if(!pv2){ pv2={id:'pv-'+Date.now().toString(36), checkedAt:today(), checkedBy:me().name}; state.providers.push(pv2); } pv2.name=pn; pv2.kind=$('#pv-kind').value; pv2.svc=svcs; pv2.accreditation=acc; pv2.licence=($('#pv-lic').value||'').trim(); pv2.expiry=$('#pv-exp').value||''; pv2.contact=($('#pv-contact').value||'').trim(); pv2.email=($('#pv-email').value||'').trim(); pv2.phone=($('#pv-phone').value||'').trim(); pv2.notes=($('#pv-notes').value||'').trim(); pv2.demo=false; log(pid?'Provider updated':'Provider added',pn,null); save(); flash('Saved '+pn+'.'); go('#/ops/providers'); break;
     case 'prov-remove': var prid=t.getAttribute('data-id'); if((state.bookings||[]).some(function(b){ return b.provider===prid && b.status!=='cancelled'; })){ flash('This provider is assigned to a booking. Reassign it first.','err'); return; } state.providers=(state.providers||[]).filter(function(x){ return x.id!==prid; }); log('Provider removed',prid,null); save(); go('#/ops/providers'); break;

@@ -387,6 +387,68 @@ function heroRoad(S, i, o){
     + '</section>';
 }
 
+/* The monthly summary: one page a client forwards upward. Where they stand against the 2030 target, what moved, what is next.
+   summaryData gives the figures and a plain-text version (for the email and the copy button); summary renders the page. */
+function bigUnit(v, u){ if(u==='kWh' && Math.abs(v)>=100000) return [v/1000,'MWh']; if(u==='L' && Math.abs(v)>=100000) return [v/1000,'kL']; return [v,u]; }
+V.summaryData = function(S, i, o, api){
+  A=api; E=api.E; D=api.D; R=api.R; CUR_SPAN=span(S.months[i].r12);
+  var m=S.months[i], p=o.profile, r=m.r12, T=S.targets, st=onTrack(S,i,T), prev=S.months[i-1]||null, k=m.month, fy=S.baseline.fy||p.baseline_fy;
+  var head, line;
+  if(!st){ head='Environmental summary'; line=''; }
+  else if(st.inBase){ head='Baseline year, to '+A.mLabel(baseFyEnd(S)); line='The target is −'+fmt(st.tgt,0)+'% by 2030, measured from the end of this year.'; }
+  else { head = st.state==='on' ? 'On track for −'+fmt(st.tgt,0)+'% by 2030' : st.state==='close' ? 'Just behind the path to −'+fmt(st.tgt,0)+'% by 2030' : 'Behind the path to −'+fmt(st.tgt,0)+'% by 2030';
+    line = 'Emissions are '+fmt(Math.abs(st.red),1)+'% '+(st.red>=0?'below':'above')+' '+fy+'. '+(st.red>=st.tgt?'The target is already met.':'The straight-line path to the target is −'+fmt(Math.max(0,st.path),1)+'% by now.'); }
+  var dM = prev && prev.score!=null && m.score!=null ? m.score-prev.score : null;
+  var moved = prev ? D.CATEGORIES.map(function(c){ return {k:c.k, name:c.name, short:c.short, now:m.scores[c.k], was:prev.scores[c.k]}; })
+      .filter(function(x){ return x.now!=null && x.was!=null && Math.abs(x.now-x.was)>=0.5; })
+      .sort(function(a,b){ return Math.abs(b.now-b.was)-Math.abs(a.now-a.was); }).slice(0,4) : [];
+  var inB=inBaseYear(S,i);
+  var figs = [['Emissions','total_t','t CO₂-e'],['Grid electricity','grid_kwh','kWh'],['Fuel','fuel_l','L'],['Potable water','potable_kl','kL'],['Waste to landfill','landfill_t','t']]
+    .map(function(x){ var v=r[x[1]], b=r.base[x[1]]; if(!(v>0)) return null; var bu=bigUnit(v,x[2]); return {name:x[0], v:bu[0], u:bu[1], ch:(!inB && b>0)?pctChg(v,b):null}; }).filter(Boolean);
+  var P=A.planFor(o,S,i);
+  var next = P ? P.active.filter(function(it){ return it.k!=='grants' && it.start; }).sort(function(a,b){ return a.start<b.start?-1:a.start>b.start?1:0; }).slice(0,3) : [];
+  var rid=E.reportId(o.id, k, m.score, (A.rec(o,k)||{}).values);
+  var base=(typeof location!=='undefined'?location.href.split('#')[0]:''), reportUrl=base+'#/report/'+k, vurl=A.verifyUrl?A.verifyUrl(rid):'';
+  var subject=p.org_name+' · '+A.mLabel(k)+': '+(st&&!st.inBase?head.charAt(0).toLowerCase()+head.slice(1):'score '+m.score+' ('+m.band+')');
+  function nxt(it){ var b=it.booking; return (b ? (b.status==='completed'?'done':b.mode==='Own provider'?'reported done':'booked, '+A.slotLabel(b.slot,b.other)) : 'starts '+A.mLabel(it.start)); }
+  var T1=[];
+  T1.push(p.org_name+' · environmental summary, '+A.mLabel(k)+(m.status!=='verified'?' (provisional)':''));
+  T1.push(''); T1.push(head+'.'+(line?' '+line:''));
+  T1.push(''); T1.push('Yindyamarra Environmental Score: '+m.score+' ('+m.band+')'+(dM!=null?', '+(dM===0?'unchanged on':(dM>0?'up ':'down ')+Math.abs(dM)+' on')+' last month':'')+(m.yoy!=null?', '+(m.yoy>=0?'up ':'down ')+Math.round(Math.abs(m.yoy))+' on a year ago':'')+'.');
+  if(moved.length){ T1.push(''); T1.push('What moved this month'); moved.forEach(function(x){ T1.push('- '+x.name+': '+Math.round(x.was)+' to '+Math.round(x.now)); }); }
+  if(figs.length){ T1.push(''); T1.push((r.n<12?'The '+span(r)+' to '+A.mLabel(k):'The last 12 months')+(inB?' (baseline year)':', against the same months of '+fy)); figs.forEach(function(f){ T1.push('- '+f.name+': '+fmt(f.v,0)+' '+f.u+(f.ch!=null?', '+(f.ch<0?'−':'+')+fmt(Math.abs(f.ch),1)+'%':'')); }); }
+  if(next.length){ T1.push(''); T1.push("What's next"); next.forEach(function(it){ T1.push('- '+it.title+': '+nxt(it)+(it.uplift&&it.uplift.overall>=0.05?' (score '+A.scoreRange(it.uplift)+' once it takes full effect, estimate)':'')); }); }
+  T1.push(''); T1.push('Full report: '+reportUrl); if(vurl) T1.push('Check it is genuine: '+vurl+' (report ID '+rid+')');
+  T1.push('Self-declared under the published Yarta Method. The estimates are not a promise.');
+  return {m:m, st:st, head:head, line:line, dM:dM, moved:moved, figs:figs, inB:inB, fy:fy, next:next, nxt:nxt, P:P, rid:rid, vurl:vurl, reportUrl:reportUrl, subject:subject, text:T1.join('\n')};
+};
+V.summary = function(q, api){
+  A=api; E=api.E; D=api.D; R=api.R; tip();
+  var o=A.org(), S=A.seriesOf(o), m=A.monthOf(S,q.m), p=o.profile;
+  if(!m) return A.shell('summary','<div class="pg-head"><div><p class="kicker">Monthly summary</p><h1>'+esc(p.org_name)+'</h1></div></div><div class="empty">The summary appears once your first month is verified.</div>');
+  var i=A.idxOf(S,m.month), d=V.summaryData(S,i,o,api), r=m.r12;
+  var opts=S.months.slice().reverse().map(function(x){ return '<option value="'+x.month+'"'+(x.month===m.month?' selected':'')+'>'+A.mLabel(x.month)+(x.status!=='verified'?' · provisional':'')+'</option>'; }).join('');
+  var mail='mailto:?subject='+encodeURIComponent(d.subject)+'&body='+encodeURIComponent(d.text);
+  var head='<div class="pg-head"><div><p class="kicker">Monthly summary · '+A.mLabel(m.month)+'</p><h1>Share this month</h1><p class="pg-sub">One page for your manager, executive or council: where you stand against the 2030 target, what moved and what is next. Every figure comes from your verified report.</p></div>'
+    + '<div class="pg-actions"><label class="vh" for="sm-m">Month</label><select id="sm-m" data-act="summary-month">'+opts+'</select></div></div>';
+  var acts='<div class="sm-acts no-print"><button class="btn btn-primary btn-sm" type="button" data-act="copy-summary">Copy as email text</button><a class="btn btn-ink btn-sm" href="'+esc(mail)+'">Open in my email</a><button class="btn btn-ghost btn-sm" type="button" data-act="print" style="color:var(--ink)">Print or save as PDF</button><textarea id="sm-text" class="vh" aria-hidden="true" tabindex="-1">'+esc(d.text)+'</textarea></div>';
+  var stCls=d.st&&!d.st.inBase?d.st.state:'base';
+  var ch=function(v,lowerBetter){ return v==null?'<span class="muted">—</span>':arrow(v,lowerBetter); };
+  var movedH = d.moved.length ? '<ul class="sm-moved">'+d.moved.map(function(x){ var dd=x.now-x.was; return '<li><span class="n">'+esc(x.name)+'</span><span class="v"><span class="was">'+Math.round(x.was)+'</span> → <b>'+Math.round(x.now)+'</b></span>'+A.delta(dd)+'<span class="bar"><i class="w" style="width:'+Math.max(0,Math.min(100,x.was))+'%"></i><i class="n'+(dd<0?' dn':'')+'" style="width:'+Math.max(0,Math.min(100,x.now))+'%"></i></span></li>'; }).join('')+'</ul>'
+    : '<p class="sm-none">No category moved by a point or more on last month.</p>';
+  var figsH = d.figs.length ? '<table class="sm-figs"><tbody>'+d.figs.map(function(f){ return '<tr><td>'+esc(f.name)+'</td><td class="num">'+nu(f.v,f.u)+'</td><td class="num">'+ch(f.ch,true)+'</td></tr>'; }).join('')+'</tbody></table>' : '';
+  var nextH = d.next.length ? '<ol class="sm-next">'+d.next.map(function(it){ return '<li><b>'+esc(it.title)+'</b><span>'+esc(cap(d.nxt(it)))+(it.uplift&&it.uplift.overall>=0.05?' · score '+esc(A.scoreRange(it.uplift))+' at full effect, '+esc(A.mLabel(it.full)):'')+'</span></li>'; }).join('')+'</ol>' : '<p class="sm-none">Nothing is planned yet. Your roadmap lists what would help most.</p>';
+  var card='<article class="sm st-'+stCls+'">'
+    + '<header class="sm-h"><div><p class="sm-k">'+esc(p.org_name)+' · '+esc(A.mLabel(m.month))+(m.status!=='verified'?' · provisional':'')+'</p><h2>'+esc(d.head)+'</h2>'+(d.line?'<p class="sm-line">'+esc(d.line)+'</p>':'')+'</div>'
+    + '<div class="sm-score">'+A.ring(m.score,124)+'<div><b>'+esc(m.band)+'</b><span>'+(d.dM!=null?(d.dM===0?'Same as last month':A.delta(d.dM)+' on last month'):'')+'</span><span>'+(m.yoy!=null?A.delta(m.yoy)+' on a year ago':'')+'</span></div></div></header>'
+    + '<div class="sm-cols"><section><h3>What moved this month</h3>'+movedH
+    + (figsH?'<h3>'+(r.n<12?'The '+esc(span(r))+' to '+esc(A.mLabel(m.month)):'The last 12 months')+(d.inB?', your baseline year':', against '+esc(d.fy))+'</h3>'+figsH:'')+'</section>'
+    + '<section><h3>What’s next</h3>'+nextH+(d.P&&d.P.potential!=null&&d.P.full?'<p class="sm-pot">With every step in the plan done, the score could reach up to <b>'+d.P.potential+'</b> by '+esc(A.mLabel(d.P.full))+'. An estimate, not a promise.</p>':'')+'</section></div>'
+    + '<footer class="sm-f"><span>Report ID <b class="mono">'+esc(d.rid)+'</b>'+(d.vurl?' · check it at <span class="nw">'+esc(d.vurl.replace(/^https?:\/\//,'').replace(/\?.*$/,''))+'</span>':'')+'</span><span>Self-declared under the published Yarta Method · <a href="#/report/'+m.month+'">Full report</a></span></footer>'
+    + '</article>';
+  return A.shell('summary', head+A.banner(o)+acts+card);
+};
+
 /* The brief: the client's own verified figures behind one step of the plan, as the provider receives them */
 V.brief = function(S, i, key, api){
   A=api; E=api.E; D=api.D; R=api.R; CUR_SPAN=span(S.months[i].r12);
@@ -406,7 +468,7 @@ V.dashboard = function(q, api){
   var opts=S.months.slice().reverse().map(function(x){ return '<option value="'+x.month+'"'+(x.month===month?' selected':'')+'>'+A.mLabel(x.month)+(x.status!=='verified'?' · provisional':'')+'</option>'; }).join('');
   var sec=(window.YESS&&p.sector&&window.YESS.BY[p.sector])?window.YESS.BY[p.sector].one:p.org_type;
   var head='<div class="pg-head"><div><p class="kicker">Overview · '+A.mLabel(month)+'</p><h1>'+esc(p.org_name)+'</h1><p class="pg-sub">'+[esc(sec), esc(p.state)].concat(p.residents?[fmt(p.residents)+' residents']:[]).concat([fmt(p.employees)+' FTE', 'baseline '+esc(p.baseline_fy)]).map(function(x,j){ return '<span class="nw">'+(j?'· ':'')+x+'</span>'; }).join(' ')+'</p></div>'
-    + '<div class="pg-actions"><label class="vh" for="dm">Month</label><select id="dm" data-act="dash-month">'+opts+'</select><a class="btn btn-ink btn-sm" href="#/report/'+month+'">Monthly report</a></div></div>';
+    + '<div class="pg-actions"><label class="vh" for="dm">Month</label><select id="dm" data-act="dash-month">'+opts+'</select><a class="btn btn-ink btn-sm" href="#/report/'+month+'">Monthly report</a><a class="btn btn-ghost btn-sm" href="#/summary?m='+month+'" style="color:var(--ink)">Share this month</a></div></div>';
 
   // 1. the score and emissions against target
   var cf=confidence(o,m), st=onTrack(S,i,T);
