@@ -653,7 +653,7 @@
       var ln = document.createElementNS('http://www.w3.org/2000/svg', 'line'); ln.setAttribute('class', current.kind === 'landfill' ? 'sc-lead sc-lead-mist' : 'sc-lead'); svg.appendChild(ln);
       labelItems.push({ el: h, hero: true, line: ln, anchors: function () {
         if (heroMode === 'pools') { var Wp = poolsGroup.userData.W, Dp = poolsGroup.userData.D;
-          return [{ p: new T.Vector3(Wp / 2, 2, -Dp / 2), side: 'right' }, { p: new T.Vector3(-Wp / 2, 2, -Dp / 2), side: 'above' }, { p: new T.Vector3(-Wp / 2, 2, Dp / 2), side: 'left' }]; }
+          return [{ p: new T.Vector3(Wp / 2, 2, Dp / 2), side: 'right' }, { p: new T.Vector3(Wp / 2, 2, -Dp / 2), side: 'right' }, { p: new T.Vector3(-Wp / 2, 2, -Dp / 2), side: 'above' }]; }
         var s = cube.scale.x;
         return [{ p: new T.Vector3(-s / 2, s, s / 2), side: 'left' }, { p: new T.Vector3(s / 2, s, -s / 2), side: 'right' }, { p: new T.Vector3(-s / 2, s, s / 2), side: 'above' }];
       } });

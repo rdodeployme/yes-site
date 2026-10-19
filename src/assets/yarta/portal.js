@@ -388,7 +388,7 @@ function vReports0(){
     var avg=g.months.filter(function(m){ return m.score!=null; }); var mean=avg.length?Math.round(avg.reduce(function(a,m){ return a+m.score; },0)/avg.length):null;
     var tot=g.months.reduce(function(a,m){ return a+(m.total_t||0); },0);
     return '<tr class="fy-row"><td colspan="9"><span class="fy-l">Financial year '+esc(g.fy)+'</span><span class="fy-s">'+g.months.length+' month'+(g.months.length===1?'':'s')+' · average score '+(mean==null?'—':mean)+' · '+fmt(tot,0)+' t CO₂-e</span></td></tr>'
-      + g.months.map(function(m){ return '<tr><td><a class="rowlink" href="#/report/'+m.month+'">'+mLabel(m.month)+'</a></td><td>'+statusChip(m.status)+'</td><td class="num"><b>'+(m.score==null?'—':m.score)+'</b></td><td>'+esc(m.band)+'</td><td class="num">'+(m.yoy==null?'—':sgn(m.yoy))+'</td><td class="num">'+fmt(m.total_t,0)+'</td><td class="num">'+pct(m.complete_pct)+'</td><td class="num">'+pct(m.evidence_pct)+'</td><td><a class="btn btn-ghost btn-sm" style="color:var(--ink)" href="#/report/'+m.month+'">Open</a></td></tr>'; }).join('');
+      + g.months.map(function(m){ return '<tr><td class="nw"><a class="rowlink" href="#/report/'+m.month+'">'+mLabel(m.month)+'</a></td><td>'+statusChip(m.status)+'</td><td class="num"><b>'+(m.score==null?'—':m.score)+'</b></td><td>'+esc(m.band)+'</td><td class="num">'+(m.yoy==null?'—':sgn(m.yoy))+'</td><td class="num">'+fmt(m.total_t,0)+'</td><td class="num">'+pct(m.complete_pct)+'</td><td class="num">'+pct(m.evidence_pct)+'</td><td><a class="btn btn-ghost btn-sm" style="color:var(--ink)" href="#/report/'+m.month+'">Open</a></td></tr>'; }).join('');
   }).join('');
   var body='<div class="pg-head"><div><p class="kicker">Reports</p><h1>Monthly reports</h1><p class="pg-sub">One report a month: the score, ten category scores, the direction of travel and the figures behind them. Print or save any report as a PDF.</p></div></div>'
     + hist
@@ -783,17 +783,17 @@ function vOrganisation(){
 function orgGlance(o,S,m){
   var p=o.profile, R=m?m.r12:null, first=S.months.length?S.months[0]:null;
   var tiles=[];
-  function t(n,v,s){ tiles.push('<div class="og-tile"><div class="n">'+esc(n)+'</div><div class="v">'+v+'</div><div class="s">'+esc(s)+'</div></div>'); }
+  function t(n,v,s,txt){ tiles.push('<div class="og-tile"><div class="n">'+esc(n)+'</div><div class="v'+(txt?' txt':'')+'">'+v+'</div><div class="s">'+esc(s)+'</div></div>'); }
   if(num(p.residents)>0) t('Residents serviced', fmt(p.residents,0), 'per-resident figures');
   t('Employees', fmt(p.employees,0)+'<span class="u">FTE</span>', 'per-employee figures');
   if(num(p.beds)>0) t('Beds', fmt(p.beds,0), 'per-bed figures');
   if(num(p.students)>0) t('Students', fmt(p.students,0)+'<span class="u">EFTSL</span>', 'per-student figures');
   if(num(p.floor_area)>0) t('Floor area', fmt(p.floor_area,0)+'<span class="u">m²</span>', 'energy per square metre');
-  if(multisite(o)) t('Sites', fmt(o.sites.filter(function(x){ return x.active!==false; }).length,0), 'each with its own figures'); else if(num(p.facilities)>0) t('Facilities', fmt(p.facilities,0), 'water per facility');
+  if(multisite(o)){ var act=o.sites.filter(function(x){ return x.active!==false; }), onMap=act.filter(function(x){ return x.lat!=null; }).length; t('Sites', fmt(act.length,0), onMap<act.length?onMap+' on the map, '+(act.length-onMap)+' organisation-wide':'each with its own figures'); } else if(num(p.facilities)>0) t('Facilities', fmt(p.facilities,0), 'water per facility');
   if(m && m.fleet_n>0) t('Fleet', fmt(m.fleet_n,0)+'<span class="u">vehicles</span>', pct(m.fleet_ev_pct,0)+' electric');
   t('Baseline year', esc(p.baseline_fy||'—'), 'every month is compared with it');
   if(first) t('Reporting since', mLabel(first.month), S.months.length+' month'+(S.months.length===1?'':'s')+' verified');
-  if(p.boundary) t('Boundary', esc(p.boundary), 'what counts as yours');
+  if(p.boundary) t('Boundary', esc(p.boundary), 'what counts as yours', true);
   var mapHook = multisite(o) && o.sites.some(function(x){ return x.lat!=null; }) ? '<div class="og-map" data-orgmap aria-label="Your sites"></div>' : '';
   return '<section class="og'+(mapHook?' has-map':'')+'"><div class="og-tiles">'+tiles.join('')+'</div>'+mapHook+'</section>';
 }
@@ -813,19 +813,19 @@ function targetTake(o,S,m,id,val){
     var base=R.base.total_t, now=R.total_t; if(!(base>0)) return {now:null, text:'Shows once the baseline year is complete.', bar:''};
     var cut=(1-now/base)*100, goal=base*(1-val/100), need=now-goal, yrs=yearsTo2030(m);
     var bar='<div class="tg-bar" aria-hidden="true"><span class="b" style="width:100%"></span><span class="n" style="width:'+(now/base*100).toFixed(1)+'%"></span><span class="t" style="left:'+((1-val/100)*100).toFixed(1)+'%"></span></div><div class="tg-bar-k"><span>Baseline '+fmt(base,0)+' t</span><span>Now '+fmt(now,0)+' t</span><span>Target '+fmt(goal,0)+' t</span></div>';
-    var text = need<=0 ? 'Already below '+fmt(goal,0)+' t a year. You have cut '+fmt(cut,1)+'% on '+esc(S.baseline.fy)+'; a target of '+fmt(val,0)+'% is behind you.'
-      : 'You have cut '+fmt(cut,1)+'% on '+esc(S.baseline.fy)+'. '+fmt(val,0)+'% by 2030 means a further '+fmt(need,0)+' t a year'+(yrs>0.25?', about '+fmt(need/yrs,0)+' t a year over '+fmt(yrs,1)+' years ('+fmt(need/yrs/base*100,1)+'% of the baseline a year)':'')+'.';
+    var text = need<=0 ? 'Already below '+fmt(goal,0)+'\u00a0t a year. You have cut '+fmt(cut,1)+'% on '+esc(S.baseline.fy)+'; a target of '+fmt(val,0)+'% is behind you.'
+      : 'You have cut '+fmt(cut,1)+'% on '+esc(S.baseline.fy)+'. '+fmt(val,0)+'% by 2030 means a further '+fmt(need,0)+'\u00a0t a year'+(yrs>0.25?', about '+fmt(need/yrs,0)+' t a year over '+fmt(yrs,1)+' years ('+fmt(need/yrs/base*100,1)+'% of the baseline a year)':'')+'.';
     return {now:cut, text:text, bar:bar};
   }
   if(id==='target_renewable'){
     var rn=R.renew_pct, kwh=R.grid_kwh||0; if(rn==null) return {now:null, text:'Shows once electricity has been reported.', bar:''};
     var extra=(val-rn)/100*kwh/1000;
-    return {now:rn, text: extra<=0 ? 'Already at '+fmt(rn,0)+'% renewable over the last 12 months, above this target.' : fmt(val,0)+'% means about '+fmt(extra,0)+' MWh a year more from renewable sources than now ('+fmt(rn,0)+'% of '+fmt(kwh/1000,0)+' MWh).'+(E.STANDARDS.renewable>val?' The eco standard of '+E.STANDARDS.renewable+'% still applies.':''), bar:''};
+    return {now:rn, text: extra<=0 ? 'Already at '+fmt(rn,0)+'% renewable over the last 12 months, above this target.' : fmt(val,0)+'% means about '+fmt(extra,0)+' MWh a year more from renewable sources than now ('+fmt(rn,0)+'% of '+fmt(kwh/1000,0)+'\u00a0MWh).'+(E.STANDARDS.renewable>val?' The eco standard of '+E.STANDARDS.renewable+'% still applies.':''), bar:''};
   }
   if(id==='target_diversion'){
     var dv=R.diversion_pct, tot=R.waste_total_t||0; if(dv==null) return {now:null, text:'Shows once waste has been reported.', bar:''};
     var extraT=(val-dv)/100*tot;
-    return {now:dv, text: extraT<=0 ? 'Already diverting '+fmt(dv,0)+'% over the last 12 months, above this target.' : fmt(val,0)+'% means keeping another '+fmt(extraT,0)+' t a year out of landfill (now '+fmt(dv,0)+'% of '+fmt(tot,0)+' t).'+(E.STANDARDS.diversion>val?' The eco standard of '+E.STANDARDS.diversion+'% still applies.':''), bar:''};
+    return {now:dv, text: extraT<=0 ? 'Already diverting '+fmt(dv,0)+'% over the last 12 months, above this target.' : fmt(val,0)+'% means keeping another '+fmt(extraT,0)+' t a year out of landfill (now '+fmt(dv,0)+'% of '+fmt(tot,0)+'\u00a0t).'+(E.STANDARDS.diversion>val?' The eco standard of '+E.STANDARDS.diversion+'% still applies.':''), bar:''};
   }
   if(id==='target_fleet_ev'){
     var ev=m.fleet_ev_pct, n=m.fleet_n||0; if(ev==null||!n) return {now:null, text:'Shows once the fleet register is on file.', bar:''};

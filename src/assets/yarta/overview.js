@@ -359,7 +359,7 @@ function scaleFigures(S,i,o){
 function scalePanel(S,i,o){
   var d=scaleFigures(S,i,o); if(!d.figures.length) return '';
   var pills=d.figures.map(function(f,j){ return '<button type="button" class="sc-pill" data-scfig="'+f.key+'" aria-pressed="'+(j===0)+'">'+esc(f.label)+'</button>'; }).join('');
-  return '<div class="cx-scale no-print reveal" data-scale3d-wrap>'
+  return '<div class="cx-scale no-print" data-scale3d-wrap>'
     + '<div class="cx-scale-head"><div><p class="ov-l">Your year, to scale</p><h3 class="cx-scale-t" data-scale-sentence>'+esc(d.figures[0].label)+': '+fmt(d.figures[0].value,0)+' '+esc(d.figures[0].unit)+'.</h3></div><div class="cx-scale-pills" role="group" aria-label="Figure to draw">'+pills+'</div></div>'
     + '<div class="cx-scale-stage" data-scale3d="'+esc(JSON.stringify(d))+'"><div class="cx-scale-fallback"><p>The 3D view needs WebGL, which this browser has turned off. The figures above are the same ones, drawn flat.</p></div></div>'
     + '<p class="cx-scale-basis" data-scale-basis>Drawn from your verified figures. Drag to look around.</p></div>';
