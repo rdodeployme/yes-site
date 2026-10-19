@@ -295,11 +295,11 @@
     ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true;
     groundGroup.add(ground);
     var gridMinor = null, gridMajor = null, gridStep = 0;
-    function buildGrid(S) {
+    function buildGrid(S, dist) {
       var span = 3.6 * S;                                  // approx. width in view
       var step = niceStep(span, 10, 40), major = step * 10;
-      var ext = Math.ceil(14 * S / major) * major;         // extent (fog hides the rest)
-      ground.scale.set(ext * 6, ext * 6, 1);
+      var ext = Math.ceil(1.3 * dist / major) * major;     // fog takes the rest
+      ground.scale.set(ext * 8, ext * 8, 1);
       ground.position.y = -0.0008 * S;
       if (step === gridStep && gridMinor && Math.abs(gridMinor.userData.ext - ext) < 1e-6) return;
       gridStep = step;
@@ -474,7 +474,7 @@
         var N = poolCount(fig), unit = 1;
         if (N > 400) { unit = 10; }
         var drawn = Math.max(1, Math.round(N / unit));
-        var rows = Math.max(1, Math.round(Math.sqrt(drawn / 0.55))), cols = Math.ceil(drawn / rows);
+        var cols = Math.max(1, Math.round(Math.sqrt(drawn * 1.6))), rows = Math.ceil(drawn / cols);
         var gx = 50 * 1.18, gz = 25 * 1.3;
         var W = cols * gx - (gx - 50), D = rows * gz - (gz - 25);
         for (i = 0; i < drawn; i++) {
@@ -491,9 +491,9 @@
         comp = { minX: -W / 2, maxX: W / 2, minZ: -D / 2, maxZ: D / 2, maxY: Math.max(2, 0.08 * S) };
         heroAnchor.set(W / 2, 2, D / 2);
         poolsGroup.userData.W = W; poolsGroup.userData.D = D; poolsGroup.userData.unit = unit; poolsGroup.userData.N = N;
-        refs = S > 300 ? [REF_BY_KEY.oval, REF_BY_KEY.tower] : S > 60 ? [REF_BY_KEY.tower, REF_BY_KEY.bus] : [REF_BY_KEY.bus, REF_BY_KEY.person];
+        refs = S > 120 ? [REF_BY_KEY.tower, REF_BY_KEY.bus] : [REF_BY_KEY.bus, REF_BY_KEY.person];
         refs.sort(function (a, b) { return a.dim - b.dim; });
-        placeRow(refs, -W / 2, D / 2, Math.max(8, 0.05 * S));
+        placeRow(refs, -W / 2, D / 2, Math.max(8, 0.04 * S));
         return;
       }
       heroMode = 'cube'; cube.visible = true;
@@ -526,13 +526,17 @@
       var cx = (comp.minX + comp.maxX) / 2, cz = (comp.minZ + comp.maxZ) / 2;
       var target = new T.Vector3(heroMode === 'cube' ? cx * 0.55 : cx, heroMode === 'cube' ? 0.35 * S : 0.02 * S, heroMode === 'cube' ? cz * 0.5 : cz);
       // direction: height 0.6 S above ground at 2.6 S horizontal distance (slightly higher for flat pools)
-      var dirY = heroMode === 'cube' ? (0.6 * S - target.y) : 0.42 * S;
+      var dirY = heroMode === 'cube' ? (0.6 * S - target.y) : 0.55 * S;
       var dir = new T.Vector3(Math.sin(AZ) * 2.6 * S, dirY, Math.cos(AZ) * 2.6 * S).normalize();
-      var corners = [], xs = [comp.minX, comp.maxX], zs = [comp.minZ, comp.maxZ], ys = [0, comp.maxY];
-      xs.forEach(function (x) { ys.forEach(function (y) { zs.forEach(function (z) { corners.push(new T.Vector3(x, y, z)); }); }); });
-      var cubeTop = heroMode === 'cube' ? [new T.Vector3(S / 2, S, S / 2), new T.Vector3(-S / 2, S, S / 2), new T.Vector3(S / 2, S, -S / 2), new T.Vector3(-S / 2, S, -S / 2)] : [];
+      var corners = [], cubeTop = [];
+      function boxCorners(x0, x1, y0, y1, z0, z1, into) {
+        [x0, x1].forEach(function (x) { [y0, y1].forEach(function (y) { [z0, z1].forEach(function (z) { into.push(new T.Vector3(x, y, z)); }); }); });
+      }
+      if (heroMode === 'cube') { boxCorners(-S / 2, S / 2, 0, S, -S / 2, S / 2, corners); boxCorners(-S / 2, S / 2, S, S, -S / 2, S / 2, cubeTop); }
+      else boxCorners(comp.minX, comp.maxX, 0, 2, comp.minZ, comp.maxZ, corners);
+      activeRefs.forEach(function (a) { boxCorners(a.x - a.w / 2, a.x + a.w / 2, 0, a.h, a.z - a.d / 2, a.z + a.d / 2, corners); });
       var cam = camera.clone();
-      var lo = 1.6 * S, hi = 30 * S, dist = 2.6 * S, i, v = new T.Vector3();
+      var lo = (heroMode === 'cube' ? 1.6 : 0.3) * S, hi = 30 * S, dist = 2.6 * S, i, v = new T.Vector3();
       var topY = isPhone ? 0.80 : 0.84, sideX = isPhone ? 0.98 : 0.95, botY = -0.98;
       function ok(d) {
         cam.position.copy(target).addScaledVector(dir, d); cam.lookAt(target); cam.updateMatrixWorld(); cam.updateProjectionMatrix();
@@ -544,9 +548,9 @@
         for (j = 0; j < cubeTop.length; j++) { v.copy(cubeTop[j]).project(cam); if (v.y > topY) return false; }
         return true;
       }
-      cam.aspect = camera.aspect; cam.fov = camera.fov;
+      cam.aspect = camera.aspect; cam.fov = camera.fov; cam.near = 0.01 * S; cam.far = 200 * S;
       for (i = 0; i < 22; i++) { dist = (lo + hi) / 2; if (ok(dist)) hi = dist; else lo = dist; }
-      dist = Math.max(hi, 1.9 * S);
+      dist = Math.max(hi, (heroMode === 'cube' ? 1.9 : 0.45) * S);
       var pos = target.clone().addScaledVector(dir, dist);
       fitState = { target: target, pos: pos, dist: dist };
       return fitState;
@@ -554,15 +558,16 @@
 
     function applyFit(f, animate) {
       controls.minDistance = 0.6 * f.dist; controls.maxDistance = 3 * f.dist;
-      scene.fog.near = f.dist * 1.2; scene.fog.far = f.dist * 4.2;
+      scene.fog.near = f.dist * 1.2; scene.fog.far = f.dist * 2.5;
       camera.near = Math.max(0.05, f.dist / 400); camera.far = f.dist * 12; camera.updateProjectionMatrix();
       // key light + shadow frustum
       var ext = Math.max(comp.maxX - comp.minX, comp.maxZ - comp.minZ, comp.maxY) * 0.75;
       key.position.set(f.target.x - 1.1 * ext, 1.9 * ext, f.target.z + 0.9 * ext);
       key.target.position.set(f.target.x, 0, f.target.z); key.target.updateMatrixWorld();
+      key.shadow.normalBias = Math.max(0.02, 0.0015 * ext); key.shadow.bias = -0.0004;
       var sc = key.shadow.camera; sc.left = -ext * 1.3; sc.right = ext * 1.3; sc.top = ext * 1.3; sc.bottom = -ext * 1.3; sc.near = 0.1 * ext; sc.far = 5 * ext; sc.updateProjectionMatrix();
       fill.position.set(f.target.x + ext, 0.6 * ext, f.target.z - ext);
-      buildGrid(S);
+      buildGrid(S, f.dist);
       if (animate && !reduced) {
         camAnim = { from: camera.position.clone(), to: f.pos, tFrom: controls.target.clone(), tTo: f.target, t0: performance.now(), dur: 900 };
       } else {
@@ -646,9 +651,11 @@
       var h = el('div', 'sc-label sc-hero' + (current.kind === 'landfill' ? ' sc-land' : ''), heroLabelHTML(current));
       labels.appendChild(h);
       var ln = document.createElementNS('http://www.w3.org/2000/svg', 'line'); ln.setAttribute('class', current.kind === 'landfill' ? 'sc-lead sc-lead-mist' : 'sc-lead'); svg.appendChild(ln);
-      labelItems.push({ el: h, hero: true, line: ln, anchor: function () {
-        if (heroMode === 'pools') return heroAnchor.clone();
-        var s = cube.scale.x; return new T.Vector3(-s / 2, s, s / 2);   // front-left top corner (nearest, left of view)
+      labelItems.push({ el: h, hero: true, line: ln, anchors: function () {
+        if (heroMode === 'pools') { var Wp = poolsGroup.userData.W, Dp = poolsGroup.userData.D;
+          return [{ p: new T.Vector3(Wp / 2, 2, -Dp / 2), side: 'right' }, { p: new T.Vector3(-Wp / 2, 2, -Dp / 2), side: 'above' }, { p: new T.Vector3(-Wp / 2, 2, Dp / 2), side: 'left' }]; }
+        var s = cube.scale.x;
+        return [{ p: new T.Vector3(-s / 2, s, s / 2), side: 'left' }, { p: new T.Vector3(s / 2, s, -s / 2), side: 'right' }, { p: new T.Vector3(-s / 2, s, s / 2), side: 'above' }];
       } });
       // references
       var maxRefs = isPhone ? 3 : 5;
@@ -676,24 +683,40 @@
       var heroRect = null, i, item, placed = [];
       for (i = 0; i < labelItems.length; i++) {
         item = labelItems[i];
-        var p = item.anchor(); pv.copy(p).project(camera);
-        var behind = pv.z > 1, x = (pv.x + 1) / 2 * W, y = (1 - pv.y) / 2 * H;
-        var off = behind || x < -40 || x > W + 40 || y < -40 || y > H + 40;
-        if (off) { item.el.style.display = 'none'; item.line.style.display = 'none'; continue; }
-        item.el.style.display = '';
-        var bw = item.el.offsetWidth, bh = item.el.offsetHeight;
-        var lx, ly;
+        var bw, bh, lx, ly, x, y;
         if (item.hero) {
-          // float up-left of the anchor, kept inside the canvas
-          lx = x - bw - (isPhone ? 18 : 46); ly = y - bh * 0.5 - (isPhone ? 10 : 18);
-          if (lx < 12) lx = Math.min(x + 24, W - bw - 12);
-          if (ly < 12) ly = 12;
-          if (ly + bh > H - 70) ly = H - 70 - bh;
-          if (lx + bw > W - 12) lx = W - bw - 12;
+          item.el.style.display = '';
+          bw = item.el.offsetWidth; bh = item.el.offsetHeight;
+          var refRects = screenRects(), cands = item.anchors(), best = null, k;
+          for (k = 0; k < cands.length; k++) {
+            pv.copy(cands[k].p).project(camera);
+            if (pv.z > 1) continue;
+            x = (pv.x + 1) / 2 * W; y = (1 - pv.y) / 2 * H;
+            var gx = isPhone ? 16 : 44, gy = isPhone ? 10 : 18;
+            if (cands[k].side === 'left') { lx = x - bw - gx; ly = y - bh * 0.5 - gy; }
+            else if (cands[k].side === 'right') { lx = x + gx; ly = y - bh * 0.5 - gy; }
+            else { lx = x - bw * 0.3; ly = y - bh - 26; }
+            var inside = lx >= 12 && lx + bw <= W - 12 && ly >= 12 && ly + bh <= H - 64;
+            var rect = { x: lx, y: ly, r: lx + bw, b: ly + bh }, clash = false, q;
+            for (q = 0; q < refRects.length && !clash; q++) if (overlap(rect, refRects[q], 6)) clash = true;
+            var score = (inside ? 0 : 10) + (clash ? 5 : 0) + k * 0.1;
+            if (!best || score < best.score) best = { score: score, x: x, y: y, lx: lx, ly: ly, side: cands[k].side };
+            if (score < 1) break;
+          }
+          if (!best) { item.el.style.display = 'none'; item.line.style.display = 'none'; continue; }
+          lx = best.lx; ly = best.ly; x = best.x; y = best.y;
+          if (lx < 12) lx = 12; if (lx + bw > W - 12) lx = W - bw - 12; if (ly < 12) ly = 12; if (ly + bh > H - 64) ly = H - 64 - bh;
           heroRect = { x: lx, y: ly, r: lx + bw, b: ly + bh };
           item.el.style.transform = 'translate(' + Math.round(lx) + 'px,' + Math.round(ly) + 'px)';
-          setLine(item.line, x, y, lx + (lx + bw < x ? bw + 6 : -6), Math.max(ly + 2, Math.min(ly + bh - 2, y)));
+          if (best.side === 'above') setLine(item.line, x, y, Math.max(lx + 6, Math.min(lx + bw - 6, x)), ly + bh);
+          else setLine(item.line, x, y, lx + (lx + bw < x ? bw + 6 : -6), Math.max(ly + 2, Math.min(ly + bh - 2, y)));
         } else {
+          var p = item.anchor(); pv.copy(p).project(camera);
+          var behind = pv.z > 1; x = (pv.x + 1) / 2 * W; y = (1 - pv.y) / 2 * H;
+          var off = behind || x < -40 || x > W + 40 || y < -40 || y > H + 40;
+          if (off) { item.el.style.display = 'none'; item.line.style.display = 'none'; continue; }
+          item.el.style.display = '';
+          bw = item.el.offsetWidth; bh = item.el.offsetHeight;
           lx = x - bw / 2; ly = y - bh - 14;
           if (lx < 8) lx = 8; if (lx + bw > W - 8) lx = W - bw - 8; if (ly < 8) ly = 8;
           var rect = { x: lx, y: ly, r: lx + bw, b: ly + bh };
@@ -705,6 +728,20 @@
           setLine(item.line, x, y, Math.max(lx + 6, Math.min(lx + bw - 6, x)), ly + bh);
         }
       }
+    }
+    var cornerV = new T.Vector3();
+    function screenRects() {            // 2D boxes of the visible reference objects
+      var out = [];
+      activeRefs.forEach(function (a) {
+        var r = { x: Infinity, y: Infinity, r: -Infinity, b: -Infinity }, ok = true;
+        [a.x - a.w / 2, a.x + a.w / 2].forEach(function (x) { [0, a.h].forEach(function (y) { [a.z - a.d / 2, a.z + a.d / 2].forEach(function (z) {
+          cornerV.set(x, y, z).project(camera); if (cornerV.z > 1) ok = false;
+          var sx = (cornerV.x + 1) / 2 * W, sy = (1 - cornerV.y) / 2 * H;
+          if (sx < r.x) r.x = sx; if (sx > r.r) r.r = sx; if (sy < r.y) r.y = sy; if (sy > r.b) r.b = sy;
+        }); }); });
+        if (ok) out.push(r);
+      });
+      return out;
     }
     function overlap(a, b, pad) { return !(a.r + pad < b.x || a.x - pad > b.r || a.b + pad < b.y || a.y - pad > b.b); }
     function setLine(l, x1, y1, x2, y2) {
@@ -767,6 +804,7 @@
       resize: resize,
       describe: function (k) { var f = typeof k === 'string' ? figures.filter(function (x) { return x.key === k; })[0] : (k || current); return describe(f); },
       current: function () { return current; },
+      isAnimating: function () { return !!(anim || camAnim); },
       _internals: opts.debug ? { renderer: renderer, scene: scene, camera: camera, controls: controls, key: key } : undefined,
       destroy: function () {
         destroyed = true; if (raf) cancelAnimationFrame(raf);
