@@ -342,7 +342,27 @@ function scaleFacts(S, i, o){
     facts.push({big:fmt(pn,pn<10?1:0)+' Olympic pools', what:'of drinking water ('+nu(r.potable_kl,'kL')+')'+(r.alt_water_pct>=1?'. Another '+fmt(r.alt_water_pct,0)+'% of what you used came from rain, storm or recycled water':''), scale: pg.html+'<p class="cx-key">Each mark is '+(pg.unit===1?'one pool':pg.unit+' pools')+' of 2,500 kL.</p>'}); }
   if(!facts.length) return '';
   return '<section class="cx cx-a"><h2 class="sec-t">What it amounts to</h2><p class="sec-s">'+(r.n<12?'The '+span(r)+' to ':'Rolling 12 months to ')+A.mLabel(m.month)+', verified by Yarta.'+(inB?'':' Comparisons use the same calendar months of '+esc(fy)+'.')+'</p>'
-    + '<div class="cx-facts">'+facts.map(function(f){ return '<div class="cx-fact"><p class="cx-big">'+f.big+'</p><p class="cx-what">'+f.what+'</p>'+f.scale+'</div>'; }).join('')+'</div></section>';
+    + '<div class="cx-facts">'+facts.map(function(f){ return '<div class="cx-fact"><p class="cx-big">'+f.big+'</p><p class="cx-what">'+f.what+'</p>'+f.scale+'</div>'; }).join('')+'</div>'
+    + scalePanel(S,i,o)+'</section>';
+}
+/* Your year, to scale: the same figures as real volumes in a 3D scene beside objects of known size (scale3d.js mounts into it; without WebGL the panel stays as a note) */
+function scaleFigures(S,i,o){
+  var m=S.months[i], r=m.r12, inB=inBaseYear(S,i), fy=S.baseline.fy, figs=[];
+  var per=r.n<12?'the '+span(r):'12 months';
+  if(r.total_t>0) figs.push({key:'emissions', label:'Emissions, '+per, kind:'gas', value:Math.round(r.total_t), unit:'t CO₂-e'});
+  if(!inB && r.base.total_t>0 && r.base.total_t-r.total_t>=1) figs.push({key:'cut', label:'Your cut on '+fy, kind:'gas', value:Math.round(r.base.total_t-r.total_t), unit:'t CO₂-e'});
+  if(r.landfill_t>0) figs.push({key:'landfill', label:'Waste to landfill', kind:'landfill', value:Math.round(r.landfill_t), unit:'t'});
+  if(r.waste_total_t-r.landfill_t>0) figs.push({key:'kept', label:'Kept out of landfill', kind:'kept', value:Math.round(r.waste_total_t-r.landfill_t), unit:'t'});
+  if(r.potable_kl>0) figs.push({key:'water', label:'Drinking water', kind:'water', value:Math.round(r.potable_kl), unit:'kL'});
+  return {org:you(o.profile), period:(r.n<12?'The '+span(r)+' to ':'Rolling 12 months to ')+A.mLabel(m.month), figures:figs};
+}
+function scalePanel(S,i,o){
+  var d=scaleFigures(S,i,o); if(!d.figures.length) return '';
+  var pills=d.figures.map(function(f,j){ return '<button type="button" class="sc-pill" data-scfig="'+f.key+'" aria-pressed="'+(j===0)+'">'+esc(f.label)+'</button>'; }).join('');
+  return '<div class="cx-scale no-print reveal" data-scale3d-wrap>'
+    + '<div class="cx-scale-head"><div><p class="ov-l">Your year, to scale</p><h3 class="cx-scale-t" data-scale-sentence>'+esc(d.figures[0].label)+': '+fmt(d.figures[0].value,0)+' '+esc(d.figures[0].unit)+'.</h3></div><div class="cx-scale-pills" role="group" aria-label="Figure to draw">'+pills+'</div></div>'
+    + '<div class="cx-scale-stage" data-scale3d="'+esc(JSON.stringify(d))+'"><div class="cx-scale-fallback"><p>The 3D view needs WebGL, which this browser has turned off. The figures above are the same ones, drawn flat.</p></div></div>'
+    + '<p class="cx-scale-basis" data-scale-basis>Drawn from your verified figures. Drag to look around.</p></div>';
 }
 
 /* The ten parts: the score is the average of the categories reported, so show them as columns with the average as a line across them */

@@ -297,6 +297,19 @@ window.YESDEMO = window.YESDEMO || {};
   })();
   /* councils carry the sector key too */
   X.ORGS.forEach(function(o){ if(o.profile.org_type==="Council") o.profile.sector="council"; });
+  /* reporting settings recorded at onboarding (demo, illustrative): boundary, what sits behind renewable kWh, and the figures that set a business's climate-reporting group */
+  (function(){
+    var R={"demo-shire":{boundary:"Operational control", scope2_contract:"Accredited GreenPower or certified renewable contract"},
+           "demo-coastal":{boundary:"Operational control", scope2_contract:"Accredited GreenPower or certified renewable contract"},
+           "demo-freight":{boundary:"Operational control", scope2_contract:"None on file", revenue_m:38, gross_assets_m:22},
+           "demo-office":{boundary:"Operational control", scope2_contract:"Accredited GreenPower or certified renewable contract", revenue_m:95, gross_assets_m:40},
+           "demo-hospital":{boundary:"Operational control", scope2_contract:"Power purchase agreement", revenue_m:620, gross_assets_m:480},
+           "demo-uni":{boundary:"Operational control", scope2_contract:"Power purchase agreement"},
+           "demo-maker":{boundary:"Operational control", scope2_contract:"None on file", revenue_m:120, gross_assets_m:70},
+           "demo-builder":{boundary:"Operational control", scope2_contract:"None on file", revenue_m:310, gross_assets_m:140},
+           "demo-retail":{boundary:"Operational control", scope2_contract:"Mixed, by site", revenue_m:740, gross_assets_m:390}};
+    X.ORGS.forEach(function(o){ var r=R[o.id]; if(r) for(var k in r) o.profile[k]=r[k]; });
+  })();
 
   X.USERS = [
     {id:"u-alex", name:"Alex Morgan", title:"Sustainability Coordinator", email:"alex.morgan@demo-shire.example", role:"customer", org:"demo-shire"},

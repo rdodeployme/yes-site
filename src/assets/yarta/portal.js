@@ -35,6 +35,7 @@ function nowKey(){ var t=new Date(); return E.key(t.getFullYear(), t.getMonth())
 function isoNow(){ return new Date().toISOString(); }
 function initials(n){ return String(n||'').split(/\s+/).map(function(w){return w.charAt(0);}).slice(0,2).join('').toUpperCase(); }
 function clamp(x,a,b){ return Math.max(a,Math.min(b,x)); }
+function num(x){ x=+x; return isFinite(x)?x:0; }
 function catName(k){ return D.CAT[k] ? D.CAT[k].name : k; }
 function field(id){ return D.FIELD[id] || (D.PROFILE.filter(function(f){return f.id===id;})[0]); }
 
@@ -49,7 +50,9 @@ function persist(s){
   try{ localStorage.setItem(KEY, JSON.stringify(s||state)); return true; }
   catch(e){ flash('This browser would not save the change (storage is full or blocked).','err'); return false; }
 }
-function seedOps(s){ seedOps2(s); if(!s.providers) s.providers=defaultProviders(); if(!s.gapLog) s.gapLog=[]; if(!s.opsSeeded){ s.opsSeeded=true; Object.keys(s.orgs).forEach(function(id){ var vs=s.orgs[id].records.filter(function(r){ return r.status==='verified'; }).sort(function(a,b){ return a.month<b.month?-1:1; }); vs.forEach(function(r){ if(!r.issuedAt){ var q=E.parse(E.addMonths(r.month,1)); r.issuedAt=new Date(q.y,q.m,20).toISOString().slice(0,10); r.issuedBy='Chris Walker'; } }); }); } var opsU=s.users.filter(function(u){ return u.role==='operator'; }); Object.keys(s.orgs).forEach(function(id,i){ var p=s.orgs[id].profile; if(!p.operator && opsU.length) p.operator=opsU[i%opsU.length].id; }); }
+function seedOps(s){ seedOps2(s); seedSettings(s); seedSites(s); if(!s.providers) s.providers=defaultProviders(); if(!s.gapLog) s.gapLog=[]; if(!s.opsSeeded){ s.opsSeeded=true; Object.keys(s.orgs).forEach(function(id){ var vs=s.orgs[id].records.filter(function(r){ return r.status==='verified'; }).sort(function(a,b){ return a.month<b.month?-1:1; }); vs.forEach(function(r){ if(!r.issuedAt){ var q=E.parse(E.addMonths(r.month,1)); r.issuedAt=new Date(q.y,q.m,20).toISOString().slice(0,10); r.issuedBy='Chris Walker'; } }); }); } var opsU=s.users.filter(function(u){ return u.role==='operator'; }); Object.keys(s.orgs).forEach(function(id,i){ var p=s.orgs[id].profile; if(!p.operator && opsU.length) p.operator=opsU[i%opsU.length].id; }); }
+/* reporting settings added Oct 2026: copy them into a demo state saved before they existed */
+function seedSettings(s){ if(!window.YESDEMO||!window.YESDEMO.ORGS) return; var byId={}; window.YESDEMO.ORGS.forEach(function(o){ byId[o.id]=o; }); Object.keys(s.orgs).forEach(function(id){ var fresh=byId[id]; if(!fresh) return; ['boundary','scope2_contract','revenue_m','gross_assets_m'].forEach(function(k){ if(s.orgs[id].profile[k]==null && fresh.profile[k]!=null) s.orgs[id].profile[k]=fresh.profile[k]; }); }); }
 var state = load();
 function save(){ return persist(state); }
 function me(){ return state.session ? state.users.filter(function(u){ return u.id===state.session.user; })[0] : null; }
@@ -359,10 +362,37 @@ function calcPanel(o,r,k){
 /* ------------------------------------------------------------------ reports */
 function vReports(){ var h=vReports0(); return h.replace(/<\/div><\/main><\/div>$/, periodPanel()+'</div></main></div>'); }
 function vReports0(){
-  var o=org(), S=seriesOf(o);
-  var rows=S.months.slice().reverse().map(function(m){ var r=rec(o,m.month); return '<tr><td><a class="rowlink" href="#/report/'+m.month+'">'+mLabel(m.month)+'</a></td><td>'+statusChip(m.status)+'</td><td class="num"><b>'+(m.score==null?'—':m.score)+'</b></td><td>'+esc(m.band)+'</td><td class="num">'+(m.yoy==null?'—':sgn(m.yoy))+'</td><td class="num">'+fmt(m.total_t,0)+'</td><td class="num">'+pct(m.complete_pct)+'</td><td class="num">'+pct(m.evidence_pct)+'</td><td><a class="btn btn-ghost btn-sm" style="color:var(--ink)" href="#/report/'+m.month+'">Open</a></td></tr>'; }).join('');
-  var body='<div class="pg-head"><div><p class="kicker">Reports</p><h1>Monthly reports</h1><p class="pg-sub">One report a month: the Yindyamarra Environmental Score, ten category scores, the direction of travel and the figures behind them. Print or save any report as a PDF.</p></div></div>'
-    + '<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Month</th><th>Status</th><th class="r">Score</th><th>Band</th><th class="r">Year on year</th><th class="r">Emissions t CO₂-e</th><th class="r">Complete</th><th class="r">Evidence</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  var o=org(), S=seriesOf(o), ms=S.months;
+  var last=ms.length?ms[ms.length-1]:null;
+  /* the trend first: score and emissions, every month since the first */
+  var hist='';
+  if(ms.length>=2){
+    var pts=ms.map(function(m){ return {label:mShort(m.month), v:m.score, prov:m.status!=='verified'}; });
+    var first=ms[0], best=ms.reduce(function(a,m){ return m.score!=null&&(a==null||m.score>a.score)?m:a; },null);
+    var verified=ms.filter(function(m){ return m.status==='verified'; }).length;
+    var evAvg=ms.reduce(function(a,m){ return a+(m.evidence_pct||0); },0)/ms.length;
+    var bars=ms.map(function(m){ return {label:mShort(m.month), parts:[m.scope1_t||0, m.scope2_t||0, m.scope3_t||0]}; });
+    hist='<div class="rp-hist"><div class="rp-hist-tiles">'
+      + '<div class="tile"><div class="n">Latest score</div><div class="v">'+(last.score==null?'—':last.score)+'</div><div class="s">'+esc(last.band||'')+' · '+mLabel(last.month)+'</div></div>'
+      + '<div class="tile"><div class="n">Since the first report</div><div class="v">'+(first.score!=null&&last.score!=null?sgn(last.score-first.score,0):'—')+'</div><div class="s">'+mLabel(first.month)+': '+(first.score==null?'—':first.score)+'</div></div>'
+      + '<div class="tile"><div class="n">Best month</div><div class="v">'+(best?best.score:'—')+'</div><div class="s">'+(best?mLabel(best.month):'')+'</div></div>'
+      + '<div class="tile"><div class="n">Verified months</div><div class="v">'+verified+'</div><div class="s">of '+ms.length+' · evidence '+pct(evAvg,0)+' on average</div></div></div>'
+      + '<div class="rp-hist-charts"><div class="panel"><p class="ov-l">Score, every month</p>'+lineChart(pts,{w:720,h:200,label:'Score by month',maxLabels:8,refs:[{v:80,label:'Eco standards 80'}]})+'</div>'
+      + '<div class="panel"><p class="ov-l">Emissions by month, t CO₂-e</p>'+stackBars(bars,{w:720,h:200,label:'Emissions by month',colors:['#B8641F','#CF7A2E','#4B4F52'],names:['Scope 1','Scope 2','Scope 3'],unit:'t'})
+      + '<div class="ov-key"><span><i style="background:#B8641F"></i>Scope 1</span><span><i style="background:#CF7A2E"></i>Scope 2</span><span><i style="background:#4B4F52"></i>Scope 3</span></div></div></div></div>';
+  }
+  /* then the reports, grouped by financial year, newest first */
+  var groups=[], byFy={};
+  ms.slice().reverse().forEach(function(m){ var fy=E.fyOf(m.month); if(!byFy[fy]){ byFy[fy]={fy:fy, months:[]}; groups.push(byFy[fy]); } byFy[fy].months.push(m); });
+  var rows=groups.map(function(g){
+    var avg=g.months.filter(function(m){ return m.score!=null; }); var mean=avg.length?Math.round(avg.reduce(function(a,m){ return a+m.score; },0)/avg.length):null;
+    var tot=g.months.reduce(function(a,m){ return a+(m.total_t||0); },0);
+    return '<tr class="fy-row"><td colspan="9"><span class="fy-l">Financial year '+esc(g.fy)+'</span><span class="fy-s">'+g.months.length+' month'+(g.months.length===1?'':'s')+' · average score '+(mean==null?'—':mean)+' · '+fmt(tot,0)+' t CO₂-e</span></td></tr>'
+      + g.months.map(function(m){ return '<tr><td><a class="rowlink" href="#/report/'+m.month+'">'+mLabel(m.month)+'</a></td><td>'+statusChip(m.status)+'</td><td class="num"><b>'+(m.score==null?'—':m.score)+'</b></td><td>'+esc(m.band)+'</td><td class="num">'+(m.yoy==null?'—':sgn(m.yoy))+'</td><td class="num">'+fmt(m.total_t,0)+'</td><td class="num">'+pct(m.complete_pct)+'</td><td class="num">'+pct(m.evidence_pct)+'</td><td><a class="btn btn-ghost btn-sm" style="color:var(--ink)" href="#/report/'+m.month+'">Open</a></td></tr>'; }).join('');
+  }).join('');
+  var body='<div class="pg-head"><div><p class="kicker">Reports</p><h1>Monthly reports</h1><p class="pg-sub">One report a month: the score, ten category scores, the direction of travel and the figures behind them. Print or save any report as a PDF.</p></div></div>'
+    + hist
+    + '<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Month</th><th>Status</th><th class="r">Score</th><th>Band</th><th class="r">Year on year</th><th class="r">Emissions t CO₂-e</th><th class="r">Complete</th><th class="r">Evidence</th><th></th></tr></thead><tbody>'+(rows||'<tr><td colspan="9" class="muted">No reports yet.</td></tr>')+'</tbody></table></div>';
   return shell('reports', body);
 }
 
@@ -725,23 +755,128 @@ function sheet3(o,S,i,P,k){
 
 /* ------------------------------------------------------------------ organisation */
 function vOrganisation(){
-  var o=org(), p=o.profile, ro=!isOp();
+  var o=org(), p=o.profile, ro=!isOp(), S=seriesOf(o), m=S.months.length?S.months[S.months.length-1]:null, R=m?m.r12:null;
   var fields=D.PROFILE.map(function(f){
     var v=p[f.id]!=null?p[f.id]:'';
-    var input = f.kind==='select' ? '<select id="p-'+f.id+'" data-pf="'+f.id+'"'+(roF(f)?' disabled':'')+'>'+f.options.map(function(op){ return '<option'+(String(v)===op?' selected':'')+'>'+esc(op)+'</option>'; }).join('')+'</select>'
+    var input = f.kind==='select' ? '<select id="p-'+f.id+'" data-pf="'+f.id+'"'+(roF(f)?' disabled':'')+'>'+(f.req?'':'<option value=""'+(v===''?' selected':'')+'>Not yet confirmed</option>')+f.options.map(function(op){ return '<option'+(String(v)===op?' selected':'')+'>'+esc(op)+'</option>'; }).join('')+'</select>'
       : f.id==='baseline_fy' ? '<select id="p-'+f.id+'" data-pf="'+f.id+'"'+(roF(f)?' disabled':'')+'>'+fyOptions(o).map(function(fy){ return '<option'+(String(v)===fy?' selected':'')+'>'+fy+'</option>'; }).join('')+'</select>'
       : f.kind==='text' ? '<input type="text" id="p-'+f.id+'" data-pf="'+f.id+'" value="'+esc(v)+'"'+(roF(f)?' disabled':'')+'>'
       : '<div class="in-unit"><input type="number" step="any" min="0" id="p-'+f.id+'" data-pf="'+f.id+'" value="'+esc(v)+'"'+(roF(f)?' disabled':'')+'>'+(f.unit?'<span class="u">'+esc(f.unit)+'</span>':'')+'</div>';
     return '<div class="field"><label for="p-'+f.id+'">'+esc(f.name)+(f.req?' <span class="req">*</span>':'')+'</label>'+input+'<span class="hint">'+esc(f.def)+'</span></div>';
   });
   function pick(fn){ return D.PROFILE.map(function(f,j){ return fn(f)?fields[j]:''; }).join(''); }
+  var SETTINGS=['boundary','scope2_contract','revenue_m','gross_assets_m'];
   var users=state.users.filter(function(u){ return u.org===o.id; }).map(function(u){ return '<tr><td>'+esc(u.name)+'</td><td>'+esc(u.title)+'</td><td class="mono small">'+esc(u.email)+'</td></tr>'; }).join('');
+  var isBiz=p.org_type==='Business';
   var body='<div class="pg-head"><div><p class="kicker">Organisation</p><h1>'+esc(p.org_name)+'</h1><p class="pg-sub">Details used for intensities, the baseline and targets. Changing them recalculates every month.'+(ro?' Yarta keeps these up to date: to change anything other than your targets, email <a class="link" href="mailto:contact@yes.com.au">contact@yes.com.au</a>.':'')+'</p></div>'+('<div class="pg-actions"><button class="btn btn-primary btn-sm" type="button" data-act="save-profile">Save changes</button></div>')+'</div>'
-    + '<div class="row2"><div class="panel"><h3>Profile</h3><div class="stack" style="margin-top:16px">'+pick(function(f){ return f.id.indexOf('target_')!==0 && (!SECTOR_FIELD[f.id] || isOp() || (p[f.id]!=null && p[f.id]!=='') || SECTOR_FIELD[f.id].indexOf(p.sector)>=0); })+'</div></div>'
-      +'<div class="panel"><h3>Your targets</h3><p class="sec-s" style="margin-top:6px">'+(ro?'Yours to set. ':'')+'The eco standard stays the floor, so the higher of the two is what the report measures against.</p><div class="stack" style="margin-top:16px">'+pick(function(f){ return OWN_TARGETS.indexOf(f.id)>=0; })+'</div>'
-      +'<h3 style="margin-top:28px">Agreed with Yarta</h3><p class="sec-s" style="margin-top:6px">Land, nature and community are scored against annual targets agreed with Yarta at onboarding, from your plans and past years, so a score cannot be raised by lowering a target.'+(ro?' To change one, email <a class="link" href="mailto:contact@yes.com.au">contact@yes.com.au</a> with the reason; it applies from the next report.':' Only the Yarta team can change them.')+'</p><div class="stack" style="margin-top:16px">'+pick(function(f){ return f.id.indexOf('target_')===0 && OWN_TARGETS.indexOf(f.id)<0; })+'</div></div></div>'
+    + orgGlance(o,S,m)
+    + '<section class="org-tg"><div class="org-tg-head"><div><h2 class="sec-t">Your targets</h2><p class="sec-s">'+(ro?'Yours to set. ':'')+'The eco standard stays the floor, so the higher of the two is what the report measures against. Move a target and the line beneath it says what it would take from where you are now.</p></div></div>'
+    + '<div class="org-tg-grid">'+OWN_TARGETS.map(function(id){ return targetCard(o,S,m,id,ro); }).join('')+'</div></section>'
+    + '<div class="row2" style="margin-top:22px"><div class="panel"><h3>Profile</h3><div class="stack" style="margin-top:16px">'+pick(function(f){ return f.id.indexOf('target_')!==0 && SETTINGS.indexOf(f.id)<0 && (!SECTOR_FIELD[f.id] || isOp() || (p[f.id]!=null && p[f.id]!=='') || SECTOR_FIELD[f.id].indexOf(p.sector)>=0); })+'</div></div>'
+      +'<div class="stack"><div class="panel"><h3>Agreed with Yarta</h3><p class="sec-s" style="margin-top:6px">Land, nature and community are scored against annual targets agreed with Yarta at onboarding, from your plans and past years, so a score cannot be raised by lowering a target.'+(ro?' To change one, email <a class="link" href="mailto:contact@yes.com.au">contact@yes.com.au</a> with the reason; it applies from the next report.':' Only the Yarta team can change them.')+'</p>'+agreedList(o,S,m)+'<details class="org-more"><summary>Edit the agreed targets</summary><div class="stack" style="margin-top:16px">'+pick(function(f){ return f.id.indexOf('target_')===0 && OWN_TARGETS.indexOf(f.id)<0; })+'</div></details></div>'
+      +'<div class="panel"><h3>Reporting settings</h3><p class="sec-s" style="margin-top:6px">Recorded at onboarding and shown on every report.'+(isBiz?' Revenue, gross assets and employees set your mandatory climate reporting group.':'')+'</p><div class="stack" style="margin-top:16px">'+pick(function(f){ return SETTINGS.indexOf(f.id)>=0 && (isBiz || f.id==='boundary' || f.id==='scope2_contract'); })+'</div>'+climateGroupNote(o)+'</div></div></div>'
+    + profileGaps(o,S,m)
     + '<h2 class="sec-t" style="margin-top:28px">Your Yarta data operator</h2><p class="sec-s">'+(operatorOf(o)?esc(operatorOf(o).name)+' · '+esc(operatorOf(o).title)+' · <a class="link" href="mailto:'+esc(operatorOf(o).email)+'">'+esc(operatorOf(o).email)+'</a>. Enters your figures, sends the monthly gap email and answers for the month.':'Not yet assigned.')+'</p><h2 class="sec-t" style="margin-top:28px">People with access</h2><p class="sec-s">In production each person has their own sign-in. Demo accounts only here.</p><div class="tbl-wrap"><table class="tbl compact nowrap-cells"><thead><tr><th>Name</th><th>Role</th><th>Email</th></tr></thead><tbody>'+(users||'<tr><td colspan="3" class="muted">No demo users for this organisation.</td></tr>')+'</tbody></table></div>';
   return shell('organisation', body);
+}
+/* the organisation at a glance: the figures that drive every intensity, and what each one is used for */
+function orgGlance(o,S,m){
+  var p=o.profile, R=m?m.r12:null, first=S.months.length?S.months[0]:null;
+  var tiles=[];
+  function t(n,v,s){ tiles.push('<div class="og-tile"><div class="n">'+esc(n)+'</div><div class="v">'+v+'</div><div class="s">'+esc(s)+'</div></div>'); }
+  if(num(p.residents)>0) t('Residents serviced', fmt(p.residents,0), 'per-resident figures');
+  t('Employees', fmt(p.employees,0)+'<span class="u">FTE</span>', 'per-employee figures');
+  if(num(p.beds)>0) t('Beds', fmt(p.beds,0), 'per-bed figures');
+  if(num(p.students)>0) t('Students', fmt(p.students,0)+'<span class="u">EFTSL</span>', 'per-student figures');
+  if(num(p.floor_area)>0) t('Floor area', fmt(p.floor_area,0)+'<span class="u">m²</span>', 'energy per square metre');
+  if(multisite(o)) t('Sites', fmt(o.sites.filter(function(x){ return x.active!==false; }).length,0), 'each with its own figures'); else if(num(p.facilities)>0) t('Facilities', fmt(p.facilities,0), 'water per facility');
+  if(m && m.fleet_n>0) t('Fleet', fmt(m.fleet_n,0)+'<span class="u">vehicles</span>', pct(m.fleet_ev_pct,0)+' electric');
+  t('Baseline year', esc(p.baseline_fy||'—'), 'every month is compared with it');
+  if(first) t('Reporting since', mLabel(first.month), S.months.length+' month'+(S.months.length===1?'':'s')+' verified');
+  if(p.boundary) t('Boundary', esc(p.boundary), 'what counts as yours');
+  var mapHook = multisite(o) && o.sites.some(function(x){ return x.lat!=null; }) ? '<div class="og-map" data-orgmap aria-label="Your sites"></div>' : '';
+  return '<section class="og'+(mapHook?' has-map':'')+'"><div class="og-tiles">'+tiles.join('')+'</div>'+mapHook+'</section>';
+}
+/* months from the latest verified month to the end of June 2030, the target year */
+function yearsTo2030(m){ if(!m) return null; var a=E.parse(m.month); var months=(2030-a.y)*12+(5-a.m); return Math.max(0, months/12); }
+function targetMeta(id){
+  return {target_emissions:{name:'Emissions reduction', unit:'% by 2030', max:80, std:null, lower:false},
+          target_renewable:{name:'Renewable electricity', unit:'%', max:100, std:E.STANDARDS.renewable},
+          target_diversion:{name:'Landfill diversion', unit:'%', max:100, std:E.STANDARDS.diversion},
+          target_fleet_ev:{name:'Fleet electrification', unit:'%', max:100, std:null}}[id];
+}
+/* what a target would take from where the organisation is now, in one plain sentence (used live as the slider moves) */
+function targetTake(o,S,m,id,val){
+  var R=m?m.r12:null; if(!R) return {now:null, text:'Shows once a month has been verified.', bar:''};
+  val=+val||0;
+  if(id==='target_emissions'){
+    var base=R.base.total_t, now=R.total_t; if(!(base>0)) return {now:null, text:'Shows once the baseline year is complete.', bar:''};
+    var cut=(1-now/base)*100, goal=base*(1-val/100), need=now-goal, yrs=yearsTo2030(m);
+    var bar='<div class="tg-bar" aria-hidden="true"><span class="b" style="width:100%"></span><span class="n" style="width:'+(now/base*100).toFixed(1)+'%"></span><span class="t" style="left:'+((1-val/100)*100).toFixed(1)+'%"></span></div><div class="tg-bar-k"><span>Baseline '+fmt(base,0)+' t</span><span>Now '+fmt(now,0)+' t</span><span>Target '+fmt(goal,0)+' t</span></div>';
+    var text = need<=0 ? 'Already below '+fmt(goal,0)+' t a year. You have cut '+fmt(cut,1)+'% on '+esc(S.baseline.fy)+'; a target of '+fmt(val,0)+'% is behind you.'
+      : 'You have cut '+fmt(cut,1)+'% on '+esc(S.baseline.fy)+'. '+fmt(val,0)+'% by 2030 means a further '+fmt(need,0)+' t a year'+(yrs>0.25?', about '+fmt(need/yrs,0)+' t a year over '+fmt(yrs,1)+' years ('+fmt(need/yrs/base*100,1)+'% of the baseline a year)':'')+'.';
+    return {now:cut, text:text, bar:bar};
+  }
+  if(id==='target_renewable'){
+    var rn=R.renew_pct, kwh=R.grid_kwh||0; if(rn==null) return {now:null, text:'Shows once electricity has been reported.', bar:''};
+    var extra=(val-rn)/100*kwh/1000;
+    return {now:rn, text: extra<=0 ? 'Already at '+fmt(rn,0)+'% renewable over the last 12 months, above this target.' : fmt(val,0)+'% means about '+fmt(extra,0)+' MWh a year more from renewable sources than now ('+fmt(rn,0)+'% of '+fmt(kwh/1000,0)+' MWh).'+(E.STANDARDS.renewable>val?' The eco standard of '+E.STANDARDS.renewable+'% still applies.':''), bar:''};
+  }
+  if(id==='target_diversion'){
+    var dv=R.diversion_pct, tot=R.waste_total_t||0; if(dv==null) return {now:null, text:'Shows once waste has been reported.', bar:''};
+    var extraT=(val-dv)/100*tot;
+    return {now:dv, text: extraT<=0 ? 'Already diverting '+fmt(dv,0)+'% over the last 12 months, above this target.' : fmt(val,0)+'% means keeping another '+fmt(extraT,0)+' t a year out of landfill (now '+fmt(dv,0)+'% of '+fmt(tot,0)+' t).'+(E.STANDARDS.diversion>val?' The eco standard of '+E.STANDARDS.diversion+'% still applies.':''), bar:''};
+  }
+  if(id==='target_fleet_ev'){
+    var ev=m.fleet_ev_pct, n=m.fleet_n||0; if(ev==null||!n) return {now:null, text:'Shows once the fleet register is on file.', bar:''};
+    var more=Math.ceil((val-ev)/100*n);
+    return {now:ev, text: more<=0 ? 'Already '+fmt(ev,0)+'% electric, above this target.' : fmt(val,0)+'% means about '+more+' more electric vehicle'+(more===1?'':'s')+' in a fleet of '+n+' (now '+fmt(ev,0)+'%).', bar:''};
+  }
+  return {now:null, text:'', bar:''};
+}
+function targetCard(o,S,m,id,ro){
+  var meta=targetMeta(id), v=o.profile[id]!=null?+o.profile[id]:0, tk=targetTake(o,S,m,id,v);
+  var marks='';
+  if(tk.now!=null) marks+='<i class="now" style="left:'+clamp(tk.now/meta.max*100,0,100).toFixed(1)+'%" title="Now '+fmt(tk.now,0)+'%"></i>';
+  if(meta.std) marks+='<i class="std" style="left:'+(meta.std/meta.max*100).toFixed(1)+'%" title="Eco standard '+meta.std+'%"></i>';
+  return '<div class="tg-card" data-tg="'+id+'"><div class="tg-top"><label for="p-'+id+'">'+esc(meta.name)+'</label><div class="in-unit tg-in"><input type="number" step="1" min="0" max="'+meta.max+'" id="p-'+id+'" data-pf="'+id+'" value="'+esc(v)+'"><span class="u">'+esc(meta.unit)+'</span></div></div>'
+    + '<div class="tg-slide"><input type="range" min="0" max="'+meta.max+'" step="1" value="'+v+'" data-tslide="'+id+'" aria-label="'+esc(meta.name)+' target"><div class="tg-marks">'+marks+'</div></div>'
+    + '<div class="tg-key">'+(tk.now!=null?'<span><i class="now"></i>Now '+fmt(tk.now,0)+'%</span>':'')+(meta.std?'<span><i class="std"></i>Eco standard '+meta.std+'%</span>':'')+'</div>'
+    + '<div class="tg-take" data-ttake="'+id+'">'+tk.bar+'<p>'+tk.text+'</p></div></div>';
+}
+/* the agreed targets, with the last 12 months against each */
+function agreedList(o,S,m){
+  var R=m?m.r12:null, p=o.profile;
+  var rows=[['target_trees','Trees planted','trees',R&&R.trees],['target_rehab_ha','Land rehabilitated','ha',R&&R.rehab_ha],['target_native_ha','Native vegetation, habitat and wetland restored','ha',R&&R.native_ha],['target_participants','Program participants','people',R&&R.participants]];
+  var h=rows.map(function(x){ var tg=num(p[x[0]]); if(!(tg>0)) return ''; var a=x[3]; var pc=a!=null?clamp(a/tg*100,0,100):null;
+    return '<div class="ag-row"><div class="ag-n">'+esc(x[1])+'</div><div class="ag-b"><i style="width:'+(pc==null?0:pc.toFixed(1))+'%"></i></div><div class="ag-v">'+(a!=null?fmt(a,0)+' of ':'')+fmt(tg,0)+' '+esc(x[2])+(a!=null?' <span class="muted">('+fmt(pc,0)+'%)</span>':'')+'</div></div>'; }).join('');
+  return h?'<div class="ag-list">'+h+'</div><p class="small muted" style="margin:8px 0 0">Last 12 months against the annual target.</p>':'<p class="small muted" style="margin:10px 0 0">No agreed targets for this organisation.</p>';
+}
+/* mandatory climate reporting group from revenue, gross assets and employees (two of three; thresholds as legislated) */
+function climateGroup(p){
+  if(p.org_type!=='Business') return {group:0, label:'Not required', why:(p.org_type==='Council'?'Local government is outside the Corporations Act reporting regime.':'Only entities that lodge financial reports under Chapter 2M of the Corporations Act are captured.')};
+  var rev=num(p.revenue_m), ast=num(p.gross_assets_m), emp=num(p.employees);
+  if(!(rev>0)||!(ast>0)) return {group:null, label:'Needs confirmation', why:'Revenue and gross assets are not on file yet.'};
+  var G=[{g:1,rev:500,ast:1000,emp:500,from:'1 January 2025'},{g:2,rev:200,ast:500,emp:250,from:'1 July 2026'},{g:3,rev:50,ast:25,emp:100,from:'1 July 2027'}];
+  for(var i=0;i<G.length;i++){ var g=G[i], n=(rev>=g.rev?1:0)+(ast>=g.ast?1:0)+(emp>=g.emp?1:0); if(n>=2) return {group:g.g, label:'Group '+g.g, why:'Reporting from the first financial year starting on or after '+g.from+'; Scope 3 from the second year.'}; }
+  return {group:0, label:'Below the thresholds', why:'Reporting is voluntary unless a customer, lender or parent company asks for it.'};
+}
+function climateGroupNote(o){ var p=o.profile; if(p.org_type!=='Business') return ''; var g=climateGroup(p); return '<div class="cg-note"><span class="cg-l">Mandatory climate reporting</span><b>'+esc(g.label)+'</b><span class="small muted">'+esc(g.why)+' <a class="link" href="../climate-reporting/">What the groups mean</a></span></div>'; }
+/* what Yarta still needs to cover every base for this organisation */
+function profileGaps(o,S,m){
+  var p=o.profile, items=[];
+  function it(ok,name,why){ items.push({ok:ok,name:name,why:why}); }
+  it(!!p.boundary,'Reporting boundary', p.boundary?esc(p.boundary)+' is recorded and shown on every report.':'Operational control is assumed until confirmed.');
+  it(!!p.scope2_contract && p.scope2_contract!=='None on file','Renewable electricity contracts', p.scope2_contract&&p.scope2_contract!=='None on file'?'On file, so a market-based Scope 2 figure can be shown beside the location-based one.':'None on file: Scope 2 is location-based only. Send any GreenPower, certificate or power purchase agreement.');
+  if(p.org_type==='Business'){ var g=climateGroup(p); it(g.group!=null,'Mandatory climate reporting group', g.label+': '+g.why); }
+  if(multisite(o)){ var missing=o.sites.filter(function(x){ return x.active!==false && x.lat==null; }).length; it(!missing,'Site locations', missing?missing+' site'+(missing===1?'':'s')+' without a location, so they are missing from the map.':'Every site is on the map.'); }
+  else if(num(p.facilities)>3) it(false,'Tracking by site', 'Figures are reported for the whole organisation. With '+fmt(p.facilities,0)+' facilities, per-site figures would show which buildings drive the totals; Yarta sets this up from your bills.');
+  it(!!(m && m.fleet_n>0),'Fleet register', m&&m.fleet_n>0?fmt(m.fleet_n,0)+' vehicles on file, '+pct(m.fleet_ev_pct,0)+' electric.':'No fleet register on file.');
+  it(num(p.floor_area)>0,'Building floor area', num(p.floor_area)>0?'On file, so energy per square metre is reported.':'Not on file, so energy per square metre cannot be reported.');
+  var contacts=state.users.filter(function(u){ return u.org===o.id; }).length; it(contacts>0,'People with access', contacts+' person'+(contacts===1?'':'s')+' can sign in.');
+  var done=items.filter(function(x){ return x.ok; }).length;
+  return '<section class="pg-gaps"><div class="pg-gaps-head"><h2 class="sec-t">Bases covered</h2><p class="sec-s">'+done+' of '+items.length+' in place. Anything not yet confirmed is marked so the report says only what the records support.</p></div><ul class="pg-gaps-list">'
+    + items.map(function(x){ return '<li class="'+(x.ok?'ok':'todo')+'"><span class="gs">'+(x.ok?'In place':'To confirm')+'</span><div><b>'+esc(x.name)+'</b><span>'+x.why+'</span></div></li>'; }).join('')+'</ul></section>';
 }
 function fyOptions(o){ var set={}; sorted(o).forEach(function(r){ set[E.fyOf(r.month)]=1; }); var a=Object.keys(set).sort(); if(o.profile.baseline_fy && a.indexOf(o.profile.baseline_fy)<0) a.unshift(o.profile.baseline_fy); return a; }
 
@@ -750,15 +885,16 @@ function csvCell(x){ x=x==null?'':String(x); return /[",\n]/.test(x)?'"'+x.repla
 function download(name,text,type){ var b=new Blob([text],{type:type||'text/plain'}); var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },500); }
 function longRows(o,months){ var out=[['org_id','month','status','field_id','field_name','category','value','unit','frequency']]; sorted(o).forEach(function(r){ if(months && months.indexOf(r.month)<0) return; Object.keys(r.values||{}).forEach(function(id){ var f=field(id); if(!f) return; out.push([o.id,r.month,r.status,id,f.name,D.CAT[f.cat]?D.CAT[f.cat].name:'',r.values[id],f.unit||'',D.FREQ[f.freq]||'']); }); }); return out.map(function(r){ return r.map(csvCell).join(','); }).join('\n'); }
 function parseCSV(t){ var rows=[],row=[],cell='',q=false; for(var i=0;i<t.length;i++){ var ch=t[i]; if(q){ if(ch==='"'){ if(t[i+1]==='"'){ cell+='"'; i++; } else q=false; } else cell+=ch; } else if(ch==='"') q=true; else if(ch===','){ row.push(cell); cell=''; } else if(ch==='\n'||ch==='\r'){ if(ch==='\r'&&t[i+1]==='\n') i++; row.push(cell); rows.push(row); row=[]; cell=''; } else cell+=ch; } if(cell!==''||row.length){ row.push(cell); rows.push(row); } return rows.filter(function(r){ return r.length>1||r[0]!==''; }); }
+function dlRow(act,name,what,cls){ return '<div class="dl-row"><div><b>'+esc(name)+'</b><div class="small muted">'+esc(what)+'</div></div><button class="btn btn-sm '+(cls||'btn-ghost')+'" type="button" data-act="'+act+'"'+(cls?'':' style="color:var(--ink)"')+'>Download</button></div>'; }
 function vData(){
   var o=org(), n=o.records.length, ev=0; o.records.forEach(function(r){ ev+=Object.keys(r.evidence||{}).length; });
   var pv=ui.importPreview;
   var body='<div class="pg-head"><div><p class="kicker">Data and export</p><h1>Your data</h1><p class="pg-sub">'+(LIVE?'Download everything, or bring figures in from a spreadsheet.':'Download everything, bring figures in from a spreadsheet, or start the demo again. In this prototype the data lives only in this browser.')+'</p></div></div>'
-    + '<div class="row2"><div class="panel"><h3>Download</h3><p class="sec-s" style="margin-top:6px">'+n+' months · '+ev+' evidence records.</p><div class="stack" style="margin-top:8px">'
-    + '<button class="btn btn-ink" type="button" data-act="csv-all">Monthly figures (CSV, one row per figure)</button>'
-    + '<button class="btn btn-ghost" type="button" data-act="carbon-csv" style="color:var(--ink)">Carbon table by scope (CSV: activity, quantity, factor, source, evidence)</button>'
-    + '<button class="btn btn-ghost" type="button" data-act="json-all" style="color:var(--ink)">Everything for this organisation (JSON)</button>'
-    + '<button class="btn btn-ghost" type="button" data-act="csv-dict" style="color:var(--ink)">The Yarta data dictionary (CSV)</button></div></div>'
+    + '<div class="row2"><div class="panel"><h3>Download</h3><p class="sec-s" style="margin-top:6px">'+n+' months · '+ev+' evidence records.</p><div class="dl-list">'
+    + dlRow('csv-all','Monthly figures','CSV, one row per figure: month, field, value, unit, status.','btn-ink')
+    + dlRow('carbon-csv','Carbon table by scope','CSV: every activity with its quantity, factor, source, evidence grade and t CO₂-e. The table an auditor asks for.')
+    + dlRow('json-all','Everything for this organisation','JSON: profile, targets, sites, every month and its evidence records.')
+    + dlRow('csv-dict','The Yarta data dictionary','CSV: every figure Yarta collects, its unit, frequency and definition.')+'</div></div>'
     + (isOp()?'<div class="panel"><h3>Import figures</h3><p class="sec-s" style="margin-top:6px">A CSV in the same shape as the download (month, field_id, value), or a JSON export. Figures go into draft months only; submitted and verified months are never overwritten.</p>'
     + '<label class="btn btn-ghost" style="color:var(--ink)">Choose a CSV or JSON file<input type="file" data-act="import-file" accept=".csv,.json,text/csv,application/json" style="display:none"></label>'
     + (pv?'<div class="callout" style="margin-top:14px"><b>'+esc(pv.name)+'</b>: '+pv.ok+' figures across '+pv.months.length+' month'+(pv.months.length===1?'':'s')+' ready'+(pv.skip?' · '+pv.skip+' skipped (locked months or unknown fields)':'')+'.<div class="btn-row" style="margin-top:12px"><button class="btn btn-primary btn-sm" type="button" data-act="import-go">Import into drafts</button><button class="btn btn-ghost btn-sm" type="button" data-act="import-cancel" style="color:var(--ink)">Cancel</button></div></div>':'')
@@ -1044,7 +1180,7 @@ function siteOrg(o,sid){
   return {id:o.id+'#'+sid, profile:p, plan:{off:{}}, site:s, records:o.records.map(function(r){ return {month:r.month, status:r.status, values:(r.sites&&r.sites[sid]&&r.sites[sid].values)||{}, evidence:r.evidence||{}, inbox:[], issuedAt:r.issuedAt, verifiedAt:r.verifiedAt, verifiedBy:r.verifiedBy, enteredAt:r.enteredAt, enteredBy:r.enteredBy}; })};
 }
 function splitSites(o,defs){
-  o.sites=defs.map(function(d,i){ return {id:'s'+(i+1), name:d.name, kind:d.kind, state:d.state||o.profile.state, employees:d.employees, floor_area:d.floor_area||'', contact:d.contact, email:d.email, cats:d.cats, active:true}; });
+  o.sites=defs.map(function(d,i){ return {id:'s'+(i+1), name:d.name, kind:d.kind, state:d.state||o.profile.state, employees:d.employees, floor_area:d.floor_area||'', contact:d.contact, email:d.email, cats:d.cats, active:true, lat:d.lat!=null?d.lat:null, lng:d.lng!=null?d.lng:null, count:d.count||null, note:d.note||''}; });
   o.records.forEach(function(r){
     r.sites={}; o.sites.forEach(function(s){ r.sites[s.id]={values:{}}; });
     Object.keys(r.values||{}).forEach(function(id){
@@ -1052,9 +1188,10 @@ function splitSites(o,defs){
       if(f.kind==='select'||f.kind==='text'){ r.sites[o.sites[0].id].values[id]=v; return; }
       if(f.kind==='percent'||!isNum(v)){ o.sites.forEach(function(s){ r.sites[s.id].values[id]=v; }); return; }
       // only the sites that report the category carry its figures: a store has no fuel card, the head office no weighbridge
-      var w=o.sites.map(function(s,i){ return (!s.cats||s.cats.indexOf(f.cat)>=0) ? defs[i].share*(1+0.3*(hashStr(id+s.id+r.month)-0.5)) : 0; }), sum=w.reduce(function(a,b){ return a+b; },0);
-      if(!(sum>0)){ w=o.sites.map(function(s,i){ return defs[i].share; }); sum=w.reduce(function(a,b){ return a+b; },0); }
-      var left=+v, isCount=f.kind==='count'||f.kind==='currency';
+      var shareOf=function(d,cat){ return d.shares&&d.shares[cat]!=null?d.shares[cat]:d.share; };
+      var w=o.sites.map(function(s,i){ return (!s.cats||s.cats.indexOf(f.cat)>=0) ? shareOf(defs[i],f.cat)*(1+0.3*(hashStr(id+s.id+r.month)-0.5)) : 0; }), sum=w.reduce(function(a,b){ return a+b; },0);
+      if(!(sum>0)){ w=o.sites.map(function(s,i){ return shareOf(defs[i],f.cat); }); sum=w.reduce(function(a,b){ return a+b; },0); }
+      var left=+v, isCount=f.kind==='count'||f.kind==='currency'||(+v===Math.round(+v)&&Math.abs(+v)>=100);   // whole numbers stay whole (kWh, litres, kilometres)
       var lastI=-1; w.forEach(function(x,i){ if(x>0) lastI=i; });
       o.sites.forEach(function(s,i){ if(!(w[i]>0)) return; var x; if(i===lastI) x=left; else { x=+v*w[i]/sum; x=isCount?Math.round(x):r3(x); left-=x; } r.sites[s.id].values[id]=isCount?Math.round(x):r3(x); });
     });
@@ -1121,17 +1258,45 @@ function seedOps2(s){
     var found=(id==='demo-shire'||id==='demo-coastal'||id==='demo-office');
     o.subscription={status:id==='demo-freight'?'pilot':'active', foundation:found, start:addDays(t0,-(240-i*9)).toISOString().slice(0,10), termMonths:12, monthlyOverride:'', estFee:found?0:8000, estStatus:found?'waived':'paid', notes:found?'Foundation Member':''};
   });
-  if(s.orgs['demo-retail'] && !s.orgs['demo-retail'].sites) splitSites(s.orgs['demo-retail'],[
-    {name:'Head office', kind:'Head office', share:.08, employees:220, floor_area:6200, contact:'Hannah Park', email:'hannah.park@demo-grocers.example', cats:['energy','water','waste','governance','circular','community']},
-    {name:'Distribution centre', kind:'Distribution centre', share:.24, employees:310, floor_area:24000, contact:'Ravi Menon', email:'ravi.menon@demo-grocers.example', cats:['energy','fleet','water','waste']},
-    {name:'Stores · Metro', kind:'Store', share:.30, employees:640, floor_area:9800, contact:'Store operations', email:'stores.metro@demo-grocers.example', cats:['energy','water','waste']},
-    {name:'Stores · Regional', kind:'Store', share:.22, employees:480, floor_area:7200, contact:'Store operations', email:'stores.regional@demo-grocers.example', cats:['energy','water','waste']},
-    {name:'Stores · Coastal', kind:'Store', share:.16, employees:250, floor_area:4800, contact:'Store operations', email:'stores.coastal@demo-grocers.example', cats:['energy','water','waste']}]);
-  if(s.orgs['demo-freight'] && !s.orgs['demo-freight'].sites) splitSites(s.orgs['demo-freight'],[
-    {name:'Depot · Brisbane', kind:'Depot', share:.36, employees:70, floor_area:9000, contact:'Jordan Blake', email:'jordan.blake@demo-freight.example', cats:['energy','fleet','water','waste']},
-    {name:'Depot · Gold Coast', kind:'Depot', share:.27, employees:48, floor_area:6000, contact:'Depot manager', email:'goldcoast@demo-freight.example', cats:['energy','fleet','water','waste']},
-    {name:'Depot · Toowoomba', kind:'Depot', share:.22, employees:36, floor_area:4500, contact:'Depot manager', email:'toowoomba@demo-freight.example', cats:['energy','fleet','water','waste']},
-    {name:'Head office', kind:'Head office', share:.15, employees:26, floor_area:2500, contact:'Jordan Blake', email:'jordan.blake@demo-freight.example', cats:['energy','water','waste','governance']}]);
+}
+/* --- demo sites with locations (fictional organisations on real ground; the demo map shows no place names) --- */
+function siteDefs(){ return {
+  'demo-shire':[
+    {name:'Civic centre', kind:'Head office', share:.06, shares:{energy:.10, water:.05, waste:.02}, employees:160, floor_area:6200, contact:'Alex Morgan', email:'alex.morgan@demo-shire.example', cats:['energy','water','waste','governance','circular'], lat:-38.3815, lng:142.4850, note:'Offices, customer service and council chamber'},
+    {name:'Works depot', kind:'Depot', share:.05, shares:{energy:.06, water:.05, waste:.04, fleet:1}, employees:95, floor_area:4800, contact:'Depot supervisor', email:'depot@demo-shire.example', cats:['energy','fleet','water','waste'], lat:-38.3700, lng:142.5100, note:'Fleet, plant and bulk fuel'},
+    {name:'Transfer station', kind:'Facility', share:.07, shares:{energy:.02, water:.03, waste:.10}, employees:8, floor_area:1200, contact:'Site operator', email:'transfer@demo-shire.example', cats:['waste','energy','water'], lat:-38.3450, lng:142.5300, note:'Self-haul drop-off and resource recovery'},
+    {name:'Aquatic centre', kind:'Facility', share:.06, shares:{energy:.26, water:.28, waste:.01}, employees:22, floor_area:5400, contact:'Centre manager', email:'aquatic@demo-shire.example', cats:['energy','water','waste'], lat:-38.3880, lng:142.4700, note:'Heated pools and gym'},
+    {name:'Library · Central', kind:'Facility', share:.02, shares:{energy:.04, water:.02, waste:.01}, employees:14, floor_area:2100, contact:'Library services', email:'library@demo-shire.example', cats:['energy','water','waste'], lat:-38.3830, lng:142.4870},
+    {name:'Library · East', kind:'Facility', share:.01, shares:{energy:.015, water:.01, waste:.005}, employees:5, floor_area:700, contact:'Library services', email:'library@demo-shire.example', cats:['energy','water','waste'], lat:-38.3760, lng:142.5250},
+    {name:'Performing arts centre', kind:'Facility', share:.02, shares:{energy:.05, water:.02, waste:.01}, employees:9, floor_area:3100, contact:'Venue manager', email:'venue@demo-shire.example', cats:['energy','water','waste'], lat:-38.3840, lng:142.4820},
+    {name:'Sports stadium', kind:'Facility', share:.025, shares:{energy:.08, water:.06, waste:.01}, employees:6, floor_area:4200, contact:'Venue manager', email:'stadium@demo-shire.example', cats:['energy','water','waste'], lat:-38.3920, lng:142.4950, note:'Indoor courts and events'},
+    {name:'Recreation reserves', kind:'Facility', share:.02, shares:{energy:.05, water:.14, waste:.01}, employees:4, floor_area:600, contact:'Parks and recreation', email:'parks@demo-shire.example', cats:['energy','water','waste'], lat:-38.3650, lng:142.4700, count:6, note:'Six ovals: lighting and irrigation'},
+    {name:'Community centres', kind:'Facility', share:.015, shares:{energy:.04, water:.02, waste:.01}, employees:10, floor_area:2400, contact:'Community services', email:'community@demo-shire.example', cats:['energy','water','waste'], lat:-38.3700, lng:142.4600, count:4, note:'Four neighbourhood centres'},
+    {name:'Childcare centre', kind:'Facility', share:.01, shares:{energy:.02, water:.01, waste:.005}, employees:18, floor_area:900, contact:'Centre director', email:'childcare@demo-shire.example', cats:['energy','water','waste'], lat:-38.3790, lng:142.5000},
+    {name:'Saleyards', kind:'Facility', share:.01, shares:{energy:.015, water:.02, waste:.01}, employees:3, floor_area:1500, contact:'Saleyards manager', email:'saleyards@demo-shire.example', cats:['energy','water','waste'], lat:-38.3400, lng:142.4500},
+    {name:'Shire-wide services', kind:'Other', share:.62, shares:{energy:.24, water:.30, waste:.78}, employees:76, floor_area:'', contact:'Alex Morgan', email:'alex.morgan@demo-shire.example', cats:['waste','energy','water','land','nature','community'], note:'Kerbside collection, street lighting, parks irrigation, Country and community programs. Not a place on the map.'}
+  ],
+  'demo-retail':[
+    {name:'Head office', kind:'Head office', share:.08, employees:220, floor_area:6200, contact:'Hannah Park', email:'hannah.park@demo-grocers.example', cats:['energy','water','waste','governance','circular','community'], lat:-33.8688, lng:151.2093},
+    {name:'Distribution centre', kind:'Distribution centre', share:.24, employees:310, floor_area:24000, contact:'Ravi Menon', email:'ravi.menon@demo-grocers.example', cats:['energy','fleet','water','waste'], lat:-33.8010, lng:150.8530},
+    {name:'Stores · Metro', kind:'Store', share:.30, employees:640, floor_area:9800, contact:'Store operations', email:'stores.metro@demo-grocers.example', cats:['energy','water','waste'], lat:-33.9000, lng:151.1000, count:18, note:'Eighteen metropolitan stores, reported as a group'},
+    {name:'Stores · Regional', kind:'Store', share:.22, employees:480, floor_area:7200, contact:'Store operations', email:'stores.regional@demo-grocers.example', cats:['energy','water','waste'], lat:-32.9267, lng:151.7789, count:12, note:'Twelve regional stores, reported as a group'},
+    {name:'Stores · Coastal', kind:'Store', share:.16, employees:250, floor_area:4800, contact:'Store operations', email:'stores.coastal@demo-grocers.example', cats:['energy','water','waste'], lat:-34.4278, lng:150.8931, count:8, note:'Eight coastal stores, reported as a group'}
+  ],
+  'demo-freight':[
+    {name:'Depot · Brisbane', kind:'Depot', share:.36, employees:70, floor_area:9000, contact:'Jordan Blake', email:'jordan.blake@demo-freight.example', cats:['energy','fleet','water','waste'], lat:-27.4300, lng:153.0800},
+    {name:'Depot · Gold Coast', kind:'Depot', share:.27, employees:48, floor_area:6000, contact:'Depot manager', email:'goldcoast@demo-freight.example', cats:['energy','fleet','water','waste'], lat:-27.8700, lng:153.2200},
+    {name:'Depot · Toowoomba', kind:'Depot', share:.22, employees:36, floor_area:4500, contact:'Depot manager', email:'toowoomba@demo-freight.example', cats:['energy','fleet','water','waste'], lat:-27.5600, lng:151.9500},
+    {name:'Head office', kind:'Head office', share:.15, employees:26, floor_area:2500, contact:'Jordan Blake', email:'jordan.blake@demo-freight.example', cats:['energy','water','waste','governance'], lat:-27.4705, lng:153.0260}
+  ]
+}; }
+/* split the demo organisations into sites once, and give sites saved before locations existed their coordinates */
+function seedSites(s){
+  var SD=siteDefs();
+  Object.keys(SD).forEach(function(id){ var o=s.orgs[id]; if(!o) return; var defs=SD[id];
+    if(!o.sites) splitSites(o,defs);
+    o.sites.forEach(function(st){ if(st.lat==null){ var d=defs.filter(function(x){ return x.name===st.name; })[0]; if(d){ if(d.lat!=null){ st.lat=d.lat; st.lng=d.lng; } if(d.count) st.count=d.count; if(d.note) st.note=d.note; } } });
+  });
 }
 /* ------------------------------------------------------------------ outbox */
 function vOutbox(){
@@ -1283,9 +1448,10 @@ function vSites(editId){
   }
   var S=seriesOf(o), last=S.months.length?S.months[S.months.length-1].month:null;
   var rows=o.sites.map(function(s){ var so=siteOrg(o,s.id), Ss=seriesOf(so), m=Ss.months.length?Ss.months[Ss.months.length-1]:null;
-    return '<tr'+(s.active===false?' style="opacity:.55"':'')+'><td><b>'+esc(s.name)+'</b><div class="small muted">'+esc(s.kind)+' · '+esc(s.state||o.profile.state)+(s.contact?' · '+esc(s.contact):'')+'</div></td><td class="small">'+(s.cats||[]).map(function(c){ return esc(D.CAT[c]?D.CAT[c].short:c); }).join(', ')+'</td><td class="num"><b>'+(m&&m.score!=null?m.score:'—')+'</b></td><td class="num">'+(m?fmt(m.r12.total_t,0):'—')+'</td><td class="num">'+(m?fmt(m.r12.grid_kwh/1000,0):'—')+'</td><td class="num">'+(m&&m.r12.diversion_pct!=null?pct(m.r12.diversion_pct,0):'—')+'</td><td><div class="pill-row">'+(m?'<a class="btn btn-ghost btn-sm" href="#/sitereport/'+s.id+'/'+m.month+'" style="color:var(--ink)">Site report</a>':'')+(op?'<a class="btn btn-ghost btn-sm" href="#/sites/'+s.id+'" style="color:var(--ink)">Edit</a>':'')+'</div></td></tr>'; }).join('');
+    return '<tr data-site-row="'+esc(s.id)+'"'+(s.active===false?' style="opacity:.55"':'')+'><td><b>'+esc(s.name)+'</b><div class="small muted">'+esc(s.kind)+(s.count?' · '+s.count+' sites':'')+' · '+esc(s.state||o.profile.state)+(s.contact?' · '+esc(s.contact):'')+'</div>'+(s.note?'<div class="small muted">'+esc(s.note)+'</div>':'')+'</td><td class="small">'+(s.cats||[]).map(function(c){ return esc(D.CAT[c]?D.CAT[c].short:c); }).join(', ')+'</td><td class="num"><b>'+(m&&m.score!=null?m.score:'—')+'</b></td><td class="num">'+(m?fmt(m.r12.total_t,0):'—')+'</td><td class="num">'+(m?fmt(m.r12.grid_kwh/1000,0):'—')+'</td><td class="num">'+(m&&m.r12.diversion_pct!=null?pct(m.r12.diversion_pct,0):'—')+'</td><td><div class="pill-row">'+(m?'<a class="btn btn-ghost btn-sm" href="#/sitereport/'+s.id+'/'+m.month+'" style="color:var(--ink)">Site report</a>':'')+(op?'<a class="btn btn-ghost btn-sm" href="#/sites/'+s.id+'" style="color:var(--ink)">Edit</a>':'')+'</div></td></tr>'; }).join('');
   var ed=editId==='new'?{id:'',name:'',kind:'Store',state:o.profile.state,employees:'',floor_area:'',contact:'',email:'',cats:['energy','water','waste']}:(editId?siteById(o,editId):null);
   body='<div class="pg-head"><div><p class="kicker">Sites</p><h1>'+esc(o.profile.org_name)+'</h1><p class="pg-sub">Each site has its own figures, score and report. The organisation report is the sum of the sites'+(last?' (latest month '+mLabel(last)+')':'')+'. Emissions and electricity are the rolling 12 months.</p></div>'+(op?'<div class="pg-actions"><a class="btn btn-ink btn-sm" href="#/sites/new">Add a site</a></div>':'')+'</div>'
+    +(o.sites.some(function(x){ return x.lat!=null && x.active!==false; })?'<div class="sites-map" data-sitemap aria-label="Map of your sites"></div><p class="small muted sites-map-note">Each marker is sized by the figure chosen above it; the share is of the whole organisation.'+(o.sites.some(function(x){ return x.lat==null && x.active!==false; })?' '+o.sites.filter(function(x){ return x.lat==null && x.active!==false; }).map(function(x){ return esc(x.name); }).join(', ')+' '+(o.sites.filter(function(x){ return x.lat==null && x.active!==false; }).length===1?'is a service, not a place, so it is':'are services, not places, so they are')+' in the table only.':'')+'</p>':'')
     +'<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Site</th><th>Reports on</th><th class="r">Score</th><th class="r">t CO₂-e</th><th class="r">MWh grid</th><th class="r">Diversion</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
     +(op&&ed?'<div class="panel" style="margin-top:22px">'+siteForm(o,ed,false)+'</div>':'');
   return shell('sites', body);
@@ -1297,7 +1463,8 @@ function siteForm(o,s,first){
    +'<div class="field"><label for="st-kind">Kind</label><select id="st-kind">'+SITE_KINDS.map(function(k){ return '<option'+(s.kind===k?' selected':'')+'>'+k+'</option>'; }).join('')+'</select></div>'
    +'<div class="field"><label for="st-state">State or territory</label><select id="st-state">'+D.STATES.map(function(x){ return '<option'+(s.state===x[0]?' selected':'')+'>'+esc(x[0])+'</option>'; }).join('')+'</select></div>'
    +'<div class="field"><label for="st-emp">Employees (FTE)</label><input type="number" id="st-emp" min="0" value="'+esc(s.employees)+'"></div>'
-   +'<div class="field"><label for="st-area">Floor area (m²)</label><input type="number" id="st-area" min="0" value="'+esc(s.floor_area)+'"></div></div>'
+   +'<div class="field"><label for="st-area">Floor area (m²)</label><input type="number" id="st-area" min="0" value="'+esc(s.floor_area)+'"></div>'
+   +'<div class="field"><label for="st-lat">Location (latitude, longitude)</label><div class="row2" style="gap:8px"><input type="number" step="any" id="st-lat" placeholder="-37.81" value="'+esc(s.lat!=null?s.lat:'')+'"><input type="number" step="any" id="st-lng" placeholder="144.96" value="'+esc(s.lng!=null?s.lng:'')+'"></div><span class="hint">Puts the site on the map. Leave blank for a service that is not a place, such as kerbside collection.</span></div></div>'
    +'<div class="stack"><div class="field"><label for="st-contact">Site contact</label><input type="text" id="st-contact" value="'+esc(s.contact)+'"></div>'
    +'<div class="field"><label for="st-email">Contact email (the gap email for this site goes here)</label><input type="email" id="st-email" value="'+esc(s.email)+'"></div>'
    +'<div class="field"><label>Categories this site reports on</label><div>'+cats.map(function(c){ return '<label class="small" style="display:inline-flex;gap:6px;align-items:center;margin:0 12px 6px 0"><input type="checkbox" data-scat="'+c.k+'"'+((s.cats||[]).indexOf(c.k)>=0?' checked':'')+'> '+esc(c.short)+'</label>'; }).join('')+'</div><span class="hint">A category a site does not report on is not asked for in its gap email.</span></div></div></div>'
@@ -1606,7 +1773,41 @@ function render(){
   app.innerHTML=html;
   document.title = (u?(isOp()?'Yarta team':org().profile.org_name)+' · ':'')+(LIVE?'Yarta':'Yarta portal (prototype)');
   bindMedia();
+  bindWidgets();
   if(LIVE) LIVE.afterRender(P,q);
+}
+/* ------------------------------------------------------------------ widgets: the 3D scale scene and the sites map (both lazy; both optional) */
+var WIDGETS=[];
+function bindWidgets(){
+  WIDGETS.forEach(function(h){ try{ h.destroy(); }catch(e){} }); WIDGETS=[];
+  $$('[data-scale3d]',app).forEach(function(stage){
+    if(!window.YartaScale || !window.YartaScale.supported()) return;
+    var data; try{ data=JSON.parse(stage.getAttribute('data-scale3d')); }catch(e){ return; }
+    var wrap=stage.closest('[data-scale3d-wrap]'), sent=wrap&&wrap.querySelector('[data-scale-sentence]'), basis=wrap&&wrap.querySelector('[data-scale-basis]');
+    function say(key){ var f=data.figures.filter(function(x){ return x.key===key; })[0]; if(!f||!window.YartaScale.describe) return; var d=window.YartaScale.describe(f); if(d){ if(sent&&d.sentence) sent.textContent=d.sentence; if(basis&&d.basis) basis.textContent=d.basis+' Drag to look around.'; } }
+    say(data.figures[0].key);
+    window.YartaScale.mount(stage, data, {controls:false}).then(function(h){
+      if(!h) return; WIDGETS.push(h); stage.classList.add('mounted'); if(wrap) wrap.classList.add('mounted');
+      if(wrap) wrap.addEventListener('click', function(e){ var b=e.target.closest('[data-scfig]'); if(!b) return; var k=b.getAttribute('data-scfig'); $$('[data-scfig]',wrap).forEach(function(x){ x.setAttribute('aria-pressed', x===b?'true':'false'); }); h.setFigure(k); say(k); });
+    }).catch(function(){});
+  });
+  $$('[data-sitemap],[data-orgmap]',app).forEach(function(el){
+    if(!window.YartaMap) return;
+    var o=org(); if(!o||!multisite(o)) return;
+    var compact=el.hasAttribute('data-orgmap'), d=siteMapData(o);
+    window.YartaMap.mount(el, {sites:d.sites, metric:'emissions', metrics:d.metrics, theme:'paper', labels:!!LIVE, compact:compact, demo:!LIVE,
+      onSelect:function(id){ var row=$('[data-site-row="'+id+'"]'); if(row){ $$('[data-site-row]',app).forEach(function(r){ r.classList.toggle('sel', r===row); }); row.scrollIntoView({block:'nearest',behavior:'smooth'}); } }
+    }).then(function(h){ if(h) WIDGETS.push(h); }).catch(function(){});
+  });
+}
+/* the sites with a location, each with the rolling-12-month figures the map can size by */
+function siteMapData(o){
+  var sites=o.sites.filter(function(s){ return s.active!==false; }).map(function(s){
+    var so=siteOrg(o,s.id), Ss=seriesOf(so), m=Ss.months.length?Ss.months[Ss.months.length-1]:null, r=m?m.r12:null;
+    return {id:s.id, name:s.name, kind:s.kind+(s.count?' · '+s.count+' sites':''), lat:s.lat, lng:s.lng, score:m?m.score:null, href:m?'#/sitereport/'+s.id+'/'+m.month:'',
+      values:{emissions:r?Math.round(r.total_t):null, electricity:r?Math.round(r.grid_kwh/1000):null, water:r?Math.round(r.potable_kl):null, waste:r?Math.round(r.waste_total_t):null}};
+  });
+  return {sites:sites, metrics:[{key:'emissions',label:'t CO₂-e',unit:'t'},{key:'electricity',label:'MWh grid',unit:'MWh'},{key:'water',label:'kL water',unit:'kL'},{key:'waste',label:'t waste',unit:'t'}]};
 }
 function bindMedia(){ // ambient video on the sign-in screen
   var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches, conn=navigator.connection||{};
@@ -1620,6 +1821,14 @@ function currentSubmit(){ var h=parseHash(); if(h.parts[0]!=='entry'||!h.parts[2
 
 app.addEventListener('input', function(e){
   var t=e.target;
+  if(t.hasAttribute('data-tslide')||(t.hasAttribute('data-pf')&&t.getAttribute('data-pf').indexOf('target_')===0&&OWN_TARGETS.indexOf(t.getAttribute('data-pf'))>=0)){
+    var tid=t.getAttribute('data-tslide')||t.getAttribute('data-pf'), card=t.closest('[data-tg]'); if(!card) return;
+    var val=t.value===''?0:+t.value; if(!isFinite(val)) return;
+    var sl=card.querySelector('[data-tslide]'), nm=card.querySelector('[data-pf]'); if(sl&&sl!==t) sl.value=val; if(nm&&nm!==t) nm.value=val;
+    var o2=org(), S2=seriesOf(o2), m2=S2.months.length?S2.months[S2.months.length-1]:null, tk=targetTake(o2,S2,m2,tid,val);
+    var tt=card.querySelector('[data-ttake]'); if(tt) tt.innerHTML=tk.bar+'<p>'+tk.text+'</p>';
+    return;
+  }
   if(t.hasAttribute('data-field')){
     var c=currentSubmit(); if(!c) return; var id=t.getAttribute('data-field'), f=field(id);
     var val=t.value; SITE=currentSite(c.o); var tv=SITE?svals(c.r,SITE):c.r.values;
@@ -1769,7 +1978,7 @@ document.addEventListener('click', function(e){
       var scats=$$('[data-scat]').filter(function(x){ return x.checked; }).map(function(x){ return x.getAttribute('data-scat'); }); if(!scats.length){ flash('Tick at least one category the site reports on.','err'); return; }
       if(sfirst){ o.sites=[{id:'s1',name:'Whole organisation so far',kind:'Other',state:o.profile.state,employees:o.profile.employees||'',floor_area:o.profile.floor_area||'',contact:'',email:'',cats:D.CATEGORIES.filter(function(c){ return c.k!=='carbon'; }).map(function(c){ return c.k; }),active:true}]; o.records.forEach(function(r){ r.sites={s1:{values:JSON.parse(JSON.stringify(r.values||{}))}}; }); }
       var sobj=sid?siteById(o,sid):null; if(!sobj){ var n2=o.sites.length+1; while(siteById(o,'s'+n2)) n2++; sobj={id:'s'+n2,active:true}; o.sites.push(sobj); }
-      sobj.name=sname; sobj.kind=$('#st-kind').value; sobj.state=$('#st-state').value; sobj.employees=+$('#st-emp').value||''; sobj.floor_area=+$('#st-area').value||''; sobj.contact=($('#st-contact').value||'').trim(); sobj.email=($('#st-email').value||'').trim(); sobj.cats=scats;
+      sobj.name=sname; sobj.kind=$('#st-kind').value; sobj.state=$('#st-state').value; sobj.employees=+$('#st-emp').value||''; sobj.floor_area=+$('#st-area').value||''; sobj.contact=($('#st-contact').value||'').trim(); sobj.email=($('#st-email').value||'').trim(); sobj.cats=scats; var la=$('#st-lat').value, lo=$('#st-lng').value; sobj.lat=(la!==''&&isFinite(+la))?+la:null; sobj.lng=(lo!==''&&isFinite(+lo))?+lo:null;
       log(sid?'Site updated':'Site added',sname,o.id); save(); flash('Saved '+sname+'.'); go('#/sites'); break;
     case 'site-toggle': o=org(); var st3=siteById(o,t.getAttribute('data-id')); if(st3){ st3.active=st3.active===false; log(st3.active?'Site reactivated':'Site retired',st3.name,o.id); save(); go('#/sites'); } break;
     case 'declare': o=state.orgs[t.getAttribute('data-org')]||org(); if(declare(o,$('#dc-m').value,$('#dc-c').value,($('#dc-n').value||'').trim())){ flash('Marked not reported. Yarta will not ask for it.'); render(); } break;
