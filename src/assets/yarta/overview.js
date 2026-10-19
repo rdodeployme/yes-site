@@ -483,7 +483,7 @@ V.brief = function(S, i, key, api){
 V.dashboard = function(q, api){
   A=api; E=api.E; D=api.D; R=api.R; tip();
   var o=A.org(), S=A.seriesOf(o), m=A.monthOf(S,q.m), p=o.profile;
-  if(!m) return A.shell('dashboard','<div class="pg-head"><div><p class="kicker">Overview</p><h1>'+esc(p.org_name)+'</h1></div></div>'+A.banner(o)+'<div class="empty">'+(A.isOp()?'No month has been verified or entered yet. <a class="link" href="#/ops/entry">Open data entry</a>.':'Your first verified month will appear here. <a class="link" href="#/documents">Send your documents</a> and Yarta will enter them.')+'</div>');
+  if(!m) return A.shell('dashboard','<div class="pg-head"><div><p class="kicker">Overview</p><h1>'+esc(p.org_name)+'</h1></div></div>'+A.banner(o)+'<div class="empty">'+(A.isOp()?'No month has been verified or entered yet. <a class="link" href="#/ops/entry">Open data entry</a>.':'Your first verified month will appear here. <a class="link" href="#/entry">Enter your first month</a> and Yarta will verify it.')+'</div>');
   var i=A.idxOf(S,m.month), r=m.r12, T=S.targets, month=m.month;
   var opts=S.months.slice().reverse().map(function(x){ return '<option value="'+x.month+'"'+(x.month===month?' selected':'')+'>'+A.mLabel(x.month)+(x.status!=='verified'?' · provisional':'')+'</option>'; }).join('');
   var sec=(window.YESS&&p.sector&&window.YESS.BY[p.sector])?window.YESS.BY[p.sector].one:p.org_type;
@@ -511,7 +511,7 @@ V.dashboard = function(q, api){
 
   // 4. what changed, and what to do next
   var ch=inB?[]:changes(S,i,o), cov=baseCover(S,month), gapNote='';
-  if(cov && cov.miss.length){ gapNote='<p class="ov-gap"><b>Your baseline year has '+cov.have+' of 12 months'+(cov.done?'':' so far')+'.</b> Months without figures use the average of the months you have, so '+(A.isOp()?'figures for ':'bills and dockets for ')+monthRange(cov.miss)+' would make every comparison more accurate.'+(A.isOp()?'':' <a class="link" href="#/documents">Send documents</a>')+'</p>'; }
+  if(cov && cov.miss.length){ gapNote='<p class="ov-gap"><b>Your baseline year has '+cov.have+' of 12 months'+(cov.done?'':' so far')+'.</b> Months without figures use the average of the months you have, so '+'figures for '+monthRange(cov.miss)+' would make every comparison more accurate.'+(A.isOp()?'':' <a class="link" href="#/entry">Enter them</a>')+'</p>'; }
   var chP='<section class="panel ov-chg"><h2 class="sec-t">What changed</h2><p class="sec-s">The biggest movements in your figures. '+winT+'.</p>'
     + (inB?'<p class="muted">'+A.mLabel(month)+' is in your baseline year ('+esc(S.baseline.fy)+'). From '+A.mLabel(E.addMonths(baseFyEnd(S),1))+', this shows what moved against it, in plain words with the numbers.</p>':ch.length?'<ul>'+ch.map(function(c){ return '<li class="'+(c.good===false?'bad':c.good?'good':'')+'"><span class="mk" aria-hidden="true">'+(c.good===false?'!':'✓')+'</span><span>'+c.text+' <a class="link" href="'+c.href+'?m='+month+'">See why</a></span></li>'; }).join('')+'</ul>'+(ch.length<3?'<p class="muted ov-quiet">Everything else is within a percent or two of the baseline.</p>':''):'<p class="muted">Nothing moved by more than a percent or two. Changes show here as your figures move.</p>')+gapNote+'</section>';
   var P=A.planFor(o,S,i), nx='';

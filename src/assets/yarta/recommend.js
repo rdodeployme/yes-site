@@ -308,7 +308,7 @@ window.YESR = window.YESR || {};
     {k:"Published rules", d:"The rules and assumptions are published in the Yarta method, and the same rules apply to every organisation."},
     {k:"Any provider", d:"You can use any provider. Recommendations, your score and the verification of your figures do not depend on who does the work."},
     {k:"Disclosure", d:"Work by a Recycle Group business (The Mattress Recycling Company, Recycle Warehouse or the group's collection business) is disclosed on your monthly report. Yarta is part of Recycle Group."},
-    {k:"Only through the figures", d:"Completed work changes your score only through the figures Yarta enters and verifies in later months, like any other change."},
+    {k:"Only through the figures", d:"Completed work changes your score only through the figures entered and verified in later months, like any other change."},
     {k:"Separate people", d:"A Yarta analyst who runs a paid session for you does not enter or verify your months."},
     {k:"Estimates", d:"The score with Yarta help and the projection are estimates. They are not a promise, a guarantee or a target."}
   ];

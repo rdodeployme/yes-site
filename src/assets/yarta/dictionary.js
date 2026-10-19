@@ -76,15 +76,15 @@ window.YESD = window.YESD || {};
     F("veh_bev","Battery electric vehicles","fleet","vehicles","S",true,"count","Fleet register","Number of battery electric passenger vehicles."),
     F("trucks_diesel","Diesel trucks","fleet","vehicles","S",true,"count","Fleet register","Number of diesel trucks, including waste and fire vehicles."),
     F("trucks_electric","Electric trucks","fleet","vehicles","S",true,"count","Fleet register","Number of electric trucks."),
-    F("plant_count","Heavy plant and machinery","fleet","items","S",false,"count","Plant register","Number of heavy plant items (graders, loaders, mowers, excavators)."),
-    F("plant_fuel","Heavy plant main fuel type","fleet","type","S",false,"select","Plant register","Main fuel used by heavy plant.",{options:["Diesel","Petrol","Electric","Mixed"]}),
-    F("flights_dom","Domestic flights","fleet","trips","M",false,"count","Travel booking system","Domestic one-way flight trips taken for work. Recorded; emissions factor pending.",{score:["fleet"]}),
-    F("flights_int","International flights","fleet","trips","M",false,"count","Travel booking system","International one-way flight trips taken for work. Recorded; emissions factor pending.",{score:["fleet"]}),
-    F("ev_public_points","Public EV charging points operated","fleet","points","S",false,"count","Asset register","Public EV charging points operated by the organisation."),
-    F("ev_public_kwh","Public EV charging supplied","fleet","kWh","M",false,"number","Charger management platform","Electricity supplied through public charging points in the month."),
+    F("plant_count","Heavy plant and machinery","fleet","items","S",false,"count","Plant register","Number of heavy plant items (graders, loaders, mowers, excavators).",{sectors:["council", "construction", "manufacturing", "logistics", "education"]}),
+    F("plant_fuel","Heavy plant main fuel type","fleet","type","S",false,"select","Plant register","Main fuel used by heavy plant.",{options:["Diesel","Petrol","Electric","Mixed"], sectors:["council", "construction", "manufacturing", "logistics", "education"]}),
+    F("flights_dom","Domestic flights","fleet","trips","M",false,"count","Travel booking system","Domestic one-way flight trips taken for work. Recorded; emissions factor pending.",{score:["fleet"], sectors:["business", "health", "education", "manufacturing", "retail", "logistics", "council", "construction"]}),
+    F("flights_int","International flights","fleet","trips","M",false,"count","Travel booking system","International one-way flight trips taken for work. Recorded; emissions factor pending.",{score:["fleet"], sectors:["business", "education", "health", "manufacturing", "retail"]}),
+    F("ev_public_points","Public EV charging points operated","fleet","points","S",false,"count","Asset register","Public EV charging points operated by the organisation.",{sectors:["council", "retail", "education"]}),
+    F("ev_public_kwh","Public EV charging supplied","fleet","kWh","M",false,"number","Charger management platform","Electricity supplied through public charging points in the month.",{sectors:["council", "retail", "education"]}),
     F("ev_staff_points","Staff EV charging points","fleet","points","S",false,"count","Asset register","Charging points for fleet and staff vehicles."),
     F("ev_staff_kwh","Staff and fleet EV charging supplied","fleet","kWh","M",false,"number","Charger management platform or sub-meter","Electricity supplied to fleet and staff vehicles in the month."),
-    F("idle_hours","Fleet idling hours","fleet","hours","M",false,"number","Telematics","Engine idling hours, where telematics are available."),
+    F("idle_hours","Fleet idling hours","fleet","hours","M",false,"number","Telematics","Engine idling hours, where telematics are available.",{sectors:["logistics", "construction", "council"]}),
     F("veh_retired","Vehicles retired","fleet","vehicles","Q",false,"count","Fleet register","Vehicles retired from the fleet in the quarter."),
     F("veh_cleaner","Cleaner replacements introduced","fleet","vehicles","Q",false,"count","Fleet register","Replacement vehicles that are electric, plug-in hybrid or hybrid."),
     C("fleet_eff","Fleet fuel efficiency","fleet","L/100 km","(diesel + petrol + LPG + biodiesel) ÷ fleet km × 100","Litres of fuel per 100 km across the fleet."),
@@ -104,8 +104,8 @@ window.YESD = window.YESD || {};
     F("peak_kw","Peak electricity demand","energy","kW","M",false,"number","Retailer bills or interval data","Highest demand in the month across metered sites."),
     F("gas_to_elec","Buildings converted from gas to electric","energy","buildings","Q",false,"count","Project register","Buildings fully converted from gas to electric in the quarter."),
     F("led_conversions","LED lighting conversions completed","energy","projects","Q",false,"count","Project register","Building lighting upgrades to LED completed in the quarter."),
-    F("street_kwh","Streetlighting electricity","energy","kWh","M",false,"number","Streetlighting bills (unmetered supply)","Electricity for streetlighting. Included in grid electricity above as well."),
-    F("street_led_pct","Streetlights converted to LED","energy","%","A",false,"percent","Streetlighting asset register","Share of streetlights that are LED."),
+    F("street_kwh","Streetlighting electricity","energy","kWh","M",false,"number","Streetlighting bills (unmetered supply)","Electricity for streetlighting. Included in grid electricity above as well.",{sectors:["council"]}),
+    F("street_led_pct","Streetlights converted to LED","energy","%","A",false,"percent","Streetlighting asset register","Share of streetlights that are LED.",{sectors:["council"]}),
     F("ee_projects","Energy-efficiency projects completed","energy","projects","Q",false,"count","Project register","Energy-efficiency projects completed in the quarter."),
     F("ee_saved_kwh","Estimated energy saved","energy","kWh/yr","Q",false,"number","Project business cases or measurement","Estimated annual energy saving from projects completed in the quarter."),
     C("renew_pct","Renewable electricity share","energy","%","(renewable purchased + solar consumed onsite) ÷ (grid electricity + solar consumed onsite) × 100","Share of electricity from renewable sources."),
@@ -117,8 +117,8 @@ window.YESD = window.YESD || {};
     F("recycled_kl","Recycled water consumed","water","kL","M",false,"number","Recycled water bills","Class A or B recycled water used (e.g. irrigation)."),
     F("rain_kl","Rainwater harvested","water","kL","M",false,"number","Tank meters or estimate","Rainwater collected and used."),
     F("storm_kl","Stormwater captured and reused","water","kL","M",false,"number","Stormwater harvesting meters","Stormwater captured and reused."),
-    F("ground_kl","Groundwater used","water","kL","M",false,"number","Bore meters","Groundwater extracted, where relevant."),
-    F("waste_water_kl","Wastewater reused","water","kL","M",false,"number","Treatment plant records","Wastewater treated and reused."),
+    F("ground_kl","Groundwater used","water","kL","M",false,"number","Bore meters","Groundwater extracted, where relevant.",{sectors:["council", "education", "manufacturing", "construction"]}),
+    F("waste_water_kl","Wastewater reused","water","kL","M",false,"number","Treatment plant records","Wastewater treated and reused.",{sectors:["manufacturing", "health", "education", "council"]}),
     F("leaks_fixed","Major water leaks repaired","water","leaks","Q",false,"count","Maintenance records","Major leaks identified and repaired in the quarter."),
     C("alt_water_pct","Alternative water share","water","%","(recycled + rainwater + stormwater + wastewater reused) ÷ all water used × 100","Share of water from non-potable sources."),
     C("water_per_fte","Water per employee","water","kL/FTE","potable water ÷ employees","Monthly potable water per employee."),
@@ -130,7 +130,7 @@ window.YESD = window.YESD || {};
     F("landfill_t","General waste to landfill","waste","t","M",true,"number","Landfill dockets","Waste sent to landfill, including kerbside garbage for councils.",{score:["waste","carbon"]}),
     F("recycling_t","Commingled recycling recovered","waste","t","M",true,"number","Contractor reports or processor certificates","Commingled recycling sent to a licensed reprocessor."),
     F("organics_t","Organics recovered","waste","t","M",false,"number","Processor certificates","Food and garden organics (FOGO) recovered."),
-    F("green_t","Green waste recovered","waste","t","M",false,"number","Processor certificates","Garden and green waste recovered."),
+    F("green_t","Green waste recovered","waste","t","M",false,"number","Processor certificates","Garden and green waste recovered.",{sectors:["council", "education", "health", "construction", "retail"]}),
     F("food_t","Food waste recovered","waste","t","M",false,"number","Processor certificates","Food waste recovered separately."),
     F("paper_t","Cardboard and paper recovered","waste","t","M",false,"number","Processor certificates","Cardboard and paper sent to reprocessing."),
     F("glass_t","Glass recovered","waste","t","M",false,"number","Processor certificates","Glass sent to reprocessing."),
@@ -138,16 +138,16 @@ window.YESD = window.YESD || {};
     F("alu_t","Aluminium and non-ferrous metals recovered","waste","t","M",false,"number","Weighbridge dockets","Aluminium, copper and other non-ferrous metals recovered."),
     F("timber_t","Plain timber recovered","waste","t","M",false,"number","Weighbridge dockets","Untreated timber recovered."),
     F("timber_treated_t","Painted or treated timber recovered","waste","t","M",false,"number","Weighbridge dockets","Painted, treated or engineered timber recovered."),
-    F("concrete_t","Concrete recovered","waste","t","M",false,"number","Weighbridge dockets","Concrete crushed for reuse."),
-    F("rubble_t","Bricks and rubble recovered","waste","t","M",false,"number","Weighbridge dockets","Bricks and rubble recovered."),
-    F("soil_t","Soil recovered or reused","waste","t","M",false,"number","Weighbridge dockets or project records","Clean soil reused rather than landfilled."),
-    F("plaster_t","Plasterboard recovered","waste","t","M",false,"number","Weighbridge dockets","Plasterboard recovered."),
-    F("mattress_n","Mattresses recovered","waste","units","M",false,"count","Processor certificates","Mattresses sent for processing (tonnes are calculated at 80 kg each unless weighed)."),
-    F("tyres_n","Tyres recovered","waste","units","M",false,"count","Tyre recycler dockets","Tyres sent to an accredited tyre recycler."),
+    F("concrete_t","Concrete recovered","waste","t","M",false,"number","Weighbridge dockets","Concrete crushed for reuse.",{sectors:["council", "construction", "manufacturing"]}),
+    F("rubble_t","Bricks and rubble recovered","waste","t","M",false,"number","Weighbridge dockets","Bricks and rubble recovered.",{sectors:["council", "construction"]}),
+    F("soil_t","Soil recovered or reused","waste","t","M",false,"number","Weighbridge dockets or project records","Clean soil reused rather than landfilled.",{sectors:["council", "construction"]}),
+    F("plaster_t","Plasterboard recovered","waste","t","M",false,"number","Weighbridge dockets","Plasterboard recovered.",{sectors:["construction", "council"]}),
+    F("mattress_n","Mattresses recovered","waste","units","M",false,"count","Processor certificates","Mattresses sent for processing (tonnes are calculated at 80 kg each unless weighed).",{sectors:["council", "health", "education", "retail"]}),
+    F("tyres_n","Tyres recovered","waste","units","M",false,"count","Tyre recycler dockets","Tyres sent to an accredited tyre recycler.",{sectors:["council", "logistics", "manufacturing", "construction"]}),
     F("ewaste_t","E-waste recovered","waste","t","M",false,"number","AS/NZS 5377 processor certificates","Electronic waste recovered."),
-    F("whitegoods_n","Whitegoods recovered","waste","units","M",false,"count","Processor dockets","Whitegoods recovered (degassed where required)."),
+    F("whitegoods_n","Whitegoods recovered","waste","units","M",false,"count","Processor dockets","Whitegoods recovered (degassed where required).",{sectors:["council", "retail", "health", "education"]}),
     F("batteries_kg","Batteries recovered","waste","kg","M",false,"number","Processor dockets","Batteries of all types recovered."),
-    F("textiles_t","Textiles and clothing recovered","waste","t","M",false,"number","Processor or charity dockets","Textiles and clothing reused or recycled."),
+    F("textiles_t","Textiles and clothing recovered","waste","t","M",false,"number","Processor or charity dockets","Textiles and clothing reused or recycled.",{sectors:["council", "health", "education", "retail"]}),
     F("furniture_t","Furniture reused or recovered","waste","t","M",false,"number","Reuse outlet records","Furniture reused or recovered."),
     F("film_t","Soft plastics and film recovered","waste","t","M",false,"number","Processor certificates","Soft plastics, shrink film and packaging film sent to a reprocessor.",{sectors:["manufacturing","retail","logistics"]}),
     F("pallets_n","Timber pallets reused or recovered","waste","units","M",false,"count","Pallet supplier or processor dockets","Pallets returned, repaired or chipped (tonnes are calculated at 20 kg each).",{sectors:["manufacturing","logistics","retail","construction"]}),
@@ -155,8 +155,8 @@ window.YESD = window.YESD || {};
     F("clinical_t","Clinical and related waste","waste","t","M",false,"number","Clinical waste contractor reports","Clinical, cytotoxic and related waste sent for treatment. Counted in total waste; neither recovered nor landfilled.",{sectors:["health"]}),
     F("sharps_kg","Sharps and pharmaceutical waste","waste","kg","M",false,"number","Clinical waste contractor reports","Sharps and pharmaceutical waste sent for treatment.",{sectors:["health"]}),
     F("food_avoided_t","Food waste avoided","waste","t","M",false,"number","Food rescue partner records","Edible food redirected to food rescue rather than disposed of.",{sectors:["retail","health","education"]}),
-    F("problem_kg","Problem wastes recovered","waste","kg","M",false,"number","Drop-off facility records","Paint, gas bottles, aerosols and similar problem wastes recovered."),
-    F("contam_pct","Waste contamination rate","waste","%","Q",false,"percent","Bin audits or contractor reports","Share of recycling streams rejected as contaminated."),
+    F("problem_kg","Problem wastes recovered","waste","kg","M",false,"number","Drop-off facility records","Paint, gas bottles, aerosols and similar problem wastes recovered.",{sectors:["council"]}),
+    F("contam_pct","Waste contamination rate","waste","%","Q",false,"percent","Bin audits or contractor reports","Share of recycling streams rejected as contaminated.",{sectors:["council"]}),
     C("treated_t","Total treated","waste","t","clinical and related waste + sharps and pharmaceutical waste","Waste sent for treatment: counted in the total, not as recovered and not as landfill.",{sectors:["health"]}),
     C("recovered_t","Total recovered","waste","t","sum of every recovered stream (mattresses at 80 kg, tyres at 9.5 kg, whitegoods at 60 kg, pallets at 20 kg, oil at 0.9 kg per litre)","All material recovered in the month."),
     C("recovery_pct","Resource recovery rate","waste","%","total recovered ÷ total waste generated × 100","Share of waste recovered for reuse or recycling."),
@@ -177,8 +177,8 @@ window.YESD = window.YESD || {};
     // ---- Land & Soil -----------------------------------------------------------------
     F("rehab_ha","Land rehabilitated","land","ha","Q",false,"number","Project records","Land rehabilitated in the quarter."),
     F("remediated_ha","Contaminated land remediated","land","ha","Q",false,"number","EPA or project records","Contaminated land remediated in the quarter."),
-    F("remediated_t","Contaminated material treated","land","t","Q",false,"number","EPA or project records","Tonnes of contaminated material treated."),
-    F("soil_rehab_t","Soil reused in rehabilitation","land","t","Q",false,"number","Project records","Soil reused in rehabilitation projects."),
+    F("remediated_t","Contaminated material treated","land","t","Q",false,"number","EPA or project records","Tonnes of contaminated material treated.",{sectors:["council", "construction"]}),
+    F("soil_rehab_t","Soil reused in rehabilitation","land","t","Q",false,"number","Project records","Soil reused in rehabilitation projects.",{sectors:["council", "construction"]}),
 
     // ---- Biodiversity & Nature -------------------------------------------------------
     F("trees","Trees planted","nature","trees","M",false,"count","Planting records","Trees planted in the month."),
@@ -186,10 +186,10 @@ window.YESD = window.YESD || {};
     F("habitat_projects","Habitat restoration projects","nature","projects","Q",false,"count","Project register","Habitat restoration projects active in the quarter."),
     F("habitat_ha","Habitat restored","nature","ha","Q",false,"number","Project records","Area covered by habitat restoration projects."),
     F("wetland_ha","Wetland restored or protected","nature","ha","Q",false,"number","Project records","Wetland restored or protected."),
-    F("weeds_ha","Weed management undertaken","nature","ha","Q",false,"number","Works records","Area of weed management."),
-    F("monitoring_sites","Biodiversity monitoring sites","nature","sites","Q",false,"count","Monitoring program","Sites monitored in the quarter."),
-    F("monitoring_species","Species monitored","nature","species","Q",false,"count","Monitoring program","Species monitored in the quarter."),
-    F("protected_ha","Native habitat created or protected","nature","ha","A",false,"number","Land management records","Native habitat created or placed under protection."),
+    F("weeds_ha","Weed management undertaken","nature","ha","Q",false,"number","Works records","Area of weed management.",{sectors:["council", "education"]}),
+    F("monitoring_sites","Biodiversity monitoring sites","nature","sites","Q",false,"count","Monitoring program","Sites monitored in the quarter.",{sectors:["council", "education"]}),
+    F("monitoring_species","Species monitored","nature","species","Q",false,"count","Monitoring program","Species monitored in the quarter.",{sectors:["council", "education"]}),
+    F("protected_ha","Native habitat created or protected","nature","ha","A",false,"number","Land management records","Native habitat created or placed under protection.",{sectors:["council", "education"]}),
 
     // ---- Community & Participation ----------------------------------------------------
     F("events","Environmental education and community events","community","events","M",false,"count","Events calendar","Environmental education sessions, workshops and community events held."),
@@ -216,16 +216,36 @@ window.YESD = window.YESD || {};
   D.INPUTS = D.FIELDS.filter(function(f){ return f.type==="input"; });
   D.CALCS = D.FIELDS.filter(function(f){ return f.type==="calc"; });
 
+  // What each industry reports on: core (its required figures are required), optional (asked, never required), off (not asked).
+  // One list drives the entry screen, the checklist, the gap email and the required-figure count.
+  D.SECTOR_SCOPE = {
+    council:       {energy:"core", fleet:"core", water:"core", waste:"core", circular:"core", land:"core",     nature:"core",     community:"core",     governance:"core"},
+    business:      {energy:"core", fleet:"core", water:"optional", waste:"core", circular:"core", land:"off",  nature:"off",      community:"optional", governance:"core"},
+    health:        {energy:"core", fleet:"core", water:"core", waste:"core", circular:"core", land:"off",      nature:"optional", community:"optional", governance:"core"},
+    education:     {energy:"core", fleet:"core", water:"core", waste:"core", circular:"core", land:"optional", nature:"core",     community:"core",     governance:"core"},
+    manufacturing: {energy:"core", fleet:"core", water:"core", waste:"core", circular:"core", land:"off",      nature:"off",      community:"optional", governance:"core"},
+    construction:  {energy:"core", fleet:"core", water:"core", waste:"core", circular:"core", land:"core",     nature:"optional", community:"optional", governance:"core"},
+    retail:        {energy:"core", fleet:"core", water:"core", waste:"core", circular:"core", land:"off",      nature:"off",      community:"optional", governance:"core"},
+    logistics:     {energy:"core", fleet:"core", water:"optional", waste:"core", circular:"optional", land:"off", nature:"off",   community:"optional", governance:"core"}
+  };
+  D.scopeFor = function(sector){ return D.SECTOR_SCOPE[sector] || D.SECTOR_SCOPE.business; };
+  // does this field belong to this industry's question set?
+  D.applies = function(f, sector){ var sc=D.scopeFor(sector); if(f.sectors && f.sectors.indexOf(sector)<0) return false; if(sc[f.cat]==="off") return false; return true; };
+  // the field as this industry sees it (required only where the category is core)
+  D.forSector = function(f, sector){ var sc=D.scopeFor(sector); if(!f.req || sc[f.cat]==="core") return f; var g={}; for(var k in f) g[k]=f[k]; g.req=false; g.softReq=true; return g; };
+  // the categories an industry is asked about, in the usual order (carbon is calculated, never entered)
+  D.catsFor = function(sector){ var sc=D.scopeFor(sector); return D.CATEGORIES.filter(function(c){ return c.k!=="carbon" && sc[c.k]!=="off"; }); };
   // Which frequencies are due in a given month (0 = Jan … 11 = Dec). Financial year ends in June.
-  D.due = function(month, isFirstMonth){
+  D.due = function(month, isFirstMonth, sector){
     var q = (month===2||month===5||month===8||month===11);
     var a = (month===5);
     return D.INPUTS.filter(function(f){
+      if(sector && !D.applies(f, sector)) return false;
       if(f.freq==="M") return true;
       if(f.freq==="Q") return q;
       if(f.freq==="A") return a;
       if(f.freq==="S") return !!isFirstMonth;   // static fields: set once, then confirm when they change
       return false;
-    });
+    }).map(function(f){ return sector ? D.forSector(f, sector) : f; });
   };
 })(window.YESD);

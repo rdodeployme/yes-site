@@ -234,8 +234,11 @@ def build():
         if not os.path.exists(fp):
             print("MISSING", frag); continue
         out_dir = os.path.join(DIST, path.strip("/")); os.makedirs(out_dir, exist_ok=True)
+        doc = open(fp, encoding="utf-8").read()
+        # cache-busting stamp on local scripts and stylesheets, as the shell pages get, so a deploy is never hidden behind a cached file
+        doc = re.sub(r'((?:src|href)="/assets/[^"?]+\.(?:js|css))"', lambda m: m.group(1) + "?v=" + v + '"', doc)
         with open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as f:
-            f.write(rebase(open(fp, encoding="utf-8").read()))
+            f.write(rebase(doc))
         built.append(path)
     # old paths keep working
     for old_path, new_path in REDIRECTS.items():

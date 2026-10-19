@@ -11,7 +11,7 @@
   <div class="wrap">
     <p class="eyebrow">What we will ask you for</p>
     <h1>The documents Yarta works from.</h1>
-    <p class="lead">You send the records you already hold; Yarta enters every figure. This is the list for your sector: what to send, who usually holds it, how often, and the evidence grade it earns. If a record does not exist, say so and the category is marked not reported, never guessed.</p>
+    <p class="lead">You enter the figures from the records you already hold; Yarta verifies them. This is the list for your sector: the records your figures come from, who usually holds them, how often, and the evidence grade an attachment earns. If a record does not exist, say so and the category is marked not reported, never guessed.</p>
   </div>
 </section>
 <section>
@@ -35,7 +35,7 @@
   function draw(){
     Array.prototype.forEach.call(chips.querySelectorAll('button'),function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-k')===cur?'true':'false'); });
     var items=S.checklist(cur), cats={}, order=[]; items.forEach(function(x){ if(!cats[x.cat]){ cats[x.cat]=[]; order.push(x.cat); } cats[x.cat].push(x); });
-    list.innerHTML='<p class="lead" style="margin-bottom:0">'+esc(S.BY[cur].name)+': '+esc(S.BY[cur].who)+'</p>'+order.map(function(c){ return '<h4>'+esc(D.CAT[c]?D.CAT[c].name:c)+'</h4><div class="table-wrap"><table class="table"><thead><tr><th>What to send</th><th>Who usually holds it</th><th>How often</th><th>Evidence grade</th></tr></thead><tbody>'+cats[c].map(function(x){ return '<tr><td>'+esc(x.item)+'</td><td>'+esc(x.holder)+'</td><td>'+esc(x.freq)+'</td><td>'+esc(x.evidence)+'</td></tr>'; }).join('')+'</tbody></table></div>'; }).join('');
+    list.innerHTML='<p class="lead" style="margin-bottom:0">'+esc(S.BY[cur].name)+': '+esc(S.BY[cur].who)+'</p>'+order.map(function(c){ return '<h4>'+esc(D.CAT[c]?D.CAT[c].name:c)+'</h4><div class="table-wrap"><table class="table"><thead><tr><th>Record</th><th>Who usually holds it</th><th>How often</th><th>Evidence grade</th></tr></thead><tbody>'+cats[c].map(function(x){ return '<tr><td>'+esc(x.item)+'</td><td>'+esc(x.holder)+'</td><td>'+esc(x.freq)+'</td><td>'+esc(x.evidence)+'</td></tr>'; }).join('')+'</tbody></table></div>'; }).join('');
     if(history.replaceState) history.replaceState(null,'',location.pathname+'?sector='+cur);
   }
   chips.innerHTML=S.SECTORS.map(function(s){ return '<button type="button" data-k="'+s.k+'" aria-pressed="false">'+esc(s.name)+'</button>'; }).join('');
