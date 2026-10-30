@@ -357,7 +357,7 @@ a.ov-src-r:hover{background:var(--silver-0)}
 .cx-steps li{display:grid;grid-template-columns:28px 9.5em minmax(12em,1fr) minmax(0,20em) auto;gap:4px 14px;align-items:center;padding:11px 0;border-bottom:1px solid var(--silver-1);font-size:14.5px}
 .cx-steps .n{width:24px;height:24px;border-radius:50%;background:#1E1712;color:#fff;font:700 12px/24px var(--font-body);text-align:center}
 .cx-steps .when{color:var(--graphite);white-space:nowrap}
-.cx-steps a{color:var(--ink);font-weight:600;text-decoration:none}
+.cx-steps a{color:var(--ink);font-weight:600;text-decoration:none}.cx-steps a.btn-primary{color:var(--white)}
 .cx-steps a:hover{text-decoration:underline}
 .cx-steps .eff{color:var(--graphite);font-size:13px;text-align:right}
 @media(max-width:699px){

@@ -1,7 +1,7 @@
 /* Yarta theme for the sample environmental sustainability report: earthy light orange instead of green,
    a warm dark band, and the Yarta logo. Loads after yes.css and portal.css and only overrides tokens and the cover. */
 :root{
-  --green:#B8641F; --green-2:#CF7A2E; --green-3:#E9A860; --green-4:#F2C894; --green-soft:#FBF0E3; --green-ink:#8A4A14;
+  --green:#A3561A; --green-2:#CF7A2E; --green-3:#E9A860; --green-4:#F2C894; --green-soft:#FBF0E3; --green-ink:#8A4A14;
 }
 body.page-yarta{background:#F3EFE9}
 .page-yarta .rp-cover{--rp-green:#1E1712;--rp-green-2:#2B211A;--rp-line:#5A4531}

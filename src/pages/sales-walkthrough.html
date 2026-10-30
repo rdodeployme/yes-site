@@ -212,7 +212,7 @@ button{font:inherit;cursor:pointer}
      see:['Every figure for the month, the kind of document it was taken from, the twelve-month total and the change on the baseline. Calculated figures show their formula.',
           'This is what an auditor, or a sceptical councillor, will ask to see.'],
      say:'“Pick any number on the dashboard, and we can show you the document behind it and how it was calculated.”',
-     ask:[['Who enters these?','A named Yarta data operator, from the documents they send. A second analyst then checks the month before it is published.'],
+     ask:[['Who enters these?','The customer, once a month, from their own records: a question set for their sector, or a spreadsheet import. A Yarta analyst then checks every figure against their history and the benchmarks and verifies the month before it is published.'],
           ['What are the evidence grades?','Every document is graded A, B or C, from strongest to weakest. The grade shows on the report so readers can see how firm each figure is.']]},
 
     {c:5, t:'Now, at the standards, and with help', u:C+'#/roadmap', s:'.rm-top',
@@ -242,16 +242,16 @@ button{font:inherit;cursor:pointer}
      say:'“This is what goes to your councillors, your board or your auditor.”',
      ask:[['Can we publish it?','Yes, as issued. They can’t alter it and present it as Yarta’s, or describe the score as accredited or verified by a third party.']]},
 
-    {c:6, t:'How the data gets in', u:C+'#/documents', s:'.content > .panel',
-     see:['The customer uploads the bills and reports they already hold. If they have nothing for a category, they can declare it “not reported” with a note. Each month lists what has arrived.',
-          'The customer never keys in a figure.'],
-     say:'“Your job each month is to send documents. Ours is everything after that.”',
+    {c:6, t:'How the data gets in', u:C+'#/entry', s:'.content > .panel',
+     see:['Once a month the customer enters the figures they already hold, from the question set for their sector, with last month and the same month last year beside each box. Registers carry forward, and a spreadsheet can be imported instead. Multi-site customers enter each site, and Yarta adds them up.',
+          'Figures that look unusual are flagged as they type. Bills and dockets are optional; attaching them earns a higher evidence grade. If there is no record for a category, they declare it “not reported” with a note.'],
+     say:'“Once a month you enter what is on your bills. We check every figure, and everything after that is ours.”',
      ask:[['What if we miss a month?','On the 1st of each month, an email lists what is still needed. Missing figures are never guessed.']]},
 
-    {c:6, t:'What to send', u:C+'#/checklist', s:'.content > .panel',
-     see:['The list of documents for their sector, category by category: what to send, who usually holds it and how often.'],
-     say:'“Here is exactly what we need, and who in your organisation usually has it.”',
-     tip:'<b>Print this for the prospect</b> after the walkthrough. It turns “send us your data” into a list someone can act on.'},
+    {c:6, t:'What we ask for', u:C+'#/checklist', s:'.content > .panel',
+     see:['The question set for their sector, category by category: each figure, the record it usually comes from, who holds it and how often it is due.'],
+     say:'“Here is every figure we will ask for, and who in your organisation usually has it.”',
+     tip:'<b>Print this for the prospect</b> after the walkthrough. It turns “enter your data” into a list someone can act on.'},
 
     {c:6, t:'Same product, their sector', u:'/demo/?sector=logistics#/dashboard', s:'.cx-c-top',
      see:['The sector buttons along the top switch the whole demo: the organisation, its categories, the standards that apply and its roadmap. This is a freight company still in its baseline year.',
@@ -261,7 +261,7 @@ button{font:inherit;cursor:pointer}
 
     {c:7, t:'The Yarta team’s workbench', u:'/tool/#/ops/home', s:'.ops-grid',
      see:['This is what the Yarta team sees, not the customer: gap emails to send, documents due, months to enter, months waiting for a second analyst, reports to issue, bookings and provider checks.'],
-     say:'“Behind your dashboard there is a named analyst who enters your figures, and a second analyst who checks them.”',
+     say:'“Behind your dashboard there is a named analyst who checks every month you send before anything is published.”',
      tip:'<b>Show this only if it builds trust.</b> It is the team’s own tool, shown here on demo data.'},
 
     {c:7, t:'Four eyes on every month', u:'/tool/#/ops', s:'.content > .tbl-wrap',

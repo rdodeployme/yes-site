@@ -115,7 +115,7 @@ body.page-portal{background:#EEF0F0}
 .tbl a.rowlink:hover{text-decoration:underline}
 .st{display:inline-flex;align-items:center;gap:6px;font:600 12px var(--font-mono);letter-spacing:.04em;white-space:nowrap;text-transform:none}
 .st::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--silver-4)}
-.st-verified{color:var(--green-2)}.st-verified::before{background:var(--green-2)}
+.st-verified{color:var(--green)}.st-verified::before{background:var(--green-2)}
 .st-submitted{color:var(--graphite)}.st-submitted::before{background:var(--graphite);box-shadow:0 0 0 3px rgba(75,79,82,.18)}
 .st-draft{color:var(--steel)}.st-draft::before{background:transparent;border:1.5px solid var(--steel)}
 .st-returned{color:var(--red)}.st-returned::before{background:var(--red)}
@@ -130,7 +130,7 @@ body.page-portal{background:#EEF0F0}
 .catnav a{display:flex;justify-content:space-between;align-items:center;gap:10px;text-decoration:none;color:var(--charcoal);background:var(--white);border:1px solid var(--silver-2);border-radius:10px;padding:10px 12px;font-size:14px;white-space:nowrap}
 .catnav a[aria-current=true]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink) inset;color:var(--ink);font-weight:600}
 .catnav a .c{font:600 11px var(--font-mono);color:var(--steel)}
-.catnav a .c.ok{color:var(--green-2)}
+.catnav a .c.ok{color:var(--green)}
 .fgroup{margin-top:6px}
 .fgroup+.fgroup{margin-top:26px}
 .fgroup h4{font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--steel);font-weight:500;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--silver-1)}
@@ -245,7 +245,7 @@ body.page-portal{background:#EEF0F0}
 .rec-f{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding-top:6px}
 .grp-dot{color:var(--green-2);font-size:11px;vertical-align:1px}
 .st-bk-requested{color:var(--graphite)}.st-bk-requested::before{background:transparent;border:1.5px solid var(--graphite)}
-.st-bk-confirmed{color:var(--green-2)}.st-bk-confirmed::before{background:transparent;border:2px solid var(--green-2)}
+.st-bk-confirmed{color:var(--green)}.st-bk-confirmed::before{background:transparent;border:2px solid var(--green-2)}
 .st-bk-completed{color:var(--green-2)}.st-bk-completed::before{background:var(--green-2)}
 .st-bk-cancelled{color:var(--steel);text-decoration:line-through}
 .rm-top{display:grid;gap:22px}
@@ -543,3 +543,13 @@ fieldset.field legend{padding:0;margin-bottom:6px}
 
 .tbl td.small{text-wrap:pretty}
 .nw{white-space:nowrap}
+
+/* 30 Oct 2026 usability pass: focus ring on dark surfaces, site scope note, send step by site, unusual figures */
+.side,.login,.panel-dark,.pg-gaps,.flash,.mtop{--focus:var(--green-3)}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.site-scope{margin:10px 0 14px;padding:10px 12px;border-left:3px solid var(--green);background:var(--green-soft,#FBF0E3);border-radius:0 10px 10px 0;font-size:13.5px;color:var(--charcoal)}
+.missing-sites{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:4px 20px;margin-top:8px}
+.missing-sites .ms-h{margin:8px 0 2px;font-size:13.5px}
+.flag-box{margin-top:12px;padding-top:4px;border-top:1px solid var(--silver-1,#E3E1DC)}
+.flag-box textarea{width:100%;font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--silver-2,#CFCBC4);border-radius:8px;background:var(--white)}
+.calc .site-ln{margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.12)}

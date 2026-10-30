@@ -4,7 +4,7 @@
 
 .ym-root{
   --ym-bg:#F3EFE9; --ym-panel:#FFFFFF; --ym-panel-2:#F4F4F2; --ym-line:#D6D8D3; --ym-line-2:#BFC1BC;
-  --ym-text:#0B0B0B; --ym-text-2:#4B4F52; --ym-muted:#7C8184; --ym-acc:#B8641F; --ym-acc-soft:#FBF0E3;
+  --ym-text:#0B0B0B; --ym-text-2:#4B4F52; --ym-muted:#7C8184; --ym-acc:#A3561A; --ym-acc-soft:#FBF0E3;
   --ym-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
   --ym-body:"Inter","Helvetica Neue",Arial,sans-serif;
   --ym-display:"Archivo","Helvetica Neue",Arial,sans-serif;

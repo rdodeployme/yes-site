@@ -244,7 +244,9 @@ function vCategory(cat,q){ var h=window.YARTA_VIEWS.category(cat, q, viewApi());
 function isFirst(o,k){ var rs=sorted(o); return !rs.length || rs[0].month===k; }
 function sectorOf(o){ return (o&&o.profile&&o.profile.sector)||'business'; }
 function dueFields(o,k){ var p=E.parse(k); return D.due(p.m, isFirst(o,k), sectorOf(o)); }
-function progressOf(o,r){ var due=dueFields(o,r.month), v=r.values||{}; var decl=r.declared||{}; var req=due.filter(function(f){ return f.req && !decl[f.cat]; }); var got=req.filter(function(f){ return isNum(v[f.id]) || (f.kind!=='number'&&f.kind!=='count'&&f.kind!=='currency'&&f.kind!=='percent'&&v[f.id]); }); var all=due.filter(function(f){ return v[f.id]!==undefined && v[f.id]!==''; }); return {reqDue:req.length, req:got.length, due:due.length, all:all.length, missing:req.filter(function(f){ return got.indexOf(f)<0; })}; }
+/* multi-site customers: every active site owes its own required figures; one site's figure does not
+   complete another's. Missing entries keep the field's properties and add the site they belong to. */
+function progressOf(o,r){ if(multisite(o)) return progressSites(o,r); var due=dueFields(o,r.month), v=r.values||{}; var decl=r.declared||{}; var req=due.filter(function(f){ return f.req && !decl[f.cat]; }); var got=req.filter(function(f){ return isNum(v[f.id]) || (f.kind!=='number'&&f.kind!=='count'&&f.kind!=='currency'&&f.kind!=='percent'&&v[f.id]); }); var all=due.filter(function(f){ return v[f.id]!==undefined && v[f.id]!==''; }); return {reqDue:req.length, req:got.length, due:due.length, all:all.length, missing:req.filter(function(f){ return got.indexOf(f)<0; })}; }
 function nextStartable(o){ var rs=sorted(o); var last=rs[rs.length-1]; var nk = last ? E.addMonths(last.month,1) : E.addMonths(nowKey(),-1); if(nk>nowKey()) return null; if(rs.some(function(r){ return r.status==='draft'||r.status==='returned'; })) return null; return nk; }
 function cmpVals(o,k,id){ var p=rec(o,E.addMonths(k,-1)), y=rec(o,E.addMonths(k,-12)); var f=field(id); var pv=p?rv(p)[id]:null, yv=y?rv(y)[id]:null; if(f&&f.freq==='S'){ pv=carried(o,E.addMonths(k,-1),id); yv=carried(o,E.addMonths(k,-12),id); } return {prev:isNum(pv)?+pv:null, ly:isNum(yv)?+yv:null, pk:E.addMonths(k,-1), yk:E.addMonths(k,-12)}; }
 function warnFor(o,k,id,v){ if(!isNum(v)) return ''; v=+v; var c=cmpVals(o,k,id), f=field(id); if(f.kind==='percent' && (v<0||v>100)) return 'A percentage must be between 0 and 100.'; if(v<0) return 'Must be zero or more.'; var ref=c.ly!=null&&c.ly>0?c.ly:(c.prev!=null&&c.prev>0?c.prev:null); var refK=c.ly!=null&&c.ly>0?c.yk:c.pk; if(ref==null||f.freq==='S') return ''; var ch=(v-ref)/ref*100; if(Math.abs(ch)>35) return fmt(Math.abs(ch),0)+'% '+(ch>0?'higher':'lower')+' than '+mLabel(refK)+' ('+fmtF(f,ref)+' '+f.unit+'). Please check before submitting.'; return ''; }
@@ -281,7 +283,7 @@ function vSubmit(k,q){
   SITE = multisite(o) ? currentSite(o) : null; var vv = SITE ? svals(r,SITE) : r.values;
   var cur=q.c && D.CAT[q.c] ? q.c : null;
   if(!cur){ cur = (cats.filter(function(c){ return pr.missing.some(function(f){ return f.cat===c.k; }); })[0]||cats[0]).k; }
-  var catNav = cats.map(function(c){ var fs=due.filter(function(f){ return f.cat===c.k; }); var rq=fs.filter(function(f){ return f.req; }); var ok=rq.filter(function(f){ return isNum(vv[f.id]); }).length; var done = rq.length ? ok===rq.length : fs.some(function(f){ return vv[f.id]!==undefined&&vv[f.id]!==''; }); return '<a href="'+base+'?c='+c.k+(SITE?'&s='+SITE:'')+'" aria-current="'+(c.k===cur)+'"><span>'+esc(c.short)+'</span><span class="c'+(done?' ok':'')+'" data-cc="'+c.k+'">'+(rq.length?ok+'/'+rq.length:(done?'✓':fs.length))+'</span></a>'; }).join('');
+  var catNav = cats.map(function(c){ var fs=due.filter(function(f){ return f.cat===c.k; }); var rq=siteReq(o,c.k)?fs.filter(function(f){ return f.req; }):[]; var ok=rq.filter(function(f){ return isNum(vv[f.id]); }).length; var done = rq.length ? ok===rq.length : fs.some(function(f){ return vv[f.id]!==undefined&&vv[f.id]!==''; }); return '<a href="'+base+'?c='+c.k+(SITE?'&s='+SITE:'')+'" aria-current="'+(c.k===cur)+'"><span>'+esc(c.short)+'</span><span class="c'+(done?' ok':'')+'" data-cc="'+c.k+'">'+(rq.length?ok+'/'+rq.length:(done?'✓':fs.length))+'</span></a>'; }).join('');
   // field groups for the current category
   var inCat=D.INPUTS.filter(function(f){ return f.cat===cur && D.applies(f, sectorOf(o)); }).map(function(f){ return D.forSector(f, sectorOf(o)); });
   var groups=[['M','This month'],['Q','This quarter'],['A','This year'],['S','Registers · confirm or update when something changes']];
@@ -300,15 +302,15 @@ function vSubmit(k,q){
   var returned = r.status==='returned' && r.notes && r.notes.length ? '<div class="note-box" style="margin-bottom:16px"><b>Returned by '+esc(r.notes[r.notes.length-1].by||'verification')+' on '+longDate(r.notes[r.notes.length-1].at)+':</b> '+esc(r.notes[r.notes.length-1].text)+'</div>' : '';
   var docsPanel = cust ? '' : '<div class="panel" style="margin-bottom:18px"><h3>Documents from '+esc(o.profile.org_name)+'</h3>'+inboxList(r)+'</div>';
   var head='<div class="pg-head"><div><p class="kicker"><a class="link" href="'+(cust?'#/entry':'#/ops/entry')+'">'+(cust?'Enter your figures':'Data entry')+'</a> · '+statusChip(r.status)+'</p><h1>'+(cust?mLabel(k):esc(o.profile.org_name)+' · '+mLabel(k))+'</h1><p class="pg-sub">'+(cust&&sec?'The '+esc(sec.name.toLowerCase())+' question set: '+cats.length+' categories, '+pr.reqDue+' required figures this month. ':'')+'Figures due '+longDate(dueDate(k))+(r.enteredAt&&r.status!=='draft'?' · entered '+longDate(r.enteredAt)+(r.enteredBy?' by '+esc(r.enteredBy):''):'')+(r.verifiedAt?' · verified '+longDate(r.verifiedAt)+(r.verifiedBy?' by '+esc(r.verifiedBy):''):'')+'</p></div>'
-    + '<div class="pg-actions" style="min-width:260px;display:block"><div class="small"><b id="prog-t">'+pr.req+' of '+pr.reqDue+'</b> required figures entered</div><div class="progress"><i id="prog-b" style="width:'+(pr.reqDue?pr.req/pr.reqDue*100:0)+'%"></i></div><div class="small muted" style="margin-top:6px" id="saved">'+(editable?'Saved in this browser as you type':'Read-only')+'</div></div></div>';
+    + '<div class="pg-actions" style="min-width:260px;display:block"><div class="small" role="status" aria-live="polite"><b id="prog-t">'+pr.req+' of '+pr.reqDue+'</b> required figures entered</div><div class="progress"><i id="prog-b" style="width:'+(pr.reqDue?pr.req/pr.reqDue*100:0)+'%"></i></div><div class="small muted" style="margin-top:6px" id="saved" role="status">'+(editable?'Saved in this browser as you type':'Read-only')+'</div></div></div>';
   var submitBox='';
   if(editable){
     var miss=pr.missing;
     submitBox = '<div class="panel" style="margin-top:22px" id="submit-box">'+(ui.confirmSubmit
-      ? '<h3>Send '+mLabel(k)+' for verification</h3>'+(miss.length?'<p class="sec-s" style="margin-top:6px">'+miss.length+' required figure'+(miss.length>1?'s are':' is')+' still missing:</p><ul class="missing">'+miss.slice(0,12).map(function(f){ return '<li><a class="link" href="'+base+'?c='+f.cat+'">'+esc(f.name)+'</a> <span class="muted">('+esc(D.CAT[f.cat].short)+')</span></li>'; }).join('')+(miss.length>12?'<li>and '+(miss.length-12)+' more</li>':'')+'</ul>':'<p class="sec-s" style="margin-top:6px">All '+pr.reqDue+' required figures are in. Evidence attached for '+Object.keys(r.evidence||{}).length+' of '+cats.length+' categories.</p><label style="display:flex;gap:10px;align-items:flex-start;font-size:14.5px;margin:12px 0 16px"><input type="checkbox" id="attest" style="margin-top:4px"> <span>'+(cust?'These figures come from our own records for '+mLabel(k)+'. Yarta may ask for the source behind any of them when verifying.':'I entered these figures from the customer\'s documents and attached the evidence for each category. A different analyst will verify them.')+'</span></label><div class="btn-row"><button class="btn btn-primary" type="button" data-act="submit-month" data-month="'+k+'">Send to Yarta</button><button class="btn btn-ghost" type="button" data-act="submit-cancel" style="color:var(--ink)">Not yet</button></div>')
+      ? '<h3>Send '+mLabel(k)+' for verification</h3>'+(miss.length?'<p class="sec-s" style="margin-top:6px" role="alert">'+miss.length+' required figure'+(miss.length>1?'s are':' is')+' still missing'+(multisite(o)?' across '+Object.keys(miss.reduce(function(a,f){ a[f.siteId]=1; return a; },{})).length+' site'+(Object.keys(miss.reduce(function(a,f){ a[f.siteId]=1; return a; },{})).length===1?'':'s'):'')+':</p>'+missingList(o,r,miss,base)+flagsBox(o,r,k,base):'<p class="sec-s" style="margin-top:6px">All '+pr.reqDue+' required figures are in. Evidence attached for '+Object.keys(r.evidence||{}).length+' of '+cats.length+' categories.</p>'+flagsBox(o,r,k,base)+'<label style="display:flex;gap:10px;align-items:flex-start;font-size:14.5px;margin:12px 0 16px"><input type="checkbox" id="attest" style="margin-top:4px"> <span>'+(cust?'These figures come from our own records for '+mLabel(k)+'. Yarta may ask for the source behind any of them when verifying.':'I entered these figures from the customer\'s documents and attached the evidence for each category. A different analyst will verify them.')+'</span></label><div class="btn-row"><button class="btn btn-primary" type="button" data-act="submit-month" data-month="'+k+'">Send to Yarta</button><button class="btn btn-ghost" type="button" data-act="submit-cancel" style="color:var(--ink)">Not yet</button></div>')
       : '<div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center"><div><h3>'+(cust?'Finished entering?':'Finished keying?')+'</h3><p class="sec-s" style="margin:6px 0 0">'+(cust?'A Yarta analyst checks every figure against your earlier months and the benchmarks, asks if something looks off, grades the evidence and verifies the month. Your dashboard and report update once it is verified.':'A second analyst checks every figure against the documents, grades the evidence and verifies the month. The customer sees '+mLabel(k)+' once it is verified.')+'</p></div><button class="btn btn-primary" type="button" data-act="submit-ask">Check and send</button></div>')+'</div>';
   }
-  var body = head + returned + docsPanel + siteTabs(o,r,base,SITE) + '<div class="subm"><nav class="catnav" aria-label="Categories">'+catNav+'</nav><div><div class="panel"><h2 class="sec-t">'+esc(D.CAT[cur].name)+'</h2><p class="sec-s">'+esc(D.CAT[cur].what)+'</p>'+declBox(o,r,k,cur,editable)+form+evBox+'</div>'+submitBox+'</div><aside class="calc"><div class="panel-dark" id="calc">'+calcPanel(o,r,k)+'</div></aside></div>';
+  var body = head + returned + docsPanel + siteTabs(o,r,base,SITE) + '<div class="subm"><nav class="catnav" aria-label="Categories">'+catNav+'</nav><div><div class="panel"><h2 class="sec-t">'+esc(D.CAT[cur].name)+'</h2><p class="sec-s">'+esc(D.CAT[cur].what)+'</p>'+siteScopeNote(o,cur)+declBox(o,r,k,cur,editable)+form+evBox+'</div>'+submitBox+'</div><aside class="calc"><div class="panel-dark" id="calc">'+calcPanel(o,r,k)+'</div></aside></div>';
   return shell('entry', body);
 }
 
@@ -333,20 +335,55 @@ function vDocuments(){
 function fieldRow(o,r,k,f,editable,dueIds){
   var raw=(SITE?svals(r,SITE):r.values)[f.id], isS=f.freq==='S', carriedV=isS?carried(o,E.addMonths(k,-1),f.id):null;
   var shown = raw!==undefined&&raw!=='' ? raw : (isS&&carriedV!=null?carriedV:'');
-  var c=cmpVals(o,k,f.id), w=editable?warnFor(o,k,f.id,raw):'';
+  var c=cmpVals(o,k,f.id), w=editable?warnFor(o,k,f.id,raw):''; var isReq=f.req&&(!isS||dueIds[f.id])&&siteReq(o,f.cat); var aria=' aria-describedby="fd-'+f.id+' fh-'+f.id+' fw-'+f.id+'"'+(isReq?' aria-required="true"':'')+(w?' aria-invalid="true"':'');
   var hint = isS ? (carriedV!=null?'Register value carried from earlier months. Change it only if it changed in '+mLabel(k)+'.':'Set once; confirm when it changes.') : [c.prev!=null?mShort(c.pk)+': '+fmtF(f,c.prev)+' '+f.unit:'', c.ly!=null?mShort(c.yk)+': '+fmtF(f,c.ly)+' '+f.unit:''].filter(Boolean).join(' · ');
   var input;
-  if(f.kind==='select'){ input='<select id="f-'+f.id+'" data-field="'+f.id+'"'+(editable?'':' disabled')+'><option value="">Select</option>'+(f.options||[]).map(function(op){ return '<option'+(String(shown)===op?' selected':'')+'>'+esc(op)+'</option>'; }).join('')+'</select>'; }
-  else if(f.kind==='text'){ input='<input type="text" id="f-'+f.id+'" data-field="'+f.id+'" value="'+esc(shown)+'"'+(editable?'':' disabled')+' placeholder="Type and quantity">'; }
-  else { input='<div class="in-unit"><input type="number" inputmode="decimal" step="any" min="0"'+(f.kind==='percent'?' max="100"':'')+' id="f-'+f.id+'" data-field="'+f.id+'" value="'+esc(shown)+'"'+(editable?'':' disabled')+(w?' class="bad"':'')+'><span class="u">'+esc(f.unit)+'</span></div>'; }
-  return '<div class="frow'+(editable?'':' locked')+'"><div><label class="fl" for="f-'+f.id+'">'+esc(f.name)+(f.req&&(!isS||dueIds[f.id])?' <span class="req" title="Required">*</span>':'')+'</label><div class="fd">'+esc(f.def)+(f.softReq?' Optional for your industry.':'')+'</div><div class="fs">'+esc(f.src)+'</div></div><div>'+input+'<div class="fh">'+esc(hint)+'</div><div class="warn" data-warn="'+f.id+'">'+esc(w)+'</div></div></div>';
+  if(f.kind==='select'){ input='<select id="f-'+f.id+'" data-field="'+f.id+'"'+aria+(editable?'':' disabled')+'><option value="">Select</option>'+(f.options||[]).map(function(op){ return '<option'+(String(shown)===op?' selected':'')+'>'+esc(op)+'</option>'; }).join('')+'</select>'; }
+  else if(f.kind==='text'){ input='<input type="text" id="f-'+f.id+'" data-field="'+f.id+'"'+aria+' value="'+esc(shown)+'"'+(editable?'':' disabled')+' placeholder="Type and quantity">'; }
+  else { input='<div class="in-unit"><input type="number" inputmode="decimal" step="any" min="0"'+(f.kind==='percent'?' max="100"':'')+' id="f-'+f.id+'" data-field="'+f.id+'"'+aria+' value="'+esc(shown)+'"'+(editable?'':' disabled')+(w?' class="bad"':'')+'><span class="u">'+esc(f.unit)+'</span></div>'; }
+  return '<div class="frow'+(editable?'':' locked')+'"><div><label class="fl" for="f-'+f.id+'">'+esc(f.name)+(isReq?' <span class="req" title="Required" aria-hidden="true">*</span><span class="sr-only"> (required)</span>':'')+'</label><div class="fd" id="fd-'+f.id+'">'+esc(f.def)+(f.softReq?' Optional for your industry.':'')+'</div><div class="fs">'+esc(f.src)+'</div></div><div>'+input+'<div class="fh" id="fh-'+f.id+'">'+esc(hint)+'</div><div class="warn" id="fw-'+f.id+'" data-warn="'+f.id+'" aria-live="polite">'+esc(w)+'</div></div></div>';
 }
 
+function siteReq(o,cat){ if(!SITE||!multisite(o)) return true; var s=siteById(o,SITE); return !s||!s.cats||s.cats.indexOf(cat)>=0; }
+/* multi-site entry: say plainly that the figures on this tab belong to one site, so nobody keys the organisation total into it */
+function siteScopeNote(o,cat){
+  if(!SITE||!multisite(o)) return '';
+  var s=siteById(o,SITE); if(!s) return ''; var n=activeSites(o).length;
+  if(s.cats && s.cats.indexOf(cat)<0) return '<p class="site-scope">'+esc(s.name)+' does not usually report '+esc(D.CAT[cat].short.toLowerCase())+'. Leave this blank unless it has records of its own; nothing here is required for this site.</p>';
+  return '<p class="site-scope">Enter <b>'+esc(s.name)+'</b>\'s figures only, from its own bills and records. Yarta adds the '+n+' sites together for the organisation total. If this site has none of something required, enter 0.</p>';
+}
+/* send step: what is missing, grouped by site for multi-site customers */
+function missingList(o,r,miss,base){
+  function li(f){ return '<li><a class="link" href="'+base+'?c='+f.cat+(f.siteId?'&s='+f.siteId:'')+'">'+esc(f.name)+'</a> <span class="muted">('+esc(D.CAT[f.cat].short)+')</span></li>'; }
+  if(!multisite(o)) return '<ul class="missing">'+miss.slice(0,12).map(li).join('')+(miss.length>12?'<li>and '+(miss.length-12)+' more</li>':'')+'</ul>';
+  var by={}, order=[]; miss.forEach(function(f){ if(!by[f.siteId]){ by[f.siteId]=[]; order.push(f.siteId); } by[f.siteId].push(f); });
+  // sites with nothing entered yet get one line; sites part-way through list what is left
+  var empty=[], part=[]; order.forEach(function(sid){ var tot=siteProgress(o,r,siteById(o,sid)).reqDue; (by[sid].length>=tot?empty:part).push(sid); });
+  var partHtml=part.map(function(sid){ var fs=by[sid];
+    return '<div class="ms"><p class="ms-h"><a class="link" href="'+base+'?s='+sid+'&c='+fs[0].cat+'">'+esc(fs[0].site)+'</a> <span class="muted">· '+fs.length+' still to enter</span></p><ul class="missing">'+fs.slice(0,6).map(li).join('')+(fs.length>6?'<li>and '+(fs.length-6)+' more</li>':'')+'</ul></div>'; }).join('');
+  var emptyHtml=empty.length?'<p class="sec-s" style="margin:10px 0 0"><b>Nothing entered yet</b> for '+empty.map(function(sid){ return '<a class="link" href="'+base+'?s='+sid+'&c='+by[sid][0].cat+'">'+esc(by[sid][0].site)+'</a> <span class="muted">('+by[sid].length+')</span>'; }).join(', ')+'.</p>':'';
+  return (partHtml?'<div class="missing-sites">'+partHtml+'</div>':'')+emptyHtml;
+}
+/* send step: figures well away from last year or last month, so the customer confirms them before Yarta asks */
+function flagsBox(o,r,k,base){
+  var fl=flagsAll(o,r,k); if(!fl.length) return '';
+  return '<div class="flag-box"><p class="sec-s" style="margin:12px 0 6px"><b>'+fl.length+' figure'+(fl.length===1?' looks':'s look')+' unusual.</b> Check '+(fl.length===1?'it':'them')+', or tell Yarta why below so the analyst does not have to ask.</p><ul class="missing">'+fl.slice(0,10).map(function(x){ return '<li><a class="link" href="'+base+'?c='+x.f.cat+(x.site?'&s='+x.site.id:'')+'">'+(x.site?esc(x.site.name)+' · ':'')+esc(x.f.name)+'</a> <span class="muted">'+esc(x.w.replace(/ Please check before submitting\.$/,''))+'</span></li>'; }).join('')+(fl.length>10?'<li>and '+(fl.length-10)+' more</li>':'')+'</ul>'
+    + '<div class="field" style="margin-top:10px"><label for="send-note">Note for Yarta (optional)</label><textarea id="send-note" rows="2" placeholder="For example: new depot opened in August; gas bill covers two months">'+esc(r.sendNote||'')+'</textarea></div></div>';
+}
 function calcPanel(o,r,k){
-  var v=withCarry(o,k,(SITE?svals(r,SITE):r.values)||{}); var m=E.month(v,o.profile);
+  /* multi-site: the headline is always the whole organisation (all sites added up); the site in play is shown beneath it */
+  var keep=SITE, site=null, ms=null;
+  if(multisite(o)){
+    SITE=null; var m=E.month(withCarry(o,k,r.values||{}),o.profile);
+    if(keep){ SITE=keep; var so=siteOrg(o,keep); site=so&&so.site; if(site) ms=E.month(withCarry(o,k,(r.sites&&r.sites[keep]&&r.sites[keep].values)||{}),so.profile); }
+    SITE=keep;
+  } else { var m=E.month(withCarry(o,k,r.values||{}),o.profile); }
   function ln(l,val){ return '<div class="ln"><span>'+l+'</span><b>'+val+'</b></div>'; }
   var prev=null; var S=seriesOf(o); var pm=monthOf(S,E.addMonths(k,-1)); if(pm&&pm.month===E.addMonths(k,-1)) prev=pm;
-  return '<p class="kicker">Yarta calculates · '+mShort(k)+'</p><div class="big">'+fmt(m.total_t,1)+'</div><div class="small" style="color:var(--silver-4)">t CO₂-e this month'+(prev?' · '+mShort(prev.month)+': '+fmt(prev.total_t,1):'')+'</div><div style="margin-top:14px">'
+  var n=multisite(o)?activeSites(o).length:0;
+  return '<p class="kicker">Yarta calculates · '+mShort(k)+'</p><div class="big" role="status" aria-live="polite">'+fmt(m.total_t,1)+'</div><div class="small" style="color:var(--silver-4)">t CO₂-e this month'+(n?', all '+n+' sites':'')+(prev?' · '+mShort(prev.month)+': '+fmt(prev.total_t,1):'')+'</div>'
+    + (site&&ms?'<div class="ln site-ln"><span>'+esc(site.name)+' alone</span><b>'+fmt(ms.total_t,1)+' t</b></div>':'')
+    + '<div style="margin-top:14px">'
     + ln('Scope 1 · fuel and gas',fmt(m.scope1_t,1)+' t')
     + ln('Scope 2 · grid electricity',fmt(m.scope2_t,1)+' t')
     + ln('Scope 3 · landfill and upstream',fmt(m.scope3_t,1)+' t')
@@ -357,7 +394,7 @@ function calcPanel(o,r,k){
     + ln('Resource recovery',pct(m.recovery_pct,1))
     + ln('Alternative water',pct(m.alt_water_pct,1))
     + ln('Avoided emissions (separate)',fmt(m.avoided_t,1)+' t')
-    + '</div><p class="cap">National Greenhouse Accounts Factors 2024, '+esc(o.profile.state)+' electricity. Flights recorded, not yet in totals. Avoided emissions are a modelled estimate, never deducted.</p>';
+    + '</div><p class="cap">'+(n?'Every line is the whole organisation. ':'')+'National Greenhouse Accounts Factors 2024, '+esc(o.profile.state)+' electricity. Flights recorded, not yet in totals. Avoided emissions are a modelled estimate, never deducted.</p>';
 }
 
 /* ------------------------------------------------------------------ reports */
@@ -882,6 +919,19 @@ function profileGaps(o,S,m){
 function fyOptions(o){ var set={}; sorted(o).forEach(function(r){ set[E.fyOf(r.month)]=1; }); var a=Object.keys(set).sort(); if(o.profile.baseline_fy && a.indexOf(o.profile.baseline_fy)<0) a.unshift(o.profile.baseline_fy); return a; }
 
 /* ------------------------------------------------------------------ data and export */
+/* "Still to enter" line: each figure once, with how many sites still owe it */
+function missingSummary(miss){ var by={}, order=[]; miss.forEach(function(f){ if(!by[f.id]){ by[f.id]={n:f.name,s:0}; order.push(f.id); } by[f.id].s+=f.siteId?1:0; });
+  var parts=order.map(function(id){ var x=by[id]; return esc(x.n)+(x.s>1?' ('+x.s+' sites)':x.s===1?' (1 site)':''); });
+  return parts.slice(0,6).join(', ')+(parts.length>6?' and '+(parts.length-6)+' more':''); }
+/* import template: one row per figure due that month (and, for multi-site customers, per site that reports its category) */
+function templateMonth(o){ var open=sorted(o).filter(function(r){ return r.status==='draft'||r.status==='returned'; }); if(open.length) return open[open.length-1].month; var rs=sorted(o); return rs.length?E.addMonths(rs[rs.length-1].month,1):E.addMonths(nowKey(),-1); }
+function templateRows(o,k){
+  var due=dueFields(o,k).filter(function(f){ return f.freq!=='S'; }), r=rec(o,k), out=[['month'].concat(multisite(o)?['site']:[]).concat(['field_id','field_name','category','unit','required','value'])];
+  var sites=multisite(o)?activeSites(o):[null];
+  sites.forEach(function(s){ var vals=s?((r&&r.sites&&r.sites[s.id]&&r.sites[s.id].values)||{}):((r&&r.values)||{});
+    due.forEach(function(f){ if(s&&s.cats&&s.cats.indexOf(f.cat)<0) return; out.push([k].concat(s?[s.name]:[]).concat([f.id,f.name,D.CAT[f.cat]?D.CAT[f.cat].name:'',f.unit||'',f.req?'yes':'no',vals[f.id]!=null?vals[f.id]:''])); }); });
+  return out.map(function(row){ return row.map(csvCell).join(','); }).join('\n');
+}
 function csvCell(x){ x=x==null?'':String(x); return /[",\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x; }
 function download(name,text,type){ var b=new Blob([text],{type:type||'text/plain'}); var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },500); }
 function longRows(o,months){ var out=[['org_id','month','status','field_id','field_name','category','value','unit','frequency']]; sorted(o).forEach(function(r){ if(months && months.indexOf(r.month)<0) return; Object.keys(r.values||{}).forEach(function(id){ var f=field(id); if(!f) return; out.push([o.id,r.month,r.status,id,f.name,D.CAT[f.cat]?D.CAT[f.cat].name:'',r.values[id],f.unit||'',D.FREQ[f.freq]||'']); }); }); return out.map(function(r){ return r.map(csvCell).join(','); }).join('\n'); }
@@ -896,9 +946,10 @@ function vData(){
     + dlRow('carbon-csv','Carbon table by scope','CSV: every activity with its quantity, factor, source, evidence grade and t CO₂-e. The table an auditor asks for.')
     + dlRow('json-all','Everything for this organisation','JSON: profile, targets, sites, every month and its evidence records.')
     + dlRow('csv-dict','The Yarta data dictionary','CSV: every figure Yarta collects, its unit, frequency and definition.')+'</div></div>'
-    + (true?'<div class="panel"><h3>Import figures</h3><p class="sec-s" style="margin-top:6px">A CSV in the same shape as the download (month, field_id, value), or a JSON export, for a bulk load or the baseline year. Figures go into open months only; months with Yarta or verified are never overwritten.</p>'
+    + (true?'<div class="panel"><h3>Import figures</h3><p class="sec-s" style="margin-top:6px">A CSV with month, '+(multisite(o)?'site, ':'')+'field_id and value columns, or a JSON export, for a bulk load or the baseline year.'+(multisite(o)?' Each row names its site, by name as it appears under Sites.':'')+' Figures go into open months only; months with Yarta or verified are never overwritten. Easiest start: download the template for the month, fill in the value column and bring it back.</p>'
+    + '<div class="btn-row" style="margin:10px 0 12px"><button class="btn btn-ink btn-sm" type="button" data-act="csv-template" data-month="'+templateMonth(o)+'">Download the '+mLabel(templateMonth(o))+' template</button></div>'
     + '<label class="btn btn-ghost" style="color:var(--ink)">Choose a CSV or JSON file<input type="file" data-act="import-file" accept=".csv,.json,text/csv,application/json" style="display:none"></label>'
-    + (pv?'<div class="callout" style="margin-top:14px"><b>'+esc(pv.name)+'</b>: '+pv.ok+' figures across '+pv.months.length+' month'+(pv.months.length===1?'':'s')+' ready'+(pv.skip?' · '+pv.skip+' skipped (locked months or unknown fields)':'')+'.<div class="btn-row" style="margin-top:12px"><button class="btn btn-primary btn-sm" type="button" data-act="import-go">Import into drafts</button><button class="btn btn-ghost btn-sm" type="button" data-act="import-cancel" style="color:var(--ink)">Cancel</button></div></div>':'')
+    + (pv?'<div class="callout" style="margin-top:14px"><b>'+esc(pv.name)+'</b>: '+pv.ok+' figures across '+pv.months.length+' month'+(pv.months.length===1?'':'s')+' ready'+(pv.skip?' · '+pv.skip+' skipped (locked months, unknown fields or unmatched sites)':'')+'.'+(pv.unsite&&Object.keys(pv.unsite).length?' Sites not recognised: '+Object.keys(pv.unsite).map(function(x){ return esc(x)+' ('+pv.unsite[x]+')'; }).join(', ')+'.':'')+'<div class="btn-row" style="margin-top:12px"><button class="btn btn-primary btn-sm" type="button" data-act="import-go">Import into drafts</button><button class="btn btn-ghost btn-sm" type="button" data-act="import-cancel" style="color:var(--ink)">Cancel</button></div></div>':'')
     + '</div>':'')+'</div>'
     + (LIVE?'':'<div class="panel" style="margin-top:22px"><h3>Start the demo again</h3><p class="sec-s" style="margin-top:6px">Replaces everything in this browser with the original demo organisations and removes attached files.</p>'
     + (ui.confirmReset?'<div class="btn-row"><button class="btn btn-ink" type="button" data-act="reset-go">Yes, reset the demo</button><button class="btn btn-ghost" type="button" data-act="reset-cancel" style="color:var(--ink)">Keep my changes</button></div>':'<button class="btn btn-ghost" type="button" data-act="reset-ask" style="color:var(--ink)">Reset demo data</button>')+'</div>');
@@ -936,7 +987,7 @@ function vReview(orgId,k){
   var canAct = r.status==='submitted', mine = !!(r.enteredBy && r.enteredBy===me().name);
   var decision = canAct ? '<div class="panel" style="margin-top:22px"><h3>Decision</h3><p class="sec-s" style="margin-top:6px">Verify once every attached document has a grade. Return the month to data entry if a figure needs correcting; your note goes with it. The customer sees the month once it is verified.</p><div class="field" style="margin:12px 0 14px"><label for="rv-note">Note to data entry (required to return)</label><textarea id="rv-note" rows="3" placeholder="For example: diesel is 40% above August last year. Please recheck the fuel card statement."></textarea></div>'+(mine?'<div class="note-box" style="margin-bottom:12px">You entered this month, so a different analyst must verify it. Sign in as another Yarta team member to verify.</div>':'')+'<div class="btn-row"><button class="btn btn-primary'+(mine?' is-disabled':'')+'" type="button" data-act="verify" data-org="'+orgId+'" data-month="'+k+'"'+(mine?' aria-disabled="true"':'')+'>Verify '+mShort(k)+'</button><button class="btn btn-ghost" type="button" data-act="return" data-org="'+orgId+'" data-month="'+k+'" style="color:var(--ink)">Return to data entry</button></div></div>'
     : '<div class="banner grey" style="margin-top:22px"><span>This month is '+esc(r.status)+'. '+(r.verifiedAt?'Verified '+longDate(r.verifiedAt)+(r.verifiedBy?' by '+esc(r.verifiedBy):'')+'.':'')+'</span></div>';
-  var body='<div class="pg-head"><div><p class="kicker"><a class="link" href="#/ops">Review queue</a> · '+statusChip(r.status)+'</p><h1>'+esc(o.profile.org_name)+' · '+mLabel(k)+'</h1><p class="pg-sub">Entered '+longDate(r.enteredAt||r.submittedAt)+(r.enteredBy?' by '+esc(r.enteredBy):'')+' · '+pr.req+' of '+pr.reqDue+' required figures · '+flagsFor(o,r)+' figures flagged for a second look</p></div></div>'
+  var body='<div class="pg-head"><div><p class="kicker"><a class="link" href="#/ops">Review queue</a> · '+statusChip(r.status)+'</p><h1>'+esc(o.profile.org_name)+' · '+mLabel(k)+'</h1><p class="pg-sub">Entered '+longDate(r.enteredAt||r.submittedAt)+(r.enteredBy?' by '+esc(r.enteredBy):'')+' · '+pr.req+' of '+pr.reqDue+' required figures · '+flagsFor(o,r)+' figures flagged for a second look</p></div></div>'+(r.sendNote?'<div class="note-box grey" style="margin:0 0 16px"><b>Note from the customer when sending:</b> '+esc(r.sendNote)+'</div>':'')
     + '<div class="row3"><div class="panel metric"><div class="k">Emissions this month</div><div class="v">'+fmt(calc.total_t,1)+'<span class="u">t CO₂-e</span></div><div class="s">Scope 1 '+fmt(calc.scope1_t,1)+' · Scope 2 '+fmt(calc.scope2_t,1)+' · Scope 3 '+fmt(calc.scope3_t,1)+'</div></div><div class="panel metric"><div class="k">Renewable · fleet electric</div><div class="v">'+pct(calc.renew_pct)+'<span class="u">·</span> '+pct(calc.fleet_ev_pct)+'</div><div class="s">Grid '+fmt(calc.grid_kwh)+' kWh</div></div><div class="panel metric"><div class="k">Landfill diversion</div><div class="v">'+pct(calc.diversion_pct,1)+'</div><div class="s">'+fmt(calc.waste_total_t,1)+' t total · '+fmt(calc.landfill_t,1)+' t landfill</div></div></div>'
     + '<div class="panel" style="margin-top:16px"><h3>Documents from '+esc(o.profile.org_name)+'</h3>'+inboxList(r)+'</div>' + declList(r) + sections + decision;
   return shell('ops', body);
@@ -1035,7 +1086,7 @@ function vOpsHome(){
     + '</div>'
     + '<h2 class="sec-t" style="margin-top:28px">My customers</h2><p class="sec-s">Organisations where '+esc(u.name)+' is the named data operator.</p>'
     + (mine.length?'<div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Organisation</th><th>Month in play</th><th class="r">Required figures</th><th>Documents due</th><th>Gap email</th><th></th></tr></thead><tbody>'
-      + mine.map(function(id){ var o=state.orgs[id], g=gapsFor(o); return '<tr><td><b>'+esc(o.profile.org_name)+'</b></td><td>'+(g?mLabel(g.month)+(g.started?' '+statusChip(g.rec.status):' <span class="st st-draft">Not started</span>'):'<span class="muted">Up to date</span>')+'</td><td class="num">'+(g?g.have.length+' / '+(g.have.length+g.need.length):'—')+'</td><td>'+(g?longDate(g.due):'—')+'</td><td>'+(g?(g.lastSent?'Sent '+longDate(g.lastSent.at):(g.dueNow?'<span class="st st-returned">Due</span>':'Not yet')):'—')+'</td><td>'+(g?'<a class="btn btn-ghost btn-sm" href="#/ops/gaps/'+id+'" style="color:var(--ink)">Open</a>':'')+'</td></tr>'; }).join('')
+      + mine.map(function(id){ var o=state.orgs[id], g=gapsFor(o); return '<tr><td><b>'+esc(o.profile.org_name)+'</b></td><td>'+(g?mLabel(g.month)+(g.started?' '+statusChip(g.rec.status):' <span class="st st-draft">Not started</span>'):'<span class="muted">Up to date</span>')+'</td><td class="num">'+(g?(g.bySite?g.bySite.reduce(function(a,b){ return a+b.have; },0)+' / '+g.bySite.reduce(function(a,b){ return a+b.total; },0):g.have.length+' / '+(g.have.length+g.need.length)):'—')+'</td><td>'+(g?longDate(g.due):'—')+'</td><td>'+(g?(g.lastSent?'Sent '+longDate(g.lastSent.at):(g.dueNow?'<span class="st st-returned">Due</span>':'Not yet')):'—')+'</td><td>'+(g?'<a class="btn btn-ghost btn-sm" href="#/ops/gaps/'+id+'" style="color:var(--ink)">Open</a>':'')+'</td></tr>'; }).join('')
       + '</tbody></table></div>':'<div class="empty">No customers are assigned to you yet. Assign an operator on the <a class="link" href="#/ops/customers">Customers</a> page.</div>');
   return shell('home', body);
 }
@@ -1199,6 +1250,21 @@ function splitSites(o,defs){
     aggregateInto(o,r);
   });
 }
+function activeSites(o){ return (o.sites||[]).filter(function(s){ return s.active!==false; }); }
+function progressSites(o,r){
+  var due=dueFields(o,r.month), v=r.values||{}, reqDue=0, req=0, missing=[];
+  activeSites(o).forEach(function(s){ var p=siteProgress(o,r,s); reqDue+=p.reqDue; req+=p.req;
+    p.missing.forEach(function(f){ var m=Object.create(f); m.site=s.name; m.siteId=s.id; missing.push(m); }); });
+  var all=due.filter(function(f){ return v[f.id]!==undefined && v[f.id]!==''; });
+  return {reqDue:reqDue, req:req, due:due.length, all:all.length, missing:missing};
+}
+/* figures that moved more than the warning threshold, for every site (read-only: never creates site records) */
+function flagsAll(o,r,k){
+  var out=[], keep=SITE, due=dueFields(o,k), sites=multisite(o)?activeSites(o):[null];
+  sites.forEach(function(s){ SITE=s?s.id:null; var vals=s?((r.sites&&r.sites[s.id]&&r.sites[s.id].values)||{}):(r.values||{});
+    due.forEach(function(f){ if(f.freq==='S'||!isNum(vals[f.id])) return; var w=warnFor(o,k,f.id,vals[f.id]); if(w) out.push({f:f, site:s, w:w}); }); });
+  SITE=keep; return out;
+}
 function siteProgress(o,r,s){
   var due=dueFields(o,r.month).filter(function(f){ return f.req && (!s.cats||s.cats.indexOf(f.cat)>=0) && !(r.declared&&r.declared[f.cat]); }), sv=(r.sites&&r.sites[s.id]&&r.sites[s.id].values)||{};
   var got=due.filter(function(f){ return isNum(sv[f.id]) || (f.kind!=='number'&&f.kind!=='count'&&f.kind!=='currency'&&f.kind!=='percent'&&sv[f.id]); });
@@ -1352,7 +1418,7 @@ function vCustomerEntry(){
     return '<div class="panel"><div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:center"><h3>'+mLabel(r.month)+'</h3>'+statusChip(r.status)+'</div>'
       + (r.status==='returned'&&r.notes&&r.notes.length?'<div class="note-box" style="margin-top:10px"><b>Returned by Yarta on '+longDate(r.notes[r.notes.length-1].at)+':</b> '+esc(r.notes[r.notes.length-1].text)+'</div>':'')
       + '<div class="small" style="margin-top:12px"><b>'+pr.req+' of '+pr.reqDue+'</b> required figures entered · due '+longDate(dueDate(r.month))+'</div><div class="progress"><i style="width:'+done.toFixed(0)+'%"></i></div>'
-      + (pr.missing.length?'<p class="small muted" style="margin:10px 0 0">Still to enter: '+pr.missing.slice(0,6).map(function(f){ return esc(f.name); }).join(', ')+(pr.missing.length>6?' and '+(pr.missing.length-6)+' more':'')+'.</p>':'<p class="small muted" style="margin:10px 0 0">Every required figure is in. Check it and send it to Yarta.</p>')
+      + (pr.missing.length?'<p class="small muted" style="margin:10px 0 0">Still to enter: '+missingSummary(pr.missing)+'.</p>':'<p class="small muted" style="margin:10px 0 0">Every required figure is in. Check it and send it to Yarta.</p>')
       + '<div class="btn-row" style="margin-top:14px"><a class="btn btn-primary" href="#/entry/'+o.id+'/'+r.month+'">'+(pr.missing.length?'Continue':'Check and send')+'</a></div></div>'; }).join('');
   var sentH=sent.length?'<h2 class="sec-t" style="margin-top:28px">With Yarta</h2><p class="sec-s">Sent and waiting for an analyst to verify. The report appears under Reports once it is verified.</p><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Month</th><th>Sent</th><th>By</th><th></th></tr></thead><tbody>'+sent.map(function(r){ return '<tr><td class="nw">'+mLabel(r.month)+'</td><td>'+longDate(r.submittedAt||r.enteredAt)+'</td><td>'+esc(r.enteredBy||'')+'</td><td><a class="btn btn-ghost btn-sm" href="#/entry/'+o.id+'/'+r.month+'" style="color:var(--ink)">View</a></td></tr>'; }).join('')+'</tbody></table></div>':'';
   var startH=ns?'<div class="panel" style="margin-top:22px"><h3>Start '+mLabel(ns)+'</h3><p class="sec-s" style="margin-top:6px">Figures are due by '+longDate(dueDate(ns))+'. Your earlier months and your registers are carried forward, so most of the form is confirm-or-change.</p><div class="btn-row" style="margin-top:12px"><button class="btn btn-primary" type="button" data-act="start-month" data-org="'+o.id+'" data-month="'+ns+'">Enter '+mLabel(ns)+'</button></div></div>':'';
@@ -1511,7 +1577,7 @@ function vSiteReport(sid,k){
 function siteTabs(o,r,base,cur){
   if(!multisite(o)) return '';
   return '<div class="site-tabs" role="tablist" aria-label="Site">'+o.sites.filter(function(s){ return s.active!==false; }).map(function(s){ var p=siteProgress(o,r,s);
-    return '<a role="tab" href="'+base+'?s='+s.id+(parseHash().q.c?'&c='+parseHash().q.c:'')+'" aria-selected="'+(s.id===cur)+'"><b>'+esc(s.name)+'</b><span class="c'+(p.reqDue&&p.req===p.reqDue?' ok':'')+'">'+p.req+'/'+p.reqDue+'</span></a>'; }).join('')+'</div>';
+    return '<a role="tab" href="'+base+'?s='+s.id+(parseHash().q.c?'&c='+parseHash().q.c:'')+'" aria-selected="'+(s.id===cur)+'"><b>'+esc(s.name)+'</b><span class="c'+(p.reqDue&&p.req===p.reqDue?' ok':'')+'" data-sc="'+s.id+'">'+p.req+'/'+p.reqDue+'</span></a>'; }).join('')+'</div>';
 }
 
 /* ------------------------------------------------------------------ declarations, customer side */
@@ -1866,9 +1932,10 @@ app.addEventListener('input', function(e){
     else { if(val===''||!isFinite(+val)) delete tv[id]; else tv[id]=+val; }
     if(f.freq==='S'){ var prevC=carried(c.o,E.addMonths(c.k,-1),id); if(tv[id]!=null && prevC!=null && +tv[id]===prevC) delete tv[id]; }
     if(SITE) aggregateInto(c.o,c.r);
-    var w=warnFor(c.o,c.k,id,tv[id]); var wEl=$('[data-warn="'+id+'"]'); if(wEl) wEl.textContent=w; t.classList.toggle('bad',!!w);
+    var w=warnFor(c.o,c.k,id,tv[id]); var wEl=$('[data-warn="'+id+'"]'); if(wEl) wEl.textContent=w; t.classList.toggle('bad',!!w); if(w) t.setAttribute('aria-invalid','true'); else t.removeAttribute('aria-invalid');
     var pr=progressOf(c.o,c.r); var pt=$('#prog-t'), pb=$('#prog-b'); if(pt) pt.textContent=pr.req+' of '+pr.reqDue; if(pb) pb.style.width=(pr.reqDue?pr.req/pr.reqDue*100:0)+'%';
-    var cc=$('[data-cc="'+f.cat+'"]'); if(cc){ var due=dueFields(c.o,c.k).filter(function(x){ return x.cat===f.cat; }); var rq=due.filter(function(x){ return x.req; }); var ok=rq.filter(function(x){ return isNum(c.r.values[x.id]); }).length; cc.textContent=rq.length?ok+'/'+rq.length:'✓'; cc.classList.toggle('ok', rq.length?ok===rq.length:true); }
+    var cc=$('[data-cc="'+f.cat+'"]'); if(cc){ var due=dueFields(c.o,c.k).filter(function(x){ return x.cat===f.cat; }); var rq=siteReq(c.o,f.cat)?due.filter(function(x){ return x.req; }):[]; var ok=rq.filter(function(x){ return isNum(tv[x.id]); }).length; cc.textContent=rq.length?ok+'/'+rq.length:'✓'; cc.classList.toggle('ok', rq.length?ok===rq.length:true); }
+    if(SITE){ var sc=$('[data-sc="'+SITE+'"]'), sp=siteProgress(c.o,c.r,siteById(c.o,SITE)); if(sc){ sc.textContent=sp.req+'/'+sp.reqDue; sc.classList.toggle('ok',!!sp.reqDue&&sp.req===sp.reqDue); } }
     var cp=$('#calc'); if(cp) cp.innerHTML=calcPanel(c.o,c.r,c.k);
     SITE=null; scheduleSave();
   }
@@ -1911,12 +1978,13 @@ function previewImport(file){
   var rd=new FileReader(); rd.onload=function(){
     var o=org(), text=String(rd.result||''), items=[], skip=0;
     try{
-      if(/\.json$/i.test(file.name)||/^\s*\{/.test(text)){ var j=JSON.parse(text); (j.records||[]).forEach(function(r){ Object.keys(r.values||{}).forEach(function(id){ items.push([r.month,id,r.values[id]]); }); }); }
-      else { var rows=parseCSV(text); var hd=rows.shift().map(function(h){ return h.trim().toLowerCase(); }); var im=hd.indexOf('month'), ii=hd.indexOf('field_id'), iv=hd.indexOf('value'); if(im<0||ii<0||iv<0) throw new Error('The CSV needs month, field_id and value columns.'); rows.forEach(function(r){ items.push([r[im],r[ii],r[iv]]); }); }
+      if(/\.json$/i.test(file.name)||/^\s*\{/.test(text)){ var j=JSON.parse(text); (j.records||[]).forEach(function(r){ if(multisite(o) && r.sites){ Object.keys(r.sites).forEach(function(sid){ var sv=(r.sites[sid]||{}).values||{}; Object.keys(sv).forEach(function(id){ items.push([r.month,id,sv[id],sid]); }); }); } else Object.keys(r.values||{}).forEach(function(id){ items.push([r.month,id,r.values[id],null]); }); }); }
+      else { var rows=parseCSV(text); var hd=rows.shift().map(function(h){ return h.trim().toLowerCase(); }); var im=hd.indexOf('month'), ii=hd.indexOf('field_id'), iv=hd.indexOf('value'), is=hd.indexOf('site'); if(im<0||ii<0||iv<0) throw new Error('The CSV needs month, field_id and value columns.'); if(multisite(o)&&is<0) throw new Error('Add a site column: with '+activeSites(o).length+' sites, each figure needs the site it belongs to. Download the template for the month to get the right shape.'); rows.forEach(function(r){ items.push([r[im],r[ii],r[iv],is>=0?r[is]:null]); }); }
     }catch(err){ flash(err.message||'That file could not be read.','err'); return; }
-    var ok=[], months={};
-    items.forEach(function(it){ var k=String(it[0]).trim(), id=String(it[1]).trim(), f=D.FIELD[id]; if(!/^\d{4}-\d{2}$/.test(k)||!f||f.type!=='input'){ skip++; return; } var r=rec(o,k); if(r && (r.status==='submitted'||r.status==='verified')){ skip++; return; } if(k>nowKey()){ skip++; return; } ok.push([k,id,it[2]]); months[k]=1; });
-    ui.importPreview={name:file.name, items:ok, ok:ok.length, skip:skip, months:Object.keys(months).sort()};
+    var ok=[], months={}, unsite={};
+    function siteOf(x){ if(!multisite(o)) return null; var t=String(x==null?'':x).trim(), tl=t.toLowerCase(); var m=activeSites(o).filter(function(s){ return s.id===t || s.name.toLowerCase()===tl; })[0]; return m?m.id:undefined; }
+    items.forEach(function(it){ var k=String(it[0]).trim(), id=String(it[1]).trim(), f=D.FIELD[id]; if(!/^\d{4}-\d{2}$/.test(k)||!f||f.type!=='input'){ skip++; return; } if(String(it[2]==null?'':it[2]).trim()===''){ return; } var sid=siteOf(it[3]); if(sid===undefined){ var nm=String(it[3]||'(blank)'); unsite[nm]=(unsite[nm]||0)+1; skip++; return; } var r=rec(o,k); if(r && (r.status==='submitted'||r.status==='verified')){ skip++; return; } if(k>nowKey()){ skip++; return; } ok.push([k,id,it[2],sid]); months[k]=1; });
+    ui.importPreview={name:file.name, items:ok, ok:ok.length, skip:skip, unsite:unsite, months:Object.keys(months).sort()};
     render();
   };
   rd.readAsText(file);
@@ -1965,7 +2033,7 @@ document.addEventListener('click', function(e){
     case 'start-month': o=state.orgs[t.getAttribute('data-org')]||org(); var nk=t.getAttribute('data-month'); if(!rec(o,nk)){ o.records.push({month:nk, values:{}, evidence:{}, status:'draft', inbox:[], enteredBy:me().name}); log('Month opened for data entry',mLabel(nk),o.id); save(); } go('#/entry/'+o.id+'/'+nk); break;
     case 'submit-ask': ui.confirmSubmit=true; render(); var sb=$('#submit-box'); if(sb) sb.scrollIntoView({block:'center'}); break;
     case 'submit-cancel': ui.confirmSubmit=false; render(); break;
-    case 'submit-month': var c=currentSubmit(); if(!c) return; var pr=progressOf(c.o,c.r); if(pr.missing.length){ flash('Some required figures are still missing.','err'); return; } if(!$('#attest')||!$('#attest').checked){ flash('Please tick the confirmation first.','err'); return; } c.r.status='submitted'; c.r.submittedAt=isoNow().slice(0,10); c.r.enteredAt=c.r.submittedAt; c.r.enteredBy=me().name; Object.keys(c.r.evidence||{}).forEach(function(cat){ if(!c.r.evidence[cat].grade) c.r.evidence[cat].pending=true; }); log('Month entered and sent for verification',mLabel(c.k)+' · '+pr.req+' required figures',c.o.id); save(); ui.confirmSubmit=false; flash((isOp()?c.o.profile.org_name+' · ':'')+mLabel(c.k)+' sent to Yarta for verification.'); go(isOp()?'#/ops/entry':'#/entry'); break;
+    case 'submit-month': var c=currentSubmit(); if(!c) return; var pr=progressOf(c.o,c.r); if(pr.missing.length){ flash('Some required figures are still missing.','err'); return; } if(!$('#attest')||!$('#attest').checked){ flash('Please tick the confirmation first.','err'); return; } var sn=$('#send-note'); if(sn){ if(sn.value.trim()) c.r.sendNote=sn.value.trim(); else delete c.r.sendNote; } c.r.status='submitted'; c.r.submittedAt=isoNow().slice(0,10); c.r.enteredAt=c.r.submittedAt; c.r.enteredBy=me().name; Object.keys(c.r.evidence||{}).forEach(function(cat){ if(!c.r.evidence[cat].grade) c.r.evidence[cat].pending=true; }); log('Month entered and sent for verification',mLabel(c.k)+' · '+pr.req+' required figures',c.o.id); save(); ui.confirmSubmit=false; flash((isOp()?c.o.profile.org_name+' · ':'')+mLabel(c.k)+' sent to Yarta for verification.'); go(isOp()?'#/ops/entry':'#/entry'); break;
     case 'ev-remove': var c2=currentSubmit(); if(!c2) return; var cat=t.getAttribute('data-cat'), ek=evKey(c2.o.id,c2.k,cat), cur2=c2.r.evidence[cat]; if(cur2 && cur2.key===ek) delFile(ek).catch(function(){}); delete c2.r.evidence[cat]; save(); render(); break;
     case 'ev-open': getFile(t.getAttribute('data-key')).then(function(f){ if(!f){ flash('That file is not stored in this browser.','err'); return; } var u=URL.createObjectURL(f); window.open(u,'_blank'); setTimeout(function(){ URL.revokeObjectURL(u); },60000); }).catch(function(){ flash('That file is not stored in this browser.','err'); }); break;
     case 'save-profile': o=org(); var errs=[]; $$('[data-pf]').forEach(function(el){ var id=el.getAttribute('data-pf'), f=field(id), v=el.value; if(!isOp() && id.indexOf('target_')===0 && OWN_TARGETS.indexOf(id)<0) return; if(f.kind==='number'||f.kind==='count'||f.kind==='percent'){ if(v===''){ if(f.req) errs.push(f.name); else delete o.profile[id]; } else if(!isFinite(+v)||+v<0){ errs.push(f.name); } else o.profile[id]=+v; } else { if(v===''&&f.req) errs.push(f.name); else o.profile[id]=v; } }); if(errs.length){ flash('Check: '+errs.join(', '),'err'); return; } log('Profile updated',''); save(); flash('Saved. Every month has been recalculated.'); render(); break;
@@ -1974,7 +2042,8 @@ document.addEventListener('click', function(e){
     case 'json-all': o=org(); download(o.id+'-yes-export.json', JSON.stringify({exported:isoNow(), method:E.VERSION, dictionary:D.VERSION, profile:o.profile, records:o.records},null,2), 'application/json'); break;
     case 'csv-dict': var rows=[['id','name','category','type','unit','frequency','mandatory','kind','source','definition','calculation','scores']].concat(D.FIELDS.map(function(f){ return [f.id,f.name,D.CAT[f.cat].name,f.type==='calc'?'Calculated by Yarta':'Entered by customer',f.unit,D.FREQ[f.freq],f.type==='calc'?'n/a':(f.req?'yes':'no'),f.kind,f.src,f.def,f.calc||'',(f.score||[]).map(function(s){ return D.CAT[s]?D.CAT[s].name:s; }).join('; ')]; })); download('yes-data-dictionary.csv', rows.map(function(r){ return r.map(csvCell).join(','); }).join('\n'), 'text/csv'); break;
     case 'import-cancel': ui.importPreview=null; render(); break;
-    case 'import-go': o=org(); var pv=ui.importPreview; if(!pv) return; pv.items.forEach(function(it){ var r=rec(o,it[0]); if(!r){ r={month:it[0],values:{},evidence:{},status:'draft'}; o.records.push(r); } if(r.status==='submitted'||r.status==='verified') return; var f=D.FIELD[it[1]]; var v=it[2]; if(f.kind==='text'||f.kind==='select'){ if(v!=='') r.values[it[1]]=v; } else if(v!==''&&isFinite(+v)) r.values[it[1]]=+v; }); log('Figures imported',pv.ok+' figures from '+pv.name); save(); ui.importPreview=null; flash('Imported '+pv.ok+' figures into months open for data entry.'); go('#/ops/entry'); break;
+    case 'import-go': o=org(); var pv=ui.importPreview; if(!pv) return; var touched={}; pv.items.forEach(function(it){ var r=rec(o,it[0]); if(!r){ r={month:it[0],values:{},evidence:{},status:'draft'}; o.records.push(r); } if(r.status==='submitted'||r.status==='verified') return; var tv=(multisite(o)&&it[3])?svals(r,it[3]):r.values; var f=D.FIELD[it[1]]; var v=it[2]; if(f.kind==='text'||f.kind==='select'){ if(v!=='') tv[it[1]]=v; } else if(v!==''&&isFinite(+v)) tv[it[1]]=+v; touched[r.month]=r; }); Object.keys(touched).forEach(function(mk){ aggregateInto(o,touched[mk]); }); log('Figures imported',pv.ok+' figures from '+pv.name); save(); ui.importPreview=null; flash('Imported '+pv.ok+' figures into months open for data entry.'); go(isOp()?'#/ops/entry':'#/entry'); break;
+    case 'csv-template': o=org(); var tk=t.getAttribute('data-month')||nowKey(); download(o.id+'-'+tk+'-template.csv', templateRows(o,tk), 'text/csv'); break;
     case 'verify': var ov=state.orgs[t.getAttribute('data-org')], rv=rec(ov,t.getAttribute('data-month')); if(rv.enteredBy && rv.enteredBy===me().name){ flash('You entered this month, so a different analyst must verify it.','err'); return; } var ungraded=Object.keys(rv.evidence||{}).filter(function(cat){ return !rv.evidence[cat].grade; }); if(ungraded.length){ flash('Grade every attached document first ('+ungraded.map(function(c){ return D.CAT[c].short; }).join(', ')+').','err'); return; } rv.status='verified'; rv.verifiedAt=isoNow().slice(0,10); rv.verifiedBy=me().name; var note=($('#rv-note')||{}).value; if(note){ rv.notes=rv.notes||[]; rv.notes.push({by:me().name,at:isoNow(),text:note}); } log('Month verified',mLabel(rv.month),ov.id); save(); flash(ov.profile.org_name+' · '+mLabel(rv.month)+' verified.'); go('#/ops'); break;
     case 'slot': ui.bookSlot=t.getAttribute('data-slot'); $$('.slot',app).forEach(function(x){ x.setAttribute('aria-pressed', x===t?'true':'false'); }); break;
     case 'book-submit': bookSubmit(t.getAttribute('data-svc')); break;
