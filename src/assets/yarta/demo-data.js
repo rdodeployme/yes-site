@@ -175,15 +175,15 @@ window.YESDEMO = window.YESDEMO || {};
 
   var ENTRY = "Morgan Lee", VERIFY = "Chris Walker";
   function finish(recs, opt){
-    // statuses: verified up to verifiedTo; later months entered by Yarta and waiting for a second analyst to verify
+    // statuses: verified up to verifiedTo; later months entered by the customer and waiting for a Yarta analyst to verify
     recs.forEach(function(r){
-      r.enteredAt = isoDay(r.month, 9); r.enteredBy = ENTRY; r.submittedAt = r.enteredAt;
+      r.enteredAt = isoDay(r.month, 9); r.enteredBy = opt.contact || ENTRY; r.submittedAt = r.enteredAt;
       if(r.month <= opt.verifiedTo){ r.status="verified"; r.verifiedAt = isoDay(r.month, 16); r.verifiedBy = VERIFY; }
       else { r.status="submitted"; delete r.verifiedAt; Object.keys(r.evidence).forEach(function(c){ r.evidence[c].grade = null; r.evidence[c].pending = true; }); }
       r.inbox = Object.keys(r.evidence).map(function(c){ return {name:r.evidence[c].name, cat:c, at:isoDay(r.month, 4), by:opt.contact, demo:true}; });
     });
     if(opt.draft){
-      // the month Yarta is keying now: the customer's documents are in, fuel and energy are entered, the rest is still to do
+      // the month the customer is entering now: fuel and energy are in, the rest is still to do
       var last = recs[recs.length-1];
       var dk = E.addMonths(last.month,1);
       var dv = {};
@@ -192,7 +192,7 @@ window.YESDEMO = window.YESDEMO || {};
       if(dv.grid_kwh) dv.grid_kwh = Math.round(dv.grid_kwh*0.93);
       var lab = E.label(dk);
       var docs = [["fleet","Fuel card statement "+lab+".pdf"],["energy","Electricity retailer bills "+lab+".pdf"],["energy","Gas bill "+lab+".pdf"],["water","Water utility bill "+lab+".pdf"],["waste","Weighbridge dockets "+lab+".xlsx"],["community","Event registrations "+lab+".csv"]];
-      recs.push({month:dk, values:dv, evidence:{fleet:{name:docs[0][1], pending:true, grade:null, demo:true}, energy:{name:docs[1][1], pending:true, grade:null, demo:true}}, status:"draft", enteredBy:ENTRY,
+      recs.push({month:dk, values:dv, evidence:{fleet:{name:docs[0][1], pending:true, grade:null, demo:true}, energy:{name:docs[1][1], pending:true, grade:null, demo:true}}, status:"draft", enteredBy:opt.contact || ENTRY,
         inbox:docs.map(function(d,i){ return {name:d[1], cat:d[0], at:isoDay(dk, 3+i), by:opt.contact, demo:true}; })});
     }
     return recs;
@@ -321,7 +321,7 @@ window.YESDEMO = window.YESDEMO || {};
     {id:"u-marco", name:"Marco Bellini", title:"Operations Manager", email:"marco.bellini@demo-metalworks.example", role:"customer", org:"demo-maker"},
     {id:"u-kate", name:"Kate Lindqvist", title:"HSEQ Manager", email:"kate.lindqvist@demo-build.example", role:"customer", org:"demo-builder"},
     {id:"u-hannah", name:"Hannah Park", title:"Sustainability Lead", email:"hannah.park@demo-grocers.example", role:"customer", org:"demo-retail"},
-    {id:"u-entry", name:"Morgan Lee", title:"Data analyst · enters the figures", email:"morgan.lee@yes.example", role:"operator", org:null, home:"#/ops/entry"},
+    {id:"u-entry", name:"Morgan Lee", title:"Analyst · checks customer months, keys any sent as documents", email:"morgan.lee@yes.example", role:"operator", org:null, home:"#/ops/entry"},
     {id:"u-verify", name:"Chris Walker", title:"Verification lead · checks and verifies", email:"chris.walker@yes.example", role:"operator", org:null, home:"#/ops"}
   ];
 
@@ -347,6 +347,6 @@ window.YESDEMO = window.YESDEMO || {};
       orgs[o.id] = {id:o.id, profile:JSON.parse(JSON.stringify(o.profile)), records:recs, demo:true};
     });
     Object.keys(orgs).forEach(function(id){ orgs[id].plan = {off:{}}; });
-    return {v:4, created:new Date().toISOString(), orgs:orgs, users:X.USERS.slice(), session:null, audit:[], bookings:JSON.parse(JSON.stringify(X.BOOKINGS))};
+    return {v:5, created:new Date().toISOString(), orgs:orgs, users:X.USERS.slice(), session:null, audit:[], bookings:JSON.parse(JSON.stringify(X.BOOKINGS))};
   };
 })(window.YESDEMO, window.YESD, window.YESE);

@@ -19,9 +19,13 @@
     requestAnimationFrame(step);
   };
   var counters=document.querySelectorAll('[data-count]');
+  // a number on screen at load shows its real value straight away (no zero on first paint); only numbers further down animate in
+  function inView(el){var r=el.getBoundingClientRect();return r.width>0&&r.bottom>0&&r.top<(window.innerHeight||document.documentElement.clientHeight);}
+  window.YES.inView=inView;
+  function settle(el){var to=parseFloat(el.getAttribute('data-count')),dec=parseInt(el.getAttribute('data-dec')||'0',10);el.textContent=(el.getAttribute('data-prefix')||'')+fmt(to,dec)+(el.getAttribute('data-suffix')||'');el.setAttribute('data-from',to);}
   if('IntersectionObserver' in window){
     var io2=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){var el=e.target;window.YES.count(el,parseFloat(el.getAttribute('data-count')),parseInt(el.getAttribute('data-dec')||'0',10));io2.unobserve(el);}});},{threshold:.4});
-    counters.forEach(function(el){io2.observe(el);});
+    counters.forEach(function(el){ if(inView(el)) settle(el); else io2.observe(el); });
   } else { counters.forEach(function(el){el.textContent=fmt(parseFloat(el.getAttribute('data-count')),parseInt(el.getAttribute('data-dec')||'0',10));}); }
 
   // bar fills: <div class="fill" data-w="72">

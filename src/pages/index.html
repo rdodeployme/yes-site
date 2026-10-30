@@ -367,7 +367,7 @@
       </div>
       <div>
         <p class="eyebrow">Foundation Members</p>
-        <h2>Free to join in the first 12 months.</h2>
+        <h2>No set-up fee if you join in the first 12 months.</h2>
         <p class="lead mt-2">The Yarta establishment fee is normally $5,000 to $15,000. Foundation Members who join in the first 12 months pay none of it. The annual subscription applies from the switch-on date.</p>
         <div class="btn-row mt-3"><a class="btn btn-ink" href="/pricing/#foundation">See pricing {{ARROW}}</a></div>
       </div>
@@ -387,7 +387,7 @@
 (function(){
   var X=window.YESDEMO, E=window.YESE, R=window.YESR, D=window.YESD; if(!X||!E||!R||!D) return;
   function fmt(n,d){ return Number(n).toLocaleString('en-AU',{minimumFractionDigits:d||0,maximumFractionDigits:d||0}); }
-  function setCount(id,v,dec){ var el=document.getElementById(id); if(!el) return; dec=dec||0; el.setAttribute('data-count',v); el.setAttribute('data-dec',dec); if(el.getAttribute('data-from')) el.textContent=fmt(v,dec); }
+  function setCount(id,v,dec){ var el=document.getElementById(id); if(!el) return; dec=dec||0; el.setAttribute('data-count',v); el.setAttribute('data-dec',dec); if(el.getAttribute('data-from')!=null || (window.YES&&window.YES.inView&&window.YES.inView(el))){ el.textContent=fmt(v,dec); el.setAttribute('data-from',v); } }
   function txt(id,s){ var el=document.getElementById(id); if(el) el.textContent=s; }
   try{
     var st=X.build(), o=st.orgs['demo-shire'], recs=o.records.filter(function(r){ return r.status==='verified'; });

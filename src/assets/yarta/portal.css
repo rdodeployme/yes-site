@@ -553,3 +553,5 @@ fieldset.field legend{padding:0;margin-bottom:6px}
 .flag-box{margin-top:12px;padding-top:4px;border-top:1px solid var(--silver-1,#E3E1DC)}
 .flag-box textarea{width:100%;font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--silver-2,#CFCBC4);border-radius:8px;background:var(--white)}
 .calc .site-ln{margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.12)}
+.tbl tr.muted-row td{color:var(--silver-5,#8E9396)}
+.tbl tr.muted-row td b{color:var(--graphite,#4B4F52)}

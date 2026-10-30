@@ -2,7 +2,7 @@
 
 :root{
   --ink:#0B0B0B; --ink-2:#121312; --ink-3:#1A1B1A;
-  --charcoal:#2A2A2A; --graphite:#4B4F52; --slate:#7C8184; --mist:#D6D8D3; --mist-2:#E7E8E3;
+  --charcoal:#2A2A2A; --graphite:#4B4F52; --slate:#62676A; --mist:#D6D8D3; --mist-2:#E7E8E3;
   --paper:#F4F4F2; --paper-2:#ECEDE8; --white:#FFFFFF;
   --green:#A3561A; --green-2:#CF7A2E; --green-3:#E9A860; --green-4:#F2C894; --green-tint:#FBF0E3; --green-ink:#8A4A14; /* the accent is earthy orange; the token names are kept so nothing else changes */
   --landfill:#2A2A2A; --stored:#A9ADA8;
@@ -55,7 +55,7 @@ section.tight{padding:clamp(40px,6vw,80px) 0}
 
 /* eyebrow + section index */
 .eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--green-2);margin:0 0 18px;display:flex;align-items:center;gap:12px}
-.eyebrow{color:var(--green)}.dark .eyebrow,.cta-band .eyebrow,.price.featured .eyebrow{color:var(--green-2)}
+.eyebrow{color:var(--green)}.dark .eyebrow,.price.featured .eyebrow{color:var(--green-2)}
 .eyebrow::before{content:"";width:22px;height:1px;background:currentColor}
 .dark .eyebrow{color:var(--green-3)}
 .idx{font-family:var(--font-mono);font-size:12px;color:var(--slate);letter-spacing:.1em}
@@ -221,12 +221,12 @@ section.tight{padding:clamp(40px,6vw,80px) 0}
 /* CTA band */
 .cta-band{background:var(--green);color:var(--paper);padding:clamp(56px,7vw,96px) 0}
 .cta-band h2{max-width:20ch}
-.cta-band .lead{color:#D8EBDF}
+.cta-band .lead{color:var(--green-tint)}
 .cta-band .btn-primary{background:var(--paper);color:var(--green-ink)}
 .cta-band .btn-primary:hover{background:var(--white)}
 .cta-band .btn-ghost{border-color:rgba(255,255,255,.4)}
 .cta-band .btn-ghost:hover{border-color:var(--paper)}
-.cta-band .eyebrow{color:#9FD9B5}
+.cta-band .eyebrow{color:var(--green-tint)}
 
 /* footer */
 footer{background:var(--ink);color:var(--mist);padding:64px 0 32px;border-top:1px solid #202220}
@@ -463,7 +463,8 @@ footer{background:var(--ink);color:var(--mist);padding:64px 0 32px;border-top:1p
 .ic.lg{width:28px;height:28px}
 /* focus */
 :focus-visible{outline:3px solid var(--focus,var(--green));outline-offset:3px;border-radius:4px}
-.dark,.nav,footer,.cta-band,.price.featured,.hero,.hero-sub{--focus:var(--green-3)}
+.dark,.nav,footer,.price.featured,.hero,.hero-sub{--focus:var(--green-3);--slate:#8E9396}
+.cta-band{--focus:var(--paper)}
 .btn:focus-visible{outline-offset:2px}
 /* editorial section index */
 .section-head .eyebrow{align-items:baseline}

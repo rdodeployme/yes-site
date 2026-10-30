@@ -63,23 +63,27 @@ window.YESD = window.YESD || {};
 
   D.FIELDS = [
     // ---- Fleet & Transport -------------------------------------------------------
-    F("diesel_l","Diesel purchased","fleet","L","M",true,"number","Fuel card statements or bulk fuel invoices","Litres of diesel purchased for vehicles, plant and equipment in the month.",{score:["fleet","carbon"]}),
-    F("petrol_l","Petrol purchased","fleet","L","M",true,"number","Fuel card statements","Litres of petrol (including E10) purchased in the month.",{score:["fleet","carbon"]}),
+    F("diesel_l","Diesel purchased","fleet","L","M",true,"number","Fuel card statements or bulk fuel invoices","Litres of diesel purchased for vehicles, plant, generators and equipment in the month.",{score:["fleet","carbon"],optFor:["business"]}),
+    F("petrol_l","Petrol purchased","fleet","L","M",true,"number","Fuel card statements","Litres of petrol (including E10) purchased in the month.",{score:["fleet","carbon"],optFor:["business"]}),
     F("lpg_l","LPG purchased","fleet","L","M",false,"number","Fuel invoices","Litres of LPG purchased for vehicles, forklifts or plant.",{score:["fleet","carbon"]}),
     F("biodiesel_l","Biodiesel or renewable diesel used","fleet","L","M",false,"number","Fuel invoices","Litres of biodiesel or renewable diesel used (the fossil share of blends goes in Diesel).",{score:["fleet","carbon"]}),
     F("other_fuel","Other fuels used","fleet","type and quantity","M",false,"text","Fuel invoices","Any other fuel, with its type and quantity. Recorded; not converted to emissions until a factor is set."),
-    F("fleet_km","Total fleet kilometres travelled","fleet","km","M",true,"number","Odometer readings, telematics or fuel card data","Kilometres travelled by all fleet vehicles in the month."),
-    F("veh_diesel","Diesel passenger vehicles","fleet","vehicles","S",true,"count","Fleet register","Number of diesel passenger vehicles in the fleet."),
-    F("veh_petrol","Petrol passenger vehicles","fleet","vehicles","S",true,"count","Fleet register","Number of petrol passenger vehicles in the fleet."),
-    F("veh_hybrid","Hybrid vehicles","fleet","vehicles","S",true,"count","Fleet register","Number of hybrid (non plug-in) vehicles."),
-    F("veh_phev","Plug-in hybrid vehicles","fleet","vehicles","S",true,"count","Fleet register","Number of plug-in hybrid vehicles."),
-    F("veh_bev","Battery electric vehicles","fleet","vehicles","S",true,"count","Fleet register","Number of battery electric passenger vehicles."),
-    F("trucks_diesel","Diesel trucks","fleet","vehicles","S",true,"count","Fleet register","Number of diesel trucks, including waste and fire vehicles."),
-    F("trucks_electric","Electric trucks","fleet","vehicles","S",true,"count","Fleet register","Number of electric trucks."),
+    F("fleet_km","Total fleet kilometres travelled","fleet","km","M",true,"number","Odometer readings, telematics or fuel card data","Kilometres travelled by all fleet vehicles in the month.",{optFor:["business"]}),
+    F("veh_diesel","Diesel passenger vehicles","fleet","vehicles","S",true,"count","Fleet register","Number of diesel passenger vehicles in the fleet.",{optFor:["business"]}),
+    F("veh_petrol","Petrol passenger vehicles","fleet","vehicles","S",true,"count","Fleet register","Number of petrol passenger vehicles in the fleet.",{optFor:["business"]}),
+    F("veh_hybrid","Hybrid vehicles","fleet","vehicles","S",true,"count","Fleet register","Number of hybrid (non plug-in) vehicles.",{optFor:["business"]}),
+    F("veh_phev","Plug-in hybrid vehicles","fleet","vehicles","S",true,"count","Fleet register","Number of plug-in hybrid vehicles.",{optFor:["business"]}),
+    F("veh_bev","Battery electric vehicles","fleet","vehicles","S",true,"count","Fleet register","Number of battery electric passenger vehicles.",{optFor:["business"]}),
+    F("trucks_diesel","Diesel trucks","fleet","vehicles","S",true,"count","Fleet register","Number of diesel trucks, including waste and fire vehicles.",{sectors:["council","health","education","manufacturing","construction","retail","logistics"]}),
+    F("trucks_electric","Electric trucks","fleet","vehicles","S",true,"count","Fleet register","Number of electric trucks.",{sectors:["council","health","education","manufacturing","construction","retail","logistics"]}),
     F("plant_count","Heavy plant and machinery","fleet","items","S",false,"count","Plant register","Number of heavy plant items (graders, loaders, mowers, excavators).",{sectors:["council", "construction", "manufacturing", "logistics", "education"]}),
     F("plant_fuel","Heavy plant main fuel type","fleet","type","S",false,"select","Plant register","Main fuel used by heavy plant.",{options:["Diesel","Petrol","Electric","Mixed"], sectors:["council", "construction", "manufacturing", "logistics", "education"]}),
     F("flights_dom","Domestic flights","fleet","trips","M",false,"count","Travel booking system","Domestic one-way flight trips taken for work. Recorded; emissions factor pending.",{score:["fleet"], sectors:["business", "health", "education", "manufacturing", "retail", "logistics", "council", "construction"]}),
     F("flights_int","International flights","fleet","trips","M",false,"count","Travel booking system","International one-way flight trips taken for work. Recorded; emissions factor pending.",{score:["fleet"], sectors:["business", "education", "health", "manufacturing", "retail"]}),
+    F("rideshare_spend","Taxi and rideshare spend","fleet","$","M",false,"currency","Expense system or travel booking system","Spent on taxis and rideshare for work in the month. Recorded; emissions factor pending.",{score:["fleet"], sectors:["business", "health", "education", "council", "manufacturing", "construction", "retail"]}),
+    F("hotel_nights","Hotel nights","fleet","nights","M",false,"count","Travel booking system","Hotel nights booked for work travel in the month. Recorded; emissions factor pending.",{score:["fleet"], sectors:["business", "health", "education", "council", "manufacturing", "construction", "retail"]}),
+    F("commute_car_pct","Staff who drive to work alone","fleet","%","A",false,"percent","Staff travel survey","Share of staff who usually drive to work alone, from the latest staff travel survey. Recorded; used for the commuting estimate once the method sets it.",{score:["fleet"], sectors:["business", "health", "education", "council"]}),
+    F("freight_tkm","Freight moved","fleet","tonne-km","M",false,"number","Transport management system or consignment records","Tonnes carried multiplied by the kilometres they travelled, for emissions per tonne-km.",{sectors:["logistics"]}),
     F("ev_public_points","Public EV charging points operated","fleet","points","S",false,"count","Asset register","Public EV charging points operated by the organisation.",{sectors:["council", "retail", "education"]}),
     F("ev_public_kwh","Public EV charging supplied","fleet","kWh","M",false,"number","Charger management platform","Electricity supplied through public charging points in the month.",{sectors:["council", "retail", "education"]}),
     F("ev_staff_points","Staff EV charging points","fleet","points","S",false,"count","Asset register","Charging points for fleet and staff vehicles."),
@@ -100,7 +104,10 @@ window.YESD = window.YESD || {};
     F("solar_sites","Buildings with solar","energy","buildings","S",false,"count","Asset register","Number of buildings with solar installed."),
     F("battery_kwh","Battery storage capacity","energy","kWh","S",false,"number","Asset register","Total installed battery storage."),
     F("battery_cycled","Battery energy cycled","energy","kWh","M",false,"number","Battery monitoring","Energy discharged from batteries in the month."),
-    F("gas_gj","Natural gas consumed","energy","GJ","M",true,"number","Gas retailer bills","Natural gas consumed (convert MJ ÷ 1,000).",{score:["energy","carbon"]}),
+    F("gas_gj","Natural gas consumed","energy","GJ","M",true,"number","Gas retailer bills","Natural gas consumed in the month. If the bill shows MJ or kWh, pick that unit and Yarta converts it.",{score:["energy","carbon"], alt:{MJ:0.001, kWh:0.0036}}),
+    F("refrig_kg","Refrigerant gas topped up","energy","kg","M",false,"number","Refrigeration or air-conditioning service dockets","Kilograms of refrigerant added to refrigeration and air-conditioning systems in the month, which is roughly what leaked. Recorded; the emissions factor is set per gas in the method.",{sectors:["retail", "health", "logistics", "manufacturing", "education", "business", "council"]}),
+    F("refrig_gas","Main refrigerant gas","energy","type","S",false,"select","Refrigeration asset register","The refrigerant most of the plant runs on.",{options:["R404A","R134a","R410A","R407F","R448A","R449A","R744 (CO2)","R290 (propane)","R717 (ammonia)","Mixed or other"], sectors:["retail", "health", "logistics", "manufacturing", "education", "business", "council"]}),
+    F("anaesthetic_gas","Anaesthetic gases used","energy","type and quantity","M",false,"text","Pharmacy or theatre purchasing records","Desflurane, sevoflurane, isoflurane and nitrous oxide bought for theatres in the month, with quantities. Recorded; emissions factor pending.",{sectors:["health"]}),
     F("peak_kw","Peak electricity demand","energy","kW","M",false,"number","Retailer bills or interval data","Highest demand in the month across metered sites."),
     F("gas_to_elec","Buildings converted from gas to electric","energy","buildings","Q",false,"count","Project register","Buildings fully converted from gas to electric in the quarter."),
     F("led_conversions","LED lighting conversions completed","energy","projects","Q",false,"count","Project register","Building lighting upgrades to LED completed in the quarter."),
@@ -232,7 +239,7 @@ window.YESD = window.YESD || {};
   // does this field belong to this industry's question set?
   D.applies = function(f, sector){ var sc=D.scopeFor(sector); if(f.sectors && f.sectors.indexOf(sector)<0) return false; if(sc[f.cat]==="off") return false; return true; };
   // the field as this industry sees it (required only where the category is core)
-  D.forSector = function(f, sector){ var sc=D.scopeFor(sector); if(!f.req || sc[f.cat]==="core") return f; var g={}; for(var k in f) g[k]=f[k]; g.req=false; g.softReq=true; return g; };
+  D.forSector = function(f, sector){ var sc=D.scopeFor(sector); if(!f.req || (sc[f.cat]==="core" && !(f.optFor && f.optFor.indexOf(sector)>=0))) return f; var g={}; for(var k in f) g[k]=f[k]; g.req=false; g.softReq=true; return g; };
   // the categories an industry is asked about, in the usual order (carbon is calculated, never entered)
   D.catsFor = function(sector){ var sc=D.scopeFor(sector); return D.CATEGORIES.filter(function(c){ return c.k!=="carbon" && sc[c.k]!=="off"; }); };
   // Which frequencies are due in a given month (0 = Jan … 11 = Dec). Financial year ends in June.

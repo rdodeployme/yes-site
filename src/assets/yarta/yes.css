@@ -253,3 +253,5 @@ input:disabled,select:disabled,textarea:disabled{background:var(--silver-0);colo
   .draft,.hdr,.ftr,.no-print{display:none!important}
   body{background:#fff}
 }
+.in-unit select.u-sel{appearance:auto;cursor:pointer;padding:0 8px;color:var(--ink)}
+.fh.conv:empty{display:none}

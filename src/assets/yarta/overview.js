@@ -439,7 +439,7 @@ V.summaryData = function(S, i, o, api){
   if(figs.length){ T1.push(''); T1.push((r.n<12?'The '+span(r)+' to '+A.mLabel(k):'The last 12 months')+(inB?' (baseline year)':', against the same months of '+fy)); figs.forEach(function(f){ T1.push('- '+f.name+': '+fmt(f.v,0)+' '+f.u+(f.ch!=null?', '+(f.ch<0?'−':'+')+fmt(Math.abs(f.ch),1)+'%':'')); }); }
   if(next.length){ T1.push(''); T1.push("What's next"); next.forEach(function(it){ T1.push('- '+it.title+': '+nxt(it)+(it.uplift&&it.uplift.overall>=0.05?' (score '+A.scoreRange(it.uplift)+' once it takes full effect, estimate)':'')); }); }
   T1.push(''); T1.push('Full report: '+reportUrl); if(vurl) T1.push('Check it is genuine: '+vurl+' (report ID '+rid+')');
-  T1.push('Self-declared under the published Yarta Method. The estimates are not a promise.');
+  T1.push('Figures checked and verified by Yarta. The score is self-declared under the published Yarta Method, not an accredited rating. The estimates are not a promise.');
   return {m:m, st:st, head:head, line:line, dM:dM, moved:moved, figs:figs, inB:inB, fy:fy, next:next, nxt:nxt, P:P, rid:rid, vurl:vurl, reportUrl:reportUrl, subject:subject, text:T1.join('\n')};
 };
 V.summary = function(q, api){
@@ -464,7 +464,7 @@ V.summary = function(q, api){
     + '<div class="sm-cols"><section><h3>What moved this month</h3>'+movedH
     + (figsH?'<h3>'+(r.n<12?'The '+esc(span(r))+' to '+esc(A.mLabel(m.month)):'The last 12 months')+(d.inB?', your baseline year':', against '+esc(d.fy))+'</h3>'+figsH:'')+'</section>'
     + '<section><h3>What’s next</h3>'+nextH+(d.P&&d.P.potential!=null&&d.P.full?'<p class="sm-pot">With every step in the plan done, the score could reach up to <b>'+d.P.potential+'</b> by '+esc(A.mLabel(d.P.full))+'. An estimate, not a promise.</p>':'')+'</section></div>'
-    + '<footer class="sm-f"><span>Report ID <b class="mono">'+esc(d.rid)+'</b>'+(d.vurl?' · check it at <span class="nw">'+esc(d.vurl.replace(/^https?:\/\//,'').replace(/\?.*$/,''))+'</span>':'')+'</span><span>Self-declared under the published Yarta Method · <a href="#/report/'+m.month+'">Full report</a></span></footer>'
+    + '<footer class="sm-f"><span>Report ID <b class="mono">'+esc(d.rid)+'</b>'+(d.vurl?' · check it at <span class="nw">'+esc(d.vurl.replace(/^https?:\/\//,'').replace(/\?.*$/,''))+'</span>':'')+'</span><span>Figures verified by Yarta · score self-declared under the published Yarta Method, not an accredited rating · <a href="#/report/'+m.month+'">Full report</a></span></footer>'
     + '</article>';
   return A.shell('summary', head+A.banner(o)+acts+card);
 };
