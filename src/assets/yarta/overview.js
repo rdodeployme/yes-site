@@ -591,13 +591,19 @@ V.category = function(cat, q, api){
     tiles=tile('Electric share', m.fleet_ev_pct==null?'—':fmt(m.fleet_ev_pct,1)+'%','', 'Your target '+fmt(T.target_fleet_ev,0)+'%'+(BM.fleet?' · industry '+fmt(BM.fleet.v,0)+'%':''))
       + tile('Fuel', fmt(r.fuel_l/1000,0),'kL', vs(sc('fuel_l'),true))
       + tile('Vehicles', fmt(m.fleet_n,0),'', fmt(pos(vv.veh_bev)+pos(vv.trucks_electric),0)+' battery electric · '+fmt(pos(vv.veh_phev),0)+' plug-in hybrid')
-      + tile('Fuel per 100 km', m.fleet_eff==null?'—':fmt(m.fleet_eff,1),'L', 'Across the fleet, '+A.mLabel(month));
+      + (r.freight_int!=null
+          ? tile('Per tonne-km', fmt(r.freight_int,0),'g CO₂-e', 'Fuel emissions ÷ '+compact(r.freight_tkm)+' tonne-km over '+span(r)+(m.fleet_eff==null?'':' · '+fmt(m.fleet_eff,1)+' L/100 km'))
+          : tile('Fuel per 100 km', m.fleet_eff==null?'—':fmt(m.fleet_eff,1),'L', 'Across the fleet, '+A.mLabel(month)));
     var fl=[['Battery electric',pos(vv.veh_bev)+pos(vv.trucks_electric),C.good],['Plug-in hybrid',pos(vv.veh_phev),C.s3],['Hybrid',pos(vv.veh_hybrid),'#A7ACAF'],['Petrol',pos(vv.veh_petrol),'#7C8184'],['Diesel',pos(vv.veh_diesel)+pos(vv.trucks_diesel),C.rest]].filter(function(x){ return x[1]>0; }), fn=sum(fl,function(x){ return x[1]; })||1;
     var hasBio=sum(w,function(x){ return (x.values||{}).biodiesel_l; })>0;
     main=chartPanel('Fuel by month','Kilolitres bought, from fuel cards and invoices. Hover a column for the split by fuel.', columns(w.map(function(x){ var v2=x.values||{}, d=pos(v2.diesel_l), pe=pos(v2.petrol_l), lp=pos(v2.lpg_l), bi=pos(v2.biodiesel_l);
         return {label:ml(x), parts:[(d+pe+lp)/1000, bi/1000], tip:A.mLabel(x.month)+' · diesel '+sig(d/1000)+' kL · petrol '+sig(pe/1000)+' kL'+(lp?' · LPG '+sig(lp/1000)+' kL':'')+(bi?' · biodiesel '+sig(bi/1000)+' kL':'')}; }),{names:['Diesel, petrol and LPG','Biodiesel'],colors:[C.rest,C.good],unit:'kL',label:'Fuel by month, kL',w:880,h:230,labelEvery:1}), [['Diesel, petrol and LPG',C.rest]].concat(hasBio?[['Biodiesel and renewable diesel',C.good]]:[]))
       + '<section class="panel"><h2 class="sec-t">The fleet, '+A.mLabel(month)+'</h2><p class="sec-s">'+fmt(m.fleet_n,0)+' vehicles. Plug-in hybrids count as half electric.</p><div class="ov-comp">'+fl.map(function(x){ return '<i style="width:'+(x[1]/fn*100)+'%;background:'+x[2]+'" data-tip="'+esc(x[0]+': '+fmt(x[1],0))+'"></i>'; }).join('')+'</div><div class="ov-key">'+fl.map(function(x){ return '<span><i style="background:'+x[2]+'"></i>'+esc(x[0])+' · '+fmt(x[1],0)+'</span>'; }).join('')+'</div>'
       + '<div style="margin-top:20px">'+bullet(m.fleet_ev_pct, num(T.target_fleet_ev)||null, BM.fleet, {what:'Fleet electrification',tName:'Your target'})+'</div>'+(BM.fleet?'<p class="ov-fine">Industry: '+esc(BM.fleet.label)+'.'+(BM.fleet.note?' '+esc(BM.fleet.note):'')+'</p>':'')+'</section>';
+    var fw=w.filter(function(x){ return x.freight_int!=null; });
+    if(fw.length) main += chartPanel('Emissions per tonne-km by month','Fuel burned plus its upstream emissions, divided by the tonnes carried times the kilometres they travelled. Lower is better: more freight for the same fuel.',
+      columns(w.map(function(x){ return {label:ml(x), parts:[x.freight_int==null?0:x.freight_int], tip:A.mLabel(x.month)+(x.freight_int==null?' · tonne-km not reported':' · '+fmt(x.freight_int,0)+' g CO₂-e per tonne-km · '+compact(x.freight_tkm)+' tonne-km')}; }),{names:['g CO₂-e per tonne-km'],colors:[C.rest],unit:'g',label:'Emissions per tonne-km by month, grams CO₂-e',w:880,h:200,labelEvery:1}),
+      [['g CO₂-e per tonne-km',C.rest]], fw.length<w.length?'Months without tonne-km show empty':null);
     void ev;
   } else if(cat==='carbon'){ var st=onTrack(S,i,T);
     tiles=tile('Total', fmt(r.total_t,0),'t CO₂-e', vs(sc('total_t'),true))
@@ -678,7 +684,7 @@ function figuresTable(S,i,cat){
   var Rw=S.months[i].r12||{}, Wn=S.months.slice(Math.max(0,i-11),i+1);
   var SHARE={renew_pct:1,diversion_pct:1,recovery_pct:1,reuse_pct:1,alt_water_pct:1,proc_recycled_pct:1};
   function calc12(f){ if(SHARE[f.id]) return Rw[f.id]; if(/_per_/.test(f.id)) return Wn.reduce(function(a,x){ return a+(isFinite(x[f.id])?x[f.id]:0); },0);
-    if(f.id==='fleet_ev_pct') return S.months[i][f.id]; if(f.id==='fleet_eff'){ var km=Wn.reduce(function(a,x){ var v=+((x.raw||{}).fleet_km); return a+(isFinite(v)?v:0); },0); return km>0?Rw.fuel_l/km*100:null; } return null; }
+    if(f.id==='fleet_ev_pct') return S.months[i][f.id]; if(f.id==='freight_int') return Rw.freight_int; if(f.id==='fleet_eff'){ var km=Wn.reduce(function(a,x){ var v=+((x.raw||{}).fleet_km); return a+(isFinite(v)?v:0); },0); return km>0?Rw.fuel_l/km*100:null; } return null; }
   D.FIELDS.filter(function(f){ return f.cat===cat && f.type==='calc'; }).forEach(function(f){
     var mv=S.months[i][f.id]; if(mv==null || !isFinite(mv)) return; var yv=calc12(f);
     calc.push('<tr><td>'+esc(f.name)+'<div class="fs">'+esc(f.calc||'')+'</div></td><td class="num" data-l="'+esc(M)+'">'+sig(mv)+'<span class="pu"> '+esc(f.unit||'')+'</span></td><td class="num" data-l="'+esc(N)+'">'+(yv==null||!isFinite(yv)?'<span class="muted">—</span>':sig(yv)+'<span class="pu"> '+esc(f.unit||'')+'</span>')+'</td><td class="un">'+esc(f.unit||'')+'</td></tr>');

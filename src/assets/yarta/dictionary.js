@@ -92,6 +92,7 @@ window.YESD = window.YESD || {};
     F("veh_retired","Vehicles retired","fleet","vehicles","Q",false,"count","Fleet register","Vehicles retired from the fleet in the quarter."),
     F("veh_cleaner","Cleaner replacements introduced","fleet","vehicles","Q",false,"count","Fleet register","Replacement vehicles that are electric, plug-in hybrid or hybrid."),
     C("fleet_eff","Fleet fuel efficiency","fleet","L/100 km","(diesel + petrol + LPG + biodiesel) ÷ fleet km × 100","Litres of fuel per 100 km across the fleet."),
+    C("freight_int","Freight emissions intensity","fleet","g CO₂-e/tonne-km","(fuel emissions, Scope 1 + upstream) × 1,000,000 ÷ tonne-km moved","Grams of emissions for each tonne of freight carried one kilometre. Shown when tonne-km is reported.",{sectors:["logistics"]}),
     C("fleet_ev_pct","Fleet electrification","fleet","%","(battery electric vehicles + electric trucks + ½ × plug-in hybrids) ÷ all vehicles × 100","Share of the fleet that is electric."),
 
     // ---- Energy & Renewables -------------------------------------------------------

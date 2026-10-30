@@ -73,6 +73,8 @@ window.YESE = window.YESE || {};
     o.scope3_upstream = (num(v.diesel_l)*F.diesel.gj*F.diesel.s3 + num(v.petrol_l)*F.petrol.gj*F.petrol.s3 + num(v.lpg_l)*F.lpg.gj*F.lpg.s3)/1e6
                       + num(v.gas_gj)*(E.FACTORS.gas.s3[st]||4)/1000 + num(v.grid_kwh)*el.s3/1000;
     o.scope3_t = o.scope3_waste + o.scope3_upstream;
+    // fuel bought for vehicles and plant, burned plus upstream: the numerator for freight intensity
+    o.fleet_fuel_t = fuelS1 + (num(v.diesel_l)*F.diesel.gj*F.diesel.s3 + num(v.petrol_l)*F.petrol.gj*F.petrol.s3 + num(v.lpg_l)*F.lpg.gj*F.lpg.s3)/1e6;
     o.total_t = o.scope1_t + o.scope2_t + o.scope3_t;
     o.flights = num(v.flights_dom) + num(v.flights_int);
     // waste
@@ -102,6 +104,8 @@ window.YESE = window.YESE || {};
     o.fleet_ev_pct = fleet>0 ? (bev+etr+0.5*phev)/fleet*100 : null;
     o.fuel_l = num(v.diesel_l)+num(v.petrol_l)+num(v.lpg_l)+num(v.biodiesel_l);
     o.fleet_eff = num(v.fleet_km)>0 ? o.fuel_l/num(v.fleet_km)*100 : null;
+    o.freight_tkm = num(v.freight_tkm);
+    o.freight_int = o.freight_tkm>0 ? o.fleet_fuel_t*1e6/o.freight_tkm : null;   // g CO₂-e per tonne-km
     // water
     var alt = num(v.recycled_kl)+num(v.rain_kl)+num(v.storm_kl)+num(v.waste_water_kl);
     var allW = num(v.potable_kl)+alt+num(v.ground_kl);
@@ -233,6 +237,10 @@ window.YESE = window.YESE || {};
       R.reuse_pct = R.waste_total_t>0 ? R.furniture_t/R.waste_total_t*100 : null;
       R.alt_water_pct = R.all_kl>0 ? R.alt_kl/R.all_kl*100 : null;
       R.proc_recycled_pct = R.proc_total>0 ? R.proc_recycled/R.proc_total*100 : null;
+      // freight intensity over the window: only months that report tonne-km count on both sides
+      R.freight_tkm = w.reduce(function(s,x){return s+num(x.raw.freight_tkm);},0);
+      R.freight_fuel_t = w.reduce(function(s,x){return s+(num(x.raw.freight_tkm)>0?num(x.fleet_fuel_t):0);},0);
+      R.freight_int = R.freight_tkm>0 ? R.freight_fuel_t*1e6/R.freight_tkm : null;
       R.contam_pct = lastContam;
       R.closure_pct = R.complaints>0 ? Math.min(100,R.closed/R.complaints*100) : 100;
       R.base = {}; ["total_t","scope1_t","scope2_t","scope3_t","grid_kwh","fuel_l","potable_kl","waste_total_t","landfill_t"].forEach(function(k){ R.base[k] = baseFor(w,k); });

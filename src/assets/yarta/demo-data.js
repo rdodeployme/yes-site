@@ -302,7 +302,8 @@ window.YESDEMO = window.YESDEMO || {};
   (function(){ var f=X.ORGS.filter(function(o){ return o.id==="demo-freight"; })[0]; f.profile.sector="logistics"; f.profile.vehicles=60;
     f.gen.mix={grid_kwh:.25, gas_gj:.05, potable_kl:.08, organics_t:.02, green_t:0, paper_t:.4, glass_t:.02, concrete_t:0, rubble_t:0, soil_t:0, plaster_t:0, mattress_n:0, whitegoods_n:.02, tyres_n:0.5, batteries_kg:2.2, textiles_t:0, furniture_t:.05, landfill_t:0.08, recycling_t:0.07, participants:.1, events:.2, trees:.02, diesel_l:3.6, fleet_km:2.8, idle_hours:2.2, recycled_kl:0, storm_kl:0, rain_kl:0.5, steel_t:0.1, alu_t:0.1, timber_t:0.1, timber_treated_t:0.05, ewaste_t:0.2, env_invest:0.25, complaints:0.2};
     f.gen.omit=NOT_COUNCIL.concat(NO_NATURE, NO_LAND); f.gen.renew=[["2000-01",0]];
-    f.gen.extra=function(v,c){ v.oil_l=c.r0(2400*c.sc*c.n(.15)); v.pallets_n=c.r0(1500*c.sc*c.n(.15)); };
+    f.gen.extra=function(v,c){ v.oil_l=c.r0(2400*c.sc*c.n(.15)); v.pallets_n=c.r0(1500*c.sc*c.n(.15));
+      if(v.fleet_km) v.freight_tkm=c.r0(v.fleet_km*9.5*Math.pow(1.03,c.t)*c.n(.05)); };   // about 9.5 t average load across loaded and empty running, payloads improving slightly
   })();
   /* councils carry the sector key too */
   X.ORGS.forEach(function(o){ if(o.profile.org_type==="Council") o.profile.sector="council"; });
@@ -358,6 +359,6 @@ window.YESDEMO = window.YESDEMO || {};
       orgs[o.id] = {id:o.id, profile:JSON.parse(JSON.stringify(o.profile)), records:recs, demo:true};
     });
     Object.keys(orgs).forEach(function(id){ orgs[id].plan = {off:{}}; });
-    return {v:5, created:new Date().toISOString(), orgs:orgs, users:X.USERS.slice(), session:null, audit:[], bookings:JSON.parse(JSON.stringify(X.BOOKINGS))};
+    return {v:6, created:new Date().toISOString(), orgs:orgs, users:X.USERS.slice(), session:null, audit:[], bookings:JSON.parse(JSON.stringify(X.BOOKINGS))};
   };
 })(window.YESDEMO, window.YESD, window.YESE);

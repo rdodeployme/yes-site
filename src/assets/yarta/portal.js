@@ -42,7 +42,7 @@ function field(id){ return D.FIELD[id] || (D.PROFILE.filter(function(f){return f
 /* ------------------------------------------------------------------ store */
 function load(){
   if(LIVE) return LIVE.emptyState();
-  try{ var s=JSON.parse(localStorage.getItem(KEY)); if(s && s.v===5 && s.orgs && s.users){ s.bookings=s.bookings||[]; seedOps(s); return s; } }catch(e){}
+  try{ var s=JSON.parse(localStorage.getItem(KEY)); if(s && s.v===6 && s.orgs && s.users){ s.bookings=s.bookings||[]; seedOps(s); return s; } }catch(e){}
   var fresh = X.build(); seedOps(fresh); persist(fresh); return fresh;
 }
 function persist(s){
@@ -392,6 +392,7 @@ function calcPanel(o,r,k){
     + ln('Renewable electricity',pct(m.renew_pct,1))
     + ln('Fleet electrification',pct(m.fleet_ev_pct,1))
     + ln('Fuel efficiency',m.fleet_eff==null?'—':fmt(m.fleet_eff,1)+' L/100 km')
+    + (m.freight_int==null?'':ln('Freight intensity',fmt(m.freight_int,0)+' g CO₂-e per tonne-km'))
     + ln('Landfill diversion',pct(m.diversion_pct,1))
     + ln('Resource recovery',pct(m.recovery_pct,1))
     + ln('Alternative water',pct(m.alt_water_pct,1))
@@ -555,6 +556,7 @@ function reportSheets(o,S,k){
     + '<div class="rp-h">Key figures</div><div class="rp-tw"><table class="tbl compact rp-kf nowrap-first"><thead><tr><th>Figure</th><th>Unit</th><th class="r">'+mShort(k)+'</th><th class="r">'+esc(L12)+'</th><th class="r">vs baseline</th><th>Note</th></tr></thead><tbody>'
     + kf('Fuel purchased','L',fmt(m.fuel_l),fmt(R12.fuel_l),chgP(R12.fuel_l,R12.base.fuel_l),'This month: diesel '+fmt(v.diesel_l)+' L, petrol '+fmt(v.petrol_l)+' L')
     + kf('Fleet kilometres','km',fmt(v.fleet_km),fmt(win('fleet_km')),'',m.fleet_eff==null?'':fmt(m.fleet_eff,1)+' L/100 km this month')
+    + (R12.freight_int==null?'':kf('Freight moved','tonne-km',fmt(v.freight_tkm),fmt(R12.freight_tkm),'',(m.freight_int==null?'':fmt(m.freight_int,0)+' g CO₂-e per tonne-km this month · ')+fmt(R12.freight_int,0)+' over the period'))
     + kf('Fleet electrification','%',pct(m.fleet_ev_pct,1),'','',fmt(m.fleet_n)+' vehicles; plug-in hybrids count as half')
     + kf('Flights','trips',fmt(m.flights),fmt(win('flights_dom')+win('flights_int')),'','Recorded; emissions factor pending')
     + kf('Grid electricity','kWh',fmt(v.grid_kwh),fmt(R12.grid_kwh),chgP(R12.grid_kwh,R12.base.grid_kwh),'')
