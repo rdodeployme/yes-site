@@ -240,6 +240,10 @@ window.YESD = window.YESD || {};
   D.applies = function(f, sector){ var sc=D.scopeFor(sector); if(f.sectors && f.sectors.indexOf(sector)<0) return false; if(sc[f.cat]==="off") return false; return true; };
   // the field as this industry sees it (required only where the category is core)
   D.forSector = function(f, sector){ var sc=D.scopeFor(sector); if(!f.req || (sc[f.cat]==="core" && !(f.optFor && f.optFor.indexOf(sector)>=0))) return f; var g={}; for(var k in f) g[k]=f[k]; g.req=false; g.softReq=true; return g; };
+  // small organisations (up to 30 staff, not councils): three figures are required each month; everything else is optional
+  D.SMALL_REQ = {grid_kwh:1, waste_total_t:1, landfill_t:1};
+  D.isSmall = function(p){ return !!p && p.org_type!=="Council" && (p.size==="small" || (+p.employees>0 && +p.employees<=30)); };
+  D.forOrg = function(f, p){ var g=D.forSector(f, (p&&p.sector)||"business"); if(!D.isSmall(p) || !g.req || D.SMALL_REQ[g.id]) return g; var h={}; for(var k in g) h[k]=g[k]; h.req=false; h.softReq=true; return h; };
   // the categories an industry is asked about, in the usual order (carbon is calculated, never entered)
   D.catsFor = function(sector){ var sc=D.scopeFor(sector); return D.CATEGORIES.filter(function(c){ return c.k!=="carbon" && sc[c.k]!=="off"; }); };
   // Which frequencies are due in a given month (0 = Jan … 11 = Dec). Financial year ends in June.

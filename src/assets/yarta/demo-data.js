@@ -290,6 +290,15 @@ window.YESDEMO = window.YESDEMO || {};
           draftFields:[]}}
   );
   /* the freight operator gets its sector shape too */
+  X.ORGS.push(
+    {id:"demo-small", profile:{org_name:"Demo Design Studio", org_type:"Business", sector:"business", state:"VIC", residents:0, employees:14, floor_area:420, facilities:1, sites:1, baseline_fy:"2025–26",
+      target_emissions:30, target_renewable:100, target_diversion:70, target_fleet_ev:0, target_trees:0, target_rehab_ha:0, target_participants:0, target_native_ha:0},
+     gen:{renew:[["2000-01",0]], seed:20250718, scale:0.02, start:"2025-07", end:"2026-08", verifiedTo:"2026-07", draft:false, contact:"Mia Chen", fuelDecline:0, petrolDecline:0, elecDecline:.04, gasDecline:0, waterDecline:.02,
+          fleet:fleet1({vd:0,vp:0,vh:0,vphev:0,vbev:0,td:0,te:0,plant:0,evp:0,evs:0,solar:0,solarSites:0,batt:0,stew:0}),
+          mix:{diesel_l:0, petrol_l:0, lpg_l:0, biodiesel_l:0, fleet_km:0, flights_dom:2, idle_hours:0, grid_kwh:0.25, gas_gj:0, peak_kw:.3, potable_kl:.05, recycled_kl:0, rain_kl:0, storm_kl:0,
+               landfill_t:0.011, recycling_t:0.0065, organics_t:0, green_t:0, food_t:0.3, paper_t:0.25, glass_t:0.003, steel_t:0, alu_t:.02, timber_t:0, timber_treated_t:0, mattress_n:0, tyres_n:0, ewaste_t:0.05, whitegoods_n:0, batteries_kg:.1, textiles_t:0, furniture_t:0,
+               participants:0, events:0, complaints:0, env_invest:.1, proc_total:.3, proc_recycled:.5},
+          omit:NOT_COUNCIL.concat(NO_NATURE, NO_LAND, NO_CD, ["events", "participants"], ["diesel_l", "petrol_l", "lpg_l", "biodiesel_l", "other_fuel", "fleet_km", "veh_diesel", "veh_petrol", "veh_hybrid", "veh_phev", "veh_bev", "trucks_diesel", "trucks_electric", "plant_count", "plant_fuel", "flights_dom", "flights_int", "rideshare_spend", "hotel_nights", "commute_car_pct", "freight_tkm", "ev_public_points", "ev_public_kwh", "ev_staff_points", "ev_staff_kwh", "idle_hours", "veh_retired", "veh_cleaner"]), draftFields:[]}});   // no vehicles: fleet is not reported
   (function(){ var f=X.ORGS.filter(function(o){ return o.id==="demo-freight"; })[0]; f.profile.sector="logistics"; f.profile.vehicles=60;
     f.gen.mix={grid_kwh:.25, gas_gj:.05, potable_kl:.08, organics_t:.02, green_t:0, paper_t:.4, glass_t:.02, concrete_t:0, rubble_t:0, soil_t:0, plaster_t:0, mattress_n:0, whitegoods_n:.02, tyres_n:0.5, batteries_kg:2.2, textiles_t:0, furniture_t:.05, landfill_t:0.08, recycling_t:0.07, participants:.1, events:.2, trees:.02, diesel_l:3.6, fleet_km:2.8, idle_hours:2.2, recycled_kl:0, storm_kl:0, rain_kl:0.5, steel_t:0.1, alu_t:0.1, timber_t:0.1, timber_treated_t:0.05, ewaste_t:0.2, env_invest:0.25, complaints:0.2};
     f.gen.omit=NOT_COUNCIL.concat(NO_NATURE, NO_LAND); f.gen.renew=[["2000-01",0]];
@@ -303,6 +312,7 @@ window.YESDEMO = window.YESDEMO || {};
            "demo-coastal":{boundary:"Operational control", scope2_contract:"Accredited GreenPower or certified renewable contract"},
            "demo-freight":{boundary:"Operational control", scope2_contract:"None on file", revenue_m:38, gross_assets_m:22},
            "demo-office":{boundary:"Operational control", scope2_contract:"Accredited GreenPower or certified renewable contract", revenue_m:95, gross_assets_m:40},
+           "demo-small":{boundary:"Operational control", scope2_contract:"None on file", revenue_m:3, gross_assets_m:1},
            "demo-hospital":{boundary:"Operational control", scope2_contract:"Power purchase agreement", revenue_m:620, gross_assets_m:480},
            "demo-uni":{boundary:"Operational control", scope2_contract:"Power purchase agreement"},
            "demo-maker":{boundary:"Operational control", scope2_contract:"None on file", revenue_m:120, gross_assets_m:70},
@@ -320,6 +330,7 @@ window.YESDEMO = window.YESDEMO || {};
     {id:"u-tom", name:"Tom Whitaker", title:"Campus Sustainability Manager", email:"tom.whitaker@demo-uni.example", role:"customer", org:"demo-uni"},
     {id:"u-marco", name:"Marco Bellini", title:"Operations Manager", email:"marco.bellini@demo-metalworks.example", role:"customer", org:"demo-maker"},
     {id:"u-kate", name:"Kate Lindqvist", title:"HSEQ Manager", email:"kate.lindqvist@demo-build.example", role:"customer", org:"demo-builder"},
+    {id:"u-mia", name:"Mia Chen", title:"Studio manager (small business)", email:"mia.chen@demo-studio.example", role:"customer", org:"demo-small"},
     {id:"u-hannah", name:"Hannah Park", title:"Sustainability Lead", email:"hannah.park@demo-grocers.example", role:"customer", org:"demo-retail"},
     {id:"u-entry", name:"Morgan Lee", title:"Analyst · checks customer months, keys any sent as documents", email:"morgan.lee@yes.example", role:"operator", org:null, home:"#/ops/entry"},
     {id:"u-verify", name:"Chris Walker", title:"Verification lead · checks and verifies", email:"chris.walker@yes.example", role:"operator", org:null, home:"#/ops"}

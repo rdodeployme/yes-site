@@ -575,3 +575,4 @@ a.ov-src-r:hover{background:var(--silver-0)}
 .cx-scale-stage.mounted .cx-scale-fallback{display:none}
 .cx-scale-basis{margin:12px 0 0;font-size:13px;line-height:1.55;color:var(--silver-4);max-width:90ch}
 @media print{.cx-scale{display:none}}
+.sm-why{margin:0;padding:12px 28px;background:#2A2018;color:#E4D9CE;font-size:13.5px;line-height:1.45;border-top:1px solid rgba(255,255,255,.08)}

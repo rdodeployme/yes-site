@@ -103,7 +103,7 @@ function result(a, s, saved){
   var todo=rows().filter(function(r){ var v=a.records[r.k]; return v==='patchy'||v==='no'||v==='unsure'; }).sort(function(x,y){ return y.w-x.w; });
   var na=rows().filter(function(r){ return a.records[r.k]==='na'; });
   var climate=a.drivers.indexOf('climate')>=0 || ['1','2','3','unsure'].indexOf(a.group)>=0;
-  var sample=['council','business','health','education','manufacturing','construction','retail','logistics'].indexOf(a.sector)>=0 ? '?sector='+a.sector : '';
+  var smap={government:'business',other:'business'}, ss=smap[a.sector]||a.sector, sample=['council','business','health','education','manufacturing','construction','retail','logistics'].indexOf(ss)>=0 ? '?sector='+ss : '';   // agencies and anything else use the business and offices question set
   var li=function(r,ok){ return '<li><span class="i '+(ok?'ok':'todo')+'" aria-hidden="true">'+(ok?'✓':'→')+'</span><span>'+esc(r.name)+(ok?'':'<small>'+esc(r.todo)+'</small>')+'</span></li>'; };
   return '<div class="rc-res-head"><div class="rc-ring" style="--p:'+(s.pct||0)+'"><div><span><b>'+(s.pct==null?'—':s.pct+'%')+'</b><small>records ready</small></span></div></div>'
     + '<div><p class="eyebrow">Your result</p><p class="rc-org">'+esc(a.org_name)+'</p><h2>'+esc(b.name)+'</h2><p>'+esc(b.say)+'</p></div></div>'

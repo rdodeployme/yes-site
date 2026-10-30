@@ -423,6 +423,9 @@ V.summaryData = function(S, i, o, api){
       .filter(function(x){ return x.now!=null && x.was!=null && Math.abs(x.now-x.was)>=0.5; })
       .sort(function(a,b){ return Math.abs(b.now-b.was)-Math.abs(a.now-a.was); }).slice(0,4) : [];
   var inB=inBaseYear(S,i);
+  // why the score sits where it does: it covers every reported category, not emissions alone, so name the two lowest
+  var rep=D.CATEGORIES.map(function(c){ return {name:c.short, v:m.scores[c.k]}; }).filter(function(x){ return x.v!=null; }).sort(function(a,b){ return a.v-b.v; });
+  var why = rep.length>1 ? 'The score measures all '+rep.length+' categories you report against the eco standards, not emissions alone. Lowest now: '+rep[0].name+' '+Math.round(rep[0].v)+' and '+rep[1].name+' '+Math.round(rep[1].v)+'.' : '';
   var figs = [['Emissions','total_t','t CO₂-e'],['Grid electricity','grid_kwh','kWh'],['Fuel','fuel_l','L'],['Potable water','potable_kl','kL'],['Waste to landfill','landfill_t','t']]
     .map(function(x){ var v=r[x[1]], b=r.base[x[1]]; if(!(v>0)) return null; var bu=bigUnit(v,x[2]); return {name:x[0], v:bu[0], u:bu[1], ch:(!inB && b>0)?pctChg(v,b):null}; }).filter(Boolean);
   var P=A.planFor(o,S,i);
@@ -434,13 +437,13 @@ V.summaryData = function(S, i, o, api){
   var T1=[];
   T1.push(p.org_name+' · environmental summary, '+A.mLabel(k)+(m.status!=='verified'?' (provisional)':''));
   T1.push(''); T1.push(head+'.'+(line?' '+line:''));
-  T1.push(''); T1.push('Yindyamarra Environmental Score: '+m.score+' ('+m.band+')'+(dM!=null?', '+(dM===0?'unchanged on':(dM>0?'up ':'down ')+Math.abs(dM)+' on')+' last month':'')+(m.yoy!=null?', '+(m.yoy>=0?'up ':'down ')+Math.round(Math.abs(m.yoy))+' on a year ago':'')+'.');
+  T1.push(''); T1.push('Yindyamarra Environmental Score: '+m.score+' ('+m.band+')'+(dM!=null?', '+(dM===0?'unchanged on':(dM>0?'up ':'down ')+Math.abs(dM)+' on')+' last month':'')+(m.yoy!=null?', '+(m.yoy>=0?'up ':'down ')+Math.round(Math.abs(m.yoy))+' on a year ago':'')+'.'+(why?' '+why:''));
   if(moved.length){ T1.push(''); T1.push('What moved this month'); moved.forEach(function(x){ T1.push('- '+x.name+': '+Math.round(x.was)+' to '+Math.round(x.now)); }); }
   if(figs.length){ T1.push(''); T1.push((r.n<12?'The '+span(r)+' to '+A.mLabel(k):'The last 12 months')+(inB?' (baseline year)':', against the same months of '+fy)); figs.forEach(function(f){ T1.push('- '+f.name+': '+fmt(f.v,0)+' '+f.u+(f.ch!=null?', '+(f.ch<0?'−':'+')+fmt(Math.abs(f.ch),1)+'%':'')); }); }
   if(next.length){ T1.push(''); T1.push("What's next"); next.forEach(function(it){ T1.push('- '+it.title+': '+nxt(it)+(it.uplift&&it.uplift.overall>=0.05?' (score '+A.scoreRange(it.uplift)+' once it takes full effect, estimate)':'')); }); }
   T1.push(''); T1.push('Full report: '+reportUrl); if(vurl) T1.push('Check it is genuine: '+vurl+' (report ID '+rid+')');
   T1.push('Figures checked and verified by Yarta. The score is self-declared under the published Yarta Method, not an accredited rating. The estimates are not a promise.');
-  return {m:m, st:st, head:head, line:line, dM:dM, moved:moved, figs:figs, inB:inB, fy:fy, next:next, nxt:nxt, P:P, rid:rid, vurl:vurl, reportUrl:reportUrl, subject:subject, text:T1.join('\n')};
+  return {m:m, st:st, head:head, line:line, why:why, dM:dM, moved:moved, figs:figs, inB:inB, fy:fy, next:next, nxt:nxt, P:P, rid:rid, vurl:vurl, reportUrl:reportUrl, subject:subject, text:T1.join('\n')};
 };
 V.summary = function(q, api){
   A=api; E=api.E; D=api.D; R=api.R; tip();
@@ -460,7 +463,7 @@ V.summary = function(q, api){
   var nextH = d.next.length ? '<ol class="sm-next">'+d.next.map(function(it){ return '<li><b>'+esc(it.title)+'</b><span>'+esc(cap(d.nxt(it)))+(it.uplift&&it.uplift.overall>=0.05?' · score '+esc(A.scoreRange(it.uplift))+' at full effect, '+esc(A.mLabel(it.full)):'')+'</span></li>'; }).join('')+'</ol>' : '<p class="sm-none">Nothing is planned yet. Your roadmap lists what would help most.</p>';
   var card='<article class="sm st-'+stCls+'">'
     + '<header class="sm-h"><div><p class="sm-k">'+esc(p.org_name)+' · '+esc(A.mLabel(m.month))+(m.status!=='verified'?' · provisional':'')+'</p><h2>'+esc(d.head)+'</h2>'+(d.line?'<p class="sm-line">'+esc(d.line)+'</p>':'')+'</div>'
-    + '<div class="sm-score">'+A.ring(m.score,124)+'<div><b>'+esc(m.band)+'</b><span>'+(d.dM!=null?(d.dM===0?'Same as last month':A.delta(d.dM)+' on last month'):'')+'</span><span>'+(m.yoy!=null?A.delta(m.yoy)+' on a year ago':'')+'</span></div></div></header>'
+    + '<div class="sm-score">'+A.ring(m.score,124)+'<div><b>'+esc(m.band)+'</b><span>'+(d.dM!=null?(d.dM===0?'Same as last month':A.delta(d.dM)+' on last month'):'')+'</span><span>'+(m.yoy!=null?A.delta(m.yoy)+' on a year ago':'')+'</span></div></div></header>'+(d.why?'<p class="sm-why">'+esc(d.why)+'</p>':'')
     + '<div class="sm-cols"><section><h3>What moved this month</h3>'+movedH
     + (figsH?'<h3>'+(r.n<12?'The '+esc(span(r))+' to '+esc(A.mLabel(m.month)):'The last 12 months')+(d.inB?', your baseline year':', against '+esc(d.fy))+'</h3>'+figsH:'')+'</section>'
     + '<section><h3>What’s next</h3>'+nextH+(d.P&&d.P.potential!=null&&d.P.full?'<p class="sm-pot">With every step in the plan done, the score could reach up to <b>'+d.P.potential+'</b> by '+esc(A.mLabel(d.P.full))+'. An estimate, not a promise.</p>':'')+'</section></div>'
