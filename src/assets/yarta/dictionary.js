@@ -96,7 +96,7 @@ window.YESD = window.YESD || {};
     C("fleet_ev_pct","Fleet electrification","fleet","%","(battery electric vehicles + electric trucks + ½ × plug-in hybrids) ÷ all vehicles × 100","Share of the fleet that is electric."),
 
     // ---- Energy & Renewables -------------------------------------------------------
-    F("grid_kwh","Grid electricity consumed","energy","kWh","M",true,"number","Electricity retailer bills or NMI interval data","All grid electricity consumed across buildings, facilities and streetlighting.",{score:["energy","carbon"]}),
+    F("grid_kwh","Grid electricity consumed","energy","kWh","M",true,"number","Electricity retailer bills or NMI interval data","All grid electricity consumed across your buildings and facilities. Councils include streetlighting.",{score:["energy","carbon"]}),
     F("renew_kwh","Renewable electricity purchased","energy","kWh","M",false,"number","GreenPower or power purchase agreement statements","Grid electricity matched by accredited renewable purchases."),
     F("solar_gen_kwh","Onsite solar generation","energy","kWh","M",false,"number","Inverter monitoring","Total solar generated on the organisation's buildings."),
     F("solar_use_kwh","Solar consumed onsite","energy","kWh","M",false,"number","Inverter monitoring","Solar generation used onsite (generation less export)."),
