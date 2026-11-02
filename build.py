@@ -256,7 +256,7 @@ def build():
     urls = [u for u in urls if not u.startswith("/recycling-")]
     today = datetime.date.today().isoformat()
     open(os.path.join(DIST, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"  <url><loc>{DOMAIN}{u}</loc><lastmod>{today}</lastmod></url>\n" for u in dict.fromkeys(urls)) + '</urlset>\n')
-    open(os.path.join(DIST, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /tool/\nDisallow: /sales/\nSitemap: {DOMAIN}/sitemap.xml\n")
+    open(os.path.join(DIST, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /tool/\nDisallow: /sales/\nDisallow: /assets/internal/\nSitemap: {DOMAIN}/sitemap.xml\n")
     open(os.path.join(DIST, ".nojekyll"), "w").write("")
     print("built", len(built), "pages:", ", ".join(built), "| form:", FORM_MODE, "| base:", BASE_PATH or "/")
 
