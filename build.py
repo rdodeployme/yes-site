@@ -25,16 +25,16 @@ DOMAIN = "https://yes.com.au"
 PAGES = [
     # path, nav label (None = not in nav), fragment file, <title>, meta description
     ("/",                 None,           "index.html",        "Yarta — Measure. Understand. Report. Improve.",       "Yarta is an environmental sustainability report and live dashboard for councils and businesses: one score, the verified figures behind it, and a roadmap to improvement."),
-    ("/how-it-works/",    "How it works", "how-it-works.html", "How Yarta works — from your data to a headline number",     "Send the records you already hold. Yarta enters them, grades the evidence, moves your dashboard and issues your report with a roadmap to improvement."),
+    ("/how-it-works/",    "How it works", "how-it-works.html", "How Yarta works — from your data to a headline number",     "Enter the figures you already hold. A Yarta analyst checks them, grades the evidence, updates your dashboard and issues your report with a roadmap to improvement."),
     ("/yes-report/",      "The Yarta Report","yes-report.html",  "The Yarta Report — the report, the dashboard and the data",     "The Yarta Report is two layers: a report for each project or period and a live environmental dashboard, backed by Yarta Data, Yarta Carbon, Yarta Circularity and Yarta Benchmark."),
     ("/demo/",            "Live demo",    "demo.html",         "Live demo — the Yarta dashboard, by sector",           "The Yarta environmental sustainability dashboard on demo data: pick a sector, see the score, the categories, the figures and the roadmap to improvement."),
     ("/portal/",          None,           "portal.html",       "Yarta client portal (prototype)",                      "Yarta client portal prototype: sign in to send documents, see verified months, targets, sites and reports. Demo data only."),
     ("/tool/",            None,           "tool.html",         "Yarta team · operations tool (prototype)",             "Yarta team operations tool prototype: documents in, figures entered, months verified, reports issued, gap emails, providers and introductions."),
-    ("/recycling-demo/",  None,           "recycling-demo.html", "Recycling demo — Hepburn Shire hard waste program",  "The recycling dashboard for a council hard waste program on illustrative data: add a stream and watch the numbers move."),
+    ("/recycling-demo/",  None,           "recycling-demo.html", "Recycling demo — Demo Shire hard waste program",  "The recycling dashboard for a council hard waste program on illustrative data: add a stream and watch the numbers move."),
     ("/calculator/",      None,           "calculator.html",   "Recycling calculator — what your recycling achieves",    "Enter what you recycled and see the Yarta impact: tonnes recovered, steel recovered, CO₂-e avoided, landfill avoided. Every figure with its method."),
     ("/councils/",        None,           "councils.html",     "Yarta for councils — whole-of-council environmental sustainability", "One score for the kerbside service, transfer stations, depots, buildings, fleet, water, Country and community programs, with a roadmap to improvement. Switched on in 30 days."),
     ("/climate-reporting/", None,         "climate-reporting.html", "Mandatory climate reporting — is your waste number ready?", "Australia's mandatory climate reporting is live. Scope 3 is reported from each company's second year and reviewed by an auditor. Check your group and your first Scope 3 year, and get your waste number from the processor."),
-    ("/sectors/",         "Sectors",      "sectors.html",      "Sectors — what councils, hospitals, universities, manufacturers, builders, retailers and transport operators report on", "The same ten categories, shaped by sector: what each kind of organisation reports on, the eco standards that apply, and a demo and sample report for each."),
+    ("/sectors/",         "Sectors",      "sectors.html",      "Sectors — what each kind of organisation reports on", "The same ten categories, shaped by sector: what each kind of organisation reports on, the eco standards that apply, and a demo and sample report for each."),
     ("/verify/",         None,           "verify.html", "Check a Yarta report — is it genuine and unchanged?", "Every Yarta report carries an ID made from its figures. Enter it to confirm the report is genuine and unchanged since Yarta issued it."),
     ("/readiness/",      None,           "readiness.html", "Reporting Readiness Check — how ready are you to report?", "Five minutes on your organisation and the records you hold. See straight away what you have, what to sort first and what Yarta would cost."),
     ("/onboarding/",     None,           "onboarding.html", "Onboarding — switched on in 30 days", "The 30-day plan for a new Yarta customer: thirteen steps over four weeks, what you do, what Yarta does, and what you have on day 30."),
@@ -53,12 +53,12 @@ PAGES = [
     ("/about/",           "About",        "about.html",        "About Yarta — a Recycle Group initiative",                "Why Yarta exists, who runs it, and the recovery infrastructure behind the numbers."),
     ("/contact/",         None,           "contact.html",      "Talk to Yarta",                                          "Book a walkthrough or ask a question. contact@yes.com.au"),
     ("/report/",     None,           "report.html",  "Sample Yarta Report — environmental sustainability, by sector (demo)", "A sample Yarta Environmental Sustainability Report for each sector, print-ready: summary, figures and the roadmap to improvement."),
-    ("/recycling-report/", None,      "recycling-report.html", "Sample recycling report — Hepburn Shire Council (demo)", "The recycling report sample, print-ready: summary, figures and roadmap."),
+    ("/recycling-report/", None,      "recycling-report.html", "Sample recycling report — Demo Shire Council (demo)", "The recycling report sample, print-ready: summary, figures and roadmap."),
     ("/sales/",      None,           "sales.html", "How to sell Yarta — the sales guide (internal)", "Internal guide for the Yarta sales team: the pitch, who buys, the sale step by step, pricing, objections, what never to say, emails and handover."),
     ("/sales/walkthrough/", None,    "sales-walkthrough.html", "Yarta guided walkthrough (internal)", "A step-by-step guided walkthrough of the Yarta demo for the sales team."),
     ("/language/",   None,           "language.html", "Language on this site — proposed names and their status (internal)", "The First Nations words proposed for Yarta products, which language each comes from, the dictionary check and whether the custodians have confirmed it."),
 ]
-NOINDEX = {"/language/", "/tool/", "/portal/", "/not-found/", "/sales/", "/sales/walkthrough/"}   # internal pages: built and linkable, not indexed
+NOINDEX = {"/language/", "/tool/", "/portal/", "/not-found/", "/sales/", "/sales/walkthrough/", "/recycling-demo/", "/recycling-method/", "/recycling-report/"}   # internal pages: built and linkable, not indexed
 STANDALONE = [("/report/", "report.html"), ("/demo/", "demo.html"), ("/tool/", "tool.html"), ("/portal/", "portal.html"), ("/sales/walkthrough/", "sales-walkthrough.html")]   # the portal-based pages: their own document, not the site shell
 STANDALONE_FRAGS = {f for _, f in STANDALONE}
 REDIRECTS = {"/yarta/": "/report/", "/certificate/": "/recycling-report/"}   # old paths that keep working
@@ -256,7 +256,7 @@ def build():
     urls = [u for u in urls if not u.startswith("/recycling-")]
     today = datetime.date.today().isoformat()
     open(os.path.join(DIST, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"  <url><loc>{DOMAIN}{u}</loc><lastmod>{today}</lastmod></url>\n" for u in dict.fromkeys(urls)) + '</urlset>\n')
-    open(os.path.join(DIST, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /tool/\nDisallow: /sales/\nDisallow: /assets/internal/\nSitemap: {DOMAIN}/sitemap.xml\n")
+    open(os.path.join(DIST, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /tool/\nDisallow: /sales/\nSitemap: {DOMAIN}/sitemap.xml\n")
     open(os.path.join(DIST, ".nojekyll"), "w").write("")
     print("built", len(built), "pages:", ", ".join(built), "| form:", FORM_MODE, "| base:", BASE_PATH or "/")
 

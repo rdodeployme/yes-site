@@ -369,7 +369,7 @@
   }
   var timer=null;
   if(form){
-    form.addEventListener('input',function(){ clearTimeout(timer); timer=setTimeout(update,120); });
+    form.addEventListener('input',function(e){ var t=e.target; if(t&&t.type==='number'){ if(+t.value<0) t.value=0; if(+t.value>1000000) t.value=1000000; } clearTimeout(timer); timer=setTimeout(update,120); });
     form.addEventListener('change',function(){ clearTimeout(timer); timer=setTimeout(update,120); });
   }
   var clr=$('c-clear');

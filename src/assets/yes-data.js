@@ -298,9 +298,9 @@ window.YES = window.YES || {};
   ];
 
   B.DEMO = {
-    customer:"Hepburn Shire Council", program:"Hard waste program · FY2026–27 to date", badge:"DEMO DATA · ILLUSTRATIVE", km:120, sector:"council", now:"2026-09",
+    customer:"Demo Shire Council", program:"Hard waste program · FY2026–27 to date", badge:"DEMO DATA · ILLUSTRATIVE", km:120, sector:"council", now:"2026-09",
     bookings:[
-      {id:"bk-demo-1", svc:"hardwaste", status:"confirmed", slot:"2026-10-14T09:00", mode:"On site", location:"Hepburn Shire depot, Creswick", contact:"Council waste officer (demo)", email:"waste@hepburn.example", notes:"Plan the next hard waste sweep as booked collections.", share:true, demo:true}
+      {id:"bk-demo-1", svc:"hardwaste", status:"confirmed", slot:"2026-10-14T09:00", mode:"On site", location:"Demo Shire depot", contact:"Council waste officer (demo)", email:"waste@demo-shire.example", notes:"Plan the next hard waste sweep as booked collections.", share:true, demo:true}
     ],
     entries:[
       {k:"mattresses", qty:1000, ev:0.8}, {k:"steel", qty:40}, {k:"aluminium", qty:3.2}, {k:"timber_plain", qty:60}, {k:"timber_coloured", qty:25},
@@ -308,6 +308,6 @@ window.YES = window.YES || {};
       {k:"vehicles", qty:40, ev:0.8}, {k:"greenwaste", qty:220}, {k:"general", qty:180, ev:0.8}
     ],
     trend:[{m:"Oct",t:31},{m:"Nov",t:38},{m:"Dec",t:27},{m:"Jan",t:22},{m:"Feb",t:35},{m:"Mar",t:44},{m:"Apr",t:39},{m:"May",t:41},{m:"Jun",t:36},{m:"Jul",t:48},{m:"Aug",t:52},{m:"Sep",t:178}],
-    ledger:[ {d:"27 Sep", what:"Hard waste sweep · Clunes · day 7 · mattresses", k:"mattresses", qty:132, by:"Yarta · RO"}, {d:"26 Sep", what:"Transfer station · scrap steel · weighbridge 4471", k:"steel", qty:6.4, by:"Yarta · RO"}, {d:"25 Sep", what:"Hard waste sweep · Clunes · day 6 · white goods", k:"whitegoods", qty:88, by:"Yarta · RO"}, {d:"24 Sep", what:"Transfer station · green waste · weighbridge 4462", k:"greenwaste", qty:18.2, by:"Yarta · RO"}, {d:"23 Sep", what:"Hard waste sweep · Clunes · day 5 · tyres", k:"tyres", qty:140, by:"Yarta · RO"}, {d:"22 Sep", what:"Depot clearance · aluminium · docket 1187", k:"aluminium", qty:0.9, by:"Yarta · RO"}, {d:"22 Sep", what:"Hard waste sweep · Clunes · day 4 · general rubbish", k:"general", qty:14.5, by:"Yarta · RO"} ]
+    ledger:[ {d:"27 Sep", what:"Hard waste sweep · township · day 7 · mattresses", k:"mattresses", qty:132, by:"Yarta · RO"}, {d:"26 Sep", what:"Transfer station · scrap steel · weighbridge 4471", k:"steel", qty:6.4, by:"Yarta · RO"}, {d:"25 Sep", what:"Hard waste sweep · township · day 6 · white goods", k:"whitegoods", qty:88, by:"Yarta · RO"}, {d:"24 Sep", what:"Transfer station · green waste · weighbridge 4462", k:"greenwaste", qty:18.2, by:"Yarta · RO"}, {d:"23 Sep", what:"Hard waste sweep · township · day 5 · tyres", k:"tyres", qty:140, by:"Yarta · RO"}, {d:"22 Sep", what:"Depot clearance · aluminium · docket 1187", k:"aluminium", qty:0.9, by:"Yarta · RO"}, {d:"22 Sep", what:"Hard waste sweep · township · day 4 · general rubbish", k:"general", qty:14.5, by:"Yarta · RO"} ]
   };
 })(window.YES);

@@ -192,7 +192,7 @@
     <div class="demo-lede"><span class="sec-idx">01</span><p class="eyebrow">The dashboard</p></div>
     <div class="demo-shell reveal" id="demo" aria-label="Yarta Dashboard, demo data">
       <div class="demo-head">
-        <div><h3>Hepburn Shire Council · Hard waste program</h3><p class="sub">FY2026–27 to date · Yarta Method <span id="demo-ver">v1.0 draft</span> · entered by Yarta</p><span class="badge demo" style="margin-top:10px">Demo data · illustrative</span></div>
+        <div><h3>Demo Shire Council · Hard waste program</h3><p class="sub">FY2026–27 to date · Yarta Method <span id="demo-ver">v1.0 draft</span> · entered by Yarta</p><span class="badge demo" style="margin-top:10px">Demo data · illustrative</span></div>
         <div class="demo-tabs" role="tablist" aria-label="Dashboard views">
           <button type="button" role="tab" id="t-overview" class="active" aria-selected="true" aria-controls="p-overview" data-tab="overview">Overview</button>
           <button type="button" role="tab" id="t-categories" aria-selected="false" aria-controls="p-categories" data-tab="categories">Categories</button>
@@ -227,9 +227,9 @@
           <div class="demo-kpis" aria-label="Score tiles">
             <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-mattress"/></svg><div class="v green"><span id="k-matt" data-count="0" data-dec="0">0</span></div><div class="l">Mattresses processed</div><div class="d" id="k-matt-d">&nbsp;</div></div>
             <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-rate"/></svg><div class="v"><span id="k-steelpct" data-count="0" data-dec="0">0</span><span class="u">%</span></div><div class="l">Steel recovery · stated yield</div><div class="d" id="k-steelpct-d">&nbsp;</div></div>
-            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-steel"/></svg><div class="v green"><span id="k-steel" data-count="0" data-dec="1">0</span><span class="u">t</span></div><div class="l">Steel recovered</div><div class="d" id="k-steel-d">&nbsp;</div></div>
-            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-rate"/></svg><div class="v"><span id="k-rate" data-count="0" data-dec="1">0</span><span class="u">%</span></div><div class="l">Material recovery rate</div><div class="d" id="k-rate-d">&nbsp;</div></div>
-            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-loop"/></svg><div class="v green"><span id="k-ret" data-count="0" data-dec="1">0</span><span class="u">t</span></div><div class="l">Delivered to licensed reprocessors</div><div class="d" id="k-ret-d">&nbsp;</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-steel"/></svg><div class="v green"><span id="k-steel" data-count="0" data-dec="1">0.0</span><span class="u">t</span></div><div class="l">Steel recovered</div><div class="d" id="k-steel-d">&nbsp;</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-rate"/></svg><div class="v"><span id="k-rate" data-count="0" data-dec="1">0.0</span><span class="u">%</span></div><div class="l">Material recovery rate</div><div class="d" id="k-rate-d">&nbsp;</div></div>
+            <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-loop"/></svg><div class="v green"><span id="k-ret" data-count="0" data-dec="1">0.0</span><span class="u">t</span></div><div class="l">Delivered to licensed reprocessors</div><div class="d" id="k-ret-d">&nbsp;</div></div>
             <div class="kpi"><svg class="ic" aria-hidden="true"><use href="#i-landfill"/></svg><div class="v"><span id="k-vol" data-count="0" data-dec="0">0</span><span class="u">m³</span></div><div class="l">Landfill volume avoided</div><div class="d" id="k-vol-d">&nbsp;</div></div>
           </div>
 
@@ -352,7 +352,7 @@
     </div>
 
     <p class="demo-attrib">Verified recycling data supplied by The Mattress Recycling Company and Recycle Group.</p>
-    <p class="note">Demo data is illustrative and is not Hepburn Shire Council data. The Category 5 inventory uses NGA landfill factors, with illustrative processing and transport values and 120 km to the processor. Avoided emissions use NSW DECCW 2010 factors and are reported separately. Calculations use the Yarta Method <span class="mv">v1.0 draft</span>, including the proposed Yarta Score, which is self-declared and not an accredited rating. Issued data would come from Recycle Group as the processing operator and is not independently assured. <a href="/method/">Read the Yarta Method →</a></p>
+    <p class="note">Demo data is illustrative and is not Demo Shire Council data. The Category 5 inventory uses NGA landfill factors, with illustrative processing and transport values and 120 km to the processor. Avoided emissions use NSW DECCW 2010 factors and are reported separately. Calculations use the Yarta Method <span class="mv">v1.0 draft</span>, including the proposed Yarta Score, which is self-declared and not an accredited rating. Issued data would come from Recycle Group as the processing operator and is not independently assured. <a href="/method/">Read the Yarta Method →</a></p>
   </div>
 </section>
 
@@ -782,7 +782,7 @@
     p.innerHTML='<div class="panel-h"><h4>Book · '+esc(h.title)+'</h4><span class="m">'+esc(h.session)+' · demo · nothing is sent</span></div>'
       +'<div class="bk-grid"><div><div class="slots" role="group" aria-label="Available times, next ten business days">'+grid+'</div>'
       +'<div class="bk-form"><div class="modes" role="radiogroup" aria-label="Format">'+h.modes.map(function(m,i){return '<label><input type="radio" name="bk-mode" value="'+esc(m)+'"'+(i===0?' checked':'')+'>'+esc(m)+'</label>';}).join('')+'</div>'
-      +'<div class="two"><label class="f">Contact name<input type="text" id="bk-name" value="Council waste officer (demo)" autocomplete="off"></label><label class="f">Contact email<input type="email" id="bk-email" value="waste@hepburn.example" autocomplete="off"></label></div>'
+      +'<div class="two"><label class="f">Contact name<input type="text" id="bk-name" value="Council waste officer (demo)" autocomplete="off"></label><label class="f">Contact email<input type="email" id="bk-email" value="waste@demo-shire.example" autocomplete="off"></label></div>'
       +'<label class="f">Notes<textarea id="bk-notes" rows="3" placeholder="Anything the provider should know, or a time that suits you if none above does."></textarea></label>'
       +'<label class="chk"><input type="checkbox" id="bk-share" checked> Share the Yarta figures behind this recommendation with the provider, so they arrive prepared</label>'
       +'<div class="btn-row"><button type="button" class="btn btn-primary btn-sm" id="bk-go">Request this booking</button><button type="button" class="btn btn-ghost btn-sm" id="bk-x">Cancel</button></div></div></div>'

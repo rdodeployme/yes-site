@@ -58,8 +58,8 @@ function score(recs){
   return {pct:Math.round(num/den*100), n:n};
 }
 function band(p){
-  if(p==null) return {name:'Not enough answers', say:''};
-  if(p>=75) return {name:'Ready to start', say:'You already hold most of what a first report needs, month by month. Onboarding is mostly Yarta entering it.'};
+  if(p==null) return {name:'Not enough answers', say:'Tell us about at least one record to get a result.'};
+  if(p>=75) return {name:'Ready to start', say:'You already hold most of what a first report needs, month by month. Onboarding is mostly entering it, with a Yarta analyst checking as you go.'};
   if(p>=45) return {name:'Nearly ready', say:'Most of it is there. A few records need one request to a retailer or contractor before the first report.'};
   return {name:'Needs groundwork', say:'The first job is getting the records flowing. Yarta’s onboarding sets that up with you over four weeks.'};
 }
@@ -109,7 +109,7 @@ function result(a, s, saved){
     + '<div><p class="eyebrow">Your result</p><p class="rc-org">'+esc(a.org_name)+'</p><h2>'+esc(b.name)+'</h2><p>'+esc(b.say)+'</p></div></div>'
     + '<div class="rc-cols">'
     + '<div class="rc-card"><h3>You already hold</h3><p class="sub">Every month, for every site.</p>'+(have.length?'<ul>'+have.map(function(r){ return li(r,true); }).join('')+'</ul>':'<p class="sub">Nothing monthly yet. That is common, and it is where onboarding starts.</p>')+'</div>'
-    + '<div class="rc-card"><h3>Sort these first</h3><p class="sub">Core records first. Each is usually one request.</p>'+(todo.length?'<ul>'+todo.map(function(r){ return li(r,false); }).join('')+'</ul>':'<p class="sub">Nothing. Every record you need comes in monthly.</p>')+'</div>'
+    + '<div class="rc-card"><h3>Sort these first</h3><p class="sub">Core records first. Each is usually one request.</p>'+(todo.length?'<ul>'+todo.map(function(r){ return li(r,false); }).join('')+'</ul>':'<p class="sub">Nothing to sort first from the answers you gave.</p>')+'</div>'
     + '</div>'
     + '<div class="rc-card" style="margin-top:18px"><div class="rc-plan"><div><h3>The plan that fits</h3><p class="sub" style="margin:4px 0 0">'+esc(p.note)+' Annual subscription. The establishment fee is waived for Foundation Members who join in the first 12 months.</p></div><div class="amt">'+esc(p.amt)+(p.unit?'<small>'+esc(p.unit)+'</small>':'')+'</div></div></div>'
     + (climate?'<div class="rc-card" style="margin-top:18px"><h3>Mandatory climate reporting</h3><p class="sub" style="margin:4px 0 0">Your waste figure becomes part of Scope 3 and faces auditor review. <a class="link" href="'+url('/climate-reporting/')+'">Check your group and your first Scope 3 year</a>.</p></div>':'')
