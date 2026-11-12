@@ -555,3 +555,6 @@ fieldset.field legend{padding:0;margin-bottom:6px}
 .calc .site-ln{margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.12)}
 .tbl tr.muted-row td{color:var(--silver-5,#8E9396)}
 .tbl tr.muted-row td b{color:var(--graphite,#4B4F52)}
+
+.thread{margin:10px 0 0 18px;padding:0;display:grid;gap:8px;font-size:14px}.site-split{margin-top:3px;line-height:1.5}
+.chip{max-width:100%;white-space:normal;overflow-wrap:anywhere}

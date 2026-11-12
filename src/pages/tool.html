@@ -51,7 +51,7 @@
   function mark(){ var c=cur(); Array.prototype.forEach.call(who.querySelectorAll('button'),function(b){ b.setAttribute('aria-pressed', c && b.getAttribute('data-u')===c.id ? 'true':'false'); }); }
   who.innerHTML=opsU.map(function(u){ return '<button type="button" data-u="'+u.id+'" aria-pressed="false" title="'+u.title+'">'+u.name.split(' ')[0]+'</button>'; }).join('');
   who.addEventListener('click',function(e){ var b=e.target.closest('button[data-u]'); if(!b) return; P.signInAsOperator(b.getAttribute('data-u'), location.hash && location.hash.indexOf('#/ops')===0 ? location.hash : '#/ops/home'); mark(); });
-  var want = location.hash && location.hash.indexOf('#/ops')===0 ? location.hash : '#/ops/home';
+  var want = location.hash && location.hash.length>2 ? location.hash : '#/ops/home';
   if(!cur()) P.signInAsOperator(opsU[0].id, want); else if(location.hash!==want) location.hash=want;
   mark();
   window.addEventListener('hashchange', mark);

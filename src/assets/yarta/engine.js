@@ -276,9 +276,10 @@ window.YESE = window.YESE || {};
     });
     // direction of travel
     out.forEach(function(m, i){
-      var prev = out[i-12] || null;
+      var byK = out._byK || (out._byK = (function(){ var mp={}; out.forEach(function(x){ mp[x.month]=x; }); return mp; })());
+      var prev = byK[E.addMonths(m.month,-12)] || null;
       m.yoy = prev && prev.score!=null && m.score!=null ? m.score - prev.score : null;
-      var p1 = out[i-1]||null;
+      var p1 = byK[E.addMonths(m.month,-1)] || null;
       m.mom = p1 && p1.score!=null && m.score!=null ? m.score - p1.score : null;
       m.cat_yoy = {}; D.CATEGORIES.forEach(function(c){ m.cat_yoy[c.k] = prev && prev.scores && prev.scores[c.k]!=null && m.scores[c.k]!=null ? m.scores[c.k]-prev.scores[c.k] : null; });
     });
