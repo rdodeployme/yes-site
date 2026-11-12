@@ -246,7 +246,7 @@ body.page-portal{background:#EEF0F0}
 .grp-dot{color:var(--green-2);font-size:11px;vertical-align:1px}
 .st-bk-requested{color:var(--graphite)}.st-bk-requested::before{background:transparent;border:1.5px solid var(--graphite)}
 .st-bk-confirmed{color:var(--green)}.st-bk-confirmed::before{background:transparent;border:2px solid var(--green-2)}
-.st-bk-completed{color:var(--green-2)}.st-bk-completed::before{background:var(--green-2)}
+.st-bk-completed{color:var(--green)}.st-bk-completed::before{background:var(--green-2)}
 .st-bk-cancelled{color:var(--steel);text-decoration:line-through}
 .rm-top{display:grid;gap:22px}
 .rm-leg{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:13px;color:var(--silver-4);margin:0}
