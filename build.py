@@ -50,7 +50,7 @@ PAGES = [
     ("/method/",          None,           "method.html",       "The Yarta Method — how every number is calculated",    "Factors, formulas, score rules, eco standards, benchmarks, providers and evidence grades behind every Yarta figure, published in full."),
     ("/recycling-method/", None,          "recycling-method.html", "The recycling report method v1.0 — factors and evidence", "The method behind the recycling report: reference factors, unit-weight assumptions, evidence grades and versioning."),
     ("/pricing/",         "Pricing",      "pricing.html",      "Yarta pricing — councils and business",                 "Councils from $1,999 a month. Business from $999 a month, by staff numbers. Annual subscription. Foundation Members pay no establishment fee in the first 12 months."),
-    ("/about/",           "About",        "about.html",        "About Yarta — a Recycle Group initiative",                "Why Yarta exists, who runs it, and the recovery infrastructure behind the numbers."),
+    ("/about/",           "About",        "about.html",        "About Yarta — a Recycle Group initiative",                "Why Yarta exists, who runs it, and the recycling operations it grew out of."),
     ("/contact/",         None,           "contact.html",      "Talk to Yarta",                                          "Book a walkthrough or ask a question. contact@yes.com.au"),
     ("/report/",     None,           "report.html",  "Sample Yarta Report — environmental sustainability, by sector (demo)", "A sample Yarta Environmental Sustainability Report for each sector, print-ready: summary, figures and the roadmap to improvement."),
     ("/recycling-report/", None,      "recycling-report.html", "Sample recycling report — Demo Shire Council (demo)", "The recycling report sample, print-ready: summary, figures and roadmap."),
@@ -108,7 +108,7 @@ def footer():
         <li><a href="/yes-report/">The Yarta Report</a></li>
         <li><a href="/how-it-works/">How it works</a></li>
         <li><a href="/demo/">Live demo</a></li>
-        <li><a href="/portal/">Client sign-in</a></li>
+        <li><a href="/portal/">Customer portal demo</a></li>
         <li><a href="/calculator/">Impact calculator</a></li>
         <li><a href="/climate-reporting/">Climate reporting</a></li>
         <li><a href="/method/">The Yarta Method</a></li>

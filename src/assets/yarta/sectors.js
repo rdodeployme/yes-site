@@ -50,7 +50,7 @@ window.YESS = window.YESS || {};
   S.ONBOARDING = [
     {k:"scope",        week:1, label:"Scope agreed",                     you:"Confirm which sites and which of the ten categories are in.",           us:"Agree the sites, the categories and the streams for your sector, and write them into the method sheet."},
     {k:"agreement",    week:1, label:"Customer agreement signed",        you:"Sign the agreement. Foundation Members: confirm the fee waiver.",       us:"Issue the agreement with the term, fees and privacy terms, and record the signature."},
-    {k:"contacts",     week:1, label:"Contacts and data operator set",   you:"Name a reporting contact and a person for each site.",                  us:"Name your Yarta analyst, who verifies your figures and answers for the month."},
+    {k:"contacts",     week:1, label:"Contacts and Yarta analyst set",   you:"Name a reporting contact and a person for each site.",                  us:"Name your Yarta analyst, who verifies your figures and answers for the month."},
     {k:"checklist",    week:1, label:"Question set issued",              you:"Read the question set for your industry and tell us what does not exist.", us:"Issue the question set: the figures, where each one comes from and how often."},
     {k:"baseline",     week:2, label:"Baseline year set",                you:"Enter the twelve months of the baseline year, or send a spreadsheet to load.",     us:"Choose the baseline financial year with you so year-on-year is real from day one."},
     {k:"targets",      week:2, label:"Targets agreed",                   you:"Tell us your own targets, or adopt the eco standards.",                 us:"Set each target against the eco standard: the standard is the floor, your target is the bar."},
