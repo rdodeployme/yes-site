@@ -369,6 +369,8 @@ fieldset.field legend{padding:0;margin-bottom:6px}
   .rp-country{font-size:11px;margin-top:8px;padding-top:6px}
   .rp-steps{font-size:9px;margin-top:5px}
   .rp-score{grid-template-columns:auto minmax(0,1fr) auto!important;gap:14px;margin-top:14px}
+  .rp-score .rp-wyc{grid-column:auto!important}   /* a printed A4 page is wider than the 760px breakpoint, which would push the three score boxes onto their own row and the footer onto a fourth page */
+  .rp-foot{break-inside:avoid;page-break-inside:avoid}
   .rp-score .score-ring{--size:104px!important}
   .rp-score .score-ring .of{font-size:7px;letter-spacing:.08em;margin-top:2px}
   .rp-score-t .band{font-size:22px}

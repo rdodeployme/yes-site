@@ -623,3 +623,7 @@ footer{background:var(--ink);color:var(--mist);padding:64px 0 32px;border-top:1p
 
 .ledger.sug div{grid-template-columns:64px minmax(0,1fr) 90px}
 .dash .bars .bar{grid-template-columns:96px minmax(0,1fr) 34px}
+
+/* simple section heading used on compare, sectors, onboarding, eco standards: it had no spacing rule on the public stylesheet, so content sat hard against the heading */
+.sec-head{margin-bottom:clamp(24px,3vw,40px)}
+.sec-head h2{margin-bottom:0}

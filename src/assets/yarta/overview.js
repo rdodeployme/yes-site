@@ -661,7 +661,7 @@ V.category = function(cat, q, api){
   } else if(cat==='governance'){
     var cf=confidence(o,m), inv=sum(w,function(x){ return (x.raw||{}).env_invest; }), prj=sum(w,function(x){ return (x.raw||{}).improve_projects; });
     tiles=tile('Data confidence', cf.g,'', esc(cf.why))
-      + tile('Complaints and incidents closed', fmt(r.closure_pct,0)+'%','', fmt(r.closed,0)+' of '+fmt(r.complaints,0)+' over '+span(r))
+      + (r.complaints>0 ? tile('Complaints and incidents closed', fmt(r.closure_pct,0)+'%','', fmt(r.closed,0)+' of '+fmt(r.complaints,0)+' over '+span(r)) : tile('Complaints and incidents', 'None','', 'none recorded over '+span(r)))
       + (inv>0?tile('Environmental investment', money(inv),'', 'Over '+span(r)+', from your finance system'):'')
       + (prj>0?tile('Improvement projects completed', fmt(prj,0),'', 'Over '+span(r)):'');
   }
