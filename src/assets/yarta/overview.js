@@ -307,10 +307,18 @@ function emisParts(S, i, o){
 
 }
 
+/* the report's page 1, in words: the three biggest movements, the same lines the dashboard's "What changed" shows. A board reader gets the story before the figures. */
+V.reportBrief = function(S, i, o, api){
+  A=api; E=api.E; D=api.D; R=api.R;
+  if(inBaseYear(S,i)) return '';
+  var ch=changes(S,i,o).slice(0,3); if(!ch.length) return '';
+  return '<div class="rp-brief"><div class="rp-h">In brief</div><ul>'+ch.map(function(c){ return '<li class="'+(c.good===false?'bad':'good')+'"><span class="mk" aria-hidden="true">'+(c.good===false?'!':'✓')+'</span><span>'+c.text+'</span></li>'; }).join('')+'</ul></div>';
+};
+
 /* the report's page 1: the same emissions headline and sources, sized for A4 */
 V.reportEmissions = function(S, i, api){
   A=api; E=api.E; D=api.D; R=api.R;
-  var m=S.months[i], r=m.r12, ep=emisParts(S,i,{traj:{fixed:!phone(),w:640,h:165}, shortKey:true}), inB=inBaseYear(S,i);
+  var m=S.months[i], r=m.r12, ep=emisParts(S,i,{traj:{fixed:!phone(),w:640,h:140}, shortKey:true}), inB=inBaseYear(S,i);
   return '<div class="rp-emis"><div class="rp-emis-l">'+ep.head+ep.chart+'</div>'
     + '<div class="rp-emis-r"><p class="ov-l">Where they come from</p>'+sourceList(sources(S,i),{static:true, inB:inB})
     + '<p class="rp-emis-f">'+(inB?'Shares of your baseline year. ':'Change on the same months of '+esc(S.baseline.fy)+'. ')+'Avoided by recycling, never deducted: '+nu(r.avoided_t,'t CO₂-e')+'.</p></div></div>';
