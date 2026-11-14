@@ -437,7 +437,7 @@ V.summaryData = function(S, i, o, api){
   var T1=[];
   T1.push(p.org_name+' · environmental summary, '+A.mLabel(k)+(m.status!=='verified'?' (provisional)':''));
   T1.push(''); T1.push(head+'.'+(line?' '+line:''));
-  T1.push(''); T1.push('Yindyamarra Environmental Score: '+m.score+' ('+m.band+')'+(dM!=null?', '+(dM===0?'unchanged on':(dM>0?'up ':'down ')+Math.abs(dM)+' on')+' last month':'')+(m.yoy!=null?', '+(m.yoy>=0?'up ':'down ')+Math.round(Math.abs(m.yoy))+' on a year ago':'')+'.'+(why?' '+why:''));
+  T1.push(''); T1.push('Yarta Score: '+m.score+' ('+m.band+')'+(dM!=null?', '+(dM===0?'unchanged on':(dM>0?'up ':'down ')+Math.abs(dM)+' on')+' last month':'')+(m.yoy!=null?', '+(m.yoy>=0?'up ':'down ')+Math.round(Math.abs(m.yoy))+' on a year ago':'')+'.'+(why?' '+why:''));
   if(moved.length){ T1.push(''); T1.push('What moved this month'); moved.forEach(function(x){ T1.push('- '+x.name+': '+Math.round(x.was)+' to '+Math.round(x.now)); }); }
   if(figs.length){ T1.push(''); T1.push((r.n<12?'The '+span(r)+' to '+A.mLabel(k):'The last 12 months')+(inB?' (baseline year)':', against the same months of '+fy)); figs.forEach(function(f){ T1.push('- '+f.name+': '+fmt(f.v,0)+' '+f.u+(f.ch!=null?', '+(f.ch<0?'−':'+')+fmt(Math.abs(f.ch),1)+'%':'')); }); }
   if(next.length){ T1.push(''); T1.push("What's next"); next.forEach(function(it){ T1.push('- '+it.title+': '+nxt(it)+(it.uplift&&it.uplift.overall>=0.05?' (score '+A.scoreRange(it.uplift)+' once it takes full effect, estimate)':'')); }); }
@@ -496,7 +496,7 @@ V.dashboard = function(q, api){
   // 1. the score and emissions against target
   var cf=confidence(o,m), st=onTrack(S,i,T);
   var yoy=m.yoy!=null?A.delta(m.yoy)+' <span class="muted">on '+A.mLabel(S.months[i-12].month)+'</span>':'<span class="muted">Year-on-year change after 12 months</span>';
-  var score='<section class="panel-dark ov-score"><p class="ov-l">Yindyamarra Environmental Score</p>'+A.ring(m.score,150)
+  var score='<section class="panel-dark ov-score"><p class="ov-l">Yarta Score</p>'+A.ring(m.score,150)
     + '<div class="band">'+esc(m.band)+'</div><div class="yoy">'+yoy+'</div>'
     + '<dl><dt>Status</dt><dd>'+A.statusChip(m.status)+'</dd><dt>Categories</dt><dd>'+m.scored+' of 10 scored</dd><dt>Data confidence</dt><dd><span class="ov-conf g-'+cf.g+'" data-tip="'+esc(cf.why)+'" tabindex="0">'+cf.g+'</span></dd></dl>'
     + '<p class="ov-fine">Self-declared under the published Yarta method; not an accredited rating.</p></section>';

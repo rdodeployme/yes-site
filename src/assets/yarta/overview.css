@@ -578,3 +578,5 @@ a.ov-src-r:hover{background:var(--silver-0)}
 .sm-why{margin:0;padding:12px 28px;background:#2A2018;color:#E4D9CE;font-size:13.5px;line-height:1.45;border-top:1px solid rgba(255,255,255,.08)}
 
 @media (max-width:600px){.rp-foot-v{flex-direction:column}}
+.cx-scale-stage.loading .cx-scale-fallback p{visibility:hidden}
+.cx-scale-stage.loading .cx-scale-fallback::after{content:"Loading the 3D view";font:600 13px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--silver-4)}

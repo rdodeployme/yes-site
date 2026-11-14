@@ -30,8 +30,8 @@ PAGES = [
     ("/demo/",            "Live demo",    "demo.html",         "Live demo — the Yarta dashboard, by sector",           "The Yarta environmental sustainability dashboard on demo data: pick a sector, see the score, the categories, the figures and the roadmap to improvement."),
     ("/portal/",          None,           "portal.html",       "Yarta client portal (prototype)",                      "Yarta client portal prototype: sign in to send documents, see verified months, targets, sites and reports. Demo data only."),
     ("/tool/",            None,           "tool.html",         "Yarta team · operations tool (prototype)",             "Yarta team operations tool prototype: documents in, figures entered, months verified, reports issued, gap emails, providers and introductions."),
-    ("/recycling-demo/",  None,           "recycling-demo.html", "Recycling demo — Demo Shire hard waste program",  "The recycling dashboard for a council hard waste program on illustrative data: add a stream and watch the numbers move."),
-    ("/calculator/",      None,           "calculator.html",   "Recycling calculator — what your recycling achieves",    "Enter what you recycled and see the Yarta impact: tonnes recovered, steel recovered, CO₂-e avoided, landfill avoided. Every figure with its method."),
+    # retired 14 Nov 2026 (old recycling-report product; source kept in src/pages, uncomment to restore): ("/recycling-demo/",  None,           "recycling-demo.html", "Recycling demo — Demo Shire hard waste program",  "The recycling dashboard for a council hard waste program on illustrative data: add a stream and watch the numbers move."),
+    # retired 14 Nov 2026 (old recycling-report product; source kept in src/pages, uncomment to restore): ("/calculator/",      None,           "calculator.html",   "Recycling calculator — what your recycling achieves",    "Enter what you recycled and see the Yarta impact: tonnes recovered, steel recovered, CO₂-e avoided, landfill avoided. Every figure with its method."),
     ("/councils/",        None,           "councils.html",     "Yarta for councils — whole-of-council environmental sustainability", "One score for the kerbside service, transfer stations, depots, buildings, fleet, water, Country and community programs, with a roadmap to improvement. Switched on in 30 days."),
     ("/climate-reporting/", None,         "climate-reporting.html", "Mandatory climate reporting — is your waste number ready?", "Australia's mandatory climate reporting is live. Scope 3 is reported from each company's second year and reviewed by an auditor. Check your group and your first Scope 3 year, and get your waste number from the processor."),
     ("/sectors/",         "Sectors",      "sectors.html",      "Sectors — what each kind of organisation reports on", "The same ten categories, shaped by sector: what each kind of organisation reports on, the eco standards that apply, and a demo and sample report for each."),
@@ -48,12 +48,12 @@ PAGES = [
     ("/eco-standards/",   None,           "eco-standards.html", "Eco standards — the standards behind every Yarta score", "The published standard behind each Yarta category, with sources: 80% resource recovery by 2030, 43% below 2005 by 2030, 82% renewable electricity, 30 by 30, halving food waste, mandatory climate reporting."),
     ("/business/",        None,           "business.html",     "Yarta for business — environmental sustainability reporting, Scope 3 and a roadmap", "Your data evaluated against the eco standards, with the emissions figures ready for mandatory climate reporting and a roadmap to improvement."),
     ("/method/",          None,           "method.html",       "The Yarta Method — how every number is calculated",    "Factors, formulas, score rules, eco standards, benchmarks, providers and evidence grades behind every Yarta figure, published in full."),
-    ("/recycling-method/", None,          "recycling-method.html", "The recycling report method v1.0 — factors and evidence", "The method behind the recycling report: reference factors, unit-weight assumptions, evidence grades and versioning."),
+    # retired 14 Nov 2026 (old recycling-report product; source kept in src/pages, uncomment to restore): ("/recycling-method/", None,          "recycling-method.html", "The recycling report method v1.0 — factors and evidence", "The method behind the recycling report: reference factors, unit-weight assumptions, evidence grades and versioning."),
     ("/pricing/",         "Pricing",      "pricing.html",      "Yarta pricing — councils and business",                 "Councils from $1,999 a month. Business from $999 a month, by staff numbers. Annual subscription. Foundation Members pay no establishment fee in the first 12 months."),
     ("/about/",           "About",        "about.html",        "About Yarta — a Recycle Group initiative",                "Why Yarta exists, who runs it, and the recycling operations it grew out of."),
     ("/contact/",         None,           "contact.html",      "Talk to Yarta",                                          "Book a walkthrough or ask a question. contact@yes.com.au"),
     ("/report/",     None,           "report.html",  "Sample Yarta Report — environmental sustainability, by sector (demo)", "A sample Yarta Environmental Sustainability Report for each sector, print-ready: summary, figures and the roadmap to improvement."),
-    ("/recycling-report/", None,      "recycling-report.html", "Sample recycling report — Demo Shire Council (demo)", "The recycling report sample, print-ready: summary, figures and roadmap."),
+    # retired 14 Nov 2026 (old recycling-report product; source kept in src/pages, uncomment to restore): ("/recycling-report/", None,      "recycling-report.html", "Sample recycling report — Demo Shire Council (demo)", "The recycling report sample, print-ready: summary, figures and roadmap."),
     ("/sales/",      None,           "sales.html", "How to sell Yarta — the sales guide (internal)", "Internal guide for the Yarta sales team: the pitch, who buys, the sale step by step, pricing, objections, what never to say, emails and handover."),
     ("/sales/walkthrough/", None,    "sales-walkthrough.html", "Yarta guided walkthrough (internal)", "A step-by-step guided walkthrough of the Yarta demo for the sales team."),
     ("/language/",   None,           "language.html", "Language on this site — proposed names and their status (internal)", "The First Nations words proposed for Yarta products, which language each comes from, the dictionary check and whether the custodians have confirmed it."),
@@ -61,7 +61,7 @@ PAGES = [
 NOINDEX = {"/language/", "/tool/", "/portal/", "/not-found/", "/sales/", "/sales/walkthrough/", "/recycling-demo/", "/recycling-method/", "/recycling-report/"}   # internal pages: built and linkable, not indexed
 STANDALONE = [("/report/", "report.html"), ("/demo/", "demo.html"), ("/tool/", "tool.html"), ("/portal/", "portal.html"), ("/sales/walkthrough/", "sales-walkthrough.html")]   # the portal-based pages: their own document, not the site shell
 STANDALONE_FRAGS = {f for _, f in STANDALONE}
-REDIRECTS = {"/yarta/": "/report/", "/certificate/": "/recycling-report/"}   # old paths that keep working
+REDIRECTS = {"/yarta/": "/report/", "/certificate/": "/report/", "/recycling-report/": "/report/", "/recycling-demo/": "/demo/", "/recycling-method/": "/method/", "/calculator/": "/readiness/"}   # old paths that keep working
 
 FORM_NOTE = (f"Submitting opens an email to Yarta at {EMAIL} with your details filled in, ready to send. Nothing is stored on this site. No mailing list."
              if FORM_MODE == "mailto" else
@@ -109,7 +109,6 @@ def footer():
         <li><a href="/how-it-works/">How it works</a></li>
         <li><a href="/demo/">Live demo</a></li>
         <li><a href="/portal/">Customer portal demo</a></li>
-        <li><a href="/calculator/">Impact calculator</a></li>
         <li><a href="/climate-reporting/">Climate reporting</a></li>
         <li><a href="/method/">The Yarta Method</a></li>
         <li><a href="/eco-standards/">Eco standards</a></li>

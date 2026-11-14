@@ -229,13 +229,15 @@
 
     /* ---------- renderer ---------- */
     var renderer = new T.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));   // 2x doubles the fill cost for little visible gain on a dark scene
     renderer.setClearColor(COL.ink, 1);
     renderer.toneMapping = T.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
     renderer.outputColorSpace = T.SRGBColorSpace;
     renderer.shadowMap.enabled = opts.shadows !== false;
     renderer.shadowMap.type = T.PCFSoftShadowMap;
+    renderer.shadowMap.autoUpdate = false;   // the light never moves: redraw the shadow map only when the scene changes, not on every camera frame
+    renderer.shadowMap.needsUpdate = true;
 
     var scene = new T.Scene();
     scene.background = new T.Color(COL.ink);
@@ -685,8 +687,9 @@
         item = labelItems[i];
         var bw, bh, lx, ly, x, y;
         if (item.hero) {
-          item.el.style.display = '';
-          bw = item.el.offsetWidth; bh = item.el.offsetHeight;
+          if (item.shown !== true) { item.el.style.display = ''; item.shown = true; }
+          if (!item.bw) { item.bw = item.el.offsetWidth; item.bh = item.el.offsetHeight; }
+          bw = item.bw; bh = item.bh;
           var refRects = screenRects(), cands = item.anchors(), best = null, k;
           for (k = 0; k < cands.length; k++) {
             pv.copy(cands[k].p).project(camera);
@@ -703,7 +706,7 @@
             if (!best || score < best.score) best = { score: score, x: x, y: y, lx: lx, ly: ly, side: cands[k].side };
             if (score < 1) break;
           }
-          if (!best) { item.el.style.display = 'none'; item.line.style.display = 'none'; continue; }
+          if (!best) { item.el.style.display = 'none'; item.shown = false; item.line.style.display = 'none'; continue; }
           lx = best.lx; ly = best.ly; x = best.x; y = best.y;
           if (lx < 12) lx = 12; if (lx + bw > W - 12) lx = W - bw - 12; if (ly < 12) ly = 12; if (ly + bh > H - 64) ly = H - 64 - bh;
           heroRect = { x: lx, y: ly, r: lx + bw, b: ly + bh };
@@ -714,15 +717,16 @@
           var p = item.anchor(); pv.copy(p).project(camera);
           var behind = pv.z > 1; x = (pv.x + 1) / 2 * W; y = (1 - pv.y) / 2 * H;
           var off = behind || x < -40 || x > W + 40 || y < -40 || y > H + 40;
-          if (off) { item.el.style.display = 'none'; item.line.style.display = 'none'; continue; }
-          item.el.style.display = '';
-          bw = item.el.offsetWidth; bh = item.el.offsetHeight;
+          if (off) { if (item.shown !== false) { item.el.style.display = 'none'; item.shown = false; } item.line.style.display = 'none'; continue; }
+          if (!item.bw) { item.el.style.display = ''; item.shown = true; item.bw = item.el.offsetWidth; item.bh = item.el.offsetHeight; }
+          bw = item.bw; bh = item.bh;
           lx = x - bw / 2; ly = y - bh - 14;
           if (lx < 8) lx = 8; if (lx + bw > W - 8) lx = W - bw - 8; if (ly < 8) ly = 8;
           var rect = { x: lx, y: ly, r: lx + bw, b: ly + bh };
           var hide = heroRect && overlap(rect, heroRect, 8);
           var j; for (j = 0; j < placed.length && !hide; j++) if (overlap(rect, placed[j], 4)) hide = true;
-          if (hide) { item.el.style.display = 'none'; item.line.style.display = 'none'; continue; }
+          if (hide) { if (item.shown !== false) { item.el.style.display = 'none'; item.shown = false; } item.line.style.display = 'none'; continue; }
+          if (item.shown !== true) { item.el.style.display = ''; item.shown = true; }
           placed.push(rect);
           item.el.style.transform = 'translate(' + Math.round(lx) + 'px,' + Math.round(ly) + 'px)';
           setLine(item.line, x, y, Math.max(lx + 6, Math.min(lx + bw - 6, x)), ly + bh);
@@ -750,23 +754,41 @@
 
     /* ---------- render loop (on demand) ---------- */
     var needsFrame = true, raf = 0, visible = true, ro = null, io = null;
-    function kick() { needsFrame = true; if (!raf && !destroyed) raf = requestAnimationFrame(frame); }
+    var shadowDirty = true, lastT = 0, spinFrom = 0, SPIN_MS = 24000, chained = false, slowN = 0, qLevel = 0;
+    /* a machine that cannot keep up gets a lighter scene instead of a stuttering one: first native-resolution pixels off, then shadows off */
+    function degrade() {
+      qLevel++;
+      if (qLevel === 1) { renderer.setPixelRatio(1); if (W && H) renderer.setSize(W, H, false); }
+      else if (qLevel === 2) { key.castShadow = false; shadowDirty = true; }
+    }
+    function kickCam() { needsFrame = true; if (!raf && !destroyed) raf = requestAnimationFrame(frame); }
+    function kick() { shadowDirty = true; kickCam(); }
     function frame(now) {
       raf = 0;
       if (destroyed || !visible) return;
+      var spinning = controls.autoRotate && !interacted;
+      if (spinning) {
+        if (!spinFrom) spinFrom = now;
+        // the idle spin is decoration: draw it at about 30 frames a second, and stop after one slow look around so an open page is not rendering forever
+        if (now - spinFrom > SPIN_MS) { controls.autoRotate = false; spinning = false; }
+        else if (!anim && !needsFrame && now - lastT < 30) { raf = requestAnimationFrame(frame); return; }
+      }
+      if (chained && lastT && qLevel < 2) { var gap = now - lastT; if (gap < 400) { if (gap > (spinning ? 58 : 42)) slowN += 1; else if (slowN > 0) slowN -= 0.5; if (slowN > 14) { slowN = 0; degrade(); } } }
+      var dt = lastT ? Math.min(0.1, (now - lastT) / 1000) : 1 / 60; lastT = now;
       var busy = tickAnim(now);
-      var moved = controls.update();
-      if (controls.autoRotate && !interacted) busy = true;
+      var moved = controls.update(dt);
+      if (busy || shadowDirty) { renderer.shadowMap.needsUpdate = true; shadowDirty = false; }
       renderer.render(scene, camera);
       updateLabels();
-      if (busy || moved || needsFrame) { needsFrame = false; raf = requestAnimationFrame(frame); }
+      chained = !!(busy || moved || needsFrame || spinning);
+      if (chained) { needsFrame = false; raf = requestAnimationFrame(frame); }
     }
-    controls.addEventListener('change', kick);
+    controls.addEventListener('change', kickCam);
     controls.addEventListener('start', function () {
       if (!interacted) { interacted = true; controls.autoRotate = false; hint.classList.add('off'); }
       kick();
     });
-    controls.addEventListener('end', kick);
+    controls.addEventListener('end', kickCam);
 
     function resize() {
       W = host.clientWidth; H = host.clientHeight || Math.round(W * (W >= 700 ? 9 / 16 : 3 / 4));

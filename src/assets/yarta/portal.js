@@ -1,6 +1,6 @@
 /* Yarta customer portal prototype v0.1 (unlisted draft)
    A working static app: demo sign-in, monthly entry of raw figures, evidence, Yarta calculations,
-   the Yindyamarra Environmental Score, printable monthly reports, export and import, and a Yarta
+   the Yarta Score, printable monthly reports, export and import, and a Yarta
    operator view for review and verification, recommended help with bookings, and a roadmap with
    the score now, at the organisation's targets and with Yarta help. All data stays in this browser
    (localStorage for figures and bookings, IndexedDB for evidence files).
@@ -500,7 +500,7 @@ function benchTable(p,tg,BM,you){ you=you||{};
   return '<div class="rp-h">Industry benchmarks · published figures for your sector</div><div class="rp-tw"><table class="tbl compact nowrap-first"><thead><tr><th>Figure</th><th class="r">You</th><th class="r">Benchmark</th><th>What the benchmark is</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
     + '<p class="rp-bmnote">'+keepUnits(esc(BM.edition)+'. '+(BM.none?esc(BM.none)+' ':'')+'Benchmarks come from public sources only; Yarta never pools customer data. Sources: '+srcs+'.')+'</p>';
 }
-var RB=window.REPORT_BRAND||{mark:'<span class="mark">Yarta</span>', full:'Yindyamarra Environmental Sustainability', score:'Yindyamarra Environmental Score', title:'Environmental<br>Sustainability Report'};
+var RB=window.REPORT_BRAND||{mark:'<span class="mark">Yarta</span>', full:'Yindyamarra Environmental Sustainability', score:'Yarta Score', title:'Environmental<br>Sustainability Report'};
 /* the public check for a report: its ID, and a QR code that opens the check page */
 function verifyUrl(id){ try{ return new URL('../verify/?id='+encodeURIComponent(id), location.href).href; }catch(e){ return '/verify/?id='+encodeURIComponent(id); } }
 function qrSvg(text){ if(!window.qrcode) return ''; try{ var q=window.qrcode(0,'M'); q.addData(text); q.make(); return q.createSvgTag({cellSize:2, margin:0, scalable:true}); }catch(e){ return ''; } }
@@ -1930,8 +1930,9 @@ function render(){
   if(LIVE) LIVE.afterRender(P,q);
 }
 /* ------------------------------------------------------------------ widgets: the 3D scale scene and the sites map (both lazy; both optional) */
-var WIDGETS=[];
+var WIDGETS=[], WGEN=0;
 function bindWidgets(){
+  var gen=++WGEN;   // a scene that finishes loading after the screen has been redrawn belongs to a page that is gone: destroy it instead of leaving it running
   WIDGETS.forEach(function(h){ try{ h.destroy(); }catch(e){} }); WIDGETS=[];
   $$('[data-scale3d]',app).forEach(function(stage){
     if(!window.YartaScale || !window.YartaScale.supported()) return;
@@ -1939,10 +1940,15 @@ function bindWidgets(){
     var wrap=stage.closest('[data-scale3d-wrap]'), sent=wrap&&wrap.querySelector('[data-scale-sentence]'), basis=wrap&&wrap.querySelector('[data-scale-basis]');
     function say(key){ var f=data.figures.filter(function(x){ return x.key===key; })[0]; if(!f||!window.YartaScale.describe) return; var d=window.YartaScale.describe(f); if(d){ if(sent&&d.sentence) sent.textContent=d.sentence; if(basis&&d.basis) basis.textContent=d.basis+' Drag to look around.'; } }
     say(data.figures[0].key);
-    window.YartaScale.mount(stage, data, {controls:false}).then(function(h){
-      if(!h) return; WIDGETS.push(h); stage.classList.add('mounted'); if(wrap) wrap.classList.add('mounted');
+    /* the 3D library and models are about 1.8 MB: fetch and start them only when the panel is about to scroll into view */
+    if(wrap) wrap.classList.add('mounted'); stage.classList.add('loading');   // WebGL is available: hold the panel's space now so the page does not jump when the scene arrives
+    function fail(){ stage.classList.remove('loading'); if(wrap) wrap.classList.remove('mounted'); }
+    function start(){ window.YartaScale.mount(stage, data, {controls:false}).then(function(h){
+      if(!h){ fail(); return; } stage.classList.remove('loading'); if(gen!==WGEN||!document.body.contains(stage)){ try{ h.destroy(); }catch(e){} return; } WIDGETS.push(h); stage.classList.add('mounted'); if(wrap) wrap.classList.add('mounted');
       if(wrap) wrap.addEventListener('click', function(e){ var b=e.target.closest('[data-scfig]'); if(!b) return; var k=b.getAttribute('data-scfig'); $$('[data-scfig]',wrap).forEach(function(x){ x.setAttribute('aria-pressed', x===b?'true':'false'); }); h.setFigure(k); say(k); });
-    }).catch(function(){});
+    }).catch(fail); }
+    if(window.IntersectionObserver){ var seen=false, ob=new IntersectionObserver(function(en){ if(seen||!en.some(function(x){ return x.isIntersecting; })) return; seen=true; ob.disconnect(); if(gen===WGEN) start(); },{rootMargin:'300px 0px'}); ob.observe(stage); WIDGETS.push({destroy:function(){ ob.disconnect(); }}); }
+    else start();
   });
   $$('[data-sitemap],[data-orgmap]',app).forEach(function(el){
     if(!window.YartaMap) return;

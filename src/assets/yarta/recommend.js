@@ -313,7 +313,7 @@ window.YESR = window.YESR || {};
     {k:"Estimates", d:"The score with Yarta help and the projection are estimates. They are not a promise, a guarantee or a target."}
   ];
   R.NUMBERS = [
-    {k:"now", name:"Now", how:"The Yindyamarra Environmental Score for the latest verified month."},
+    {k:"now", name:"Now", how:"The Yarta Score for the latest verified month."},
     {k:"target", name:"At the eco standards", how:"The same month's figures with each published standard, or your target where it is tighter, in your profile treated as met: emissions reduction, renewable electricity, landfill diversion, fleet electrification, trees planted, hectares restored, land rehabilitated and program participants. Figures without a target stay as they are."},
     {k:"potential", name:"With Yarta help (estimate)", how:"The same month's figures with the assumed effect of every recommended item in your plan applied in full, once each has had time to take effect. An upper estimate: each item is also shown as a range from half its assumed effect to the full. Items you switch off are left out."}
   ];
