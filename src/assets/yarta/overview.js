@@ -11,7 +11,9 @@ var A, E, D, R;   // set from the api on every render
 /* Chart colours (validated with the dataviz checks, 13 Oct 2026): orange marks the share that is going the right
    way (renewable, recovered, electric, alternative water) and the actual line; steel marks the share to reduce.
    #CF7A2E vs #5F6467: normal-vision ΔE 21.6, CVD ΔE 15.9, both ≥3:1 on white. Scope ramp passes the ordinal checks. */
-var C = { good:'#CF7A2E', rest:'#5F6467', ink:'#0B0B0B', bench:'#8A4A14', s1:'#8A4A14', s2:'#C06A22', s3:'#E39A4F' };
+/* C.good is the accent a chart is drawn in: the brand ochre, or the colour of the category being shown (set through ACC). */
+var ACC=null;
+var C = { get good(){ return ACC||'#CF7A2E'; }, rest:'#5F6467', ink:'#0B0B0B', bench:'#8A4A14', s1:'#8A4A14', s2:'#C06A22', s3:'#E39A4F' };
 var TARGET_YEAR_END = '2030-06';
 var TCO2 = '<span class="nw">t CO₂-e</span>';   // never breaks at the hyphen
 function nu(v, unit, dp){ return '<span class="nw">'+fmt(v,dp||0)+' '+unit+'</span>'; }   // a number and its unit, never split   // "by 2030": the end of the 2029–30 financial year
@@ -194,11 +196,12 @@ function sources(S,i){
   var w=win(S,i), tot=sum(w,function(x){ return x.total_t; });
   return SRC.map(function(s){ var v=sum(w,s.fn), b=baseSum(S,w,s.fn); return {s:s, v:v, b:b, share:tot>0?v/tot*100:0, ch:pctChg(v,b)}; }).filter(function(r){ return r.v>0.05; }).sort(function(a,b){ return b.v-a.v; });
 }
+var SRC_C=['#8A5A3C','#E0902F','#B5622A','#C9A227','#6B5646','#2C6E8F','#7D6335'];
 function sourceList(rows, o){
   o=o||{}; var max=rows.length?rows[0].v:1;
   return '<div class="ov-src'+(o.inB?' no-ch':'')+'">'+rows.map(function(r){
-    return (o.static?'<div class="ov-src-r">':'<a class="ov-src-r" href="#/category/'+r.s.cat+(o.m?'?m='+o.m:'')+'" data-tip="'+esc(r.s.what)+'">')+'<span class="nm">'+esc(r.s.name)+'<span class="sc">Scope '+r.s.scope+'</span></span>'
-      + '<span class="tr"><i style="width:'+clamp(r.v/max*100,1.5,100)+'%"></i></span>'
+    return (o.static?'<div class="ov-src-r">':'<a class="ov-src-r" href="#/category/'+r.s.cat+(o.m?'?m='+o.m:'')+'" data-tip="'+esc(r.s.what)+'">')+'<span class="nm"><i class="sw" style="background:'+SRC_C[rows.indexOf(r)%SRC_C.length]+'" aria-hidden="true"></i>'+esc(r.s.name)+'<span class="sc">Scope '+r.s.scope+'</span></span>'
+      + '<span class="tr"><i style="width:'+clamp(r.v/max*100,1.5,100)+'%;background:'+SRC_C[rows.indexOf(r)%SRC_C.length]+'"></i></span>'
       + '<span class="vl"><b>'+fmt(r.v,0)+'</b> t<span class="sh">'+fmt(r.share,0)+'%</span></span>'
       + (o.inB?'':'<span class="ch">'+(r.ch==null?'<span class="muted">—</span>':arrow(r.ch,true))+'</span>')+(o.static?'</div>':'</a>'); }).join('')+'</div>';
 }
@@ -235,35 +238,40 @@ function levers(S,i,o){
   var m=S.months[i], r=m.r12, T=S.targets, w=win(S,i), BM=A.benchFor(o.profile)||{}, ml=function(x){ return A.mShort(x.month); };
   var L=[], inB=inBaseYear(S,i), n=span(r), BY='<span class="muted">Baseline year</span> · ';
   var onB=function(ch,lb){ return ch==null?'<span class="muted">no baseline</span>':arrow(ch,lb)+' on the baseline months'; };
+  ACC=A.catColour('energy');
   if(m.scores.energy!=null){ var g=pctChg(r.grid_kwh,r.base.grid_kwh), mwh=nu(r.grid_kwh/1000,'MWh');
     L.push({k:'energy', name:'Energy', big:r.renew_pct==null?'—':fmt(r.renew_pct,0)+'%', what:'of your electricity is renewable',
       sub: inB ? BY+mwh+' of grid electricity over '+n : 'Grid electricity '+onB(g,true)+' · '+mwh+' over '+n,
       bul:bullet(r.renew_pct, Math.max(num(T.target_renewable),E.STANDARDS.renewable), BM.renewable, {what:'Renewable electricity', tName:tLab(T.target_renewable,E.STANDARDS.renewable)}),
       chart:columns(w.map(function(x){ var all=pos(x.elec_all_kwh), rn=Math.min(all,pos(x.renew_kwh)); return {label:ml(x), parts:[(all-rn)/1000, rn/1000]}; }),{names:['Not renewable','Renewable'],colors:[C.rest,C.good],unit:'MWh',label:'Electricity by month, MWh',h:150}),
       key:[['Not renewable',C.rest],['Renewable',C.good]], unit:'MWh'}); }
+  ACC=A.catColour('fleet');
   if(m.scores.fleet!=null){ var fch=pctChg(r.fuel_l,r.base.fuel_l), kl=nu(r.fuel_l/1000,'kL',r.fuel_l<1e4?1:0);
     L.push({k:'fleet', name:'Fleet', big:m.fleet_ev_pct==null?'—':fmt(m.fleet_ev_pct,0)+'%', what:'of the fleet is electric',
       sub: inB ? BY+kl+' of fuel over '+n+' · '+fmt(m.fleet_n,0)+' vehicles' : 'Fuel '+onB(fch,true)+' · '+kl+' over '+n+' · '+fmt(m.fleet_n,0)+' vehicles',
       bul:bullet(m.fleet_ev_pct, num(T.target_fleet_ev)||null, BM.fleet, {what:'Fleet electrification', tName:'Your target'}),
       chart:columns(w.map(function(x){ var v=x.values||{}; return {label:ml(x), parts:[(pos(v.diesel_l)+pos(v.petrol_l)+pos(v.lpg_l))/1000, pos(v.biodiesel_l)/1000]}; }),{names:['Diesel, petrol and LPG','Biodiesel'],colors:[C.rest,C.good],unit:'kL',label:'Fuel by month, kL',h:150}),
       key:[['Diesel, petrol and LPG',C.rest]].concat(sum(w,function(x){ return (x.values||{}).biodiesel_l; })>0?[['Biodiesel',C.good]]:[]), unit:'kL'}); }
+  ACC=A.catColour('water');
   if(m.scores.water!=null){ var wc=pctChg(r.potable_kl,r.base.potable_kl), alt=r.alt_water_pct==null?'no rain, storm or recycled water reported':fmt(r.alt_water_pct,0)+'% from rain, storm or recycled water';
     L.push({k:'water', name:'Water', big:fmt(r.potable_kl,0)+'<small> kL</small>', what:'of drinking water over '+n,
       sub: inB ? BY+alt : onB(wc,true)+' · '+alt,
       bul:bullet(r.alt_water_pct, null, null, {what:'Alternative water share', max:100}),
       chart:columns(w.map(function(x){ var v=x.raw||{}; var a2=pos(v.recycled_kl)+pos(v.rain_kl)+pos(v.storm_kl)+pos(v.waste_water_kl); return {label:ml(x), parts:[pos(v.potable_kl), a2]}; }),{names:['Drinking water','Rain, storm or recycled'],colors:[C.rest,C.good],unit:'kL',label:'Water by month, kL',h:150}),
       key:[['Drinking water',C.rest],['Rain, storm or recycled',C.good]], altLabel:true, unit:'kL'}); }
+  ACC=A.catColour('waste');
   if(m.scores.waste!=null){ var lch=pctChg(r.landfill_t,r.base.landfill_t), wt=nu(r.waste_total_t,'t')+' of waste over '+n;
     L.push({k:'waste', name:'Waste', big:r.diversion_pct==null?'—':fmt(r.diversion_pct,0)+'%', what:'kept out of landfill',
       sub: inB ? BY+wt : 'Landfill '+onB(lch,true)+' · '+wt,
       bul:bullet(r.diversion_pct, Math.max(num(T.target_diversion),E.STANDARDS.diversion), BM.diversion, {what:'Landfill diversion', tName:tLab(T.target_diversion,E.STANDARDS.diversion)}),
       chart:columns(w.map(function(x){ return {label:ml(x), parts:[pos(x.landfill_t), pos(x.waste_total_t)-pos(x.landfill_t)]}; }),{names:['To landfill','Recovered or treated'],colors:[C.rest,C.good],unit:'t',label:'Waste by month, tonnes',h:150}),
       key:[['To landfill',C.rest],['Recovered or treated',C.good]], unit:'t'}); }
+  ACC=null;
   L.forEach(function(l){ l.span=n; });
   return L;
 }
 function leverCard(l, m, month){
-  return '<article class="ov-lev"><header><h3><a href="#/category/'+l.k+'?m='+month+'">'+esc(l.name)+'</a></h3>'+chipScore(m,l.k)+'</header>'
+  return '<article class="ov-lev" style="--c:'+A.catColour(l.k)+'"><header><h3><a href="#/category/'+l.k+'?m='+month+'">'+esc(l.name)+'</a></h3>'+chipScore(m,l.k)+'</header>'
     + '<div class="ov-val"><b>'+l.big+'</b><span>'+esc(l.what)+'</span></div>'
     + '<p class="ov-s">'+l.sub+'</p>'
     + (l.altLabel ? '<p class="mini-k">Share from rain, storm or recycled water</p>' : '')
@@ -317,6 +325,7 @@ V.reportBrief = function(S, i, o, api){
 
 /* the report's page 1: the same emissions headline and sources, sized for A4 */
 V.reportEmissions = function(S, i, api){
+  ACC=null;
   A=api; E=api.E; D=api.D; R=api.R;
   var m=S.months[i], r=m.r12, ep=emisParts(S,i,{traj:{fixed:!phone(),w:640,h:140}, shortKey:true}), inB=inBaseYear(S,i);
   return '<div class="rp-emis"><div class="rp-emis-l">'+ep.head+ep.chart+'</div>'
@@ -397,22 +406,55 @@ function heroRoad(S, i, o){
   var head, sub;
   if(!st){ head='Your emissions'; sub=''; }
   else if(st.inBase){ head='Baseline year, to '+A.mLabel(baseFyEnd(S)); sub='Your target is −'+fmt(st.tgt,0)+'% by 2030. The path starts when this year ends: every later month is measured against it.'; }
-  else { head = st.state==='on' ? 'On track for −'+fmt(st.tgt,0)+'% by 2030' : st.state==='close' ? 'Just behind the path to −'+fmt(st.tgt,0)+'%' : 'Behind the path to −'+fmt(st.tgt,0)+'% by 2030';
+  else { head = st.red>=0.05 ? 'Emissions are down '+fmt(st.red,1)+'%' : st.red<=-0.05 ? 'Emissions are up '+fmt(-st.red,1)+'%' : 'Emissions are level with your baseline'; var headOld = st.state==='on' ? 'On track for −'+fmt(st.tgt,0)+'% by 2030' : st.state==='close' ? 'Just behind the path to −'+fmt(st.tgt,0)+'%' : 'Behind the path to −'+fmt(st.tgt,0)+'% by 2030';
     sub = 'You have cut '+fmt(Math.max(0,st.red),1)+'% on '+esc(S.baseline.fy)+'. '+(st.red>=st.tgt?'The target is already met; the job now is to hold it.':'Reaching the target takes about '+fmt(Math.max(0,st.pace),1)+'% of your baseline emissions each year, for '+fmt(st.yrsLeft,1)+' more years.'); }
   var steps=P?P.active.filter(function(it){ return it.k!=='grants' && it.start; }).sort(function(a,b){ return a.start<b.start?-1:a.start>b.start?1:0; }).slice(0,6):[];
   var qOf=function(k){ return k.slice(0,5)+('0'+(Math.floor((+k.slice(5)-1)/3)*3+1)).slice(-2); }, byQ={}, order=[];
   steps.forEach(function(it,j){ var q=qOf(it.start); if(!byQ[q]){ byQ[q]=[]; order.push(q); } byQ[q].push({n:j+1, t:it.title}); });
   var pins=phone()?[]:order.map(function(q){ var g=byQ[q], a=g[0].n, b=g[g.length-1].n; return {k:E.addMonths(q,1), n:a===b?a:a+'–'+b, tip:R.qLabel(q)+': '+g.map(function(x){ return x.n+'. '+x.t; }).join('; ')}; });
+  pins=[];   // the chart now shares its row with the sources, where the pins crowd; the plan has its own panel below
   var stepList=steps.map(function(it,j){ var q=it.start.slice(0,5)+('0'+(Math.floor((+it.start.slice(5)-1)/3)*3+1)).slice(-2);
     return '<li><span class="n">'+(j+1)+'</span><span class="when">'+esc(R.qLabel(q))+'</span><a href="#/improvements/'+it.s.k+'">'+esc(it.title)+'</a><span class="eff">'+doKey(it)+(it.full&&it.k!=='grants'?' <span class="nw">· full effect '+esc(A.mShort(it.full))+'</span>':'')+'</span>'+(it.booking?A.bookingChip(it.booking):'<a class="btn btn-primary btn-sm bk" href="#/improvements/'+it.s.k+'">Book</a>')+'</li>'; }).join('');
   var eCh=pctChg(r.total_t,r.base.total_t);
   var scoreBox='<a class="cx-score" href="#ten" aria-label="Your score, in its parts">'+A.ring(m.score,124,true)+'<span><b>'+esc(m.band)+'</b>'+(m.yoy!=null?(m.yoy>=0?'Up ':'Down ')+Math.round(Math.abs(m.yoy))+' on a year ago':'Change shows after 12 months')+'<br>'+m.scored+' of 10 categories scored</span></a>';
   var numbers='<p class="cx-c-nums"><b>'+nu(r.total_t,'t CO₂-e')+'</b> '+(r.n<12?'in the '+span(r)+' to '+A.mLabel(month):'over the last 12 months')+(eCh!=null&&!(st&&st.inBase)?', '+arrow(eCh,true)+' on '+esc(S.baseline.fy):'')+'. <span class="nw">Scope 1: '+fmt(r.scope1_t,0)+' t</span> · <span class="nw">Scope 2: '+fmt(r.scope2_t,0)+' t</span> · <span class="nw">Scope 3: '+fmt(r.scope3_t,0)+' t</span></p>';
   return '<section class="cx cx-c"><div class="cx-c-top"><div class="cx-c-head"><h2>'+head+'</h2><p>'+sub+'</p>'+numbers+'</div></div>'
-    + '<div class="cx-c-road">'+trajectory(S,i,T,{w:1040,h:270,pins:pins})+'</div>'
+    + '<div class="cx-c-road">'+trajectory(S,i,T,{w:600,h:290,pins:pins})+'</div>'
     + '<div class="cx-c-key ov-key"><span><i class="ln"></i>Your emissions, % change on '+esc(S.baseline.fy)+'</span><span><i class="ln dash"></i>Straight-line path to your target</span>'+(pins.length?'<span><i class="k-pin"></i>When each step of your plan starts</span>':'')+'</div>'
     + '</section>'
-    + '\u0000' + (stepList?'<section class="panel cx-plan"><div class="ov-h"><div><h2 class="sec-t">Your plan</h2><p class="sec-s">The steps that would move your score most, in the order they start. The numbered pins on the emissions chart mark when each begins.</p></div><a class="btn btn-ghost btn-sm" href="#/roadmap" style="color:var(--ink)">The full roadmap</a></div><ol class="cx-steps">'+stepList+'</ol><p class="cx-foot">The effects are estimates from the published rules'+(P&&P.potential!=null?'; with every step done, the score could reach up to '+P.potential+(P.full?' by '+A.mLabel(P.full):''):'')+'. You can use any provider.</p></section>':'');
+    + '\u0000' + (stepList?'<section class="panel cx-plan"><div class="ov-h"><div><h2 class="sec-t">Your plan</h2><p class="sec-s">The steps that would move your score most, in the order they start.</p></div><a class="btn btn-ghost btn-sm" href="#/roadmap" style="color:var(--ink)">The full roadmap</a></div><ol class="cx-steps">'+stepList+'</ol><p class="cx-foot">The effects are estimates from the published rules'+(P&&P.potential!=null?'; with every step done, the score could reach up to '+P.potential+(P.full?' by '+A.mLabel(P.full):''):'')+'. You can use any provider.</p></section>':'');
+}
+
+/* The answer in one sentence, from the figures: the score's band, and where emissions stand against the path to the target. */
+function saySentence(S,i){ var m=S.months[i], st=onTrack(S,i,S.targets), band=m.band||'';
+  return !st ? band+'.' : st.inBase ? band+'. This is your baseline year.' : st.state==='on' ? band+', and on track for 2030.' : st.state==='close' ? band+', and just behind the path to 2030.' : band+', but behind the path to 2030.'; }
+V.reportSay = function(S, i, api){ A=api; E=api.E; D=api.D; R=api.R; return saySentence(S,i); };
+
+/* The opening, in the brand's own colours: the score drawn as its ten parts, the answer in one sentence, who verified it, and where the score could go. */
+function heroCountry(S, i, o){
+  var m=S.months[i], T=S.targets, st=onTrack(S,i,T), month=m.month, ly=S.months[i-12]||null, rec=A.rec(o,month)||{}, cf=confidence(o,m), P=A.planFor(o,S,i);
+  var say=saySentence(S,i);
+  var ver=m.status==='verified';
+  var chip='<span class="ct-chip'+(ver?'':' prov')+'"><i aria-hidden="true">'+(ver?'✓':'…')+'</i>'+(ver?'Verified by a Yarta analyst'+(rec.verifiedAt?' on '+esc(A.longDate(rec.verifiedAt)):''):'Provisional: waiting for a Yarta analyst to verify')+'</span>';
+  var data='<p class="ct-data"><b>'+fmt(num(m.complete_pct),0)+'%</b> of required figures in <span aria-hidden="true">·</span> <b>'+fmt(num(m.evidence_pct),0)+'%</b> backed by documents <span aria-hidden="true">·</span> data confidence <b>'+cf.g+'</b></p>';
+  var nSteps=P?P.active.filter(function(it){ return it.k!=='grants' && it.start; }).length:0;
+  var three='<div class="ct-three"><a href="#ten"><span>Yarta Score now</span><b>'+m.score+'</b><span class="ct-d">'+(m.yoy!=null&&ly?A.delta(m.yoy,{unit:' pts'})+' on '+esc(A.mLabel(ly.month)):m.scored+' of 10 categories scored')+'</span></a>'
+    + (P&&P.potential!=null?'<a href="#/roadmap"><span>With your plan</span><b>'+P.potential+'</b><span>'+(nSteps?nSteps+' step'+(nSteps>1?'s':'')+', an estimate':'an estimate')+'</span></a>':'')
+    + (P&&P.target!=null?'<a href="#/roadmap"><span>At the eco standards</span><b>'+P.target+'</b><span>the published targets</span></a>':'')+'</div>';
+  return '<section class="ct-hero" aria-label="Where you stand"><a class="ct-dial-w" href="#ten" aria-label="Your score in its ten parts">'+A.dial(m, 360, true)+'</a>'
+    + '<div class="ct-h"><h2 class="ct-say">'+esc(say)+'</h2>'+chip+data+three+'</div></section>';
+}
+
+/* The ten parts of the score, each in its own colour: the same colours as the arcs of the dial. */
+function tenCountry(S, i, o){
+  var m=S.months[i], ly=S.months[i-12]||null, month=m.month;
+  var cats=D.CATEGORIES.map(function(c){ return {c:c, v:m.scores[c.k], d:m.cat_yoy[c.k]}; });
+  var scored=cats.filter(function(x){ return x.v!=null; }).sort(function(a,b){ return b.v-a.v; }), hi=scored.slice(0,2), lo=scored.slice(-2).reverse();
+  var link=function(x){ return '<a href="#/category/'+x.c.k+'?m='+month+'">'+esc(x.c.short)+' '+Math.round(x.v)+'</a>'; };
+  var cards=cats.map(function(x){ var v=x.v, col=A.catColour(x.c.k);
+    return '<a class="ct-cat'+(v==null?' na':'')+'" href="#/category/'+x.c.k+'?m='+month+'" style="--c:'+col+'"><span class="nm"><i aria-hidden="true"></i>'+esc(x.c.name)+'</span><b>'+(v==null?'—':Math.round(v))+'</b><span class="t"><i style="width:'+(v==null?0:Math.round(v))+'%"></i></span><span class="dl">'+(v==null?'Not reported':x.d==null?'First year':A.delta(x.d)+(Math.abs(x.d)>=0.5?' on last year':''))+'</span></a>'; }).join('');
+  return '<section class="panel ct-ten" id="ten"><div class="ov-h"><div><h2 class="sec-t">The '+(m.scored===10?'ten':m.scored)+' parts of your score</h2><p class="sec-s">Your score of '+m.score+' is the average of the categories you report, each out of 100. Each colour is one arc of the ring.</p></div>'
+    + (scored.length>3?'<p class="ct-ten-side"><span>Lifting it: '+hi.map(link).join(', ')+'</span><span>Holding it back: '+lo.map(link).join(', ')+'</span></p>':'')+'</div><div class="ct-cats">'+cards+'</div></section>';
 }
 
 /* At a glance: the four things a manager checks first. The score, emissions against the target, whether the month is verified and how well evidenced, and the next step. */
@@ -471,6 +513,7 @@ V.summaryData = function(S, i, o, api){
   return {m:m, st:st, head:head, line:line, why:why, dM:dM, moved:moved, figs:figs, inB:inB, fy:fy, next:next, nxt:nxt, P:P, rid:rid, vurl:vurl, reportUrl:reportUrl, subject:subject, text:T1.join('\n')};
 };
 V.summary = function(q, api){
+  ACC=null;
   A=api; E=api.E; D=api.D; R=api.R; tip();
   var o=A.org(), S=A.seriesOf(o), m=A.monthOf(S,q.m), p=o.profile;
   if(!m) return A.shell('summary','<div class="pg-head"><div><p class="kicker">Monthly summary</p><h1>'+esc(p.org_name)+'</h1></div></div><div class="empty">The summary appears once your first month is verified.</div>');
@@ -509,6 +552,7 @@ V.brief = function(S, i, key, api){
 
 /* ------------------------------------------------------------------ the Overview */
 V.dashboard = function(q, api){
+  ACC=null;
   A=api; E=api.E; D=api.D; R=api.R; tip();
   var o=A.org(), S=A.seriesOf(o), m=A.monthOf(S,q.m), p=o.profile;
   if(!m) return A.shell('dashboard','<div class="pg-head"><div><p class="kicker">Overview</p><h1>'+esc(p.org_name)+'</h1></div></div>'+A.banner(o)+'<div class="empty">'+(A.isOp()?'No month has been verified or entered yet. <a class="link" href="#/ops/entry">Open data entry</a>.':'Your first verified month will appear here. <a class="link" href="#/entry">Enter your first month</a> and Yarta will verify it.')+'</div>');
@@ -530,12 +574,13 @@ V.dashboard = function(q, api){
   // 2. where the emissions come from
   var srcRows=sources(S,i), inB=inBaseYear(S,i), winT=(r.n<12?'The '+span(r)+' to ':'Rolling 12 months to ')+A.mLabel(month);
   var srcP='<section class="panel ov-srcp"><div class="ov-h"><div><h2 class="sec-t">Where your emissions come from</h2><p class="sec-s">'+winT+(inB?', your baseline year. Changes against it show from '+A.mLabel(E.addMonths(baseFyEnd(S),1))+'.':'. The arrow is the change on the same months of the baseline year.')+'</p></div><a class="btn btn-ghost btn-sm" href="#/category/carbon?m='+month+'" style="color:var(--ink)">Emissions in detail</a></div>'
+    + '<div class="ct-stack" aria-hidden="true">'+srcRows.map(function(x,j){ return '<i style="width:'+Math.max(0.6,x.share)+'%;background:'+SRC_C[j%SRC_C.length]+'"></i>'; }).join('')+'</div>'
     + sourceList(srcRows,{m:month, inB:inB})
     + '<p class="ov-fine">Avoided emissions from your recycling, reported separately and never deducted: <b>'+nu(r.avoided_t,'t CO₂-e')+'</b> (modelled estimate).'+(sum(win(S,i),function(x){ return x.flights; })>0?' Flights are recorded but not yet in the totals.':'')+'</p></section>';
 
   // 3. the four levers
   var lv=levers(S,i,o);
-  var levP='<section class="ov-levs"><div class="ov-h"><div><h2 class="sec-t">Your four levers</h2><p class="sec-s">What moves your emissions and your score. Orange is the share going the right way.</p></div></div><div class="ov-lev-g">'+lv.map(function(l){ return leverCard(l,m,month); }).join('')+'</div></section>';
+  var levP='<section class="ov-levs"><div class="ov-h"><div><h2 class="sec-t">Your four levers</h2><p class="sec-s">What moves your emissions and your score. The colour is the share going the right way.</p></div></div><div class="ov-lev-g">'+lv.map(function(l){ return leverCard(l,m,month); }).join('')+'</div></section>';
 
   // 4. what changed, and what to do next
   var ch=inB?[]:changes(S,i,o), cov=baseCover(S,month), gapNote='';
@@ -556,7 +601,7 @@ V.dashboard = function(q, api){
         + (v==null?'<span class="na">Not reported</span>':'<span class="tr"><i style="width:'+clamp(v,1,100)+'%"></i></span><span class="v">'+Math.round(v)+'</span><span class="d">'+A.delta(m.cat_yoy[c.k])+'</span>')+'</a>'; }).join('')+'</div></section>';
 
   var hr=heroRoad(S,i,o).split('\u0000');   // [the road to 2030, the plan]
-  return A.shell('dashboard', head + A.banner(o) + glance(S,i,o) + hr[0] + chP + tenParts(S,i,o) + srcP + levP + (hr[1]||'') + scaleFacts(S,i,o));
+  return A.shell('dashboard', head + A.banner(o) + heroCountry(S,i,o) + '<div class="ct-row">'+hr[0]+srcP+'</div>' + tenCountry(S,i,o) + chP + levP + (hr[1]||'') + scaleFacts(S,i,o));
 };
 
 /* ------------------------------------------------------------------ category pages */
@@ -596,6 +641,7 @@ function vs(ch, lowerBetter){ return CUR_INBASE?'<span class="muted">Baseline ye
 
 V.category = function(cat, q, api){
   A=api; E=api.E; D=api.D; R=api.R; tip();
+  ACC=api.catColour?api.catColour(cat):null;
   var o=A.org(), S=A.seriesOf(o), m=A.monthOf(S,q.m), c=D.CAT[cat]; if(!c||!m) return null;
   var i=A.idxOf(S,m.month), r=m.r12, T=S.targets, w=win(S,i), month=m.month, BM=A.benchFor(o.profile)||{}, ml=function(x){ return A.mShort(x.month); };
   CUR_INBASE=inBaseYear(S,i); CUR_SPAN=span(r);
@@ -693,7 +739,8 @@ V.category = function(cat, q, api){
   }
   var scoreHist=S.months.slice(Math.max(0,i-23),i+1).map(function(x){ return {label:A.mShort(x.month), v:x.scores[cat]==null?null:Math.round(x.scores[cat]), prov:x.status!=='verified'}; });
   var hist='<section class="panel"><h2 class="sec-t">'+esc(c.short)+' score by month</h2><p class="sec-s">Out of 100, from rolling 12-month figures.</p>'+line(scoreHist,{label:c.short+' score by month'})+'</section>';
-  return A.shell('category', head + '<div class="ov-cat-top">'+scoreP+'<div class="ov-tiles">'+tiles+'</div></div>' + main + extra + hist + figuresTable(S,i,cat));
+  var colC=A.catColour(cat); ACC=null;
+  return A.shell('category', '<div class="ct-catpage" style="--c:'+colC+';--cd:'+A.catColour(cat,true)+'">' + head + '<div class="ov-cat-top">'+scoreP+'<div class="ov-tiles">'+tiles+'</div></div>' + main + extra + hist + figuresTable(S,i,cat) + '</div>');
 };
 function chartPanel(title, sub, svg, key, note){ return '<section class="panel"><h2 class="sec-t">'+esc(title)+'</h2>'+(sub?'<p class="sec-s">'+esc(sub)+'</p>':'')+'<div class="ov-big">'+svg+'</div><div class="ov-key">'+(key&&key.length>1?key.map(function(k){ return '<span><i style="background:'+k[1]+'"></i>'+esc(k[0])+'</span>'; }).join(''):'')+'<span class="r">'+esc(note||('Last '+CUR_SPAN))+' · hover a column for its figures</span></div></section>'; }
 

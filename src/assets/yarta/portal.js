@@ -139,6 +139,19 @@ function stackBars(rows,o){
   rows.forEach(function(r,i){ var x=pl+i*gap+(gap-bw)/2, acc=0; r.parts.forEach(function(v,j){ v=v||0; if(v<=0) return; var y0=y(acc), y1=y(acc+v); s+='<rect x="'+x.toFixed(1)+'" y="'+y1.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(0.5,y0-y1).toFixed(1)+'" fill="'+o.colors[j]+'"><title>'+esc(r.label+' · '+(o.names?o.names[j]+': ':'')+auto(v)+(o.unit?' '+o.unit:''))+'</title></rect>'; acc+=v; }); if(i%Math.ceil(n/13)===0||i===n-1) s+='<text x="'+(x+bw/2)+'" y="'+(H-7)+'" text-anchor="middle">'+esc(r.label)+'</text>'; });
   return s+'</svg>';
 }
+/* Each category has its own colour: [on light, on dark]. The same colours draw the dial, the category cards and the report. */
+var CAT_C={energy:['#E0902F','#F0A24A'],fleet:['#B5622A','#D9853B'],carbon:['#6B5646','#B9A089'],water:['#2C6E8F','#6FB3D2'],waste:['#9A6A47','#C4936B'],circular:['#C9A227','#E5C24A'],land:['#7D6335','#B79A5E'],nature:['#2E6B4A','#7FB894'],community:['#A8452F','#E07C62'],governance:['#5A6066','#AEB4BA']};
+function catColour(k,dark){ var c=CAT_C[k]; return c?c[dark?1:0]:'#8E9396'; }
+/* The Yarta Score drawn as its ten parts: one arc per category, and the length of the arc is that category's score. */
+function dial(m,size,dark){ size=size||240; var c=size/2, rr=size*0.40, sw=size*0.085, gap=4, seg=36-gap, s='';
+  function pt(a){ var t=a*Math.PI/180; return (c+rr*Math.sin(t)).toFixed(2)+' '+(c-rr*Math.cos(t)).toFixed(2); }
+  function arc(a0,a1,col){ return '<path d="M'+pt(a0)+' A'+rr.toFixed(2)+' '+rr.toFixed(2)+' 0 0 1 '+pt(a1)+'" fill="none" stroke="'+col+'" stroke-width="'+sw.toFixed(1)+'" stroke-linecap="round"/>'; }
+  D.CATEGORIES.forEach(function(ct,i){ var v=m&&m.scores?m.scores[ct.k]:null, a0=i*36+gap/2;
+    s+='<g><title>'+esc(ct.name)+': '+(v==null?'not reported':Math.round(v)+' out of 100')+'</title>'+arc(a0,a0+seg,dark?'#3A2F26':'#E6DCCB')+(v==null?'':arc(a0,a0+Math.max(1.5,seg*Math.min(100,v)/100),catColour(ct.k,dark)))+'</g>'; });
+  var sc=m&&m.score!=null?m.score:'—';
+  return '<svg class="ct-dial" viewBox="0 0 '+size+' '+size+'" width="'+size+'" height="'+size+'" role="img" aria-label="Yarta Score '+sc+' out of 100, drawn as its ten category scores">'+s
+    + '<text x="'+c+'" y="'+(c+size*0.085).toFixed(1)+'" text-anchor="middle" class="ct-dial-v" font-size="'+(size*0.30).toFixed(0)+'" fill="'+(dark?'#fff':'#1E1712')+'">'+sc+'</text>'
+    + '<text x="'+c+'" y="'+(c+size*0.168).toFixed(1)+'" text-anchor="middle" class="ct-dial-of" font-size="'+Math.max(8,size*0.047).toFixed(1)+'" fill="'+(dark?'#C9B9A2':'#75695C')+'">out of 100</text></svg>'; }
 function ring(v,size,light){ return '<div class="score-ring'+(light?' light':'')+'" style="--v:'+(v==null?0:v)+';--size:'+(size||170)+'px"><div class="in"><div class="v">'+(v==null?'—':v)+'</div><div class="of">out of 100</div></div></div>'; }
 function statusChip(st){ var L={verified:'Verified',submitted:'Awaiting verification',draft:'Being entered',returned:'Returned for correction'}; return '<span class="st st-'+esc(st)+'">'+(L[st]||esc(st))+'</span>'; }
 
@@ -240,7 +253,7 @@ function dashBanner(o){
   return banner;
 }
 function viewApi(){ return {E:E, D:D, R:R, org:org, seriesOf:seriesOf, monthOf:monthOf, idxOf:idxOf, isOp:isOp, me:me, rec:rec, shell:shell, esc:esc, fmt:fmt, pct:pct, sgn:sgn, delta:delta,
-  mLabel:mLabel, mShort:mShort, longDate:longDate, statusChip:statusChip, ring:ring, lineChart:lineChart, planFor:planFor, benchFor:benchFor, upText:upText, bookingChip:bookingChip, banner:dashBanner,
+  mLabel:mLabel, mShort:mShort, longDate:longDate, statusChip:statusChip, ring:ring, dial:dial, catColour:catColour, lineChart:lineChart, planFor:planFor, benchFor:benchFor, upText:upText, bookingChip:bookingChip, banner:dashBanner,
   verifyUrl:verifyUrl, slotLabel:slotLabel, scoreRange:scoreRange}; }
 function vSummary(q){ return window.YARTA_VIEWS.summary(q, viewApi()); }
 function vDashboard(q){ return window.YARTA_VIEWS.dashboard(q, viewApi()); }
@@ -529,18 +542,23 @@ function sheetCover(o,S,i,PL,k,nP,provTxt,issuedTxt){
   if(R12.participants>0) scale.push({ic:'people', v:fmt(R12.participants,0)+' people', t:'took part in environment programs'});
   if(m.r12.n && R12.treated_t>0) scale.push({ic:'scale', v:fmt(R12.treated_t,0)+' t', t:'of clinical and related waste sent for treatment, counted in the total but never as recovered'});
   var scaleH=scale.slice(0,(window.YARTA_VIEWS && window.YARTA_VIEWS.reportEmissions)?4:6).map(function(x){ return '<div class="rp-sc">'+rpIco(x.ic)+'<div><b>'+x.v+'</b> '+esc(x.t)+'</div></div>'; }).join('') || '<p class="rp-p muted">No figures yet.</p>';
-  var subs=D.CATEGORIES.map(function(c){ var v=m.scores[c.k]; return '<div class="rp-sub"><span>'+esc(c.name)+(m.prov[c.k]?' <span class="muted">(P)</span>':'')+'</span><span class="v">'+(v==null?'—':Math.round(v))+'</span><span class="d">'+(v==null?'<span class="muted small">not reported</span>':delta(m.cat_yoy[c.k]))+'</span><div class="bar"><i style="width:'+(v||0)+'%"></i></div></div>'; }).join('');
+  var subs=D.CATEGORIES.map(function(c){ var v=m.scores[c.k]; return '<div class="rp-sub" style="--c:'+catColour(c.k)+'"><span><i class="cd" aria-hidden="true"></i>'+esc(c.name)+(m.prov[c.k]?' <span class="muted">(P)</span>':'')+'</span><span class="v">'+(v==null?'—':Math.round(v))+'</span><span class="d">'+(v==null?'<span class="muted small">not reported</span>':delta(m.cat_yoy[c.k]))+'</span><div class="bar"><i style="width:'+(v||0)+'%"></i></div></div>'; }).join('');
   var BM=benchFor(p);
   var tgH=tg.filter(function(t){ return !(window.YARTA_VIEWS && window.YARTA_VIEWS.reportEmissions) || t.k!=='emissions'; }).map(function(t){ var w=(t.actual==null||!(t.target>0))?0:Math.max(0,Math.min(100,t.actual/t.target*100)); var met=t.actual!=null&&t.actual>=t.target; var b=BM&&BM[t.k]; var bw=(b&&t.target>0)?Math.max(0,Math.min(100,b.v/t.target*100)):null; return '<div class="rp-tg'+(met?' met':'')+'"><span class="n">'+esc(t.name)+(b?' <span class="muted">· industry '+pct(b.v,0)+'</span>':'')+'</span><span class="r">'+(t.actual==null?'—':pct(t.actual,0))+' <span class="muted">of '+pct(t.target,0)+'</span></span><div class="bar"><i style="width:'+w.toFixed(0)+'%"></i>'+(bw==null?'':'<b class="bm" style="left:'+bw.toFixed(0)+'%" title="Industry benchmark"></b>')+'</div></div>'; }).join('');
   var rid=E.reportId(o.id, k, m.score, (rec(o,k)||{}).values), vurl=verifyUrl(rid);
   var photo = p.country_photo ? ' style="background-image:linear-gradient(90deg,rgba(11,40,24,.96) 0%,rgba(11,40,24,.78) 55%,rgba(11,40,24,.35) 100%),url('+esc(p.country_photo)+')"' : '';
   var wyc = PL ? '<div class="rp-wyc"><div><span class="k">Now</span><b>'+(PL.now==null?'—':PL.now)+'</b></div><div><span class="k">At the eco standards</span><b>'+(PL.target==null?'—':PL.target)+'</b></div><div class="hl"><span class="k">With Yarta help</span><b>'+(PL.potential==null?'—':PL.potential)+'</b><span class="s">estimate · plan on page '+nP+'</span></div></div>' : '';
-  return '<section class="rp-sheet rp-cover">'
+  var sayT=(window.YARTA_VIEWS && window.YARTA_VIEWS.reportSay) ? window.YARTA_VIEWS.reportSay(S,i,viewApi()) : (m.band||'')+'.';
+  var three='<div class="rp-three"><div><span class="k">'+RB.score+' now</span><b>'+m.score+'</b><span class="s">'+(m.yoy==null?m.scored+' of 10 categories scored':delta(m.yoy,{unit:' pts'})+' on '+(ly?esc(mLabel(ly.month)):'last year'))+'</span></div>'
+    + (PL&&PL.potential!=null?'<div><span class="k">With your plan</span><b>'+PL.potential+'</b><span class="s">an estimate · the plan is on page '+nP+'</span></div>':'')
+    + (PL&&PL.target!=null?'<div><span class="k">At the eco standards</span><b>'+PL.target+'</b><span class="s">the published targets</span></div>':'')+'</div>';
+  return '<section class="rp-sheet rp-cover rp-ct">'
     + '<div class="rp-band"'+photo+'><div class="rp-band-l"><div class="rp-brand">'+RB.mark+'<span class="full">'+RB.full+'</span></div>'
-    + '<div class="rp-ethos">Measure. Understand. Report. Improve.</div><h1 class="rp-big">'+RB.title+'</h1><p class="rp-tag">Where '+esc(p.org_name)+' stands, verified figure by figure, and the ways to improve.</p></div>'
-    + '<div class="rp-band-r"><div class="rp-kv light"><span>Organisation</span><b>'+esc(p.org_name)+'</b>'+(sectorName?'<span>Sector</span><b>'+esc(sectorName)+'</b>':'')+'<span>Month</span><b>'+mLabel(k)+'</b><span>Status</span><b>'+esc(provTxt)+'</b><span>Issued</span><b>'+(issuedTxt||longDate(new Date()))+'</b></div>'+(p.traditional_owners?'<div class="rp-country">On '+esc(p.traditional_owners)+' Country</div>':'')+'</div></div>'
+    + '<h1 class="rp-big">'+RB.title+'</h1><p class="rp-say">'+esc(sayT)+'</p>'
+    + '<div class="rp-kv light"><span>Organisation</span><b>'+esc(p.org_name)+'</b>'+(sectorName?'<span>Sector</span><b>'+esc(sectorName)+'</b>':'')+'<span>Month</span><b>'+mLabel(k)+'</b><span>Status</span><b>'+esc(provTxt)+'</b><span>Issued</span><b>'+(issuedTxt||longDate(new Date()))+'</b></div>'+(p.traditional_owners?'<div class="rp-country">On '+esc(p.traditional_owners)+' Country</div>':'')+'</div>'
+    + '<div class="rp-dial">'+dial(m,240,true)+'</div></div>'
     + (p.country_photo?'<div class="rp-photo-credit">Photo: '+esc(p.country_photo_credit||'supplied by the organisation and approved by Traditional Owners')+'</div>':'')
-    + '<div class="rp-score">'+ring(m.score,150,true)+'<div class="rp-score-t"><p class="kicker">'+RB.score+' · '+esc(mLabel(k))+'</p><div class="band">'+esc(m.band)+'</div><div class="rp-score-d">'+(m.yoy==null?'':'<span>'+delta(m.yoy,{unit:' pts'})+' year on year'+(ly?' ('+esc(mLabel(ly.month))+')':'')+'</span>')+(m.mom==null?'':'<span>'+delta(m.mom,{unit:' pts'})+' month on month</span>')+'<span>'+m.scored+' of 10 categories scored</span></div></div>'+wyc+'</div>'
+    + three
     + (window.YARTA_VIEWS && window.YARTA_VIEWS.reportBrief ? window.YARTA_VIEWS.reportBrief(S,i,o,viewApi()) : '')
     + (window.YARTA_VIEWS && window.YARTA_VIEWS.reportEmissions ? window.YARTA_VIEWS.reportEmissions(S,i,viewApi()) : '<div class="rp-cards">'+cardsH+'</div>')
     + '<div class="rp-cols"><div><div class="rp-h">Category scores · change on last year</div><div class="rp-subs one">'+subs+'</div></div>'
@@ -565,7 +583,7 @@ function reportSheets(o,S,k){
   var pts=S.months.slice(Math.max(0,i-12),i+1).map(function(x){ return {label:mShort(x.month), v:x.score, prov:x.status!=='verified'}; });
   var provTxt = m.status==='verified' ? 'Verified by Yarta on '+longDate(r.verifiedAt) : 'Provisional · awaiting Yarta verification';
   var tg=E.targets({months:S.months.slice(0,i+1), targets:T, baseline:S.baseline});
-  var subs=D.CATEGORIES.map(function(c){ var v=m.scores[c.k]; return '<div class="rp-sub"><span>'+esc(c.name)+(m.prov[c.k]?' <span class="muted">(P)</span>':'')+'</span><span class="v">'+(v==null?'—':Math.round(v))+'</span><span class="d">'+(v==null?'<span class="muted small">not reported</span>':delta(m.cat_yoy[c.k]))+'</span><div class="bar"><i style="width:'+(v||0)+'%"></i></div></div>'; }).join('');
+  var subs=D.CATEGORIES.map(function(c){ var v=m.scores[c.k]; return '<div class="rp-sub" style="--c:'+catColour(c.k)+'"><span><i class="cd" aria-hidden="true"></i>'+esc(c.name)+(m.prov[c.k]?' <span class="muted">(P)</span>':'')+'</span><span class="v">'+(v==null?'—':Math.round(v))+'</span><span class="d">'+(v==null?'<span class="muted small">not reported</span>':delta(m.cat_yoy[c.k]))+'</span><div class="bar"><i style="width:'+(v||0)+'%"></i></div></div>'; }).join('');
   // key figures: the month, the rolling window and the change on the same months of the baseline year
   var L12=R12.n<12?'Last '+R12.n+' months':'Rolling 12 months', W12=S.months.slice(Math.max(0,i-11),i+1);
   function win(id){ return W12.reduce(function(a,x){ var y=+((x.raw||{})[id]); return a+(isFinite(y)?y:0); },0); }
@@ -689,7 +707,7 @@ function ganttPlan(P,o){
     var tg=o.print?'':'<label class="tgl" title="'+(b?'Booked items stay in the plan':'Include in the plan')+'"><input type="checkbox" data-act="plan-toggle" data-svc="'+s.k+'"'+(it.off?'':' checked')+(b?' disabled':'')+'><span class="vh">Include '+esc(it.title)+' in the plan</span></label>';
     var act=o.print?'':(b?bookingChip(b)+'<span class="small muted">'+esc(slotLabel(b.slot,b.other))+'</span>':'<a class="btn btn-primary btn-sm" href="#/improvements/'+s.k+'">Book</a>');
     var more=o.print?'':'<details class="gt-more"><summary>Why, and what you get</summary><p>'+esc(it.why)+'</p>'+(PL?'<p><b>You get:</b> '+esc(PL.gets)+'</p><p><b>Owner:</b> '+esc(PL.owner)+' · <b>Who runs it:</b> '+esc(provOf(s).label)+' · '+esc(s.session)+'</p>':'')+'</details>';
-    return '<div class="gt-row'+(it.off?' off':'')+'">'
+    return '<div class="gt-row'+(it.off?' off':'')+'"'+(s.cat&&D.CAT[s.cat]?' style="--c:'+catColour(s.cat)+'"':'')+'>'
       + '<div class="gt-lab">'+tg+'<div><a class="gt-t" href="#/improvements/'+s.k+'">'+itemName(it)+'</a>'
       + '<span class="gt-m"><span class="gt-cat">'+esc(cat)+'</span>'+(rng?' · score '+esc(rng):(it.k==='grants'?' · no direct change':''))+(o.print&&it.start&&it.k!=='grants'?' · '+nw('full effect '+mShort(it.full)):'')+'</span>'
       + (o.print?'':'<span class="gt-w">'+when(it)+'</span>')+more+'</div></div>'

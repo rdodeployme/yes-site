@@ -642,3 +642,140 @@ a.ov-src-r:hover{background:var(--silver-0)}
   .rp-cover .rp-scale,.rp-cover .rp-tgs{gap:3px}
   .rp-cover .rp-bmnote{margin-top:3px}
 }
+
+/* ═══════════ Country: the brand's earth and sun (Nov 2026 redesign) ═══════════
+   Ochre stays the brand colour. Green means improving, red means needs attention. Each of the ten categories has its own colour. */
+:root{--good:#2E6B4A;--good-soft:#E6F1EA;--good-dk:#9FD0B1;--bad:#B23A2A;--bad-soft:#F8E9E5;--earth:#1E1712;--sand:#F7F1E7;--sand-2:#E6DCCB;--bark:#75695C}
+body.page-yarta{background:#F4EEE4}
+.page-yarta .delta.up{color:var(--good)}
+.page-yarta .delta.down{color:var(--bad);background:var(--bad-soft)}
+.page-yarta .ct-hero .delta.up,.page-yarta .cx-b .delta.up,.page-yarta .sm-h .delta.up,.page-yarta .panel-dark .delta.up,.page-yarta .rp-band .delta.up{color:var(--good-dk)}
+.page-yarta .sec-t,.page-yarta .pg-head h1,.page-yarta .cx-c-head h2{font-stretch:108%}
+.page-yarta .panel,.page-yarta .cx.cx-c{border-color:transparent;border-radius:22px;box-shadow:0 1px 0 var(--sand-2);background:#FFFDF9}
+
+.ct-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr);gap:22px 44px;align-items:center;margin-top:18px;padding:30px 28px 32px;border-radius:26px;background:var(--earth);color:#EDE4D6;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.ct-hero::after{content:"";position:absolute;right:-180px;top:-220px;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle,rgba(207,122,46,.28),rgba(207,122,46,0) 68%);pointer-events:none}
+.ct-hero>*{position:relative;z-index:1}
+@media(min-width:900px){.ct-hero{grid-template-columns:auto minmax(0,1fr);padding:36px 44px 40px}}
+.ct-dial-w{display:block;justify-self:center;line-height:0;border-radius:50%}
+.ct-dial-w:focus-visible{outline:2px solid #fff;outline-offset:4px}
+.ct-dial{display:block;width:min(360px,72vw);height:auto}
+@media(min-width:900px) and (max-width:1240px){.ct-hero .ct-dial{width:280px}}
+.ct-dial-v{font-family:var(--font-display);font-weight:800;letter-spacing:-.04em}
+.ct-dial-of{font-family:var(--font-body)}
+.ct-say{font:800 clamp(30px,4vw,50px)/1.04 var(--font-display);font-stretch:112%;letter-spacing:-.02em;color:#fff;margin:0 0 16px;max-width:16em;text-wrap:balance}
+.ct-chip{display:inline-flex;align-items:center;gap:8px;border:1px solid #6B5A49;border-radius:999px;padding:7px 14px 7px 9px;font:600 14.5px var(--font-body);color:#F3E9DA}
+.ct-chip i{flex:none;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#7FB894;color:#16110D;font:800 12px var(--font-body);font-style:normal}
+.ct-chip.prov i{background:#E5C24A}
+.ct-data{margin:12px 0 0;font-size:14px;color:#C9B9A2}
+.ct-data b{color:#fff}
+.ct-three{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:22px;border-top:1px solid #4A3D32}
+.ct-three a{display:block;padding:16px 20px 0 0;color:#C9B9A2;text-decoration:none;font-size:14px}
+.ct-three a+a{padding-left:20px;border-left:1px solid #4A3D32}
+.ct-three a b{display:block;font:800 clamp(34px,3.4vw,44px)/1.05 var(--font-display);font-stretch:112%;color:#fff;margin:2px 0}
+.ct-three a:hover b{color:#F0B77F}
+.ct-three a:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.ct-three .ct-d{display:block}
+@media(max-width:560px){.ct-three a+a{padding-left:0;border-left:0;border-top:1px solid #4A3D32;margin-top:14px}}
+
+.ct-row{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;margin-top:18px;align-items:start}
+@media(min-width:1180px){.ct-row{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}}
+.ct-row>.cx,.ct-row>.panel{margin-top:0;height:100%}
+.page-yarta .ov-traj .act{stroke-width:3}
+.page-yarta .ov-traj .bz{fill:#F3EADC}
+.ct-stack{display:flex;height:30px;border-radius:9px;overflow:hidden;margin:14px 0 6px}
+.ct-stack i{display:block;min-width:3px}
+.ov-src-r .nm .sw{display:inline-block;width:11px;height:11px;border-radius:3.5px;margin-right:9px;vertical-align:-1px}
+
+.ct-ten{margin-top:18px}
+.ct-ten-side{display:grid;gap:2px;font-size:14px;color:var(--bark);text-align:right;margin:0}
+.ct-ten-side a{color:var(--ink);font-weight:600}
+.ct-cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+@media(min-width:760px){.ct-cats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:1180px){.ct-cats{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.ct-cat{display:flex;flex-direction:column;gap:8px;padding:14px 16px 16px;border-radius:16px;background:var(--sand);text-decoration:none;color:#3B322B;border:1.5px solid transparent;transition:border-color .15s}
+.ct-cat:hover{border-color:var(--c)}
+.ct-cat:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.ct-cat .nm{font:600 13.5px/1.3 var(--font-body);min-height:2.6em}
+.ct-cat .nm i{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--c);margin-right:7px}
+.ct-cat b{font:800 38px/1 var(--font-display);font-stretch:108%;color:var(--earth)}
+.ct-cat .t{display:block;height:6px;border-radius:3px;background:var(--sand-2)}
+.ct-cat .t i{display:block;height:100%;border-radius:3px;background:var(--c)}
+.ct-cat .dl{font-size:13px;color:var(--bark)}
+.ct-cat.na b{color:#A89C8D}
+/* what changed and the levers: green for the good, red for the bad */
+.page-yarta .ov-chg li.good .mk{background:var(--good);color:#fff;box-shadow:none}
+.page-yarta .ov-chg li.bad .mk{background:#fff;color:var(--bad);box-shadow:inset 0 0 0 1.5px var(--bad)}
+/* each lever and each category page is drawn in its category's colour */
+.page-yarta .ov-lev{border-color:transparent;border-radius:22px;box-shadow:0 1px 0 var(--sand-2);background:#FFFDF9}
+.ov-lev[style] .ov-bul i{background:var(--c)}
+.ov-lev[style] .ov-bul-l .k-a{background:var(--c)}
+.ct-catpage .pg-head h1::before{content:"";display:inline-block;width:.42em;height:.42em;border-radius:.12em;background:var(--c);margin-right:.32em;vertical-align:.12em}
+.ct-catpage .ov-bul i,.ct-catpage .ov-prog-t i,.ct-catpage .ov-cat-r .tr i{background:var(--c)}
+.ct-catpage .ov-bul-l .k-a{background:var(--c)}
+.ct-row .cx-c-head h2{font-size:clamp(22px,2vw,27px)}
+.ov-src-r .nm{position:relative;padding-left:20px}
+.ov-src-r .nm .sw{position:absolute;left:0;top:.36em;margin:0}
+/* the app frame takes the brand's earth brown, so the frame and the hero are one family */
+.page-yarta .side{background:#17110D;border-right-color:#2A211A}
+.page-yarta .side .brand,.page-yarta .side .who{border-bottom-color:#2A211A}
+
+/* ── Country: the report ── */
+.rp-ct .rp-band{grid-template-columns:minmax(0,1fr);align-items:center;position:relative;overflow:hidden;border-radius:22px}
+.rp-ct .rp-band::after{content:"";position:absolute;right:-150px;top:-190px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(207,122,46,.3),rgba(207,122,46,0) 68%);pointer-events:none}
+.rp-ct .rp-band>*{position:relative;z-index:1}
+@media(min-width:700px){.rp-ct .rp-band{grid-template-columns:minmax(0,1fr) auto}}
+.rp-ct .rp-big{text-transform:none;font-stretch:112%;letter-spacing:-.02em;font-size:clamp(28px,3.6vw,40px);line-height:1.05;margin:16px 0 8px}
+.rp-say{font:700 clamp(17px,2vw,22px)/1.25 var(--font-display);font-stretch:108%;color:#F0B77F;margin:0 0 16px}
+.rp-ct .rp-kv.light{color:#B9A994;font-size:13.5px;max-width:34em}
+.rp-dial{justify-self:center;line-height:0}
+.rp-dial .ct-dial{width:min(240px,60vw);height:auto}
+.rp-three{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:22px;padding-bottom:16px;border-bottom:1px solid var(--sand-2)}
+.rp-three>div{padding-right:20px}
+.rp-three>div+div{padding-left:22px;border-left:1px solid var(--sand-2)}
+.rp-three .k{display:block;font-size:13.5px;color:var(--bark)}
+.rp-three b{display:block;font:800 clamp(34px,4vw,44px)/1.05 var(--font-display);font-stretch:112%;color:var(--earth);margin:2px 0}
+.rp-three .s{display:block;font-size:13px;color:var(--bark)}
+@media(max-width:560px){.rp-three>div+div{padding-left:0;border-left:0;border-top:1px solid var(--sand-2);margin-top:12px;padding-top:12px}}
+.rp-ct .rp-brief{border-left:0;border-radius:14px;background:var(--sand)}
+.rp-ct .rp-brief .mk{background:var(--good)}
+.rp-ct .rp-brief li.bad .mk{background:#fff;color:var(--bad);box-shadow:inset 0 0 0 1.5px var(--bad)}
+.rp-sub .cd{display:inline-block;width:9px;height:9px;border-radius:3px;background:var(--c,#CF7A2E);margin-right:8px}
+.page-yarta .rp-sub[style] .bar i{background:var(--c)}
+.page-yarta .rp-h{font-stretch:108%}
+.page-yarta .rp-emis{border-color:transparent;background:var(--sand);border-radius:16px}
+@media print{
+  .rp-ct .rp-band{grid-template-columns:minmax(0,1fr) 150px!important;padding:14px 20px 13px;border-radius:12px;gap:14px}
+  .rp-ct .rp-big{font-size:22px;margin:7px 0 3px}
+  .rp-say{font-size:12.5px;margin:0 0 7px}
+  .rp-ct .rp-kv.light{font-size:9.6px;gap:1.5px 12px}
+  .rp-dial .ct-dial{width:150px}
+  .rp-three{margin-top:9px;padding-bottom:7px}
+  .rp-three .k{font-size:9.6px}.rp-three b{font-size:26px}.rp-three .s{font-size:9.4px}
+  .rp-sub .cd{width:7px;height:7px;border-radius:2px;margin-right:6px}
+  .ct-stack{height:11px;border-radius:4px;margin:3px 0 2px}
+  .ov-src-r .nm{padding-left:13px}.ov-src-r .nm .sw{width:8px;height:8px;border-radius:2.5px}
+  body.page-yarta{background:#fff}
+}
+.rp-three .delta,.ct-three .delta{font:inherit;font-weight:700}
+@media print{
+  .page-yarta .rp-h{font-stretch:100%}
+  .rp-three{margin-top:7px;padding-bottom:6px}
+  .rp-ct .rp-brief{margin-top:7px;padding:6px 10px}
+  .rp-cover .rp-emis{margin-top:7px;padding:9px 12px}
+}
+/* report pages two and three */
+.page-yarta .report td .dn,.page-yarta .rp-sheet td .dn{color:var(--good)}
+.page-yarta .rp-chg.good{color:var(--good)}.page-yarta .rp-chg.bad{color:var(--bad)}
+.page-yarta .rp-sheet .tbl thead th{background:var(--sand)}
+.page-yarta .rp-wyc>div{border-color:transparent;background:var(--sand);border-radius:14px}
+.page-yarta .rp-wyc .hl{background:#F6E4CF;border-color:transparent}
+.page-yarta .rp-wyc b{font-stretch:112%;letter-spacing:-.02em}
+/* the roadmap: each step in the colour of the category it lifts */
+.gt-row[style] .gt-ramp{background:linear-gradient(90deg,color-mix(in srgb,var(--c) 22%,transparent),var(--c))}
+.gt-row[style] .gt-full,.gt-row[style] .gt-dot{background:var(--c)}
+.gt-row[style] .gt-cat::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2.5px;background:var(--c);margin-right:5px}
+.page-yarta .tile{border-color:transparent;background:#FFFDF9;border-radius:18px;box-shadow:0 1px 0 var(--sand-2)}
+.page-yarta .panel-dark{background:var(--earth);border-color:#2A211A}
+.ct-catpage .panel-dark .score-ring{background:conic-gradient(var(--cd) calc(var(--v)*1%),#3A2F26 0)}
+.ct-catpage .panel-dark .score-ring::before{background:var(--earth)}
