@@ -400,11 +400,28 @@ function heroRoad(S, i, o){
   var eCh=pctChg(r.total_t,r.base.total_t);
   var scoreBox='<a class="cx-score" href="#ten" aria-label="Your score, in its parts">'+A.ring(m.score,124,true)+'<span><b>'+esc(m.band)+'</b>'+(m.yoy!=null?(m.yoy>=0?'Up ':'Down ')+Math.round(Math.abs(m.yoy))+' on a year ago':'Change shows after 12 months')+'<br>'+m.scored+' of 10 categories scored</span></a>';
   var numbers='<p class="cx-c-nums"><b>'+nu(r.total_t,'t CO₂-e')+'</b> '+(r.n<12?'in the '+span(r)+' to '+A.mLabel(month):'over the last 12 months')+(eCh!=null&&!(st&&st.inBase)?', '+arrow(eCh,true)+' on '+esc(S.baseline.fy):'')+'. <span class="nw">Scope 1: '+fmt(r.scope1_t,0)+' t</span> · <span class="nw">Scope 2: '+fmt(r.scope2_t,0)+' t</span> · <span class="nw">Scope 3: '+fmt(r.scope3_t,0)+' t</span></p>';
-  return '<section class="cx cx-c"><div class="cx-c-top"><div class="cx-c-head"><h2>'+head+'</h2><p>'+sub+'</p>'+numbers+'</div>'+scoreBox+'</div>'
+  return '<section class="cx cx-c"><div class="cx-c-top"><div class="cx-c-head"><h2>'+head+'</h2><p>'+sub+'</p>'+numbers+'</div></div>'
     + '<div class="cx-c-road">'+trajectory(S,i,T,{w:1040,h:270,pins:pins})+'</div>'
     + '<div class="cx-c-key ov-key"><span><i class="ln"></i>Your emissions, % change on '+esc(S.baseline.fy)+'</span><span><i class="ln dash"></i>Straight-line path to your target</span>'+(pins.length?'<span><i class="k-pin"></i>When each step of your plan starts</span>':'')+'</div>'
-    + (stepList?'<h3 class="cx-c-plan">Your plan</h3><ol class="cx-steps">'+stepList+'</ol><p class="cx-foot">In the order the steps start. The effects are estimates from the published rules'+(P&&P.potential!=null?'; with every step done, the score could reach up to '+P.potential+(P.full?' by '+A.mLabel(P.full):''):'')+'. You can use any provider. <a class="link" href="#/roadmap">The full roadmap</a></p>':'')
-    + '</section>';
+    + '</section>'
+    + '\u0000' + (stepList?'<section class="panel cx-plan"><div class="ov-h"><div><h2 class="sec-t">Your plan</h2><p class="sec-s">The steps that would move your score most, in the order they start. The numbered pins on the emissions chart mark when each begins.</p></div><a class="btn btn-ghost btn-sm" href="#/roadmap" style="color:var(--ink)">The full roadmap</a></div><ol class="cx-steps">'+stepList+'</ol><p class="cx-foot">The effects are estimates from the published rules'+(P&&P.potential!=null?'; with every step done, the score could reach up to '+P.potential+(P.full?' by '+A.mLabel(P.full):''):'')+'. You can use any provider.</p></section>':'');
+}
+
+/* At a glance: the four things a manager checks first. The score, emissions against the target, whether the month is verified and how well evidenced, and the next step. */
+function glance(S, i, o){
+  var m=S.months[i], r=m.r12, T=S.targets, st=onTrack(S,i,T), month=m.month, ly=S.months[i-12]||null, rec=A.rec(o,month)||{}, cf=confidence(o,m), P=A.planFor(o,S,i);
+  var eCh=pctChg(r.total_t,r.base.total_t), inB=!!(st&&st.inBase);
+  var tScore='<a class="gl gl-score" href="#ten" aria-label="Yarta Score '+m.score+' out of 100, '+esc(m.band)+'. See its parts">'+A.ring(m.score,116)
+    + '<span class="gl-b"><span class="ov-l">Yarta Score</span><b class="gl-band">'+esc(m.band)+'</b><span class="gl-s">'+(m.yoy!=null&&ly?A.delta(m.yoy,{unit:' pts'})+' on '+esc(A.mLabel(ly.month)):'Change shows after 12 months')+'</span><span class="gl-s">'+m.scored+' of 10 categories scored</span></span></a>';
+  var track=!st?'':inB?'<span class="gl-chip">Baseline year</span>':'<span class="gl-chip '+(st.state==='on'?'ok':st.state==='close'?'near':'off')+'">'+(st.state==='on'?'On track':st.state==='close'?'Just behind':'Behind')+' for −'+fmt(st.tgt,0)+'% by 2030</span>';
+  var tEmis='<a class="gl" href="#/category/carbon?m='+month+'"><span class="ov-l">Emissions · '+(r.n<12?span(r):'12 months')+'</span><b class="gl-v">'+fmt(r.total_t,0)+'<span class="u"> t CO₂-e</span></b><span class="gl-s">'+(eCh!=null&&!inB?arrow(eCh,true)+' on '+esc(S.baseline.fy):'Your baseline year')+'</span>'+track+'</a>';
+  var ver=m.status==='verified';
+  var tData='<a class="gl" href="#/report/'+month+'"><span class="ov-l">'+esc(A.mLabel(month))+' figures</span><b class="gl-v gl-ver">'+(ver?'<i class="tick" aria-hidden="true">✓</i>Verified':'Provisional')+'</b><span class="gl-s">'+(ver?'by a Yarta analyst'+(rec.verifiedAt?' on '+esc(A.longDate(rec.verifiedAt)):''):'entered, waiting for a Yarta analyst')+'</span>'
+    + '<span class="gl-meta"><span><b>'+fmt(num(m.complete_pct),0)+'%</b> required figures in</span><span><b>'+fmt(num(m.evidence_pct),0)+'%</b> backed by documents</span><span>Data confidence <i class="ov-conf g-'+cf.g+'">'+cf.g+'</i></span></span></a>';
+  var steps=P?P.active.filter(function(it){ return it.k!=='grants' && it.start; }).sort(function(a,b){ return a.start<b.start?-1:a.start>b.start?1:0; }):[], nx=steps.filter(function(it){ return !it.booking; })[0]||steps[0];
+  var tNext=nx?'<a class="gl" href="#/improvements/'+nx.s.k+'"><span class="ov-l">Next step</span><b class="gl-t">'+esc(nx.title)+'</b><span class="gl-s">'+doKey(nx)+'</span><span class="gl-go">'+(nx.booking?'Booked · see the plan':'See what it involves')+' <span aria-hidden="true">→</span></span></a>'
+    :'<a class="gl" href="#/roadmap"><span class="ov-l">Next step</span><b class="gl-t">Nothing recommended right now</b><span class="gl-s">Every published rule is met.</span><span class="gl-go">Your roadmap <span aria-hidden="true">→</span></span></a>';
+  return '<section class="cx-glance" aria-label="At a glance">'+tScore+tEmis+tData+tNext+'</section>';
 }
 
 /* The monthly summary: one page a client forwards upward. Where they stand against the 2030 target, what moved, what is next.
@@ -530,7 +547,8 @@ V.dashboard = function(q, api){
       return '<a class="ov-cat-r" href="#/category/'+c.k+'?m='+month+'"><span class="nm">'+esc(c.name)+(m.prov[c.k]?' <span class="prov" data-tip="Provisional until 12 months of data">P</span>':'')+'</span>'
         + (v==null?'<span class="na">Not reported</span>':'<span class="tr"><i style="width:'+clamp(v,1,100)+'%"></i></span><span class="v">'+Math.round(v)+'</span><span class="d">'+A.delta(m.cat_yoy[c.k])+'</span>')+'</a>'; }).join('')+'</div></section>';
 
-  return A.shell('dashboard', head + A.banner(o) + heroRoad(S,i,o) + scaleFacts(S,i,o) + srcP + levP + chP + tenParts(S,i,o));
+  var hr=heroRoad(S,i,o).split('\u0000');   // [the road to 2030, the plan]
+  return A.shell('dashboard', head + A.banner(o) + glance(S,i,o) + hr[0] + chP + tenParts(S,i,o) + srcP + levP + (hr[1]||'') + scaleFacts(S,i,o));
 };
 
 /* ------------------------------------------------------------------ category pages */

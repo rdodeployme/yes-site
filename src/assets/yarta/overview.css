@@ -580,3 +580,39 @@ a.ov-src-r:hover{background:var(--silver-0)}
 @media (max-width:600px){.rp-foot-v{flex-direction:column}}
 .cx-scale-stage.loading .cx-scale-fallback p{visibility:hidden}
 .cx-scale-stage.loading .cx-scale-fallback::after{content:"Loading the 3D view";font:600 13px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--silver-4)}
+/* at a glance: score, emissions against target, verification, next step */
+.cx-glance{display:grid;gap:14px;grid-template-columns:minmax(0,1fr);margin-top:18px}
+@media(min-width:640px){.cx-glance{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1180px){.cx-glance{grid-template-columns:minmax(0,1.3fr) repeat(3,minmax(0,1fr))}}
+.gl{display:flex;flex-direction:column;gap:6px;background:var(--white);border:1px solid var(--silver-2);border-radius:16px;padding:18px 20px;text-decoration:none;color:var(--graphite);min-width:0;transition:border-color .15s}
+.gl:hover{border-color:var(--ink)}
+.gl:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.gl .ov-l{margin-bottom:4px}
+.gl-v{font:800 clamp(28px,2.4vw,36px)/1.05 var(--font-display);letter-spacing:-.03em;color:var(--ink)}
+.gl-v .u{font:600 14px var(--font-body);letter-spacing:0;color:var(--graphite)}
+.gl-t{font:800 19px/1.25 var(--font-display);letter-spacing:-.01em;color:var(--ink)}
+.gl-s{font-size:13.5px;line-height:1.45}
+.gl-chip{align-self:flex-start;margin-top:auto;font:600 12.5px var(--font-body);padding:5px 10px;border-radius:999px;background:var(--silver-1);color:var(--ink);border:1px solid var(--silver-2)}
+.gl-chip.ok{background:#1E1712;border-color:#1E1712;color:#fff}
+.gl-chip.off{background:#fff;border-color:var(--red);color:var(--red)}
+.gl-ver{display:flex;align-items:center;gap:8px}
+.gl-ver .tick{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#1E1712;color:#fff;font:700 14px var(--font-body);font-style:normal;flex:none}
+.gl-meta{display:grid;gap:3px;margin-top:auto;padding-top:8px;border-top:1px solid var(--silver-1);font-size:13px}
+.gl-meta b{color:var(--ink)}
+.gl-meta .ov-conf{width:20px;height:20px;font-size:11px;font-style:normal;vertical-align:middle;margin-left:2px}
+.gl-go{margin-top:auto;font:600 13.5px var(--font-body);color:var(--green-ink)}
+.gl-score{flex-direction:row;align-items:center;gap:18px;background:#1E1712;border-color:#1E1712;color:#D9D2C8;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.gl-score:hover{border-color:#fff}
+.gl-score .score-ring{flex:none}
+.gl-b{display:flex;flex-direction:column;gap:4px;min-width:0}
+.gl-score .ov-l{color:#B9B0A4}
+.gl-band{font:800 clamp(26px,2.2vw,32px)/1.05 var(--font-display);letter-spacing:-.02em;color:#fff}
+.gl-score .delta{color:#F0B77F}
+/* the plan, now its own panel under the levers */
+.cx-plan{margin-top:18px}
+.cx-plan .cx-steps{margin-top:14px}
+/* what it amounts to: the caption sits at the foot so cards of different content line up */
+.cx-fact{display:flex;flex-direction:column}
+.cx-fact .cx-key{margin-top:auto;padding-top:10px}
+.gl-score .score-ring .of{font-size:7.5px;letter-spacing:.1em;margin-top:2px}
+.gl-score .gl-s{white-space:normal}
