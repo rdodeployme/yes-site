@@ -761,27 +761,35 @@
       if (qLevel === 1) { renderer.setPixelRatio(1); if (W && H) renderer.setSize(W, H, false); }
       else if (qLevel === 2) { key.castShadow = false; shadowDirty = true; }
     }
-    function kickCam() { needsFrame = true; if (!raf && !destroyed) raf = requestAnimationFrame(frame); }
+    /* One frame callback at a time, always. The camera controls fire a change event from inside the frame; if that scheduled a
+       callback as well as the frame's own reschedule, every moving frame left two callbacks behind and the scene was drawn dozens
+       of times per screen refresh. So a kick during a frame only notes that another frame is wanted. */
+    var inFrame = false, lastTick = -1;
+    function kickCam() { needsFrame = true; if (!raf && !inFrame && !destroyed) raf = requestAnimationFrame(frame); }
     function kick() { shadowDirty = true; kickCam(); }
     function frame(now) {
       raf = 0;
       if (destroyed || !visible) return;
+      if (now === lastTick) return;                 // this refresh has already been drawn
       var spinning = controls.autoRotate && !interacted;
       if (spinning) {
         if (!spinFrom) spinFrom = now;
-        // the idle spin is decoration: draw it at about 30 frames a second, and stop after one slow look around so an open page is not rendering forever
+        // the idle spin is decoration: stop after one slow look around so an open page is not rendering forever
         if (now - spinFrom > SPIN_MS) { controls.autoRotate = false; spinning = false; }
-        else if (!anim && !needsFrame && now - lastT < 30) { raf = requestAnimationFrame(frame); return; }
       }
-      if (chained && lastT && qLevel < 2) { var gap = now - lastT; if (gap < 400) { if (gap > (spinning ? 58 : 42)) slowN += 1; else if (slowN > 0) slowN -= 0.5; if (slowN > 14) { slowN = 0; degrade(); } } }
-      var dt = lastT ? Math.min(0.1, (now - lastT) / 1000) : 1 / 60; lastT = now;
-      var busy = tickAnim(now);
-      var moved = controls.update(dt);
-      if (busy || shadowDirty) { renderer.shadowMap.needsUpdate = true; shadowDirty = false; }
-      renderer.render(scene, camera);
-      updateLabels();
+      lastTick = now; inFrame = true; needsFrame = false;
+      var busy = false, moved = false;
+      try {
+        if (chained && lastT && qLevel < 2) { var gap = now - lastT; if (gap < 400) { if (gap > 42) slowN += 1; else if (slowN > 0) slowN -= 0.5; if (slowN > 14) { slowN = 0; degrade(); } } }
+        var dt = lastT ? Math.min(0.1, (now - lastT) / 1000) : 1 / 60; lastT = now;
+        busy = tickAnim(now);
+        moved = controls.update(dt);
+        if (busy || shadowDirty) { renderer.shadowMap.needsUpdate = true; shadowDirty = false; }
+        renderer.render(scene, camera);
+        updateLabels();
+      } finally { inFrame = false; }
       chained = !!(busy || moved || needsFrame || spinning);
-      if (chained) { needsFrame = false; raf = requestAnimationFrame(frame); }
+      if (chained && !raf) raf = requestAnimationFrame(frame);
     }
     controls.addEventListener('change', kickCam);
     controls.addEventListener('start', function () {
