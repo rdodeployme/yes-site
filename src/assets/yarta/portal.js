@@ -1945,11 +1945,15 @@ function render(){
   app.innerHTML=html;
   document.title = (u?(isOp()?'Yarta team':org().profile.org_name)+' · ':'')+(LIVE?'Yarta':'Yarta portal (prototype)');
   bindMedia();
-  bindWidgets();
+  bindWidgets(); fitSelects();
   if(LIVE) LIVE.afterRender(P,q);
 }
 /* ------------------------------------------------------------------ widgets: the 3D scale scene and the sites map (both lazy; both optional) */
 var WIDGETS=[], WGEN=0;
+/* A month picker is as wide as its chosen month, so its arrow sits beside the text rather than at the far end of a box sized for the longest option. Browsers with field-sizing do this in CSS. */
+var FIT_CSS = !!(window.CSS && CSS.supports && CSS.supports('field-sizing','content')), fitCanvas=null;
+function fitSelects(root){ if(FIT_CSS) return; (root||document).querySelectorAll('.pg-actions select, select.gsel').forEach(function(s){ var o=s.options[s.selectedIndex]; if(!o) return; var cs=getComputedStyle(s); fitCanvas=fitCanvas||document.createElement('canvas'); var cx=fitCanvas.getContext('2d'); cx.font=cs.fontWeight+' '+cs.fontSize+' '+cs.fontFamily; var w=cx.measureText(o.text).width+parseFloat(cs.paddingLeft)+parseFloat(cs.paddingRight)+parseFloat(cs.borderLeftWidth)+parseFloat(cs.borderRightWidth)+2; s.style.width=Math.ceil(w)+'px'; }); }
+document.addEventListener('change', function(e){ if(e.target && e.target.tagName==='SELECT') fitSelects(e.target.parentNode); });
 function bindWidgets(){
   var gen=++WGEN;   // a scene that finishes loading after the screen has been redrawn belongs to a page that is gone: destroy it instead of leaving it running
   WIDGETS.forEach(function(h){ try{ h.destroy(); }catch(e){} }); WIDGETS=[];

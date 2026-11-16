@@ -182,7 +182,8 @@ input:disabled,select:disabled,textarea:disabled{background:var(--silver-0);colo
 .score-ring::before{content:"";position:absolute;inset:12px;border-radius:50%;background:radial-gradient(circle at 50% 30%,#1C1D1E,#0D0E0E 70%);box-shadow:0 1px 0 rgba(255,255,255,.06) inset}
 .score-ring .in{position:relative;text-align:center}
 .score-ring .v{font:900 calc(var(--size)*.3)/1 var(--font-display);letter-spacing:-.04em}
-.score-ring .of{font:500 11px var(--font-mono);letter-spacing:.16em;color:var(--silver-4);text-transform:uppercase;margin-top:6px}
+/* sized from the ring, in sentence case, so it always sits inside the disc */
+.score-ring .of{font:500 max(9px,calc(var(--size)*.072))/1.1 var(--font-body);letter-spacing:0;color:var(--silver-4);margin-top:calc(var(--size)*.03);white-space:nowrap}
 .score-ring.light{background:conic-gradient(var(--green-2) calc(var(--v)*1%),var(--silver-2) 0);box-shadow:none}
 .score-ring.light::before{background:radial-gradient(circle at 50% 30%,#FFFFFF,#EEF0F0 70%);box-shadow:0 0 0 1px var(--silver-2) inset}
 .score-ring.light .of{color:var(--steel)}
@@ -255,3 +256,8 @@ input:disabled,select:disabled,textarea:disabled{background:var(--silver-0);colo
 }
 .in-unit select.u-sel{appearance:auto;cursor:pointer;padding:0 8px;color:var(--ink)}
 .fh.conv:empty{display:none}
+
+/* selects: our own chevron, set close to the text */
+select:not(.u-sel){-webkit-appearance:none;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%231E1712' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:12px 8px;padding-right:34px}
+select.gsel{padding-right:28px!important;background-position:right 9px center}
+.pg-actions select,select.gsel{field-sizing:content;min-width:0;max-width:100%}

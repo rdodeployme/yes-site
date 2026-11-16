@@ -614,7 +614,7 @@ a.ov-src-r:hover{background:var(--silver-0)}
 /* what it amounts to: the caption sits at the foot so cards of different content line up */
 .cx-fact{display:flex;flex-direction:column}
 .cx-fact .cx-key{margin-top:auto;padding-top:10px}
-.gl-score .score-ring .of{font-size:7.5px;letter-spacing:.1em;margin-top:2px}
+.gl-score .score-ring .of{font-size:7.5px;margin-top:2px}
 .gl-score .gl-s{white-space:normal}
 /* report page 1: In brief */
 .rp-brief{display:grid;grid-template-columns:minmax(0,1fr);gap:8px 18px;margin-top:20px;padding:14px 18px;border-left:3px solid var(--green-2);background:#FAF6F0;border-radius:0 10px 10px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
