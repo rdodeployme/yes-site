@@ -45,3 +45,7 @@
 .sc-hint{position:absolute;top:12px;right:14px;font:500 11px/1 "IBM Plex Mono",ui-monospace,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:#7C8184;pointer-events:none;transition:opacity .6s}
 .sc-hint.off{opacity:0}
 @media(max-width:699px){.sc-hint{top:10px;right:10px;font-size:10px}}
+
+.sc-btns{display:flex;gap:6px;pointer-events:auto;flex:none}
+.sc-close.on{border-color:#CF7A2E;color:#FBF0E3}
+@media(max-width:699px){.sc-pills{max-width:calc(100% - 180px)}}

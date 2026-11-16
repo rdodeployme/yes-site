@@ -220,12 +220,15 @@
     svg.setAttribute('class', 'sc-leaders');
     var ui = el('div', 'sc-ui');
     var pillRow = el('div', 'sc-pills');
-    var resetBtn = el('button', 'sc-reset', 'Reset view');
+    var resetBtn = el('button', 'sc-reset', 'Whole view');
     resetBtn.type = 'button';
-    var hint = el('div', 'sc-hint', 'Drag to look around');
+    var closeBtn = el('button', 'sc-reset sc-close', 'Close up');
+    closeBtn.type = 'button'; closeBtn.title = 'Fly in to the comparison objects beside the edge of your figure';
+    var btns = el('div', 'sc-btns'); btns.appendChild(closeBtn); btns.appendChild(resetBtn);
+    var hint = el('div', 'sc-hint', isPhone ? 'Drag to turn · pinch to zoom · two fingers to move' : 'Drag to turn · scroll to zoom where you point · shift-drag to move');
     host.appendChild(canvas); host.appendChild(svg); host.appendChild(labels);
     if (opts.controls !== false) ui.appendChild(pillRow);
-    ui.appendChild(resetBtn); host.appendChild(ui); host.appendChild(hint);
+    ui.appendChild(btns); host.appendChild(ui); host.appendChild(hint);
 
     /* ---------- renderer ---------- */
     var renderer = new T.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
@@ -247,7 +250,9 @@
     camera.position.set(0, 40, 160);
 
     var controls = new T.OrbitControls(camera, canvas);
-    controls.enablePan = false;
+    controls.enablePan = true;                 // right-drag, shift-drag or two fingers moves across the scene
+    controls.screenSpacePanning = false;       // panning slides along the ground, never under it
+    // the wheel is handled below: it zooms towards the object under the pointer and never past it
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
     controls.rotateSpeed = 0.6;
@@ -558,10 +563,39 @@
       return fitState;
     }
 
+    /* The close-up: the comparison objects at a size you can read, with the near edge of the figure towering beside them.
+       Frames the objects plus a slice of the figure's front-left corner up to about twice the tallest object. */
+    function closeFit() {
+      if (!activeRefs.length) return null;
+      var minX = Infinity, maxH = 0, minZ = Infinity, maxZ = -Infinity, corners = [];
+      activeRefs.forEach(function (a) { minX = Math.min(minX, a.x - a.w / 2); maxH = Math.max(maxH, a.h); minZ = Math.min(minZ, a.z - a.d / 2); maxZ = Math.max(maxZ, a.z + a.d / 2); });
+      function box(x0, x1, y0, y1, z0, z1) { [x0, x1].forEach(function (x) { [y0, y1].forEach(function (y) { [z0, z1].forEach(function (z) { corners.push(new T.Vector3(x, y, z)); }); }); }); }
+      activeRefs.forEach(function (a) { box(a.x - a.w / 2, a.x + a.w / 2, 0, a.h, a.z - a.d / 2, a.z + a.d / 2); });
+      var rowW = -comp.minX - (heroMode === 'cube' ? S / 2 : poolsGroup.userData.W / 2), edgeX = heroMode === 'cube' ? -S / 2 : -poolsGroup.userData.W / 2;
+      var sliceW = Math.max(maxH, Math.min(rowW * 0.35, heroMode === 'cube' ? S : 60)), sliceH = heroMode === 'cube' ? Math.min(S, maxH * 2.2) : 2;
+      var frontZ = heroMode === 'cube' ? S / 2 : poolsGroup.userData.D / 2;
+      box(edgeX, edgeX + sliceW, 0, sliceH, frontZ - Math.min(sliceW, 2 * maxH), frontZ);
+      var bx0 = Infinity, bx1 = -Infinity, bz0 = Infinity, bz1 = -Infinity;
+      corners.forEach(function (c) { bx0 = Math.min(bx0, c.x); bx1 = Math.max(bx1, c.x); bz0 = Math.min(bz0, c.z); bz1 = Math.max(bz1, c.z); });
+      var target = new T.Vector3((bx0 + bx1) / 2, maxH * 0.42, (bz0 + bz1) / 2);
+      var az = 0.42, dir = new T.Vector3(Math.sin(az), 0.32, Math.cos(az)).normalize();
+      var cam = camera.clone(), v = new T.Vector3(), lo = maxH * 0.5, hi = Math.max(400, (bx1 - bx0) * 20), d, i;
+      cam.aspect = camera.aspect; cam.fov = camera.fov; cam.near = 0.01; cam.far = hi * 4;
+      function ok(dd) { cam.position.copy(target).addScaledVector(dir, dd); cam.lookAt(target); cam.updateMatrixWorld(); cam.updateProjectionMatrix();
+        for (var j = 0; j < corners.length; j++) { v.copy(corners[j]).project(cam); if (v.z > 1 || Math.abs(v.x) > (isPhone ? 0.94 : 0.88) || v.y > 0.66 || v.y < -0.8) return false; } return true; }
+      for (i = 0; i < 24; i++) { d = (lo + hi) / 2; if (ok(d)) hi = d; else lo = d; }
+      return { target: target, pos: target.clone().addScaledVector(dir, hi), dist: hi, close: true };
+    }
+    function zoomLimits() {
+      var smallest = activeRefs.length ? Math.min.apply(null, activeRefs.map(function (a) { return Math.max(a.h, a.w * 0.5); })) : S * 0.2;
+      controls.minDistance = Math.max(1.5, smallest * 1.4);
+      controls.maxDistance = 1.7 * (fitState ? fitState.dist : 3 * S);   // well inside the fog, so zooming out never loses the scene
+    }
     function applyFit(f, animate) {
-      controls.minDistance = 0.6 * f.dist; controls.maxDistance = 3 * f.dist;
-      scene.fog.near = f.dist * 1.2; scene.fog.far = f.dist * 2.5;
-      camera.near = Math.max(0.05, f.dist / 400); camera.far = f.dist * 12; camera.updateProjectionMatrix();
+      var whole = fitState && !f.close ? f : (fitState || f);
+      zoomLimits();
+      scene.fog.near = whole.dist * 1.6; scene.fog.far = whole.dist * 3.4;
+      camera.near = Math.max(0.05, Math.min(f.dist, controls.minDistance) / 60); camera.far = whole.dist * 12; camera.updateProjectionMatrix();
       // key light + shadow frustum
       var ext = Math.max(comp.maxX - comp.minX, comp.maxZ - comp.minZ, comp.maxY) * 0.75;
       key.position.set(f.target.x - 1.1 * ext, 1.9 * ext, f.target.z + 0.9 * ext);
@@ -598,7 +632,7 @@
       anim = { t0: performance.now(), dur: reduced ? 0 : 900, fromS: fromS, toS: S };
       activeRefs.forEach(function (a) { a.obj.mats.forEach(function (m) { m.opacity = 0; }); a.obj.group.position.x = a.x - Math.max(0.12 * S, 2); });
       poolsGroup.scale.setScalar(heroMode === 'pools' ? 0.001 : 1);
-      applyFit(fit(), !first);
+      closeBtn.classList.remove('on'); applyFit(fit(), !first);
       // pills + aria
       Array.prototype.forEach.call(pillRow.children, function (b) {
         var on = b.dataset.key === fig.key; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false');
@@ -791,7 +825,50 @@
       chained = !!(busy || moved || needsFrame || spinning);
       if (chained && !raf) raf = requestAnimationFrame(frame);
     }
-    controls.addEventListener('change', kickCam);
+    /* Wheel zoom towards what you point at. Camera and pivot are both scaled about the point under the pointer, so the view keeps
+       its angle, closes in on that point geometrically and can never pass through it. */
+    var ray = new T.Raycaster(), ndc = new T.Vector2(), groundPlane = new T.Plane(new T.Vector3(0, 1, 0), 0), hitV = new T.Vector3();
+    function pointUnder(cx, cy) {
+      var r = canvas.getBoundingClientRect(); ndc.set((cx - r.left) / r.width * 2 - 1, -((cy - r.top) / r.height) * 2 + 1);
+      ray.setFromCamera(ndc, camera);
+      var objs = activeRefs.map(function (a) { return a.obj.group; }); if (heroMode === 'cube') objs.push(cube); else objs.push(poolsGroup);
+      var hits = ray.intersectObjects(objs, true).filter(function (h) { return !h.object.isLineSegments && h.object.visible; });
+      if (hits.length) return hits[0].point.clone();
+      if (ray.ray.intersectPlane(groundPlane, hitV) && hitV.distanceTo(camera.position) < controls.maxDistance * 1.5) return hitV.clone();
+      return ray.ray.at(camera.position.distanceTo(controls.target), new T.Vector3());
+    }
+    host.addEventListener('wheel', function (e) {
+      if (e.target !== canvas) return;
+      e.preventDefault(); e.stopPropagation();
+      if (!interacted) { interacted = true; controls.autoRotate = false; hint.classList.add('off'); }
+      camAnim = null; closeBtn.classList.remove('on');
+      var dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+      var f = Math.exp(Math.max(-60, Math.min(60, dy)) * 0.0022 / Math.max(0.35, controls.zoomSpeed * 1.4));
+      if (f < 1) {
+        var P = pointUnder(e.clientX, e.clientY), dCam = camera.position.distanceTo(P);
+        if (dCam * f < controls.minDistance * 0.5) f = Math.min(1, controls.minDistance * 0.5 / Math.max(dCam, 1e-6));
+        camera.position.copy(P.clone().addScaledVector(camera.position.clone().sub(P), f));
+        controls.target.copy(P.clone().addScaledVector(controls.target.clone().sub(P), f));
+      } else {
+        // zooming out backs away from the pivot and drifts it home, so scrolling out always returns to the whole view
+        var off = camera.position.clone().sub(controls.target), d0 = off.length(), d1 = Math.min(controls.maxDistance, d0 * f);
+        if (fitState) { var home = fitState.target, k = Math.min(1, (f - 1) * 1.6); controls.target.lerp(home, k); }
+        camera.position.copy(controls.target).addScaledVector(off.normalize(), d1);
+      }
+      controls.update(); kick();
+    }, { capture: true, passive: false });
+
+    controls.addEventListener('change', function () {
+      // panning and zooming to the cursor move the point the camera turns around; keep it over the scene
+      var t = controls.target, m = Math.max(4, 0.15 * S);
+      var cx = Math.min(comp.maxX + m, Math.max(comp.minX - m, t.x)), cz = Math.min(comp.maxZ + m, Math.max(comp.minZ - m, t.z)), cy = Math.min(comp.maxY, Math.max(0, t.y));
+      if (cx !== t.x || cy !== t.y || cz !== t.z) { camera.position.x += cx - t.x; camera.position.y += cy - t.y; camera.position.z += cz - t.z; t.set(cx, cy, cz); }
+      if (camera.position.y < 0.6) camera.position.y = 0.6;
+      // inside the figure, its walls would fill the screen: keep only its outline
+      var inside = heroMode === 'cube' && Math.abs(camera.position.x) < S / 2 && Math.abs(camera.position.z) < S / 2 && camera.position.y < S;
+      if (cube.userData.inside !== inside) { cube.userData.inside = inside; [matHeroSide, matHeroTop, matLandSide, matLandTop].forEach(function (mm) { mm.visible = !inside; }); }
+      kickCam();
+    });
     controls.addEventListener('start', function () {
       if (!interacted) { interacted = true; controls.autoRotate = false; hint.classList.add('off'); }
       kick();
@@ -805,7 +882,7 @@
       renderer.setSize(W, H, false);
       camera.aspect = W / H; camera.updateProjectionMatrix();
       svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('width', W); svg.setAttribute('height', H);
-      if (current) { var f = fit(); controls.minDistance = 0.6 * f.dist; controls.maxDistance = 3 * f.dist; rebuildLabels(); }
+      if (current) { fit(); zoomLimits(); rebuildLabels(); }
       kick();
     }
     if (window.ResizeObserver) { ro = new ResizeObserver(function () { resize(); }); ro.observe(host); }
@@ -821,7 +898,10 @@
       b.addEventListener('click', function () { setFigure(f.key); });
       pillRow.appendChild(b);
     });
-    resetBtn.addEventListener('click', function () { if (!fitState) return; AZ = 0.66; applyFit(fit(), true); });
+    resetBtn.addEventListener('click', function () { if (!fitState) return; AZ = 0.66; closeBtn.classList.remove('on'); applyFit(fit(), true); });
+    closeBtn.addEventListener('click', function () { var f = closeFit(); if (!f) return;
+      if (!interacted) { interacted = true; controls.autoRotate = false; hint.classList.add('off'); }
+      closeBtn.classList.add('on'); applyFit(f, true); });
     if (reduced) hint.classList.add('off');
 
     /* ---------- lifecycle ---------- */
