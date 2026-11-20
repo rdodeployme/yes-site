@@ -237,19 +237,46 @@ function vLogin(){
 
 /* ------------------------------------------------------------------ dashboard
    The Overview and the category pages live in overview.js (window.YARTA_VIEWS); this file keeps the banners they share. */
+/* What needs the signed-in customer, and what has happened since they were last here. */
+function limited(){ var u=me(); return !!(u && u.role==='customer' && u.sites && u.sites.length); }
+function mySites(o){ var u=me(); return limited()?activeSites(o).filter(function(s){ return u.sites.indexOf(s.id)>=0; }):activeSites(o); }
+function needsYou(o){
+  var u=me(), lim=limited(), today0=new Date(localDate()+'T00:00:00'), prev=ui.prevSeen||null, isNew=function(at){ return !!(prev && at && String(at)>prev); };
+  var todo=[], info=[], rs=sorted(o), pend=rs.filter(function(r){ return r.status!=='verified'; });
+  function row(t,x,act,nw){ return {t:t,x:x,act:act||'',nw:!!nw}; }
+  pend.forEach(function(r){
+    var pr=progressOf(o,r), due=dueDate(r.month), late=due<today0, link='#/entry/'+o.id+'/'+r.month;
+    if(r.status==='returned' && !withYarta(r)){ var nt=(r.notes||[]).filter(function(n){ return (n.kind==='returned'||n.kind==='reopened') && n.text; }).pop();
+      todo.push(row(mLabel(r.month)+' came back from Yarta with a question', nt?'“'+nt.text+'” '+nt.by+', '+longDate(nt.at)+'.':'Open it to see the note, fix it and send it again.', '<a class="btn btn-primary btn-sm" href="'+link+'">Fix and send again</a>', nt&&isNew(nt.at))); }
+    else if(r.status==='draft'){
+      if(lim){ var ms=mySites(o), left=ms.filter(function(st){ var sp=siteProgress(o,r,st); return sp && sp.req<sp.reqDue; });
+        if(left.length) todo.push(row(mLabel(r.month)+': '+left.length+' of your '+ms.length+' site'+(ms.length===1?'':'s')+' still need'+(left.length===1?'s':'')+' figures', left.slice(0,4).map(function(st){ return st.name; }).join(', ')+(left.length>4?' and '+(left.length-4)+' more':'')+'. '+(late?(left.length===1?'It was':'They were')+' due '+longDate(due)+'.':'Due '+longDate(due)+'.'), '<a class="btn btn-primary btn-sm" href="'+link+'?s='+left[0].id+'">Enter figures</a>'));
+        else info.push(row(mLabel(r.month)+': your sites are done','The month is sent to Yarta once every site is in.','')); }
+      else todo.push(row(mLabel(r.month)+' is open: '+pr.req+' of '+pr.reqDue+' required figures entered', (late?'It was due '+longDate(due)+'. ':'Due '+longDate(due)+'. ')+(pr.req>=pr.reqDue?'Everything is in: check it and send it to Yarta.':'Finish it and send it to Yarta.'), '<a class="btn btn-primary btn-sm" href="'+link+'">'+(pr.req>=pr.reqDue?'Check and send':'Continue')+'</a>')); }
+    else if(r.status==='submitted') info.push(row(mLabel(r.month)+' is with Yarta for verification','Sent '+longDate(r.submittedAt||r.enteredAt)+'. Its report appears under Reports once an analyst has verified it.','<a class="btn btn-ghost btn-sm" href="'+link+'" style="color:var(--ink)">View</a>'));
+    else if(withYarta(r)) info.push(row(mLabel(r.month)+' is with Yarta','An analyst is finishing a check on it.',''));
+  });
+  var dueK=rs.length?E.addMonths(rs[rs.length-1].month,1):E.addMonths(nowKey(),-1);
+  if(dueK<=nowKey() && !rec(o,dueK) && !pend.some(function(r){ return r.status==='draft'||(r.status==='returned'&&!withYarta(r)); })){
+    var dd=dueDate(dueK); todo.push(row('Figures for '+mLabel(dueK)+(dd<today0?' were due '+longDate(dd):' are due '+longDate(dd)), 'Fuel, electricity, gas, water, waste and the registers, from your own records.', '<button class="btn btn-primary btn-sm" type="button" data-act="start-month" data-org="'+o.id+'" data-month="'+dueK+'">Enter figures</button>')); }
+  orgBookings(o.id).forEach(function(b){ var nm=R&&R.byKey[b.svc]?R.title(R.byKey[b.svc],o.profile):'Booking';
+    if(b.status==='confirmed' && b.slot && slotDate(b.slot)>=today0) info.push(row(nm+' is confirmed for '+slotLabel(b.slot,b.other), provById(b.provider)?'With '+provById(b.provider).name+'.':'', '<a class="btn btn-ghost btn-sm" href="#/improvements" style="color:var(--ink)">See it</a>', isNew(b.confirmedAt)));
+    else if(b.status==='requested') info.push(row(nm+': booking requested','Yarta will confirm the time.','<a class="btn btn-ghost btn-sm" href="#/improvements" style="color:var(--ink)">See it</a>')); });
+  var iss=rs.filter(function(r){ return r.status==='verified' && r.issuedAt; }).pop();
+  if(iss) info.push(row('Latest report: '+mLabel(iss.month), 'Issued '+longDate(iss.issuedAt)+'.', '<a class="btn btn-ghost btn-sm" href="#/report/'+iss.month+'" style="color:var(--ink)">Open report</a>', isNew(iss.issuedAt)));
+  if(!lim && R && R.RATES && !R.RATES.some(function(d){ return num(o.profile[d.id])>0; })) todo.push(row('Add what you pay for energy, fuel, water and landfill','Yarta then shows what the year cost and what each improvement could save.','<a class="btn btn-ghost btn-sm" href="#/organisation" style="color:var(--ink)">Add prices</a>'));
+  function li(x,cls){ return '<li class="ny-r '+cls+'"><span class="ny-b"><span class="ny-t">'+(x.nw?'<span class="ny-new">New</span>':'')+esc(x.t)+'</span>'+(x.x?'<span class="ny-x">'+esc(x.x)+'</span>':'')+'</span>'+(x.act?'<span class="ny-a">'+x.act+'</span>':'')+'</li>'; }
+  return '<section class="needs no-print" aria-label="What needs you"><div class="ny-h"><h2>'+(todo.length?'What needs you':'Nothing needs you right now')+'</h2>'+(todo.length?'<span class="ny-n">'+todo.length+'</span>':'')+(prev?'<span class="ny-since">Last here '+longDate(prev)+'</span>':'')+'</div>'
+    + (todo.length?'<ul class="ny-l">'+todo.map(function(x){ return li(x,'do'); }).join('')+'</ul>':'')
+    + (info.length?'<ul class="ny-l ny-i">'+info.map(function(x){ return li(x,'fyi'); }).join('')+'</ul>':'')+'</section>';
+}
 function dashBanner(o){
   var banner='';
   var pend=sorted(o).filter(function(r){ return r.status!=='verified'; });
   if(isOp()){
     var om=openMonths(o);
     if(om.length){ var r0=om[om.length-1], prog=progressOf(o,r0); banner='<div class="banner no-print"><span><b>'+mLabel(r0.month)+' is open for data entry.</b> '+prog.req+' of '+prog.reqDue+' required figures entered · '+((r0.inbox||[]).length)+' documents from the customer'+(r0.status==='returned'?' · <b>returned by verification with a note</b>':'')+'</span><a class="btn btn-primary btn-sm" href="#/entry/'+o.id+'/'+r0.month+'">Enter figures</a></div>'; }
-  } else {
-    var lastP=pend[pend.length-1];
-    if(lastP && lastP.status==='submitted') banner='<div class="banner grey no-print"><span><b>'+mLabel(lastP.month)+' is with Yarta for verification.</b> Its report appears here once an analyst has verified it.</span><a class="btn btn-ghost btn-sm" href="#/entry" style="color:var(--ink)">Enter your figures</a></div>';
-    else if(lastP && withYarta(lastP)) banner='<div class="banner grey no-print"><span><b>'+mLabel(lastP.month)+' is with Yarta.</b> An analyst is finishing a check on it. Its report appears here once it is verified.</span></div>';
-    else if(lastP){ var pr2=progressOf(o,lastP); banner='<div class="banner no-print"><span><b>'+mLabel(lastP.month)+' is open: '+pr2.req+' of '+pr2.reqDue+' required figures entered.</b>'+(lastP.status==='returned'?' Yarta returned it with a note.':(dueDate(lastP.month)<new Date(localDate()+'T00:00:00')?' It was due '+longDate(dueDate(lastP.month))+'. Finish it and send it to Yarta.':' Finish it and send it to Yarta.'))+'</span><a class="btn btn-primary btn-sm" href="#/entry/'+o.id+'/'+lastP.month+'">Continue</a></div>'; }
-    var rsAll=sorted(o), dueK=rsAll.length?E.addMonths(rsAll[rsAll.length-1].month,1):E.addMonths(nowKey(),-1); if(dueK<=nowKey() && !rec(o,dueK) && !lastP) banner+='<div class="banner no-print"><span><b>Figures for '+mLabel(dueK)+' are due '+longDate(dueDate(dueK))+'.</b> Fuel, electricity, gas, water, waste and the registers, from your own records.</span><button class="btn btn-primary btn-sm" type="button" data-act="start-month" data-org="'+o.id+'" data-month="'+dueK+'">Enter figures</button></div>';
-  }
+  } else banner=needsYou(o);
   return banner;
 }
 function viewApi(){ return {E:E, D:D, R:R, org:org, seriesOf:seriesOf, monthOf:monthOf, idxOf:idxOf, isOp:isOp, me:me, rec:rec, shell:shell, esc:esc, fmt:fmt, pct:pct, sgn:sgn, delta:delta,
@@ -329,7 +356,9 @@ function vSubmit(k,q){
   var head='<div class="pg-head"><div><p class="kicker"><a class="link" href="'+(cust?'#/entry':'#/ops/entry')+'">'+(cust?'Enter your figures':'Data entry')+'</a> · '+statusChip(r.status)+'</p><h1>'+(cust?mLabel(k):esc(o.profile.org_name)+' · '+mLabel(k))+'</h1><p class="pg-sub">'+(cust&&sec?(D.isSmall(o.profile)?'The small-business question set: '+pr.reqDue+' figures are required this month (electricity and waste). Fill in anything else you have; leave the rest blank. ':'The '+esc(sec.name.toLowerCase())+' question set: '+cats.length+' categories, '+pr.reqDue+' required figures this month. '):'')+'Figures due '+longDate(dueDate(k))+(r.enteredAt&&r.status!=='draft'?' · entered '+longDate(r.enteredAt)+(r.enteredBy?' by '+(cust?esc(r.enteredBy):keyedLabel(r)):''):'')+(r.verifiedAt?' · verified '+longDate(r.verifiedAt)+(r.verifiedBy?' by '+esc(r.verifiedBy):''):'')+'</p></div>'
     + '<div class="pg-actions" style="min-width:260px;display:block"><div class="small" role="status" aria-live="polite"><b id="prog-t">'+pr.req+' of '+pr.reqDue+'</b> required figures entered</div><div class="progress"><i id="prog-b" style="width:'+(pr.reqDue?pr.req/pr.reqDue*100:0)+'%"></i></div><div class="small muted" style="margin-top:6px" id="saved" role="status">'+(editable?'Saved in this browser as you type':'Read-only')+'</div></div></div>';
   var submitBox='';
-  if(editable){
+  if(editable && limited()){ var fullU=state.users.filter(function(x){ return x.org===o.id && x.role==='customer' && !(x.sites&&x.sites.length); })[0];
+    submitBox='<div class="panel" style="margin-top:22px" id="submit-box"><h3>Your sites</h3><p class="sec-s" style="margin-top:6px">Your access covers '+esc(mySites(o).map(function(x){ return x.name; }).join(', '))+'. What you type is saved as you go. '+(fullU?esc(fullU.name):'Your organisation\'s main contact')+' sends the month to Yarta once every site is in.</p></div>'; }
+  else if(editable){
     var miss=pr.missing;
     submitBox = '<div class="panel" style="margin-top:22px" id="submit-box">'+(ui.confirmSubmit
       ? '<h3>Send '+mLabel(k)+' for verification</h3>'+(miss.length?'<p class="sec-s" style="margin-top:6px" role="alert">'+miss.length+' required figure'+(miss.length>1?'s are':' is')+' still missing'+(multisite(o)?' across '+Object.keys(miss.reduce(function(a,f){ a[f.siteId]=1; return a; },{})).length+' site'+(Object.keys(miss.reduce(function(a,f){ a[f.siteId]=1; return a; },{})).length===1?'':'s'):'')+':</p>'+missingList(o,r,miss,base)+flagsBox(o,r,k,base):'<p class="sec-s" style="margin-top:6px">All '+pr.reqDue+' required figures are in. Evidence attached for '+Object.keys(r.evidence||{}).length+' of '+cats.length+' categories.</p>'+flagsBox(o,r,k,base)+'<label style="display:flex;gap:10px;align-items:flex-start;font-size:14.5px;margin:12px 0 16px"><input type="checkbox" id="attest" style="margin-top:4px"> <span>'+(cust?'These figures come from our own records for '+mLabel(k)+'. Yarta may ask for the source behind any of them when verifying.':'I entered these figures from the customer\'s documents and attached the evidence for each category. A different analyst will verify them.')+'</span></label><div class="btn-row"><button class="btn btn-primary" type="button" data-act="submit-month" data-month="'+k+'">Send to Yarta</button><button class="btn btn-ghost" type="button" data-act="submit-cancel" style="color:var(--ink)">Not yet</button></div>')
@@ -845,6 +874,18 @@ function sheet3(o,S,i,P,k){
 }
 
 /* ------------------------------------------------------------------ organisation */
+/* who can sign in for this organisation, and which sites each person can enter figures for */
+function peoplePanel(o){
+  var u=me(), can=!isOp() && !limited() && !LIVE, ms=multisite(o), us=state.users.filter(function(x){ return x.org===o.id; });
+  var rows=us.map(function(x){ var acc=x.sites&&x.sites.length?x.sites.map(function(id){ var st=siteById(o,id); return st?st.name:''; }).filter(Boolean).join(', '):'Whole organisation';
+    var act=can && x.id!==u.id ? (ui.confirmPerson===x.id?'<span class="pill-row"><button class="btn btn-primary btn-sm" type="button" data-act="person-remove" data-id="'+esc(x.id)+'">Remove '+esc(x.name.split(' ')[0])+'</button><button class="btn btn-ghost btn-sm" type="button" data-act="person-keep" style="color:var(--ink)">Keep</button></span>':'<button class="btn btn-ghost btn-sm" type="button" data-act="person-ask" data-id="'+esc(x.id)+'" style="color:var(--ink)">Remove</button>') : (x.id===(u&&u.id)?'<span class="muted small">You</span>':'');
+    return '<tr><td>'+esc(x.name)+'</td><td>'+esc(x.title||'')+'</td><td class="mono small">'+esc(x.email||'')+'</td><td class="pp-acc">'+esc(acc)+(x.sites&&x.sites.length?'<span class="muted small"> · enters figures only</span>':'')+'</td><td>'+act+'</td></tr>'; }).join('');
+  var intro = LIVE ? 'Each person signs in with their own email link. To add a colleague, ask your Yarta analyst.' : can ? 'Add the people who hold the records. Limit someone to their own sites and they can enter those figures and nothing else; sending the month to Yarta stays with people who have the whole organisation.' : limited() ? 'Your access covers your own sites. People with the whole organisation can add colleagues.' : 'In production each person has their own sign-in. Demo accounts only here.';
+  var form = !can ? '' : '<div class="panel pp-form"><h3>Add a colleague</h3><div class="pp-g"><div class="field"><label for="pp-name">Name</label><input type="text" id="pp-name" autocomplete="off"></div><div class="field"><label for="pp-title">Role</label><input type="text" id="pp-title" placeholder="Aquatic centre manager" autocomplete="off"></div><div class="field"><label for="pp-email">Work email</label><input type="email" id="pp-email" autocomplete="off"></div></div>'
+    + (ms?'<fieldset class="pp-sites"><legend>What they can enter</legend><label class="pp-all"><input type="radio" name="pp-scope" value="all" checked> <span>The whole organisation <span class="muted small">· can also send the month, set targets and add people</span></span></label><label class="pp-all"><input type="radio" name="pp-scope" value="sites"> <span>Only these sites</span></label><div class="pp-sl">'+activeSites(o).map(function(st){ return '<label><input type="checkbox" data-ppsite="'+esc(st.id)+'"> <span>'+esc(st.name)+'</span></label>'; }).join('')+'</div></fieldset>':'')
+    + '<div class="btn-row" style="margin-top:14px"><button class="btn btn-primary btn-sm" type="button" data-act="person-add">Add colleague</button><span class="small muted">In this prototype the invitation is queued, not emailed, and the new account appears on the sign-in screen.</span></div></div>';
+  return '<p class="sec-s">'+intro+'</p><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Name</th><th>Role</th><th>Email</th><th>Access</th><th></th></tr></thead><tbody>'+(rows||'<tr><td colspan="5" class="muted">No users for this organisation.</td></tr>')+'</tbody></table></div>'+form;
+}
 function vOrganisation(){
   var o=org(), p=o.profile, ro=!isOp(), S=seriesOf(o), m=S.months.length?S.months[S.months.length-1]:null, R=m?m.r12:null;
   var fields=D.PROFILE.map(function(f){
@@ -869,7 +910,7 @@ function vOrganisation(){
       +'<div class="stack"><div class="panel"><h3>Agreed with Yarta</h3><p class="sec-s" style="margin-top:6px">Land, nature and community are scored against annual targets agreed with Yarta at onboarding, from your plans and past years, so a score cannot be raised by lowering a target.'+(ro?' To change one, email <a class="link" href="mailto:contact@yes.com.au">contact@yes.com.au</a> with the reason; it applies from the next report.':' Only the Yarta team can change them.')+'</p>'+agreedList(o,S,m)+'<details class="org-more"><summary>Edit the agreed targets</summary><div class="stack" style="margin-top:16px">'+pick(function(f){ return f.id.indexOf('target_')===0 && OWN_TARGETS.indexOf(f.id)<0; })+'</div></details></div>'
       +'<div class="panel"><h3>Reporting settings</h3><p class="sec-s" style="margin-top:6px">Shown on every report.'+(isBiz?' Revenue, gross assets and employees set your mandatory climate reporting group.':'')+'</p><div class="stack" style="margin-top:16px">'+pick(function(f){ return SETTINGS.indexOf(f.id)>=0 && (isBiz || f.id==='boundary' || f.id==='scope2_contract'); })+'</div>'+climateGroupNote(o)+'</div></div></div>'
     + profileGaps(o,S,m)
-    + '<h2 class="sec-t" style="margin-top:28px">Your Yarta analyst</h2><p class="sec-s">'+(operatorOf(o)?esc(operatorOf(o).name)+' · '+esc(operatorOf(o).title)+' · <a class="link" href="mailto:'+esc(operatorOf(o).email)+'">'+esc(operatorOf(o).email)+'</a>. Checks the figures you enter, sends the monthly reminder and answers for the month.':'Not yet assigned.')+'</p><h2 class="sec-t" style="margin-top:28px">People with access</h2><p class="sec-s">In production each person has their own sign-in. Demo accounts only here.</p><div class="tbl-wrap"><table class="tbl compact nowrap-cells"><thead><tr><th>Name</th><th>Role</th><th>Email</th></tr></thead><tbody>'+(users||'<tr><td colspan="3" class="muted">No demo users for this organisation.</td></tr>')+'</tbody></table></div>';
+    + '<h2 class="sec-t" style="margin-top:28px">Your Yarta analyst</h2><p class="sec-s">'+(operatorOf(o)?esc(operatorOf(o).name)+' · '+esc(operatorOf(o).title)+' · <a class="link" href="mailto:'+esc(operatorOf(o).email)+'">'+esc(operatorOf(o).email)+'</a>. Checks the figures you enter, sends the monthly reminder and answers for the month.':'Not yet assigned.')+'</p><h2 class="sec-t" style="margin-top:28px">People with access</h2>'+peoplePanel(o);
   return shell('organisation', body);
 }
 /* the organisation at a glance: the figures that drive every intensity, and what each one is used for */
@@ -1659,7 +1700,7 @@ function vSiteReport(sid,k){
 /* entry: the site tabs above the category form */
 function siteTabs(o,r,base,cur){
   if(!multisite(o)) return '';
-  return '<div class="site-tabs" role="tablist" aria-label="Site">'+o.sites.filter(function(s){ return s.active!==false; }).map(function(s){ var p=siteProgress(o,r,s);
+  return '<div class="site-tabs" role="tablist" aria-label="Site">'+mySites(o).map(function(s){ var p=siteProgress(o,r,s);
     return '<a role="tab" href="'+base+'?s='+s.id+(parseHash().q.c?'&c='+parseHash().q.c:'')+'" aria-selected="'+(s.id===cur)+'"><b>'+esc(s.name)+'</b><span class="c'+(p.reqDue&&p.req===p.reqDue?' ok':'')+'" data-sc="'+s.id+'">'+p.req+'/'+p.reqDue+'</span></a>'; }).join('')+'</div>';
 }
 
@@ -1888,7 +1929,7 @@ function importApply(){
   flash(done+' figures imported into '+Object.keys(byMonth).length+' month'+(Object.keys(byMonth).length===1?'':'s')+(skipped.length?'. Skipped locked: '+skipped.join(', '):'')+'.'); ui.imp=null; ui.impFile=null; render();
 }
 
-function currentSite(o){ var q=parseHash().q; if(!multisite(o)) return null; if(q.s && siteById(o,q.s)) return q.s; var a=o.sites.filter(function(x){ return x.active!==false; })[0]; return a?a.id:o.sites[0].id; }
+function currentSite(o){ var q=parseHash().q; if(!multisite(o)) return null; if(limited()){ var mine=mySites(o); if(q.s && mine.some(function(x){ return x.id===q.s; })) return q.s; if(mine.length) return mine[0].id; } if(q.s && siteById(o,q.s)) return q.s; var a=o.sites.filter(function(x){ return x.active!==false; })[0]; return a?a.id:o.sites[0].id; }
 /* A customer sets the four targets that are theirs to choose (the eco standard stays the floor). Land, nature and
    community are scored against targets agreed with Yarta at onboarding, so a score cannot be raised by lowering them. */
 var OWN_TARGETS=['target_emissions','target_renewable','target_diversion','target_fleet_ev'];
@@ -1922,6 +1963,8 @@ function render(){
   if(LIVE && !LIVE.ready){ appEl.innerHTML=LIVE.loadingHtml(); return; }
   SITE=null; var h=parseHash(), P=h.parts, q=h.q, html;
   var u=me();
+  if(u && !LIVE && u.role==='customer' && ui.seenFor!==u.id){ state.seen=state.seen||{}; ui.prevSeen=state.seen[u.id]||null; ui.seenFor=u.id; state.seen[u.id]=isoNow(); save(); }
+  if(!u){ ui.seenFor=null; ui.prevSeen=null; }
   if(u && window.YESPORTAL_CLIENT && isOp()){ state.session=null; save(); u=null; }   /* the client portal never shows the team's screens */
   if(!u){ html=vLogin(); }
   else if(!P.length){ go(isOp()?(u.home||'#/ops'):'#/dashboard'); return; }
@@ -2117,6 +2160,7 @@ document.addEventListener('click', function(e){
   var t=e.target.closest ? e.target.closest('[data-act]') : null; if(!t) return;
   var act=t.getAttribute('data-act'), o;
   if(t.tagName==='INPUT'||t.tagName==='SELECT') return;
+  if(limited() && ['submit-ask','submit-month','recall','save-profile','import-go','site-save','site-toggle','declare','book-submit','own-done','bk-cancel','bk-cancel-go'].indexOf(act)>=0){ flash('Your access covers entering figures for your sites. Ask someone with the whole organisation to do this.','err'); return; }
   switch(act){
     case 'login': if(LIVE) return; state.session={user:t.getAttribute('data-user')}; if(isOp()) state.session.viewOrg='demo-shire'; save(); go(isOp()?(me().home||'#/ops'):'#/dashboard'); break;
     case 'ltab': ui.loginTab=t.getAttribute('data-tab'); render(); break;
@@ -2126,6 +2170,10 @@ document.addEventListener('click', function(e){
     case 'reset-demo': case 'reset-go': if(LIVE) return; var sess=state.session; state=X.build(); if(act==='reset-go') state.session=sess; save(); clearFiles(); ui.confirmReset=false; ui.importPreview=null; flash('Demo data reset.'); render(); break;
     case 'reset-ask': if(LIVE) return; ui.confirmReset=true; render(); break;
     case 'reset-cancel': ui.confirmReset=false; render(); break;
+    case 'person-ask': ui.confirmPerson=t.getAttribute('data-id'); render(); break;
+    case 'person-keep': ui.confirmPerson=null; render(); break;
+    case 'person-remove': o=org(); if(isOp()||limited()||LIVE) return; var prm=state.users.filter(function(x){ return x.id===t.getAttribute('data-id') && x.org===o.id; })[0]; if(!prm||prm.id===me().id) return; state.users=state.users.filter(function(x){ return x!==prm; }); if(state.seen) delete state.seen[prm.id]; ui.confirmPerson=null; log('Person removed',prm.name,o.id); save(); flash(prm.name+' can no longer sign in.'); render(); break;
+    case 'person-add': o=org(); if(isOp()||limited()||LIVE) return; var pnm=($('#pp-name').value||'').trim(), pti=($('#pp-title').value||'').trim(), pem=($('#pp-email').value||'').trim().toLowerCase(); if(!pnm){ flash('Add their name.','err'); $('#pp-name').focus(); return; } if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(pem)){ flash('Add their work email.','err'); $('#pp-email').focus(); return; } if(state.users.some(function(x){ return (x.email||'').toLowerCase()===pem; })){ flash('Someone with that email already has access.','err'); return; } var psc=($$('input[name=pp-scope]').filter(function(x){ return x.checked; })[0]||{}).value, pss=$$('[data-ppsite]').filter(function(x){ return x.checked; }).map(function(x){ return x.getAttribute('data-ppsite'); }); if(psc==='sites' && !pss.length){ flash('Tick the sites they can enter.','err'); return; } var pnu={id:'u-'+Date.now().toString(36), name:pnm, title:pti||'Colleague', email:pem, role:'customer', org:o.id, addedBy:me().name, addedAt:isoNow()}; if(psc==='sites') pnu.sites=pss; state.users.push(pnu); log('Person added',pnm+(pnu.sites?' · '+pnu.sites.length+' site'+(pnu.sites.length===1?'':'s'):' · whole organisation'),o.id); queueMail('invite',o.id,pem,'You have access to '+o.profile.org_name+' on Yarta','Hi '+pnm.split(' ')[0]+',\n\n'+me().name+' has given you access to '+o.profile.org_name+' on Yarta'+(pnu.sites?' to enter the monthly figures for '+pnu.sites.map(function(id){ return (siteById(o,id)||{}).name; }).join(', '):'')+'.\n\nSign in at the Yarta portal with this email address.\n\nYarta',pnu.id); save(); flash(pnm+' added'+(pnu.sites?' for '+pnu.sites.length+' site'+(pnu.sites.length===1?'':'s'):'')+'.'); render(); break;
     case 'view-org': state.session.viewOrg=t.getAttribute('data-org'); save(); go('#/dashboard'); break;
     case 'print': window.print(); break;
     case 'copy-summary': var smt=document.getElementById('sm-text'); if(smt) copyText(smt.value); break;

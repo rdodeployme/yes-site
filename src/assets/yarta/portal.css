@@ -605,3 +605,33 @@ fieldset.field legend{padding:0;margin-bottom:6px}
 .imp-save b{font-weight:700}
 .imp-savebox{margin:10px 0;padding:10px 12px;border-radius:8px;background:#EEF4EF;border:1px solid #CFE0D5;font-size:13.5px;line-height:1.45}
 .imp-savebox b{color:#2E6B4A}
+
+/* ---- what needs you (dashboard) ---- */
+.needs{margin:0 0 18px;background:#fff;border:1px solid var(--line,#d8d2c8);border-radius:14px;padding:16px 20px 8px}
+.ny-h{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:6px}
+.ny-h h2{font:800 20px/1.2 var(--font-display,Archivo,Inter,sans-serif);margin:0;letter-spacing:-.01em}
+.ny-n{min-width:24px;height:24px;padding:0 7px;border-radius:999px;background:#B8641F;color:#fff;font:700 13px/24px var(--font-body,Inter,sans-serif);text-align:center}
+.ny-since{margin-left:auto;font-size:12.5px;color:var(--steel,#6b6259)}
+.ny-l{list-style:none;margin:0;padding:0}
+.ny-r{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 20px;padding:12px 0;border-top:1px solid var(--silver-1,#ece6dc)}
+.ny-l:first-of-type .ny-r:first-child{border-top:0}
+.ny-b{display:grid;gap:2px;min-width:0;flex:1 1 320px;padding-left:14px;border-left:3px solid #B8641F}
+.ny-r.fyi .ny-b{border-left-color:var(--silver-2,#cfc7bb)}
+.ny-t{font-weight:700;font-size:15px;line-height:1.35}
+.ny-r.fyi .ny-t{font-weight:600}
+.ny-x{font-size:13.5px;line-height:1.45;color:var(--graphite,#4a423a)}
+.ny-new{display:inline-block;margin-right:8px;padding:1px 7px;border-radius:999px;background:#2E6B4A;color:#fff;font:700 11px/1.5 var(--font-body,Inter,sans-serif);vertical-align:1px}
+.ny-a{flex:none}
+@media(max-width:560px){.needs{padding:14px 14px 6px}.ny-a{width:100%}.ny-since{margin-left:0;width:100%}}
+
+/* ---- people with access ---- */
+.pp-acc{white-space:normal;min-width:14rem}
+.pp-form{margin-top:16px}
+.pp-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 18px;margin-top:14px}
+.pp-sites{border:0;padding:0;margin:16px 0 0}
+.pp-sites legend{font-weight:700;font-size:14px;padding:0;margin-bottom:8px}
+.pp-all{display:flex;gap:9px;align-items:flex-start;font-size:14.5px;margin:6px 0}
+.pp-all input,.pp-sl input{margin-top:3px;flex:none}
+.pp-sl{display:grid;grid-template-columns:repeat(auto-fill,minmax(13rem,1fr));gap:6px 16px;margin:8px 0 0 26px}
+.pp-sl label{display:flex;gap:8px;align-items:flex-start;font-size:14px}
+@media(max-width:760px){.pp-g{grid-template-columns:1fr}.pp-sl{margin-left:0}}
