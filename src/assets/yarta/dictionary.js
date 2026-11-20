@@ -55,7 +55,13 @@ window.YESD = window.YESD || {};
     {id:"target_trees", name:"Trees planted per year (target)", kind:"count", unit:"trees", req:false, def:"Annual tree-planting target used for the Nature score."},
     {id:"target_rehab_ha", name:"Land rehabilitated per year (target)", kind:"number", unit:"ha", req:false, def:"Annual rehabilitation target used for the Land score."},
     {id:"target_native_ha", name:"Native vegetation, habitat and wetland restored per year (target)", kind:"number", unit:"ha", req:false, def:"Annual restoration target used for the Nature score."},
-    {id:"target_participants", name:"Program participants per year (target)", kind:"count", unit:"people", req:false, def:"Annual participation target used for the Community score."}
+    {id:"target_participants", name:"Program participants per year (target)", kind:"count", unit:"people", req:false, def:"Annual participation target used for the Community score."},
+    {id:"rate_elec", name:"Grid electricity", kind:"number", unit:"$ per kWh", req:false, def:"Average price paid, from a recent bill: the total charge divided by the kWh used."},
+    {id:"rate_gas", name:"Natural gas", kind:"number", unit:"$ per GJ", req:false, def:"Average price paid per gigajoule, from a recent bill."},
+    {id:"rate_diesel", name:"Diesel", kind:"number", unit:"$ per litre", req:false, def:"Average price paid per litre, from fuel card statements."},
+    {id:"rate_petrol", name:"Petrol", kind:"number", unit:"$ per litre", req:false, def:"Average price paid per litre, from fuel card statements."},
+    {id:"rate_water", name:"Drinking water", kind:"number", unit:"$ per kL", req:false, def:"Usage charge per kilolitre, from a water bill."},
+    {id:"rate_landfill", name:"Waste to landfill", kind:"number", unit:"$ per tonne", req:false, def:"What a tonne sent to landfill costs you: gate fee, levy and haulage."}
   ];
 
   function F(id,name,cat,unit,freq,req,kind,src,def,extra){ var f={id:id,name:name,cat:cat,unit:unit,freq:freq,req:req,kind:kind,type:"input",src:src,def:def,score:[cat]}; if(extra){ for(var k in extra) f[k]=extra[k]; } return f; }

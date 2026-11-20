@@ -351,12 +351,16 @@ window.YESDEMO = window.YESDEMO || {};
      month:"2026-06", group:false, createdAt:"2026-09-18T00:00:00.000Z", createdBy:"Sam Nguyen", demo:true}
   ];
 
+  /* Fictional unit prices for the demo organisations, so the cost views have something to show. */
+  X.DEMO_RATES = {rate_elec:0.28, rate_gas:18, rate_diesel:1.85, rate_petrol:1.95, rate_water:4.2, rate_landfill:250};
+  X.seedRates = function(p){ if(!p) return p; var any=false, k; for(k in X.DEMO_RATES) if(p[k]!=null && p[k]!=='') any=true; if(!any) for(k in X.DEMO_RATES) p[k]=X.DEMO_RATES[k]; return p; };
   X.build = function(){
     var orgs = {};
     X.ORGS.forEach(function(o){
       var g = o.gen; g.profile = o.profile;
       var recs = finish(build(g), g);
       orgs[o.id] = {id:o.id, profile:JSON.parse(JSON.stringify(o.profile)), records:recs, demo:true};
+      X.seedRates(orgs[o.id].profile);
     });
     Object.keys(orgs).forEach(function(id){ orgs[id].plan = {off:{}}; });
     return {v:6, created:new Date().toISOString(), orgs:orgs, users:X.USERS.slice(), session:null, audit:[], bookings:JSON.parse(JSON.stringify(X.BOOKINGS))};

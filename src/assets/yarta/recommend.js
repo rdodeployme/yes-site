@@ -317,5 +317,52 @@ window.YESR = window.YESR || {};
     {k:"target", name:"At the eco standards", how:"The same month's figures with each published standard, or your target where it is tighter, in your profile treated as met: emissions reduction, renewable electricity, landfill diversion, fleet electrification, trees planted, hectares restored, land rehabilitated and program participants. Figures without a target stay as they are."},
     {k:"potential", name:"With Yarta help (estimate)", how:"The same month's figures with the assumed effect of every recommended item in your plan applied in full, once each has had time to take effect. An upper estimate: each item is also shown as a range from half its assumed effect to the full. Items you switch off are left out."}
   ];
+  /* ---------- Cost: what the year cost at the organisation's own rates, and the saving an improvement implies.
+     Rates are the customer's own (Organisation page). Nothing is assumed when a rate is missing. ---------- */
+  R.RATES = [
+    {id:"rate_elec",     k:"elec",     name:"Grid electricity", unit:"kWh", qty:function(m){ return num(m.grid_kwh); }},
+    {id:"rate_gas",      k:"gas",      name:"Natural gas",      unit:"GJ",  qty:function(m){ return num(m.gas_gj); }},
+    {id:"rate_diesel",   k:"diesel",   name:"Diesel",           unit:"L",   qty:function(m){ return num((m.values||{}).diesel_l); }},
+    {id:"rate_petrol",   k:"petrol",   name:"Petrol",           unit:"L",   qty:function(m){ return num((m.values||{}).petrol_l); }},
+    {id:"rate_water",    k:"water",    name:"Drinking water",   unit:"kL",  qty:function(m){ return num(m.potable_kl); }},
+    {id:"rate_landfill", k:"landfill", name:"Waste to landfill", unit:"t",  qty:function(m){ return num(m.landfill_t); }}
+  ];
+  R.money = function(v){ if(v==null||!isFinite(v)) return "—"; var a=Math.abs(v), r=a>=1e6?Math.round(a/1e4)*1e4:a>=1e4?Math.round(a/100)*100:a>=1000?Math.round(a/10)*10:Math.round(a); return (v<0?"−":"")+"$"+Number(r).toLocaleString("en-AU"); };
+  function costOf(w, p){
+    var items=[], missing=[], total=0;
+    R.RATES.forEach(function(d){ var q=0; w.forEach(function(m){ q+=d.qty(m); }); var rate=num(p[d.id]);
+      if(q>0 && rate>0){ items.push({k:d.k, id:d.id, name:d.name, unit:d.unit, qty:q, rate:rate, cost:q*rate}); total+=q*rate; }
+      else if(q>0) missing.push(d); });
+    items.sort(function(a,b){ return b.cost-a.cost; });
+    return {items:items, missing:missing, total:total, n:w.length};
+  }
+  /* The 12 months to month i, and the 12 before them when all 24 are held. */
+  R.cost12 = function(S, i, p){
+    var w=S.months.slice(Math.max(0,i-11), i+1), c=costOf(w, p||{});
+    if(i>=23){ var pc0=costOf(S.months.slice(i-23, i-11), p||{}); c.prev=pc0.total; c.prevBy={}; pc0.items.forEach(function(x){ c.prevBy[x.k]=x.cost; }); }
+    return c;
+  };
+  /* Saving a year implied by an improvement's own assumed effect, at the customer's rates. null = this help has no bill attached. */
+  R.SAVES = {
+    hardwaste:{rate:"rate_landfill", say:"3% of your waste kept out of landfill"},
+    energy:{rate:"rate_elec", say:"5% less grid electricity"},
+    water:{rate:"rate_water", say:"8% less drinking water"},
+    fleet:{rate:"rate_diesel", say:"less fuel as vehicles are replaced"}
+  };
+  R.saving = function(k, S, i, p){
+    var d=R.SAVES[k]; if(!d) return null; p=p||{};
+    var w=S.months.slice(Math.max(0,i-11), i+1), yr=12/Math.max(1,w.length), sm=function(fn){ var t=0; w.forEach(function(m){ t+=fn(m); }); return t*yr; }, v=null, say=d.say, need=null;
+    if(k==="hardwaste"){ if(num(p.rate_landfill)>0) v=0.03*sm(function(m){ return num(m.waste_total_t); })*num(p.rate_landfill); else need="rate_landfill"; }
+    else if(k==="energy"){ if(num(p.rate_elec)>0) v=0.05*sm(function(m){ return num(m.grid_kwh); })*num(p.rate_elec); else need="rate_elec"; }
+    else if(k==="water"){ if(num(p.rate_water)>0) v=0.08*sm(function(m){ return num(m.potable_kl); })*num(p.rate_water); else need="rate_water"; }
+    else if(k==="fleet"){ var g=R.fleetGain(R.context(S,i,p)); if(!(g.fuel>0)) return null;
+      var dl=sm(function(m){ return num((m.values||{}).diesel_l); }), pl=sm(function(m){ return num((m.values||{}).petrol_l); });
+      if((dl>0 && !(num(p.rate_diesel)>0)) || (pl>0 && !(num(p.rate_petrol)>0))) need=dl>0&&!(num(p.rate_diesel)>0)?"rate_diesel":"rate_petrol";
+      else v=g.fuel/100*(dl*num(p.rate_diesel)+pl*num(p.rate_petrol));
+      say=f1(g.fuel)+"% less fuel as vehicles are replaced"; }
+    if(need) return {perYear:null, need:need, say:say};
+    return v>0 ? {perYear:v, say:say, note:k==="fleet"?"Fuel only: charging electricity is not taken off.":""} : null;
+  };
+
   R.ROADMAP_RULES = "Booked items start in the month booked. The others start from next month, two a quarter, weakest category first. Each kind of help has its own lead time before it shows in your figures and its own build-up to full effect: from three months for water leaks and evidence to two years for fleet replacement, at your own rate of retiring vehicles. Estimated changes run from half the assumed effect to the full effect. Everything else is held at the latest 12 months. Work completed in the last 6 months is not recommended again; its effect shows only in later verified figures.";
 })(window.YESR, window.YESD, window.YESE);

@@ -49,8 +49,8 @@ function field(id){ return D.FIELD[id] || (D.PROFILE.filter(function(f){return f
 /* ------------------------------------------------------------------ store */
 function load(){
   if(LIVE) return LIVE.emptyState();
-  try{ var s=JSON.parse(localStorage.getItem(KEY)); if(s && s.v===6 && s.orgs && s.users){ s.bookings=s.bookings||[]; seedOps(s); return s; } }catch(e){}
-  var fresh = X.build(); seedOps(fresh); persist(fresh); return fresh;
+  try{ var s=JSON.parse(localStorage.getItem(KEY)); if(s && s.v===6 && s.orgs && s.users){ s.bookings=s.bookings||[]; seedOps(s); if(!s.ratesSeeded && X.seedRates){ Object.keys(s.orgs).forEach(function(k){ if(s.orgs[k].demo) X.seedRates(s.orgs[k].profile); }); s.ratesSeeded=true; } return s; } }catch(e){}
+  var fresh = X.build(); fresh.ratesSeeded=true; seedOps(fresh); persist(fresh); return fresh;
 }
 function persist(s){
   if(LIVE) return LIVE.sync(s||state);
@@ -743,6 +743,12 @@ function vRoadmap(){
 
 function nextSlots(){ var out=[], d=new Date(); d.setHours(0,0,0,0); while(out.length<20){ d.setDate(d.getDate()+1); var w=d.getDay(); if(w===0||w===6) continue; var ds=d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate()); out.push(ds+'T09:00'); out.push(ds+'T13:30'); } return out; }
 function slotTaken(v,svc,orgId){ return (state.bookings||[]).some(function(b){ return b.status!=='cancelled' && b.slot===v && (b.svc===svc || b.org===orgId); }); }
+/* what an improvement could save a year, with its working, or which price is needed to work it out */
+function savingNote(key,S,i,o){
+  if(!R.saving || i<0) return ''; var sv=R.saving(key,S,i,o.profile); if(!sv) return '';
+  if(sv.perYear) return '<p class="imp-savebox"><b>About '+R.money(sv.perYear)+' a year</b> at your prices, from '+esc(sv.say)+'. '+(sv.note?esc(sv.note)+' ':'')+'The cost of the work is not taken off.</p>';
+  var f=field(sv.need); return '<p class="small muted">Add what you pay for '+esc(f?f.name.toLowerCase():'this')+' under <a class="link" href="#/organisation">Organisation</a> to see the saving in dollars.</p>';
+}
 function vBook(key){
   var o=org(), s=R&&R.byKey[key]; if(!s) return vNotFound();
   var S=seriesOf(o), m=monthOf(S), i=m?idxOf(S,m.month):-1, r=m?R.recommend(S,i,o.profile).filter(function(x){ return x.k===key; })[0]:null;
@@ -755,7 +761,7 @@ function vBook(key){
   var body='<div class="pg-head"><div><p class="kicker"><a class="link" href="#/improvements">Improvements</a> · '+esc(s.cat?D.CAT[s.cat].name:'Funding')+'</p><h1>'+esc(title)+'</h1><p class="pg-sub">'+esc(s.what)+'</p></div></div>'
     + (open?'<div class="banner grey"><span>You already have a '+esc(BK_L[open.status].toLowerCase())+' booking for this: <b>'+esc(slotLabel(open.slot,open.other))+'</b>.</span><a class="btn btn-ghost btn-sm" href="#/improvements" style="color:var(--ink)">See it</a></div>':'')
         + '<section class="panel imp-detail"><div class="imp-top"><div><p class="k">Estimated change</p><p class="imp-num">'+(r&&r.uplift&&r.uplift.overall>=0.05?'Score '+scoreRange(r.uplift):(r?esc(upText(r.uplift)||s.effectText):'—'))+'</p>'+(r&&r.uplift&&r.uplift.overall>=0.05&&m?'<p class="small muted">From '+fmt(m.score,0)+', on its own, at full effect. The range runs from half the assumed effect to the full.</p>':'<p class="small muted">Once it has taken full effect</p>')+'</div><div><p class="k">Why it is recommended</p><p>'+esc(r?r.why:'Your current figures do not call for this, but you can still book it.')+'</p></div></div>'
-    + '<div class="imp-cols"><div><h3>What is involved</h3><p class="small">'+esc(s.what)+'</p><p class="small muted">'+esc(s.session)+'</p></div><div><h3>Who delivers it</h3><p class="small">'+esc(s.who)+'</p>'+(s.prov==='group'?'<p class="small muted">'+esc(s.groupNames)+(s.groupNames.indexOf(' and ')>0?' are':' is')+' part of Recycle Group, like Yarta. Disclosed on your monthly report.</p>':'')+'</div><div><h3>The estimate</h3><p class="small">Assumed effect: '+esc(s.effectText)+'</p><p class="small muted">You can use any provider. Your score and the verification of your figures do not depend on who does the work.</p></div></div></section>'
+    + '<div class="imp-cols"><div><h3>What is involved</h3><p class="small">'+esc(s.what)+'</p><p class="small muted">'+esc(s.session)+'</p></div><div><h3>Who delivers it</h3><p class="small">'+esc(s.who)+'</p>'+(s.prov==='group'?'<p class="small muted">'+esc(s.groupNames)+(s.groupNames.indexOf(' and ')>0?' are':' is')+' part of Recycle Group, like Yarta. Disclosed on your monthly report.</p>':'')+'</div><div><h3>The estimate</h3><p class="small">Assumed effect: '+esc(s.effectText)+'</p>'+savingNote(key,S,i,o)+'<p class="small muted">You can use any provider. Your score and the verification of your figures do not depend on who does the work.</p></div></div></section>'
     + planPanels(o,S,i,s,open)
     + '<h2 class="sec-t" style="margin-top:28px">Book the relevant expert</h2>'
 + '<div class="book"><div class="panel"><h3>Choose a time</h3><p class="sec-s" style="margin-top:4px">'+esc(s.session)+'. The next ten business days, in your local time.</p>'
@@ -793,15 +799,15 @@ function vImprove(){
   var items=P.items.slice().sort(function(a,b){ return ((b.uplift&&b.uplift.overall)||0)-((a.uplift&&a.uplift.overall)||0); });
   var head='<div class="pg-head"><div><p class="kicker">Improvements</p><h1>What would lift your score</h1><p class="pg-sub">Suggestions from your verified figures to '+mLabel(m.month)+(m.status!=='verified'?' (provisional: awaiting verification)':'')+', biggest estimated change first. Open one to see what is involved, then book the relevant expert.</p></div></div>';
   var cards=items.map(function(it){
-    var s=it.s, b=it.booking, pv=provOf(s), ov=it.uplift&&it.uplift.overall>=0.05?it.uplift.overall:null;
+    var s=it.s, b=it.booking, pv=provOf(s), ov=it.uplift&&it.uplift.overall>=0.05?it.uplift.overall:null, sv=R.saving?R.saving(s.k,S,i,o.profile):null;
     return '<a class="imp-card'+(s.prov==='group'?' grp':'')+'" href="#/improvements/'+s.k+'">'
       + '<span class="imp-n"><b>'+(ov!=null?sgn(ov,1):'—')+'</b><small>'+(ov!=null?'score':'see detail')+'</small></span>'
-      + '<span class="imp-b"><span class="k">'+esc(s.cat?D.CAT[s.cat].name:'Funding')+'</span><span class="imp-t">'+itemName(it)+'</span><span class="small muted">'+esc(upText(it.uplift)||s.effectText)+' · '+esc(pv.label)+'</span></span>'
+      + '<span class="imp-b"><span class="k">'+esc(s.cat?D.CAT[s.cat].name:'Funding')+'</span><span class="imp-t">'+itemName(it)+'</span><span class="small muted">'+esc(upText(it.uplift)||s.effectText)+' · '+esc(pv.label)+'</span>'+(sv&&sv.perYear?'<span class="imp-save">Saves about <b>'+R.money(sv.perYear)+'</b> a year</span>':'')+'</span>'
       + '<span class="imp-s">'+(b?bookingChip(b):'<span class="btn btn-primary btn-sm">Details and booking</span>')+'</span></a>';
   }).join('');
   var bl=orgBookings(o.id).slice().sort(function(a,b){ return (b.slot||b.createdAt||'')<(a.slot||a.createdAt||'')?-1:1; });
   var bk=bl.length?'<h2 class="sec-t" style="margin-top:28px">Your bookings</h2><div class="tbl-wrap"><table class="tbl compact"><thead><tr><th>Help</th><th>When</th><th>Status</th><th>Since then</th><th></th></tr></thead><tbody>'+bl.map(function(b){ return bookingRow(b,o,S,i); }).join('')+'</tbody></table></div>':'';
-  return shell('improve', head+'<section class="panel-dark rm-top">'+threeNums(P,m,'dark')+'</section><h2 class="sec-t" style="margin-top:28px">Suggested improvements</h2><p class="sec-s">The estimated change is for each item on its own, once it has taken full effect. You can use any provider.</p>'+(cards?'<div class="imp-list">'+cards+'</div>':'<div class="empty">Nothing is suggested from your current figures.</div>')+bk);
+  return shell('improve', head+'<section class="panel-dark rm-top">'+threeNums(P,m,'dark')+'</section><h2 class="sec-t" style="margin-top:28px">Suggested improvements</h2><p class="sec-s">The estimated change is for each item on its own, once it has taken full effect. Savings use the prices under <a class="link" href="#/organisation">Organisation</a> and leave out the cost of the work. You can use any provider.</p>'+(cards?'<div class="imp-list">'+cards+'</div>':'<div class="empty">Nothing is suggested from your current figures.</div>')+bk);
 }
 
 /* the figures behind an open booking, from the customer's verified months, when none were saved with it */
@@ -858,7 +864,8 @@ function vOrganisation(){
     + orgGlance(o,S,m)
     + '<section class="org-tg"><div class="org-tg-head"><div><h2 class="sec-t">Your targets</h2><p class="sec-s">'+(ro?'Yours to set. ':'')+'The eco standard stays the floor, so the higher of the two is what the report measures against. Move a target and the line beneath it says what it would take from where you are now.</p></div></div>'
     + '<div class="org-tg-grid">'+OWN_TARGETS.map(function(id){ return targetCard(o,S,m,id,ro); }).join('')+'</div></section>'
-    + '<div class="row2" style="margin-top:22px"><div class="panel"><h3>Profile</h3><div class="stack" style="margin-top:16px">'+pick(function(f){ return f.id.indexOf('target_')!==0 && SETTINGS.indexOf(f.id)<0 && (!SECTOR_FIELD[f.id] || isOp() || (p[f.id]!=null && p[f.id]!=='') || SECTOR_FIELD[f.id].indexOf(p.sector)>=0); })+'</div></div>'
+    + '<section class="panel rate-p" id="rates" style="margin-top:22px"><h3>What you pay</h3><p class="sec-s" style="margin-top:6px">Your own average prices, from recent bills. Yarta uses them to show what the year cost and what each improvement could save. Leave one blank and no cost is shown for it; nothing is assumed.'+(o.demo?' The demo prices here are fictional.':'')+'</p><div class="rate-g">'+pick(function(f){ return f.id.indexOf('rate_')===0; })+'</div></section>'
+    + '<div class="row2" style="margin-top:22px"><div class="panel"><h3>Profile</h3><div class="stack" style="margin-top:16px">'+pick(function(f){ return f.id.indexOf('target_')!==0 && f.id.indexOf('rate_')!==0 && SETTINGS.indexOf(f.id)<0 && (!SECTOR_FIELD[f.id] || isOp() || (p[f.id]!=null && p[f.id]!=='') || SECTOR_FIELD[f.id].indexOf(p.sector)>=0); })+'</div></div>'
       +'<div class="stack"><div class="panel"><h3>Agreed with Yarta</h3><p class="sec-s" style="margin-top:6px">Land, nature and community are scored against annual targets agreed with Yarta at onboarding, from your plans and past years, so a score cannot be raised by lowering a target.'+(ro?' To change one, email <a class="link" href="mailto:contact@yes.com.au">contact@yes.com.au</a> with the reason; it applies from the next report.':' Only the Yarta team can change them.')+'</p>'+agreedList(o,S,m)+'<details class="org-more"><summary>Edit the agreed targets</summary><div class="stack" style="margin-top:16px">'+pick(function(f){ return f.id.indexOf('target_')===0 && OWN_TARGETS.indexOf(f.id)<0; })+'</div></details></div>'
       +'<div class="panel"><h3>Reporting settings</h3><p class="sec-s" style="margin-top:6px">Shown on every report.'+(isBiz?' Revenue, gross assets and employees set your mandatory climate reporting group.':'')+'</p><div class="stack" style="margin-top:16px">'+pick(function(f){ return SETTINGS.indexOf(f.id)>=0 && (isBiz || f.id==='boundary' || f.id==='scope2_contract'); })+'</div>'+climateGroupNote(o)+'</div></div></div>'
     + profileGaps(o,S,m)

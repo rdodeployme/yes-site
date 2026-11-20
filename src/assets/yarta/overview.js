@@ -601,8 +601,27 @@ V.dashboard = function(q, api){
         + (v==null?'<span class="na">Not reported</span>':'<span class="tr"><i style="width:'+clamp(v,1,100)+'%"></i></span><span class="v">'+Math.round(v)+'</span><span class="d">'+A.delta(m.cat_yoy[c.k])+'</span>')+'</a>'; }).join('')+'</div></section>';
 
   var hr=heroRoad(S,i,o).split('\u0000');   // [the road to 2030, the plan]
-  return A.shell('dashboard', head + A.banner(o) + heroCountry(S,i,o) + '<div class="ct-row">'+hr[0]+srcP+'</div>' + tenCountry(S,i,o) + chP + levP + (hr[1]||'') + scaleFacts(S,i,o));
+  return A.shell('dashboard', head + A.banner(o) + heroCountry(S,i,o) + '<div class="ct-row">'+hr[0]+srcP+'</div>' + tenCountry(S,i,o) + chP + levP + costPanel(S,i,o) + (hr[1]||'') + scaleFacts(S,i,o));
 };
+
+/* What the year cost, at the customer's own prices, and what the suggested improvements could save. */
+var COST_C = {elec:'#C9973F', gas:'#B8641F', diesel:'#8A4A14', petrol:'#A9744A', water:'#3F7C96', landfill:'#9A6A47'};
+function costPanel(S, i, o){
+  if(!R || !R.cost12) return '';
+  var p=o.profile, c=R.cost12(S,i,p), month=S.months[i].month;
+  if(!c.items.length) return '<section class="panel ov-cost ov-cost-0"><div><h2 class="sec-t">What your year cost</h2><p class="sec-s">Add what you pay per kWh, litre, kilolitre and tonne, and Yarta shows the dollars beside the tonnes: what the year cost and what each improvement could save.</p></div><a class="btn btn-primary btn-sm" href="#/organisation">Add your prices</a></section>';
+  var ch=c.prev>0?pctChg(c.total,c.prev):null, max=c.items[0].cost, save=0, nSave=0, P=A.planFor(o,S,i);
+  if(P) P.items.forEach(function(it){ if(it.off) return; var sv=R.saving(it.s.k,S,i,p); if(sv&&sv.perYear){ save+=sv.perYear; nSave++; } });
+  var rows=c.items.map(function(x){ var pv=c.prevBy?c.prevBy[x.k]:null, d=pv>0?pctChg(x.cost,pv):null;
+    return '<div class="ov-src-r" data-tip="'+esc(x.name+': '+fmt(x.qty,0)+' '+x.unit+' at $'+x.rate+' per '+x.unit)+'" tabindex="0"><span class="nm">'+esc(x.name)+'</span><span class="tr"><i style="width:'+clamp(x.cost/max*100,1.2,100)+'%;background:'+COST_C[x.k]+'"></i></span><span class="vl"><b>'+R.money(x.cost)+'</b><span class="sh">'+(d==null?fmt(x.cost/c.total*100,0)+'%':arrow(d,true))+'</span></span></div>'; }).join('');
+  return '<section class="panel ov-cost"><div class="ov-h"><div><h2 class="sec-t">What your year cost</h2><p class="sec-s">'+(c.n<12?'The '+c.n+' month'+(c.n===1?'':'s')+' to ':'Rolling 12 months to ')+A.mLabel(month)+', at the prices on your <a class="link" href="#/organisation">Organisation</a> page.</p></div></div>'
+    + '<div class="ov-cost-g"><div class="ov-cost-t"><p class="ov-l">Energy, fuel, water and landfill</p><div class="v">'+R.money(c.total)+'</div>'
+    + (ch!=null?'<p class="ov-s">'+arrow(ch,true)+' on the 12 months before ('+R.money(c.prev)+')</p>':'<p class="ov-s muted">Compared with the year before once 24 months are held.</p>')
+    + (save>0?'<a class="ov-cost-s" href="#/improvements"><span>Your '+(nSave===1?'suggested improvement':nSave+' suggested improvements')+' could save about</span><b>'+R.money(save)+' a year</b><span class="go">See them</span></a>':'')
+    + '</div><div class="ov-src">'+rows+'</div></div>'
+    + (c.missing.length?'<p class="ov-fine">Not costed, because no price is on file: '+esc(c.missing.map(function(d){ return d.name.toLowerCase(); }).join(', '))+'. <a class="link" href="#/organisation">Add it</a>.</p>':'')
+    + '<p class="ov-fine">Quantity from your verified figures multiplied by your average price. It will not match your invoices to the dollar: fixed charges and price changes during the year are not in it.</p></section>';
+}
 
 /* ------------------------------------------------------------------ category pages */
 /* per-field 12-month figure: flows sum; registers, quarterly and percentages take the latest value */
