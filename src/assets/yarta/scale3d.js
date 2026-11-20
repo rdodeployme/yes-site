@@ -18,11 +18,11 @@
 
   /* ---------- reference objects (real-world size, metres) ---------- */
   var REFS = [
-    { key: 'person', name: 'Person',                  dim: 1.75, dimText: '1.75 m',        pri: 0, noun: 'height', as: 'as tall as', what: 'a person' },
+    { key: 'person', name: 'Person',                  dim: 1.75, dimText: '1.75 m',        pri: 0, noun: 'height', as: 'as tall as', what: 'a person', pl: 'people', tall: true },
     { key: 'car',    name: 'Family car',              dim: 4.5,  dimText: '4.5 m',         pri: 1, noun: 'length', as: 'as long as', what: 'a family car',       glb: 'car.glb',   axis: 'x', rotY: 0 },
     { key: 'bus',    name: 'City bus',                dim: 12.5, dimText: '12.5 m',        pri: 2, noun: 'length', as: 'as long as', what: 'a city bus',         glb: 'bus.glb',   axis: 'z', rotY: Math.PI / 2 },
     { key: 'house',  name: 'Two-storey house',        dim: 12,   dimText: '12 m wide',     pri: 3, noun: 'width',  as: 'as wide as', what: 'a two-storey house', glb: 'house.glb', axis: 'x', rotY: 0 },
-    { key: 'tower',  name: 'Ten-storey office',       dim: 35,   dimText: '35 m',          pri: 4, noun: 'height', as: 'as tall as', what: 'a ten-storey office',glb: 'tower.glb', axis: 'y', rotY: 0 },
+    { key: 'tower',  name: 'Ten-storey office',       dim: 35,   dimText: '35 m',          pri: 4, noun: 'height', as: 'as tall as', what: 'a ten-storey office', pl: 'ten-storey offices', tall: true, glb: 'tower.glb', axis: 'y', rotY: 0 },
     { key: 'oval',   name: 'Football oval',           dim: 165,  dimText: '165 × 135 m',   pri: 5, noun: 'width',  as: 'as wide as', what: 'a football oval' },
     { key: 'pool',   name: 'Olympic pool',            dim: 50,   dimText: '50 × 25 × 2 m', pri: 6, noun: 'length', as: 'as long as', what: 'an Olympic pool' },
     { key: 'truck',  name: 'Garbage truck',           dim: 9,    dimText: '9 m',           pri: 7, noun: 'length', as: 'as long as', what: 'a garbage truck',    glb: 'truck.glb', axis: 'z', rotY: Math.PI / 2 }
@@ -145,6 +145,14 @@
     return { sentence: sentence, basis: basis };
   }
 
+  /* How many of a familiar tall thing the cube is high: only objects whose stated dimension is a height. */
+  function yardFor(L) {
+    var c = [REF_BY_KEY.tower, REF_BY_KEY.person], i;
+    for (i = 0; i < c.length; i++) { var r = L / c[i].dim; if (r >= 1.8 && r <= 16.4) return { ref: c[i], n: Math.round(r), exact: Math.abs(r - Math.round(r)) < 0.08 }; }
+    return null;
+  }
+  function yardText(L) { var y = yardFor(L); return y ? (y.exact ? '' : 'about ') + y.n + ' ' + y.ref.pl + ' high' : ''; }
+
   /* ---------- support check ---------- */
   function supported() {
     try {
@@ -178,8 +186,17 @@
   /* =====================================================================
      SCENE
      ===================================================================== */
-  var COL = { ink: 0x0B0B0B, ground: 0x141514, charcoal: 0x2A2A2A, graphite: 0x4B4F52, slate: 0x7C8184, mist: 0xD6D8D3,
+  var COL = { ink: 0x120E0B, ground: 0x1B1511, charcoal: 0x2E2620, graphite: 0x8F8880, slate: 0x7C8184, mist: 0xDDD3C6,
               paper: 0xF4F4F2, orange: 0xCF7A2E, orangeL: 0xE9A860, orangeD: 0xB8641F };
+  /* each figure has its own colour, taken from the dashboard's category colours, so the five scenes are not one orange box */
+  var TONE = {
+    gas:      { edge: 0xCF7A2E, side: 0xCF7A2E, top: 0xE9A860, sideOp: 0.34, topOp: 0.42, css: '#CF7A2E', cssL: '#E9A860' },
+    cut:      { edge: 0x7FB894, side: 0x2E6B4A, top: 0x7FB894, sideOp: 0.42, topOp: 0.46, css: '#5FA57D', cssL: '#9CCDB0' },
+    landfill: { edge: 0xC4936B, side: 0x9A6A47, top: 0xC4936B, sideOp: 0.62, topOp: 0.78, css: '#C4936B', cssL: '#DDB796' },
+    kept:     { edge: 0x7FB894, side: 0x2E6B4A, top: 0x7FB894, sideOp: 0.42, topOp: 0.46, css: '#5FA57D', cssL: '#9CCDB0' },
+    water:    { edge: 0x6FB3D2, side: 0x2C6E8F, top: 0x6FB3D2, sideOp: 1, topOp: 0.9, css: '#6FB3D2', cssL: '#A5D2E6' }
+  };
+  function toneOf(fig) { return TONE[fig.key === 'cut' ? 'cut' : fig.kind] || TONE.gas; }
   var SUP = { '0': '⁰', '1': '¹', '2': '²', '3': '³' };
 
   function el(tag, cls, html) {
@@ -214,7 +231,8 @@
 
     /* ---------- DOM ---------- */
     host.classList.add('sc-root');
-    var canvas = el('canvas', 'sc-canvas');
+    var canvas = el('canvas', 'sc-canvas'); canvas.tabIndex = 0; canvas.setAttribute('role', 'img');
+    var gridNote = el('div', 'sc-grid');
     var labels = el('div', 'sc-labels');
     var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('class', 'sc-leaders');
@@ -225,10 +243,10 @@
     var closeBtn = el('button', 'sc-reset sc-close', 'Close up');
     closeBtn.type = 'button'; closeBtn.title = 'Fly in to the comparison objects beside the edge of your figure';
     var btns = el('div', 'sc-btns'); btns.appendChild(closeBtn); btns.appendChild(resetBtn);
-    var hint = el('div', 'sc-hint', isPhone ? 'Drag to turn · pinch to zoom · two fingers to move' : 'Drag to turn · scroll to zoom where you point · shift-drag to move');
+    var hint = el('div', 'sc-hint', isPhone ? 'Drag to turn · pinch to zoom' : 'Drag to turn · scroll to zoom where you point · shift-drag to move');
     host.appendChild(canvas); host.appendChild(svg); host.appendChild(labels);
     if (opts.controls !== false) ui.appendChild(pillRow);
-    ui.appendChild(btns); host.appendChild(ui); host.appendChild(hint);
+    ui.appendChild(btns); ui.appendChild(gridNote); host.appendChild(ui); host.appendChild(hint);
 
     /* ---------- renderer ---------- */
     var renderer = new T.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
@@ -280,8 +298,10 @@
     var matGround = new T.MeshStandardMaterial({ color: COL.ground, roughness: 1, metalness: 0 });
     var matGraphite = new T.MeshStandardMaterial({ color: COL.graphite, roughness: 0.9, metalness: 0, transparent: true, opacity: 1 });
     var matCharcoal = new T.MeshStandardMaterial({ color: COL.charcoal, roughness: 0.95, metalness: 0, transparent: true, opacity: 1 });
-    var matPoolTop = new T.MeshStandardMaterial({ color: COL.mist, roughness: 1, metalness: 0, transparent: true, opacity: 0.6 });
-    var matEdgeMist = new T.LineBasicMaterial({ color: COL.mist, transparent: true, opacity: 0.25 });
+    var matPoolTop = new T.MeshStandardMaterial({ color: 0x6FB3D2, roughness: 0.6, metalness: 0, transparent: true, opacity: 0.9, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+    var matPoolSlab = new T.MeshStandardMaterial({ color: 0x3B5F70, roughness: 0.95, metalness: 0 });
+    var matBand = new T.LineBasicMaterial({ color: COL.orange, transparent: true, opacity: 0, depthWrite: false });
+    var matEdgeMist = new T.LineBasicMaterial({ color: COL.mist, transparent: true, opacity: 0.3 });
     var matEdgeOval = new T.LineBasicMaterial({ color: COL.mist, transparent: true, opacity: 0.55 });
     var matGridMinor = new T.LineBasicMaterial({ color: COL.mist, transparent: true, opacity: 0.11, depthWrite: false });
     var matGridMajor = new T.LineBasicMaterial({ color: COL.mist, transparent: true, opacity: 0.22, depthWrite: false });
@@ -289,12 +309,12 @@
     var matHeroSide = new T.MeshStandardMaterial({ color: COL.orange, roughness: 1, metalness: 0, transparent: true, opacity: 0.35, depthWrite: false, side: T.FrontSide });
     var matHeroTop  = new T.MeshStandardMaterial({ color: COL.orangeL, roughness: 1, metalness: 0, transparent: true, opacity: 0.42, depthWrite: false });
     var hatch = makeHatchTexture(T);
-    var matLandSide = new T.MeshStandardMaterial({ color: COL.charcoal, roughness: 1, metalness: 0, transparent: true, opacity: 0.9, depthWrite: false });
+    var matLandSide = new T.MeshStandardMaterial({ color: 0x9A6A47, roughness: 1, metalness: 0, transparent: true, opacity: 0.62, depthWrite: false });
     var matLandTop  = new T.MeshStandardMaterial({ color: 0xFFFFFF, map: hatch, roughness: 1, metalness: 0, transparent: true, opacity: 0.94, depthWrite: false });
-    var matLandEdge = new T.LineBasicMaterial({ color: COL.mist, transparent: true, opacity: 0.35 });
+    var matLandEdge = new T.LineBasicMaterial({ color: 0xDDB796, transparent: true, opacity: 0.9 });
     var contactTex = makeContactTexture(T);
     var matContact = new T.MeshBasicMaterial({ map: contactTex, transparent: true, opacity: 0.55, depthWrite: false, color: 0x000000 });
-    var disposables = [matGround, matGraphite, matCharcoal, matPoolTop, matEdgeMist, matEdgeOval, matGridMinor, matGridMajor, matHeroEdge, matHeroSide, matHeroTop, hatch, matLandSide, matLandTop, matLandEdge, contactTex, matContact];
+    var disposables = [matGround, matGraphite, matCharcoal, matPoolTop, matEdgeMist, matEdgeOval, matGridMinor, matGridMajor, matHeroEdge, matHeroSide, matHeroTop, hatch, matLandSide, matLandTop, matLandEdge, contactTex, matContact, matPoolSlab, matBand];
 
     /* ---------- ground + grid ---------- */
     var groundGroup = new T.Group(); scene.add(groundGroup);
@@ -309,7 +329,7 @@
       ground.scale.set(ext * 8, ext * 8, 1);
       ground.position.y = -0.0008 * S;
       if (step === gridStep && gridMinor && Math.abs(gridMinor.userData.ext - ext) < 1e-6) return;
-      gridStep = step;
+      gridStep = step; gridNote.textContent = 'Grid squares ' + fmtNum(step) + ' m';
       if (gridMinor) { groundGroup.remove(gridMinor); gridMinor.geometry.dispose(); }
       if (gridMajor) { groundGroup.remove(gridMajor); gridMajor.geometry.dispose(); }
       var minor = [], maj = [], v, isMajor;
@@ -341,6 +361,15 @@
     cube.add(cubeEdges);
     heroGroup.add(cube);
     var poolsGroup = new T.Group(); heroGroup.add(poolsGroup);
+    var bands = null;   // level lines up the cube, one per yardstick height
+    function buildBands(L) {
+      if (bands) { scene.remove(bands); bands.geometry.dispose(); bands = null; }
+      var y = heroMode === 'cube' ? yardFor(L) : null; if (!y || y.n > 8) return;   // more than eight lines is clutter: the label still gives the count
+      var a = [], h = L / 2, k, yy;
+      for (k = 1; k <= y.n && k * y.ref.dim < L - 0.02 * L; k++) { yy = k * y.ref.dim; a.push(-h, yy, h, h, yy, h, h, yy, h, h, yy, -h, h, yy, -h, -h, yy, -h, -h, yy, -h, -h, yy, h); }
+      if (!a.length) return;
+      bands = lineSeg(a, matBand); bands.renderOrder = 12; scene.add(bands);
+    }
     disposables.push(cubeGeo, cubeEdgeGeo);
 
     /* ---------- reference objects ---------- */
@@ -410,7 +439,7 @@
     function buildPoolGeometry() {
       // returns {slab, top, edges} geometries for one pool, origin at centre of footprint on ground
       var slab = new T.BoxGeometry(50, 2, 25); slab.translate(0, 1, 0);
-      var top = new T.PlaneGeometry(47.5, 22.5); top.rotateX(-Math.PI / 2); top.translate(0, 2.03, 0);
+      var top = new T.PlaneGeometry(47.5, 22.5); top.rotateX(-Math.PI / 2); top.translate(0, 2.06, 0);
       var edges = new T.EdgesGeometry(slab);
       disposables.push(slab, top, edges);
       return { slab: slab, top: top, edges: edges };
@@ -424,7 +453,7 @@
       g.add(slab); g.add(top); g.add(ed);
       var o = finishRef('pool', g, 'x', 50, 0);
       // finishRef replaced materials; restore the water top + rim so the pool reads as a pool
-      top.material = matPoolTop; ed.material = matEdgeOval;
+      top.material = matPoolTop; ed.material = matEdgeOval; slab.material = matPoolSlab;
       return o;
     }
     function buildOval() {
@@ -486,7 +515,7 @@
         var W = cols * gx - (gx - 50), D = rows * gz - (gz - 25);
         for (i = 0; i < drawn; i++) {
           var g = new T.Group();
-          var slab = new T.Mesh(poolGeo.slab, matGraphite); slab.castShadow = true; slab.receiveShadow = true;
+          var slab = new T.Mesh(poolGeo.slab, matPoolSlab); slab.castShadow = true;
           var top = new T.Mesh(poolGeo.top, matPoolTop); top.renderOrder = 3;
           var ed = new T.LineSegments(poolGeo.edges, matEdgeMist); ed.renderOrder = 5;
           g.add(slab); g.add(top); g.add(ed);
@@ -621,10 +650,14 @@
       var prevS = S, prevMode = heroMode;
       layout(fig);
       // hero appearance
-      var landfill = fig.kind === 'landfill';
+      var landfill = fig.kind === 'landfill', tone = toneOf(fig);
       cube.material = landfill ? [matLandSide, matLandSide, matLandTop, matLandSide, matLandSide, matLandSide]
                                : [matHeroSide, matHeroSide, matHeroTop, matHeroSide, matHeroSide, matHeroSide];
       cubeEdges.material = landfill ? matLandEdge : matHeroEdge;
+      if (!landfill) { matHeroEdge.color.setHex(tone.edge); matHeroSide.color.setHex(tone.side); matHeroTop.color.setHex(tone.top); matHeroSide.opacity = tone.sideOp; matHeroTop.opacity = tone.topOp; }
+      matBand.color.setHex(tone.top); matBand.opacity = 0; buildBands(S);
+      host.style.setProperty('--sc-acc', tone.css); host.style.setProperty('--sc-acc-l', tone.cssL);
+      canvas.setAttribute('aria-label', describe(fig).sentence + ' Arrow keys turn the view, plus and minus zoom, Home shows the whole view.');
       contact.visible = heroMode === 'cube';
       contact.scale.set(S * 1.9, S * 1.9, 1); contact.position.set(0, 0.002 * S, 0);
       // animate hero scale + ref fade
@@ -649,9 +682,10 @@
         else { poolsGroup.scale.setScalar(0.001 + 0.999 * e); }
         var ro = Math.max(0, (t - 0.25) / 0.75), eo = easeInOut(ro);
         activeRefs.forEach(function (a) {
-          a.obj.mats[0].opacity = eo; a.obj.mats[1].opacity = 0.25 * eo;
+          a.obj.mats[0].opacity = eo; a.fade = eo;
           a.obj.group.position.x = a.x - (1 - eo) * Math.max(0.12 * S, 2);
         });
+        matBand.opacity = 0.34 * eo;
         if (t >= 1) { anim = null; } else busy = true;
       }
       if (camAnim) {
@@ -672,7 +706,7 @@
         var N = poolsGroup.userData.N, unit = poolsGroup.userData.unit;
         sub = fmtInt(N) + ' Olympic pools of 2,500 kL each' + (unit > 1 ? ' · each slab drawn here stands for ten pools' : '');
       } else {
-        sub = 'a cube ' + fmtNum(S) + ' m on each side';
+        var yt = yardText(S); sub = 'a cube ' + fmtNum(S) + ' m on each side' + (yt ? ' · ' + yt : '');
       }
       return '<span class="sc-eyebrow">' + esc(fig.label).toUpperCase() + '</span>' +
              '<span class="sc-value">' + esc(v) + '</span>' +
@@ -684,14 +718,14 @@
       labels.innerHTML = ''; while (svg.firstChild) svg.removeChild(svg.firstChild); labelItems = [];
       if (!current) return;
       // hero
-      var h = el('div', 'sc-label sc-hero' + (current.kind === 'landfill' ? ' sc-land' : ''), heroLabelHTML(current));
+      var h = el('div', 'sc-label sc-hero', heroLabelHTML(current));
       labels.appendChild(h);
-      var ln = document.createElementNS('http://www.w3.org/2000/svg', 'line'); ln.setAttribute('class', current.kind === 'landfill' ? 'sc-lead sc-lead-mist' : 'sc-lead'); svg.appendChild(ln);
+      var ln = document.createElementNS('http://www.w3.org/2000/svg', 'line'); ln.setAttribute('class', 'sc-lead'); svg.appendChild(ln);
       labelItems.push({ el: h, hero: true, line: ln, anchors: function () {
         if (heroMode === 'pools') { var Wp = poolsGroup.userData.W, Dp = poolsGroup.userData.D;
           return [{ p: new T.Vector3(Wp / 2, 2, Dp / 2), side: 'right' }, { p: new T.Vector3(Wp / 2, 2, -Dp / 2), side: 'right' }, { p: new T.Vector3(-Wp / 2, 2, -Dp / 2), side: 'above' }]; }
         var s = cube.scale.x;
-        return [{ p: new T.Vector3(-s / 2, s, s / 2), side: 'left' }, { p: new T.Vector3(s / 2, s, -s / 2), side: 'right' }, { p: new T.Vector3(-s / 2, s, s / 2), side: 'above' }];
+        return [{ p: new T.Vector3(-s / 2, s, s / 2), side: 'left' }, { p: new T.Vector3(s / 2, s, -s / 2), side: 'right' }, { p: new T.Vector3(s / 2, s, -s / 2), side: 'aboveR' }, { p: new T.Vector3(-s / 2, s, s / 2), side: 'above' }];
       } });
       // references
       var maxRefs = isPhone ? 3 : 5;
@@ -704,7 +738,7 @@
       if (isPhone && list.length > 2) list = [list[0], list[list.length - 1]];
       var ordered = []; if (list.length) { ordered.push(list[list.length - 1]); if (list.length > 1) ordered.push(list[0]); list.slice(1, -1).reverse().forEach(function (a) { ordered.push(a); }); }
       ordered.forEach(function (a) {
-        var d = el('div', 'sc-label sc-ref', '<span class="sc-eyebrow">' + esc(a.ref.name).toUpperCase() + ' · ' + esc(a.ref.dimText).toUpperCase() + '</span>');
+        var d = el('div', 'sc-label sc-ref', '<span class="sc-name">' + esc(a.ref.name) + '</span><span class="sc-dim">' + esc(a.ref.dimText) + '</span>');
         labels.appendChild(d);
         var l2 = document.createElementNS('http://www.w3.org/2000/svg', 'line'); l2.setAttribute('class', 'sc-lead sc-lead-mist'); svg.appendChild(l2);
         labelItems.push({ el: d, hero: false, line: l2, a: a, anchor: function () {
@@ -732,6 +766,7 @@
             var gx = isPhone ? 16 : 44, gy = isPhone ? 10 : 18;
             if (cands[k].side === 'left') { lx = x - bw - gx; ly = y - bh * 0.5 - gy; }
             else if (cands[k].side === 'right') { lx = x + gx; ly = y - bh * 0.5 - gy; }
+            else if (cands[k].side === 'aboveR') { lx = x - bw * 0.7; ly = y - bh - 26; }
             else { lx = x - bw * 0.3; ly = y - bh - 26; }
             var inside = lx >= 12 && lx + bw <= W - 12 && ly >= 12 && ly + bh <= H - 64;
             var rect = { x: lx, y: ly, r: lx + bw, b: ly + bh }, clash = false, q;
@@ -745,7 +780,7 @@
           if (lx < 12) lx = 12; if (lx + bw > W - 12) lx = W - bw - 12; if (ly < 12) ly = 12; if (ly + bh > H - 64) ly = H - 64 - bh;
           heroRect = { x: lx, y: ly, r: lx + bw, b: ly + bh };
           item.el.style.transform = 'translate(' + Math.round(lx) + 'px,' + Math.round(ly) + 'px)';
-          if (best.side === 'above') setLine(item.line, x, y, Math.max(lx + 6, Math.min(lx + bw - 6, x)), ly + bh);
+          if (best.side === 'above' || best.side === 'aboveR') setLine(item.line, x, y, Math.max(lx + 6, Math.min(lx + bw - 6, x)), ly + bh);
           else setLine(item.line, x, y, lx + (lx + bw < x ? bw + 6 : -6), Math.max(ly + 2, Math.min(ly + bh - 2, y)));
         } else {
           var p = item.anchor(); pv.copy(p).project(camera);
@@ -819,12 +854,35 @@
         busy = tickAnim(now);
         moved = controls.update(dt);
         if (busy || shadowDirty) { renderer.shadowMap.needsUpdate = true; shadowDirty = false; }
+        fadeEdges();
         renderer.render(scene, camera);
         updateLabels();
       } finally { inFrame = false; }
       chained = !!(busy || moved || needsFrame || spinning);
       if (chained && !raf) raf = requestAnimationFrame(frame);
     }
+    /* Fine edge lines turn to grey static when an object is only a few pixels tall: draw them only once it is big enough to read. */
+    var edgeV = new T.Vector3();
+    function fadeEdges() {
+      var k = H / (2 * Math.tan(camera.fov * Math.PI / 360)), i;
+      for (i = 0; i < activeRefs.length; i++) {
+        var a = activeRefs[i], d = edgeV.set(a.x, a.h / 2, a.z).distanceTo(camera.position), px = Math.max(a.h, a.w * 0.6) / Math.max(d, 1e-3) * k;
+        a.obj.mats[1].opacity = 0.3 * (a.fade == null ? 1 : a.fade) * Math.max(0, Math.min(1, (px - 70) / 130));
+      }
+    }
+    /* Keyboard: arrows turn, plus and minus zoom, Home resets. */
+    canvas.addEventListener('keydown', function (e) {
+      var k = e.key, off = camera.position.clone().sub(controls.target), sph = new T.Spherical().setFromVector3(off), used = true;
+      if (k === 'ArrowLeft') sph.theta -= 0.14; else if (k === 'ArrowRight') sph.theta += 0.14;
+      else if (k === 'ArrowUp') sph.phi = Math.max(controls.minPolarAngle, sph.phi - 0.09); else if (k === 'ArrowDown') sph.phi = Math.min(controls.maxPolarAngle, sph.phi + 0.09);
+      else if (k === '+' || k === '=') sph.radius = Math.max(controls.minDistance, sph.radius * 0.85); else if (k === '-' || k === '_') sph.radius = Math.min(controls.maxDistance, sph.radius / 0.85);
+      else if (k === 'Home' || k === '0') { resetBtn.click(); e.preventDefault(); return; }
+      else used = false;
+      if (!used) return;
+      e.preventDefault(); camAnim = null;
+      if (!interacted) { interacted = true; controls.autoRotate = false; hint.classList.add('off'); }
+      camera.position.copy(controls.target).add(off.setFromSpherical(sph)); controls.update(); kick();
+    });
     /* Wheel zoom towards what you point at. Camera and pivot are both scaled about the point under the pointer, so the view keeps
        its angle, closes in on that point geometrically and can never pass through it. */
     var ray = new T.Raycaster(), ndc = new T.Vector2(), groundPlane = new T.Plane(new T.Vector3(0, 1, 0), 0), hitV = new T.Vector3();
@@ -939,8 +997,8 @@
   /* ---------- canvas textures ---------- */
   function makeHatchTexture(T) {
     var c = document.createElement('canvas'); c.width = c.height = 256; var g = c.getContext('2d');
-    g.fillStyle = '#2A2A2A'; g.fillRect(0, 0, 256, 256);
-    g.strokeStyle = 'rgba(214,216,211,0.42)'; g.lineWidth = 1.2;
+    g.fillStyle = '#B5855F'; g.fillRect(0, 0, 256, 256);
+    g.strokeStyle = 'rgba(58,38,24,0.5)'; g.lineWidth = 1.6;
     var i; for (i = -256; i < 512; i += 16) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i + 256, 256); g.stroke(); }
     var t = new T.CanvasTexture(c); t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(6, 6); t.colorSpace = T.SRGBColorSpace; t.anisotropy = 4;
     return t;
