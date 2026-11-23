@@ -58,8 +58,8 @@ PAGES = [
     ("/sales/walkthrough/", None,    "sales-walkthrough.html", "Yarta guided walkthrough (internal)", "A step-by-step guided walkthrough of the Yarta demo for the sales team."),
     ("/language/",   None,           "language.html", "Language on this site — proposed names and their status (internal)", "The First Nations words proposed for Yarta products, which language each comes from, the dictionary check and whether the custodians have confirmed it."),
 ]
-NOINDEX = {"/language/", "/tool/", "/portal/", "/not-found/", "/sales/", "/sales/walkthrough/", "/recycling-demo/", "/recycling-method/", "/recycling-report/"}   # internal pages: built and linkable, not indexed
-STANDALONE = [("/report/", "report.html"), ("/demo/", "demo.html"), ("/tool/", "tool.html"), ("/portal/", "portal.html"), ("/sales/walkthrough/", "sales-walkthrough.html")]   # the portal-based pages: their own document, not the site shell
+NOINDEX = {"/sales/demo-city/", "/language/", "/tool/", "/portal/", "/not-found/", "/sales/", "/sales/walkthrough/", "/recycling-demo/", "/recycling-method/", "/recycling-report/"}   # internal pages: built and linkable, not indexed
+STANDALONE = [("/report/", "report.html"), ("/demo/", "demo.html"), ("/tool/", "tool.html"), ("/portal/", "portal.html"), ("/sales/walkthrough/", "sales-walkthrough.html"), ("/sales/demo-city/", "demo-city.html")]   # the portal-based pages: their own document, not the site shell
 STANDALONE_FRAGS = {f for _, f in STANDALONE}
 REDIRECTS = {"/yarta/": "/report/", "/certificate/": "/report/", "/recycling-report/": "/report/", "/recycling-demo/": "/demo/", "/recycling-method/": "/method/", "/calculator/": "/readiness/"}   # old paths that keep working
 
