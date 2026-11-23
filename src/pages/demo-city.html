@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="/assets/yarta/overview.css">
 <link rel="stylesheet" href="/assets/yarta/scale3d.css">
 <link rel="stylesheet" href="/assets/yarta/sitemap.css">
+<link rel="stylesheet" href="/assets/yarta/tour.css">
 <style>
 /* Demo City presenter page. Scoped to body.page-city so nothing else on the site changes. */
 .page-city{--earth:#1E1712;--earth-2:#2A211A;--cream:#F3EFE9;--or:#CF7A2E;--or-l:#E9A860;--or-t:#FBF0E3;--or-ink:#8A4A14;
@@ -35,16 +36,6 @@
 .cx-tools button:hover{border-color:var(--or-l)}
 .cx-tools button[aria-pressed="true"]{border-color:var(--or-l);color:var(--or-l)}
 
-.cx-note{background:var(--or-t);border-bottom:1px solid #EAD7BF;color:#2A211A}
-.cx-note-in{padding:16px clamp(16px,3vw,40px);display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:12px 32px;max-width:1440px}
-.cx-note h2{font:700 20px/1.2 var(--font-display,Archivo),sans-serif;letter-spacing:-.01em;margin:0 0 6px}
-.cx-note p{margin:0 0 6px;font-size:15px;line-height:1.5}
-.cx-note .k{font:500 11px/1.3 var(--font-mono,"IBM Plex Mono"),monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--or-ink);display:block;margin-bottom:4px}
-.cx-note .say{border-left:3px solid var(--or);padding-left:12px}
-.cx-note ol{margin:0;padding-left:1.2em;font-size:15px;line-height:1.5}
-.cx-note li{margin:3px 0}
-.cx-note a{color:var(--or-ink);font-weight:600}
-.cx-notes-off .cx-note .say,.cx-notes-off .cx-note .cx-say-k{display:none}
 
 .cx-band{padding:22px clamp(16px,3vw,40px) 6px;max-width:1440px}
 .cx-band h2{font:700 clamp(20px,2vw,24px)/1.2 var(--font-display,Archivo),sans-serif;letter-spacing:-.01em;margin:0}
@@ -91,7 +82,6 @@
 .cx-card ul.links a{display:block;padding:12px 14px;border:1px solid #E2DDD5;border-radius:10px;text-decoration:none;color:#0B0B0B;font-weight:600;font-size:14.5px}
 .cx-card ul.links a span{display:block;font-weight:400;color:#4B4F52;font-size:13.5px;margin-top:2px}
 .cx-card ul.links a:hover{border-color:var(--or)}
-.cx-warn{background:var(--or-t);border:1px solid #EAD7BF;border-radius:10px;padding:10px 12px;font-size:14px;margin-top:12px}
 
 /* reset dialog */
 .cx-dlg{border:0;border-radius:14px;padding:22px 24px;max-width:440px;width:calc(100% - 32px);box-shadow:0 20px 60px rgba(0,0,0,.35)}
@@ -104,7 +94,7 @@
 .cx-print{display:none}
 @media (max-width:1100px){ .cx-mults{grid-template-columns:repeat(2,minmax(0,1fr))} .cx-tiles{grid-template-columns:repeat(3,minmax(0,1fr))} .cx-trace{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:760px){
-  .cx-note-in,.cx-setup{grid-template-columns:minmax(0,1fr)}
+  .cx-setup{grid-template-columns:minmax(0,1fr)}
   .cx-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
   .cx-tile.div{grid-column:1/-1}
   .cx-trace{grid-template-columns:minmax(0,1fr)}
@@ -113,7 +103,7 @@
   .cx-tools button{padding:8px 10px}
 }
 @media print{
-  .cx-steps,.cx-note,.cx-band,.cx-setup{display:none!important}
+  .cx-steps,.cx-band,.cx-setup{display:none!important}
   .cx-print{display:block;font:600 9px/1.3 "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A4A14;border:1px solid #CF7A2E;border-radius:4px;padding:4px 8px;margin:0 0 6px}
   .page-city:has(.rp-sheet) .cx-print{display:none}
   .page-city .rp-sheet{position:relative}
@@ -132,7 +122,6 @@
 <nav class="cx-steps no-print" aria-label="Demo path">
   <div class="cx-steps-in" id="cx-steps"></div>
 </nav>
-<section class="cx-note no-print" id="cx-note" aria-live="polite"></section>
 <section class="cx-band no-print" id="cx-band" hidden></section>
 <p class="cx-print">Illustrative figures · Demo City Council is fictional · not a real report</p>
 <div id="app"></div>
@@ -154,11 +143,13 @@
 <script src="/assets/yarta/sitemap.js"></script>
 <script src="/assets/yarta/demo-city.js"></script>
 <script src="/assets/yarta/portal.js"></script>
+<script>window.YARTA_TOUR_AUTO=false;</script>
+<script src="/assets/yarta/tour.js"></script>
 <script>
 (function(){
   'use strict';
   var P=window.YESPortal, E=window.YESE, X=window.YESDEMO, S=window.YESS, ID='demo-city';
-  var app=document.getElementById('app'), band=document.getElementById('cx-band'), note=document.getElementById('cx-note'), bar=document.getElementById('cx-steps');
+  var app=document.getElementById('app'), band=document.getElementById('cx-band'), bar=document.getElementById('cx-steps');
   var BASE=(location.pathname.split('/sales/demo-city')[0]||'');   /* "/yes-site" on GitHub Pages, "" on a custom domain */
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function fmt(n,dp){ return n==null||!isFinite(n)?'—':Number(n).toLocaleString('en-AU',{minimumFractionDigits:dp||0,maximumFractionDigits:dp||0}); }
@@ -241,46 +232,27 @@
       + '<ul class="links">'
       + '<li><a href="'+BASE+'/onboarding/" target="_blank" rel="noopener">The onboarding plan<span>The public page: what happens in each week</span></a></li>'
       + '<li><a href="'+BASE+'/checklist/" target="_blank" rel="noopener">What a council sends<span>The data request, by sector, printable</span></a></li>'
-      + '<li><a href="'+BASE+'/tool/#/ops/customers/new" target="_blank" rel="noopener">The team\'s new-customer form<span>Show the form only. Don\'t save it: saving adds a customer in this browser</span></a></li>'
-      + '</ul><div class="cx-warn">Pricing for councils over 50,000 residents isn\'t set yet. Don\'t quote a price: say Yarta will follow up with a quote.</div></div></div>';
+      + '<li><a href="'+BASE+'/tool/#/ops/customers/new" target="_blank" rel="noopener">The new-customer form<span>What the Yarta team fills in to set up a council</span></a></li>'
+      + '</ul></div></div>';
   }
 
   /* ---------------------------------------------------------- the five steps */
   var STEPS=[
-    {t:'The council\'s report', min:3, hash:'#/report/'+LM,
-     show:'The issued '+LAB+' Yarta Report for Demo City: the score, emissions against the 2030 target, the ten categories, and the roadmap on page 3.',
-     say:'This is what the council receives each month, verified by a Yarta analyst before it is issued. It prints as three A4 pages and carries an ID anyone can check.',
-     tips:['Scroll page 1: score, "where you could be", emissions, then the categories.','Use "Print or save as PDF" to show the printed version. Every printed page is marked illustrative.']},
-    {t:'Live dashboard', min:3, hash:'#/dashboard', band:'materials',
-     show:'Metal, mattresses, timber and green waste over the last 12 months, landfill diverted, then the live dashboard.',
-     say:'Every time a month is verified, these numbers move. You see where you stand today, the trend and what needs your attention.',
-     tips:['Hover the bars for each month.','Scroll the dashboard: "What needs you", the score, emissions, then "Your year, to scale".','Click the Waste category to go deeper.']},
-    {t:'Trace a figure', min:3, hash:HOPS[0], band:'trace',
-     show:'From one number on the dashboard to the document behind it, then to the report check.',
-     say:'Every figure traces back to a council document, and the report can\'t be changed after it is issued without the ID changing. That\'s what makes it hold up with an auditor or a councillor.',
-     tips:['Follow the four cards left to right.','The check page opens in a new tab.']},
-    {t:'What councillors see', min:3, hash:'#/summary',
-     show:'The one-page monthly summary a sustainability officer forwards to their executive or council.',
-     say:'Councillors don\'t need the detail. This page answers the questions they ask: where are we against 2030, what moved, what\'s next.',
-     tips:['This is the councillor view. There is no separate resident page in Yarta today, so don\'t promise one.']},
-    {t:'Setting up a real council', min:3, band:'setup',
-     show:'How a council goes from signing to its first verified report in about 30 days.',
-     say:'You send what you already have. We build your baseline year, set up your logins and run the first month with you.',
-     tips:['Close with the ask: one month of the council\'s own records, so they can see their real first report.']}
+    {t:'The council\'s report', hash:'#/report/'+LM},
+    {t:'Live dashboard', hash:'#/dashboard', band:'materials'},
+    {t:'Trace a figure', hash:HOPS[0], band:'trace'},
+    {t:'What councillors see', hash:'#/summary'},
+    {t:'Setting up a real council', band:'setup'}
   ];
-  var cur=0, notesOn=store('yarta-city-notes')!=='off';
+  var cur=0;
   function stepButtons(){
     bar.innerHTML=STEPS.map(function(s,i){ return '<button type="button" class="cx-step" data-step="'+i+'"'+(i===cur?' aria-current="step"':'')+'><span class="n">'+(i+1)+'</span><span class="t">'+esc(s.t)+'</span></button>'; }).join('')
-      + '<div class="cx-tools"><button type="button" id="cx-notes" aria-pressed="'+(notesOn?'true':'false')+'">Presenter notes</button><button type="button" id="cx-reset-ask">Reset Demo City</button></div>';
-  }
-  function noteHtml(s,i){
-    return '<div class="cx-note-in"><div><span class="k">Step '+(i+1)+' of 5 · about '+s.min+' minutes</span><h2>'+esc(s.t)+'</h2><p>'+esc(s.show)+'</p><p class="say"><span class="k cx-say-k">Say</span>'+esc(s.say)+'</p></div>'
-      + '<div><span class="k">Do</span><ol>'+s.tips.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ol>'+(i<4?'<p style="margin-top:8px"><a href="#" data-next="1">Next: '+esc(STEPS[i+1].t)+' →</a></p>':'')+'</div></div>';
+      + '<div class="cx-tools">'+(cur<4?'<button type="button" id="cx-next">Next: '+esc(STEPS[cur+1].t)+' →</button>':'')+'<button type="button" id="cx-reset-ask">Reset Demo City</button></div>';
   }
   function show(i, keepHash){
     cur=Math.max(0,Math.min(4,i)); var s=STEPS[cur];
     store('yarta-city-step', String(cur));
-    stepButtons(); note.innerHTML=noteHtml(s,cur); document.body.classList.toggle('cx-notes-off', !notesOn);
+    stepButtons();
     if(s.band==='materials'){ band.innerHTML=materialsBand(); band.hidden=false; }
     else if(s.band==='trace'){ traceAt=0; band.innerHTML=traceBand(); band.hidden=false; }
     else if(s.band==='setup'){ band.innerHTML='<h2>How a real council is set up</h2><p class="cx-sub">From signing to the first verified report.</p>'+setupBand(); band.hidden=false; }
@@ -296,10 +268,9 @@
 
   bar.addEventListener('click', function(e){
     var b=e.target.closest('[data-step]'); if(b){ show(+b.getAttribute('data-step')); return; }
-    if(e.target.closest('#cx-notes')){ notesOn=!notesOn; store('yarta-city-notes', notesOn?'on':'off'); show(cur, true); return; }
+    if(e.target.closest('#cx-next')){ show(cur+1); return; }
     if(e.target.closest('#cx-reset-ask')){ var d=document.getElementById('cx-reset'); if(d.showModal) d.showModal(); else if(window.confirm('Reset Demo City? The other demo organisations are not touched.')) doReset(); }
   });
-  note.addEventListener('click', function(e){ if(e.target.closest('[data-next]')){ e.preventDefault(); show(cur+1); } });
   band.addEventListener('click', function(e){ var h=e.target.closest('[data-hop]'); if(!h) return; traceAt=+h.getAttribute('data-hop'); band.innerHTML=traceBand(); P.signInAs(ID, HOPS[traceAt]); var a=document.getElementById('app'); if(a) a.scrollIntoView({behavior:'smooth', block:'start'}); });
   function doReset(){ var ok=X.resetCity && X.resetCity(); store('yarta-city-step','0'); location.hash=''; setTimeout(function(){ location.reload(); }, ok===false?0:150); }
   document.getElementById('cx-reset-go').addEventListener('click', doReset);
