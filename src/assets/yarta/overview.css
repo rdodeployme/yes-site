@@ -703,6 +703,18 @@ body.page-yarta{background:#F4EEE4}
 .ct-cat .t i{display:block;height:100%;border-radius:3px;background:var(--c)}
 .ct-cat .dl{font-size:13px;color:var(--bark)}
 .ct-cat.na b{color:#A89C8D}
+/* clickable cues: every category card and dashboard tile that opens something says so at rest, not only on hover */
+.ct-cat{position:relative;transition:border-color .15s,transform .15s,box-shadow .15s}
+.ct-cat::after{content:"See details \2192";margin-top:auto;padding-top:6px;font:600 13px/1.2 var(--font-body);color:var(--earth);text-decoration:underline;text-decoration-color:var(--c);text-decoration-thickness:2px;text-underline-offset:4px}
+.ct-cat:hover,.ct-cat:focus-visible{transform:translateY(-2px);box-shadow:0 6px 18px rgba(30,23,18,.10)}
+.ct-cat:active{transform:translateY(0);box-shadow:none}
+/* rows that open a category (where your emissions come from, what your year cost): a chevron at the end of each row */
+.panel a.ov-src-r{position:relative;padding-right:30px}
+.panel a.ov-src-r::after{content:"\203A";position:absolute;right:8px;top:50%;transform:translateY(-50%);font:600 20px/1 var(--font-body);color:var(--bark)}
+.panel a.ov-src-r:hover::after,.panel a.ov-src-r:focus-visible::after{color:var(--ink)}
+.panel a.ov-src-r:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+@media (prefers-reduced-motion:reduce){.ct-cat{transition:border-color .15s}.ct-cat:hover,.ct-cat:focus-visible{transform:none}}
+@media print{.ct-cat::after,.panel a.ov-src-r::after{display:none!important}.ct-cat{transform:none!important;box-shadow:none!important}.panel a.ov-src-r{padding-right:4px}}
 /* what changed and the levers: green for the good, red for the bad */
 .page-yarta .ov-chg li.good .mk{background:var(--good);color:#fff;box-shadow:none}
 .page-yarta .ov-chg li.bad .mk{background:#fff;color:var(--bad);box-shadow:inset 0 0 0 1.5px var(--bad)}
