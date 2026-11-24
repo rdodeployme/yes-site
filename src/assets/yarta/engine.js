@@ -25,7 +25,18 @@ window.YESE = window.YESE || {};
     landfill:{Council:1.6, Business:1.3, "Government agency":1.3, Other:1.3}, // t CO2-e per t: MSW 1.6, C&I 1.3
     landfillSector:{construction:0.2}, // construction businesses landfill mostly mixed construction and demolition waste: C&D 0.2
     avoided:{steel:0.44, alu:17.72, timber:1.35, green:0.32, concrete:0.02, tyres:1.07}, // t CO2-e per t recycled
-    unit:{mattress:0.080, tyre:0.0095, whitegood:0.060, pallet:0.020, oil_l:0.0009} // tonnes per unit
+    unit:{mattress:0.080, tyre:0.0095, whitegood:0.060, pallet:0.020, oil_l:0.0009}, // tonnes per unit
+    /* Added 24 Nov 2026 for councils' Climate Active inventories (contractor fuel, oils and greases, materials, commuting). */
+    oils:{ // lubricants: NGER Measurement Determination, Sch 1 Pt 3 (69.9 kg CO2-e/GJ × default oxidation factor: oils 0.2, greases 0.05); scope 3 from NGA
+      oil:{gj:38.8, s1:13.9, s3:18.0},
+      grease:{gj:38.8, s1:3.5, s3:18.0}
+    },
+    materials:{ // kg CO2-e per unit, cradle-to-gate. UK DESNZ conversion factors 2025, Material use, primary material production (no Australian government factor)
+      asphalt:{kg:39.21, per:"t", src:"DESNZ 2025: asphalt, primary production, 39.21 kg CO2-e/t"},
+      concrete:{kg:285.10, per:"m³", src:"DESNZ 2025: concrete, primary production, 118.79 kg CO2-e/t × 2.4 t/m³ (assumed density)"},
+      paper:{kg:3.363, per:"ream", src:"DESNZ 2025: paper, primary production, 1,345.08 kg CO2-e/t × 2.5 kg per ream of A4 80 gsm"}
+    },
+    commute:{kgPerKm:0.257, weeks:46, days:5, src:"ABS Survey of Motor Vehicle Use (year to June 2020): passenger vehicles about 11.1 L/100 km × NGA petrol 2.313 kg CO2-e/L (scope 1 combustion)"}
   };
   E.DEFAULT_TARGETS = {target_emissions:30, target_renewable:50, target_diversion:70, target_fleet_ev:30, target_trees:2000, target_rehab_ha:10, target_participants:3000, target_native_ha:6};
 
@@ -72,7 +83,21 @@ window.YESE = window.YESE || {};
     o.scope3_waste = num(v.landfill_t)*landF;
     o.scope3_upstream = (num(v.diesel_l)*F.diesel.gj*F.diesel.s3 + num(v.petrol_l)*F.petrol.gj*F.petrol.s3 + num(v.lpg_l)*F.lpg.gj*F.lpg.s3)/1e6
                       + num(v.gas_gj)*(E.FACTORS.gas.s3[st]||4)/1000 + num(v.grid_kwh)*el.s3/1000;
-    o.scope3_t = o.scope3_waste + o.scope3_upstream;
+    // lubricating oils and greases: the share that burns in use is Scope 1 (NGER); their supply chain is Scope 3
+    var OL=E.FACTORS.oils, oilL=num(v.lube_oil_l), grL=num(v.grease_l);
+    o.scope1_oils = (oilL*OL.oil.gj*OL.oil.s1 + grL*OL.grease.gj*OL.grease.s1)/1e6;
+    o.scope1_t += o.scope1_oils;
+    o.scope3_upstream += (oilL*OL.oil.gj*OL.oil.s3 + grL*OL.grease.gj*OL.grease.s3)/1e6;
+    // contractor fuel: burned by someone else on your work, so the whole well-to-wheel figure is your Scope 3
+    o.scope3_contractor = (num(v.contractor_diesel_l)*F.diesel.gj*(F.diesel.s1+F.diesel.s3) + num(v.contractor_petrol_l)*F.petrol.gj*(F.petrol.s1+F.petrol.s3))/1e6;
+    // materials purchased (cradle-to-gate)
+    var MT=E.FACTORS.materials;
+    o.scope3_materials = (num(v.asphalt_t)*MT.asphalt.kg + num(v.concrete_m3)*MT.concrete.kg + num(v.paper_reams)*MT.paper.kg)/1000;
+    // staff commuting: a year's driving from the latest survey, spread evenly over the months
+    var CM=E.FACTORS.commute, carShare=Math.min(100,num(v.commute_car_pct))/100, cDays=num(v.commute_days_wk)>0?Math.min(7,num(v.commute_days_wk)):CM.days;
+    o.commute_km = (num(p.employees)>0 && carShare>0 && num(v.commute_km)>0) ? num(p.employees)*carShare*2*num(v.commute_km)*cDays*CM.weeks/12 : 0;
+    o.scope3_commute = o.commute_km*CM.kgPerKm/1000;
+    o.scope3_t = o.scope3_waste + o.scope3_upstream + o.scope3_contractor + o.scope3_materials + o.scope3_commute;
     // fuel bought for vehicles and plant, burned plus upstream: the numerator for freight intensity
     o.fleet_fuel_t = fuelS1 + (num(v.diesel_l)*F.diesel.gj*F.diesel.s3 + num(v.petrol_l)*F.petrol.gj*F.petrol.s3 + num(v.lpg_l)*F.lpg.gj*F.lpg.s3)/1e6;
     o.total_t = o.scope1_t + o.scope2_t + o.scope3_t;

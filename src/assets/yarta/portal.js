@@ -453,7 +453,7 @@ function calcPanel(o,r,k){
     + '<div style="margin-top:14px">'
     + ln('Scope 1 · fuel and gas',fmt(m.scope1_t,1)+' t')
     + ln('Scope 2 · grid electricity',fmt(m.scope2_t,1)+' t')
-    + ln('Scope 3 · landfill and upstream',fmt(m.scope3_t,1)+' t')
+    + ln('Scope 3 · reported categories',fmt(m.scope3_t,1)+' t')
     + ln('Renewable electricity',pct(m.renew_pct,1))
     + ln('Fleet electrification',pct(m.fleet_ev_pct,1))
     + ln('Fuel efficiency',m.fleet_eff==null?'—':fmt(m.fleet_eff,1)+' L/100 km')
@@ -616,6 +616,7 @@ function reportSheets(o,S,k){
   // key figures: the month, the rolling window and the change on the same months of the baseline year
   var L12=R12.n<12?'Last '+R12.n+' months':'Rolling 12 months', W12=S.months.slice(Math.max(0,i-11),i+1);
   function win(id){ return W12.reduce(function(a,x){ var y=+((x.raw||{})[id]); return a+(isFinite(y)?y:0); },0); }
+  function sumW(k){ return W12.reduce(function(a,x){ var y=+x[k]; return a+(isFinite(y)?y:0); },0); }
   function chgP(a,b){ if(!(b>0) || a==null) return '<span class="muted">—</span>'; var c=(a/b-1)*100; if(Math.abs(c)<0.05) return '0.0%'; return '<span class="'+(c<0?'dn':'up')+'">'+(c<0?'−':'+')+Math.abs(c).toFixed(1)+'%</span>'; }
   function kf(l,u,a,b,c,note){ return '<tr><td>'+esc(l)+'</td><td class="u">'+esc(u)+'</td><td class="num">'+a+'</td><td class="num">'+(b===''?'<span class="muted">—</span>':b)+'</td><td class="num">'+(c===''?'<span class="muted">—</span>':c)+'</td><td class="small muted">'+esc(note)+'</td></tr>'; }
   var v=m.values;
@@ -623,7 +624,7 @@ function reportSheets(o,S,k){
   var sheet1 = sheetCover(o,S,i,PL,k,nP,provTxt,issuedTxt), BM2=benchFor(p);
   var sheet2 = '<section class="rp-sheet"><div class="rp-head"><div><div class="rp-title" style="font-size:22px">'+esc(p.org_name)+' · '+mLabel(k)+'</div>'+rpSteps(['understand'])+'</div><div class="rp-kv"><span>Report</span><b>Figures behind the score</b></div></div>'
     + '<div class="rp-h" style="margin-top:0">Emissions · t CO₂-e</div><div class="rp-tw"><table class="tbl compact"><thead><tr><th></th><th class="r">'+mShort(k)+'</th><th class="r">'+esc(L12)+'</th><th class="r">Baseline months</th><th class="r">Change</th></tr></thead><tbody>'
-    + [['Scope 1 · fuel and gas','scope1_t'],['Scope 2 · grid electricity','scope2_t'],['Scope 3 · landfill and upstream','scope3_t'],['Total operational emissions','total_t']].map(function(x){ return '<tr'+(x[1]==='total_t'?' class="tot"':'')+'><td>'+x[0]+'</td><td class="num">'+fmt(m[x[1]],1)+'</td><td class="num">'+fmt(R12[x[1]],0)+'</td><td class="num">'+fmt(R12.base[x[1]],0)+'</td><td class="num">'+chgP(R12[x[1]],R12.base[x[1]])+'</td></tr>'; }).join('')
+    + [['Scope 1 · fuel and gas','scope1_t'],['Scope 2 · grid electricity','scope2_t'],['Scope 3 · reported categories','scope3_t'],['Total operational emissions','total_t']].map(function(x){ return '<tr'+(x[1]==='total_t'?' class="tot"':'')+'><td>'+x[0]+'</td><td class="num">'+fmt(m[x[1]],1)+'</td><td class="num">'+fmt(R12[x[1]],0)+'</td><td class="num">'+fmt(R12.base[x[1]],0)+'</td><td class="num">'+chgP(R12[x[1]],R12.base[x[1]])+'</td></tr>'; }).join('')
     + '<tr><td>Avoided emissions · reported separately, never deducted</td><td class="num">'+fmt(m.avoided_t,1)+'</td><td class="num">'+fmt(R12.avoided_t,0)+'</td><td></td><td></td></tr></tbody></table></div>'
     + '<div class="rp-h">Key figures</div><div class="rp-tw"><table class="tbl compact rp-kf nowrap-first"><thead><tr><th>Figure</th><th>Unit</th><th class="r">'+mShort(k)+'</th><th class="r">'+esc(L12)+'</th><th class="r">vs baseline</th><th>Note</th></tr></thead><tbody>'
     + kf('Fuel purchased','L',fmt(m.fuel_l),fmt(R12.fuel_l),chgP(R12.fuel_l,R12.base.fuel_l),'This month: diesel '+fmt(v.diesel_l)+' L, petrol '+fmt(v.petrol_l)+' L')
@@ -631,6 +632,10 @@ function reportSheets(o,S,k){
     + (R12.freight_int==null?'':kf('Freight moved','tonne-km',fmt(v.freight_tkm),fmt(R12.freight_tkm),'',(m.freight_int==null?'':fmt(m.freight_int,0)+' g CO₂-e per tonne-km this month · ')+fmt(R12.freight_int,0)+' over the period'))
     + kf('Fleet electrification','%',pct(m.fleet_ev_pct,1),'','',fmt(m.fleet_n)+' vehicles; plug-in hybrids count as half')
     + kf('Flights','trips',fmt(m.flights),fmt(win('flights_dom')+win('flights_int')),'','Recorded; emissions factor pending')
+    + ((win('contractor_diesel_l')+win('contractor_petrol_l'))>0?kf('Contractor fuel','L',fmt(num(v.contractor_diesel_l)+num(v.contractor_petrol_l)),fmt(win('contractor_diesel_l')+win('contractor_petrol_l')),'',fmt(sumW('scope3_contractor'),0)+' t CO₂-e over the period, Scope 3'):'')
+    + ((win('asphalt_t')+win('concrete_m3')+win('paper_reams'))>0?kf('Materials purchased','t CO₂-e',fmt(m.scope3_materials,1),fmt(sumW('scope3_materials'),0),'','Asphalt, concrete and office paper; manufacture only, Scope 3'):'')
+    + (sumW('scope3_commute')>0?kf('Staff commuting','t CO₂-e',fmt(m.scope3_commute,1),fmt(sumW('scope3_commute'),0),'','From the staff travel survey: '+pct(num(v.commute_car_pct),0)+' drive alone, '+fmt(v.commute_km)+' km each way'):'')
+    + ((win('lube_oil_l')+win('grease_l'))>0?kf('Oils and greases','L',fmt(num(v.lube_oil_l)+num(v.grease_l)),fmt(win('lube_oil_l')+win('grease_l')),'','The share that burns in use is Scope 1 (NGER method)'):'')
     + kf('Grid electricity','kWh',fmt(v.grid_kwh),fmt(R12.grid_kwh),chgP(R12.grid_kwh,R12.base.grid_kwh),'')
     + kf('Renewable electricity','%',pct(m.renew_pct,1),pct(R12.renew_pct,1),'','Bought renewable plus solar used on site')
     + kf('Natural gas','GJ',fmt(v.gas_gj,1),fmt(R12.gas_gj,0),'','')
@@ -642,7 +647,7 @@ function reportSheets(o,S,k){
     + '</tbody></table></div>'
     + benchTable(p,tg,BM2,{'Kerbside recycling contamination':R12.contam_pct!=null?pct(R12.contam_pct,1):null})
     + '<div class="rp-h">Data quality and evidence</div><div class="rp-tw"><table class="tbl compact nowrap-first"><tbody><tr><td>Required figures supplied</td><td class="num">'+pct(m.complete_pct)+'</td></tr><tr><td>Figures backed by evidence</td><td class="num">'+pct(m.evidence_pct)+'</td></tr><tr><td>Evidence grades</td><td>'+D.CATEGORIES.filter(function(c){return c.k!=='carbon';}).map(function(c){ var e=(r.evidence||{})[c.k]; return esc(c.short)+' '+(e?(e.grade||'…'):'—'); }).join(' · ')+'</td></tr></tbody></table></div>'
-    + '<div class="rp-foot">Method: emissions use the National Greenhouse Accounts Factors 2024 (DCCEEW), location-based electricity for '+esc(p.state)+'. Scope 3 covers waste to landfill and upstream fuel and electricity only. Flights are recorded but not yet converted. Avoided emissions use NSW DECCW (2010) factors, flagged as dated, and are never netted against emissions. Comparisons with the baseline use the same calendar months of '+esc(S.baseline.fy||p.baseline_fy)+'. Figures are entered by the organisation and verified by a Yarta analyst; where Yarta keys a figure on the organisation\'s behalf, a second analyst verifies it. Yarta is part of Recycle Group: work by a Recycle Group business is disclosed on the roadmap page, and it changes the score only through figures Yarta enters and verifies later, like any other change. Full method: yes.com.au/method. Page 2 of '+nP+'.</div></section>';
+    + '<div class="rp-foot">Method: emissions use the National Greenhouse Accounts Factors 2024 (DCCEEW), location-based electricity for '+esc(p.state)+'. Scope 3 covers waste to landfill, upstream fuel and electricity, and, where reported, contractor fuel, materials purchased (UK DESNZ 2025 factors, as no Australian government factors exist) and staff commuting. Flights are recorded but not yet converted. Avoided emissions use NSW DECCW (2010) factors, flagged as dated, and are never netted against emissions. Comparisons with the baseline use the same calendar months of '+esc(S.baseline.fy||p.baseline_fy)+'. Figures are entered by the organisation and verified by a Yarta analyst; where Yarta keys a figure on the organisation\'s behalf, a second analyst verifies it. Yarta is part of Recycle Group: work by a Recycle Group business is disclosed on the roadmap page, and it changes the score only through figures Yarta enters and verifies later, like any other change. Full method: yes.com.au/method. Page 2 of '+nP+'.</div></section>';
   return sheet1+sheet2+(PL?sheet3(o,S,i,PL,k):'');
 }
 
@@ -898,7 +903,7 @@ function vOrganisation(){
     return '<div class="field"><label for="p-'+f.id+'">'+esc(f.name)+(f.req?' <span class="req">*</span>':'')+'</label>'+input+'<span class="hint">'+esc(f.def)+'</span></div>';
   });
   function pick(fn){ return D.PROFILE.map(function(f,j){ return fn(f)?fields[j]:''; }).join(''); }
-  var SETTINGS=['boundary','scope2_contract','revenue_m','gross_assets_m'];
+  var SETTINGS=['boundary','scope2_contract','revenue_m','gross_assets_m','nger_reporter','nger_fy','nger_s1_t','nger_s2_t'];
   var users=state.users.filter(function(u){ return u.org===o.id; }).map(function(u){ return '<tr><td>'+esc(u.name)+'</td><td>'+esc(u.title)+'</td><td class="mono small">'+esc(u.email)+'</td></tr>'; }).join('');
   var isBiz=p.org_type==='Business';
   var body='<div class="pg-head"><div><p class="kicker">Organisation</p><h1>'+esc(p.org_name)+'</h1><p class="pg-sub">Details used for intensities, the baseline and targets. Changing them recalculates every month.'+(ro?' Yours to keep up to date; the targets agreed with Yarta are the one thing only Yarta changes.':'')+'</p></div>'+('<div class="pg-actions"><button class="btn btn-primary btn-sm" type="button" data-act="save-profile">Save changes</button></div>')+'</div>'
@@ -908,7 +913,7 @@ function vOrganisation(){
     + '<section class="panel rate-p" id="rates" style="margin-top:22px"><h3>What you pay</h3><p class="sec-s" style="margin-top:6px">Your own average prices, from recent bills. Yarta uses them to show what the year cost and what each improvement could save. Leave one blank and no cost is shown for it; nothing is assumed.'+(o.demo?' The demo prices here are fictional.':'')+'</p><div class="rate-g">'+pick(function(f){ return f.id.indexOf('rate_')===0; })+'</div></section>'
     + '<div class="row2" style="margin-top:22px"><div class="panel"><h3>Profile</h3><div class="stack" style="margin-top:16px">'+pick(function(f){ return f.id.indexOf('target_')!==0 && f.id.indexOf('rate_')!==0 && SETTINGS.indexOf(f.id)<0 && (!SECTOR_FIELD[f.id] || isOp() || (p[f.id]!=null && p[f.id]!=='') || SECTOR_FIELD[f.id].indexOf(p.sector)>=0); })+'</div></div>'
       +'<div class="stack"><div class="panel"><h3>Agreed with Yarta</h3><p class="sec-s" style="margin-top:6px">Land, nature and community are scored against annual targets agreed with Yarta at onboarding, from your plans and past years, so a score cannot be raised by lowering a target.'+(ro?' To change one, email <a class="link" href="mailto:contact@yes.com.au">contact@yes.com.au</a> with the reason; it applies from the next report.':' Only the Yarta team can change them.')+'</p>'+agreedList(o,S,m)+'<details class="org-more"><summary>Edit the agreed targets</summary><div class="stack" style="margin-top:16px">'+pick(function(f){ return f.id.indexOf('target_')===0 && OWN_TARGETS.indexOf(f.id)<0; })+'</div></details></div>'
-      +'<div class="panel"><h3>Reporting settings</h3><p class="sec-s" style="margin-top:6px">Shown on every report.'+(isBiz?' Revenue, gross assets and employees set your mandatory climate reporting group.':'')+'</p><div class="stack" style="margin-top:16px">'+pick(function(f){ return SETTINGS.indexOf(f.id)>=0 && (isBiz || f.id==='boundary' || f.id==='scope2_contract'); })+'</div>'+climateGroupNote(o)+'</div></div></div>'
+      +'<div class="panel"><h3>Reporting settings</h3><p class="sec-s" style="margin-top:6px">Shown on every report.'+(isBiz?' Revenue, gross assets and employees set your mandatory climate reporting group.':'')+'</p><div class="stack" style="margin-top:16px">'+pick(function(f){ return SETTINGS.indexOf(f.id)>=0 && (isBiz || f.id==='boundary' || f.id==='scope2_contract' || f.id.indexOf('nger_')===0) && (f.id.indexOf('nger_')!==0 || f.id==='nger_reporter' || p.nger_reporter==='Yes' || isOp()); })+'</div>'+climateGroupNote(o)+ngerNote(o,S)+'</div></div></div>'
     + profileGaps(o,S,m)
     + '<h2 class="sec-t" style="margin-top:28px">Your Yarta analyst</h2><p class="sec-s">'+(operatorOf(o)?esc(operatorOf(o).name)+' · '+esc(operatorOf(o).title)+' · <a class="link" href="mailto:'+esc(operatorOf(o).email)+'">'+esc(operatorOf(o).email)+'</a>. Checks the figures you enter, sends the monthly reminder and answers for the month.':'Not yet assigned.')+'</p><h2 class="sec-t" style="margin-top:28px">People with access</h2>'+peoplePanel(o);
   return shell('organisation', body);
@@ -996,6 +1001,15 @@ function climateGroup(p){
   return {group:0, label:'Below the thresholds', why:'Reporting is voluntary unless a customer, lender or parent company asks for it.'};
 }
 function climateGroupNote(o){ var p=o.profile; if(p.org_type!=='Business') return ''; var g=climateGroup(p); return '<div class="cg-note"><span class="cg-l">Mandatory climate reporting</span><b>'+esc(g.label)+'</b><span class="small muted">'+esc(g.why)+' <a class="link" href="../climate-reporting/">What the groups mean</a></span></div>'; }
+/* NGER reporters: the latest NGER figures beside Yarta's own for the same financial year */
+function ngerNote(o,S){
+  var p=o.profile; if(p.nger_reporter!=='Yes') return '';
+  var s1=num(p.nger_s1_t), s2=num(p.nger_s2_t), fy=String(p.nger_fy||'').replace('-','–');
+  if(!(s1>0) && !(s2>0)) return '<div class="cg-note"><span class="cg-l">NGER</span><b>Figures not on file</b><span class="small muted">Enter the Scope 1 and 2 totals from the latest NGER report and Yarta shows its own figures beside them.</span></div>';
+  var ms=fy?S.months.filter(function(x){ return E.fyOf(x.month)===fy; }):[], y1=0, y2=0; ms.forEach(function(x){ y1+=x.scope1_t||0; y2+=x.scope2_t||0; });
+  var mine=ms.length?'Yarta, same year ('+ms.length+' of 12 months): Scope 1: '+fmt(y1,0)+' t, Scope 2: '+fmt(y2,0)+' t.':(fy?'Yarta has no months for '+esc(fy)+' yet.':'Add the report year to compare.');
+  return '<div class="cg-note"><span class="cg-l">NGER '+esc(fy||'report')+'</span><b>Scope 1: '+fmt(s1,0)+' t · Scope 2: '+fmt(s2,0)+' t</b><span class="small muted">'+mine+' The two will differ: NGER Scope 1 includes emissions from landfills and other facilities you operate, while Yarta counts the waste you send to landfill under Scope 3.'+(p.org_type==='Council'?' Councils report to NGER voluntarily.':'')+'</span></div>';
+}
 /* what Yarta still needs to cover every base for this organisation */
 function profileGaps(o,S,m){
   var p=o.profile, items=[];
@@ -1005,6 +1019,7 @@ function profileGaps(o,S,m){
   if(p.org_type==='Business'){ var g=climateGroup(p); it(g.group!=null,'Mandatory climate reporting group', g.label+': '+g.why); }
   if(multisite(o)){ var missing=o.sites.filter(function(x){ return x.active!==false && x.lat==null; }).length; it(!missing,'Site locations', missing?missing+' site'+(missing===1?'':'s')+' without a location, so they are missing from the map.':'Every site is on the map.'); }
   else if(num(p.facilities)>3) it(false,'Tracking by site', 'Figures are reported for the whole organisation. With '+fmt(p.facilities,0)+' facilities, per-site figures would show which buildings drive the totals; Yarta sets this up from your bills.');
+  if(p.nger_reporter==='Yes') it(num(p.nger_s1_t)>0 && !!p.nger_fy,'NGER figures', num(p.nger_s1_t)>0 && p.nger_fy?'The '+esc(String(p.nger_fy))+' NGER report is on file and shown beside Yarta\'s figures.':'You report to NGER: enter the latest report\'s year and Scope 1 and 2 totals.');
   it(!!(m && m.fleet_n>0),'Fleet register', m&&m.fleet_n>0?fmt(m.fleet_n,0)+' vehicles on file, '+pct(m.fleet_ev_pct,0)+' electric.':'No fleet register on file.');
   it(num(p.floor_area)>0,'Building floor area', num(p.floor_area)>0?'On file, so energy per square metre is reported.':'Not on file, so energy per square metre cannot be reported.');
   var contacts=state.users.filter(function(u){ return u.org===o.id; }).length; it(contacts>0,'People with access', contacts+' person'+(contacts===1?'':'s')+' can sign in.');
@@ -1126,6 +1141,15 @@ function vFactors(){
     + '<div class="panel"><h3>Transport fuels</h3><div class="tbl-wrap" style="margin-top:12px"><table class="tbl compact"><thead><tr><th>Fuel</th><th class="r">GJ per kL</th><th class="r">Scope 1 kg/GJ</th><th class="r">Scope 3 kg/GJ</th></tr></thead><tbody>'+fu+'</tbody></table></div><h3 style="margin-top:22px">Landfill · t CO₂-e per t</h3><p class="small" style="margin-top:8px">Council (mixed municipal) '+F.landfill.Council+' · Business, government and other (commercial and industrial) '+F.landfill.Business+'</p></div></div>'
     + '<div class="row2" style="margin-top:22px"><div class="panel"><h3>Avoided emissions · t CO₂-e per t recycled</h3><p class="small muted" style="margin-top:6px">NSW DECCW (2010). Flagged as dated; reported separately and never deducted.</p><div class="tbl-wrap" style="margin-top:10px"><table class="tbl compact"><tbody>'+av+'</tbody></table></div></div>'
     + '<div class="panel"><h3>Unit weights · tonnes per item</h3><p class="small muted" style="margin-top:6px">Defaults until items are weighed.</p><div class="tbl-wrap" style="margin-top:10px"><table class="tbl compact"><tbody><tr><td>Mattress</td><td class="num">'+F.unit.mattress+'</td></tr><tr><td>Tyre</td><td class="num">'+F.unit.tyre+'</td></tr><tr><td>Whitegood</td><td class="num">'+F.unit.whitegood+'</td></tr></tbody></table></div><h3 style="margin-top:22px">Pending</h3><p class="small" style="margin-top:8px">Flights: trips are recorded; a distance-based factor is not yet adopted, so flights are not in the totals.</p></div></div>';
+  var OL=F.oils, MT=F.materials, CM=F.commute, fd=F.fuel.diesel, fp=F.fuel.petrol;
+  body += '<div class="row2" style="margin-top:22px"><div class="panel"><h3>Contractor fuel, oils and greases</h3><p class="small muted" style="margin-top:6px">Contractor fuel is Scope 3 at the full well-to-wheel factor. Oils and greases: NGER Measurement Determination, 69.9 kg CO₂-e/GJ × the default oxidation factor (oils 0.2, greases 0.05).</p><div class="tbl-wrap" style="margin-top:10px"><table class="tbl compact"><thead><tr><th>Item</th><th class="r">Scope 1 kg/L</th><th class="r">Scope 3 kg/L</th></tr></thead><tbody>'
+    + '<tr><td>Contractor diesel</td><td class="num">—</td><td class="num">'+(fd.gj*(fd.s1+fd.s3)/1000).toFixed(3)+'</td></tr>'
+    + '<tr><td>Contractor petrol</td><td class="num">—</td><td class="num">'+(fp.gj*(fp.s1+fp.s3)/1000).toFixed(3)+'</td></tr>'
+    + '<tr><td>Lubricating oils</td><td class="num">'+(OL.oil.gj*OL.oil.s1/1000).toFixed(3)+'</td><td class="num">'+(OL.oil.gj*OL.oil.s3/1000).toFixed(3)+'</td></tr>'
+    + '<tr><td>Greases</td><td class="num">'+(OL.grease.gj*OL.grease.s1/1000).toFixed(3)+'</td><td class="num">'+(OL.grease.gj*OL.grease.s3/1000).toFixed(3)+'</td></tr></tbody></table></div></div>'
+    + '<div class="panel"><h3>Materials purchased and commuting</h3><p class="small muted" style="margin-top:6px">No Australian government factors exist for materials, so UK DESNZ 2025 values are used (grade C). Replace with supplier EPDs where a customer has them.</p><div class="tbl-wrap" style="margin-top:10px"><table class="tbl compact"><tbody>'
+    + ['asphalt','concrete','paper'].map(function(k){ var x=MT[k]; return '<tr><td>'+k.charAt(0).toUpperCase()+k.slice(1)+'<div class="small muted">'+esc(x.src)+'</div></td><td class="num">'+x.kg+' kg/'+esc(x.per)+'</td></tr>'; }).join('')
+    + '<tr><td>Commuting by car<div class="small muted">'+esc(CM.src)+'; '+CM.weeks+' working weeks a year</div></td><td class="num">'+CM.kgPerKm+' kg/km</td></tr></tbody></table></div></div></div>';
   return shell('factors', body);
 }
 function vActivity(){
@@ -1343,7 +1367,7 @@ function aggregateInto(o,r){
     var vs=[]; o.sites.forEach(function(s){ var sv=r.sites[s.id]&&r.sites[s.id].values; if(sv && sv[f.id]!==undefined && sv[f.id]!=='') vs.push(sv[f.id]); });
     if(!vs.length) return;
     if(f.kind==='select'||f.kind==='text') out[f.id]=vs[0];
-    else if(f.kind==='percent') out[f.id]=r3(vs.reduce(function(a,b){ return a+(+b); },0)/vs.length);
+    else if(f.kind==='percent'||f.agg==='mean') out[f.id]=r3(vs.reduce(function(a,b){ return a+(+b); },0)/vs.length);   // averages: shares, and survey distances and days
     else out[f.id]=r3(vs.reduce(function(a,b){ return a+(+b); },0));
   });
   r.values=out;

@@ -190,13 +190,17 @@ var SRC = [
   {k:'fleet', name:'Fleet fuel', scope:1, cat:'fleet', fn:function(x){ return x.scope1_fleet; }, what:'Diesel, petrol, LPG and biodiesel burned in your vehicles and plant'},
   {k:'gas', name:'Gas', scope:1, cat:'energy', fn:function(x){ return x.scope1_gas; }, what:'Natural gas burned on site'},
   {k:'landfill', name:'Waste to landfill', scope:3, cat:'waste', fn:function(x){ return x.scope3_waste; }, what:'Methane from your general waste breaking down in landfill'},
-  {k:'upstream', name:'Fuel and electricity supply chain', scope:3, cat:'carbon', fn:function(x){ return x.scope3_upstream; }, what:'Extracting, processing and transmitting the fuel and electricity you buy'}
+  {k:'upstream', name:'Fuel and electricity supply chain', scope:3, cat:'carbon', fn:function(x){ return x.scope3_upstream; }, what:'Extracting, processing and transmitting the fuel and electricity you buy'},
+  {k:'oils', name:'Oils and greases', scope:1, cat:'fleet', fn:function(x){ return x.scope1_oils; }, what:'The share of lubricating oils and greases that burns in use'},
+  {k:'contractor', name:'Contractor fuel', scope:3, cat:'fleet', fn:function(x){ return x.scope3_contractor; }, what:'Fuel burned by contractors delivering your services'},
+  {k:'materials', name:'Materials purchased', scope:3, cat:'circular', fn:function(x){ return x.scope3_materials; }, what:'Making the asphalt, concrete and office paper you buy'},
+  {k:'commute', name:'Staff commuting', scope:3, cat:'fleet', fn:function(x){ return x.scope3_commute; }, what:'Staff driving to work, from your latest travel survey'}
 ];
 function sources(S,i){
   var w=win(S,i), tot=sum(w,function(x){ return x.total_t; });
   return SRC.map(function(s){ var v=sum(w,s.fn), b=baseSum(S,w,s.fn); return {s:s, v:v, b:b, share:tot>0?v/tot*100:0, ch:pctChg(v,b)}; }).filter(function(r){ return r.v>0.05; }).sort(function(a,b){ return b.v-a.v; });
 }
-var SRC_C=['#8A5A3C','#E0902F','#B5622A','#C9A227','#6B5646','#2C6E8F','#7D6335'];
+var SRC_C=['#8A5A3C','#E0902F','#B5622A','#C9A227','#6B5646','#2C6E8F','#7D6335','#A3895F','#4F6E58'];
 function sourceList(rows, o){
   o=o||{}; var max=rows.length?rows[0].v:1;
   return '<div class="ov-src'+(o.inB?' no-ch':'')+'">'+rows.map(function(r){
@@ -700,9 +704,9 @@ V.category = function(cat, q, api){
     tiles=tile('Total', fmt(r.total_t,0),'t CO₂-e', vs(sc('total_t'),true))
       + tile('Scope 1', fmt(r.scope1_t,0),'t', vs(sc('scope1_t'),true)+' · fuel and gas burned')
       + tile('Scope 2', fmt(r.scope2_t,0),'t', vs(sc('scope2_t'),true)+' · electricity')
-      + tile('Scope 3', fmt(r.scope3_t,0),'t', vs(sc('scope3_t'),true)+' · landfill and supply chain');
+      + tile('Scope 3', fmt(r.scope3_t,0),'t', vs(sc('scope3_t'),true)+' · landfill, supply chain and more');
     main='<section class="panel ov-emis"><div class="ov-emis-h"><div><h2 class="sec-t">Against the path to your target</h2><p class="sec-s">% change on the same months of '+esc(S.baseline.fy)+'. Your target: −'+fmt(T.target_emissions,0)+'% by 2030.</p></div>'+(st&&!st.inBase?'<span class="ov-pill '+(st.state==='on'?'good':st.state==='behind'?'bad':'')+'">'+(st.state==='on'?'On track':st.state==='close'?'Just behind':'Behind the path')+'</span>':'')+'</div><div class="ov-traj-w">'+trajectory(S,i,T,{w:880,h:280})+'</div><div class="ov-key"><span><i class="ln"></i>Your emissions</span><span><i class="ln dash"></i>Straight-line path to your target</span></div></section>'
-      + chartPanel('Emissions by month, by scope','Tonnes CO₂‑e. Scope 3 covers waste to landfill and the supply chain of your fuel and electricity.', columns(w.map(function(x){ return {label:ml(x), parts:[x.scope1_t, x.scope2_t, x.scope3_t]}; }),{names:['Scope 1','Scope 2','Scope 3'],colors:[C.s1,C.s2,C.s3],unit:'t',label:'Emissions by month',w:880,h:230,labelEvery:1}), [['Scope 1',C.s1],['Scope 2',C.s2],['Scope 3',C.s3]])
+      + chartPanel('Emissions by month, by scope','Tonnes CO₂‑e. Scope 3 covers waste to landfill, the supply chain of your fuel and electricity, and any contractor fuel, materials and commuting you report.', columns(w.map(function(x){ return {label:ml(x), parts:[x.scope1_t, x.scope2_t, x.scope3_t]}; }),{names:['Scope 1','Scope 2','Scope 3'],colors:[C.s1,C.s2,C.s3],unit:'t',label:'Emissions by month',w:880,h:230,labelEvery:1}), [['Scope 1',C.s1],['Scope 2',C.s2],['Scope 3',C.s3]])
       + '<section class="panel ov-srcp"><h2 class="sec-t">By source</h2><p class="sec-s">'+(CUR_INBASE?esc(cap(span(r)))+', your baseline year.':'Rolling 12 months. The arrow is the change on the baseline months.')+'</p>'+sourceList(sources(S,i),{m:month,inB:CUR_INBASE})+'<p class="ov-fine">Per resident: '+(num(o.profile.residents)>0?fmt(r.total_t*1000/num(o.profile.residents),0)+' kg':'—')+' · per employee: '+fmt(r.total_t/Math.max(1,num(o.profile.employees)),1)+' t. Avoided emissions from recycling (separate, never deducted): '+nu(r.avoided_t,'t')+'. Factors: '+esc(E.FACTORS.edition)+'.</p></section>';
   } else if(cat==='water'){ var alt=sum(w,function(x){ var v2=x.raw||{}; return pos(v2.recycled_kl)+pos(v2.rain_kl)+pos(v2.storm_kl)+pos(v2.waste_water_kl); });
     tiles=tile('Drinking water', fmt(r.potable_kl,0),'kL', vs(sc('potable_kl'),true))
