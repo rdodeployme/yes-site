@@ -200,6 +200,14 @@ function sources(S,i){
   var w=win(S,i), tot=sum(w,function(x){ return x.total_t; });
   return SRC.map(function(s){ var v=sum(w,s.fn), b=baseSum(S,w,s.fn); return {s:s, v:v, b:b, share:tot>0?v/tot*100:0, ch:pctChg(v,b)}; }).filter(function(r){ return r.v>0.05; }).sort(function(a,b){ return b.v-a.v; });
 }
+/* the printed report keeps page 1 to one A4 sheet: past five sources, the smallest are grouped into one line */
+function topSources(rows, max){
+  if(rows.length<=max) return rows;
+  var keep=rows.slice(0,max-1), rest=rows.slice(max-1), v=0, b=0, sh=0, sc={};
+  rest.forEach(function(r){ v+=r.v; b+=(r.b||0); sh+=r.share; sc[r.s.scope]=1; });
+  var scopes=Object.keys(sc).sort();
+  return keep.concat([{s:{k:'other', name:rest.length+' other sources', scope:scopes.join(' and '), cat:'carbon', what:rest.map(function(r){ return r.s.name; }).join(', ')}, v:v, b:b, share:sh, ch:pctChg(v,b)}]);
+}
 var SRC_C=['#8A5A3C','#E0902F','#B5622A','#C9A227','#6B5646','#2C6E8F','#7D6335','#A3895F','#4F6E58'];
 function sourceList(rows, o){
   o=o||{}; var max=rows.length?rows[0].v:1;
@@ -333,7 +341,7 @@ V.reportEmissions = function(S, i, api){
   A=api; E=api.E; D=api.D; R=api.R;
   var m=S.months[i], r=m.r12, ep=emisParts(S,i,{traj:{fixed:!phone(),w:640,h:140}, shortKey:true}), inB=inBaseYear(S,i);
   return '<div class="rp-emis"><div class="rp-emis-l">'+ep.head+ep.chart+'</div>'
-    + '<div class="rp-emis-r"><p class="ov-l">Where they come from</p>'+sourceList(sources(S,i),{static:true, inB:inB})
+    + '<div class="rp-emis-r"><p class="ov-l">Where they come from</p>'+sourceList(topSources(sources(S,i),5),{static:true, inB:inB})
     + '<p class="rp-emis-f">'+(inB?'Shares of your baseline year. ':'Change on the same months of '+esc(S.baseline.fy)+'. ')+'Avoided by recycling, never deducted: '+nu(r.avoided_t,'t CO₂-e')+'.</p></div></div>';
 };
 

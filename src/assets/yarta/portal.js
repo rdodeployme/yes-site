@@ -632,10 +632,7 @@ function reportSheets(o,S,k){
     + (R12.freight_int==null?'':kf('Freight moved','tonne-km',fmt(v.freight_tkm),fmt(R12.freight_tkm),'',(m.freight_int==null?'':fmt(m.freight_int,0)+' g CO₂-e per tonne-km this month · ')+fmt(R12.freight_int,0)+' over the period'))
     + kf('Fleet electrification','%',pct(m.fleet_ev_pct,1),'','',fmt(m.fleet_n)+' vehicles; plug-in hybrids count as half')
     + kf('Flights','trips',fmt(m.flights),fmt(win('flights_dom')+win('flights_int')),'','Recorded; emissions factor pending')
-    + ((win('contractor_diesel_l')+win('contractor_petrol_l'))>0?kf('Contractor fuel','L',fmt(num(v.contractor_diesel_l)+num(v.contractor_petrol_l)),fmt(win('contractor_diesel_l')+win('contractor_petrol_l')),'',fmt(sumW('scope3_contractor'),0)+' t CO₂-e over the period, Scope 3'):'')
-    + ((win('asphalt_t')+win('concrete_m3')+win('paper_reams'))>0?kf('Materials purchased','t CO₂-e',fmt(m.scope3_materials,1),fmt(sumW('scope3_materials'),0),'','Asphalt, concrete and office paper; manufacture only, Scope 3'):'')
-    + (sumW('scope3_commute')>0?kf('Staff commuting','t CO₂-e',fmt(m.scope3_commute,1),fmt(sumW('scope3_commute'),0),'','From the staff travel survey: '+pct(num(v.commute_car_pct),0)+' drive alone, '+fmt(v.commute_km)+' km each way'):'')
-    + ((win('lube_oil_l')+win('grease_l'))>0?kf('Oils and greases','L',fmt(num(v.lube_oil_l)+num(v.grease_l)),fmt(win('lube_oil_l')+win('grease_l')),'','The share that burns in use is Scope 1 (NGER method)'):'')
+    + ((sumW('scope3_contractor')+sumW('scope3_materials')+sumW('scope3_commute')+sumW('scope1_oils'))>0.05?kf('Other reported items','t CO₂-e',fmt((m.scope3_contractor||0)+(m.scope3_materials||0)+(m.scope3_commute||0)+(m.scope1_oils||0),1),fmt(sumW('scope3_contractor')+sumW('scope3_materials')+sumW('scope3_commute')+sumW('scope1_oils'),0),'',[['Contractor fuel','scope3_contractor'],['materials','scope3_materials'],['commuting','scope3_commute'],['oils and greases','scope1_oils']].filter(function(x){ return sumW(x[1])>0.05; }).map(function(x,j){ var t=fmt(sumW(x[1]),0)+' t'; return (j?x[0]:x[0].charAt(0).toUpperCase()+x[0].slice(1))+' '+t; }).join(' · ')+' over the period'):'')
     + kf('Grid electricity','kWh',fmt(v.grid_kwh),fmt(R12.grid_kwh),chgP(R12.grid_kwh,R12.base.grid_kwh),'')
     + kf('Renewable electricity','%',pct(m.renew_pct,1),pct(R12.renew_pct,1),'','Bought renewable plus solar used on site')
     + kf('Natural gas','GJ',fmt(v.gas_gj,1),fmt(R12.gas_gj,0),'','')
@@ -643,7 +640,7 @@ function reportSheets(o,S,k){
     + kf('Total waste','t',fmt(v.waste_total_t,1),fmt(R12.waste_total_t,0),chgP(R12.waste_total_t,R12.base.waste_total_t),'')
     + kf('Waste to landfill','t',fmt(v.landfill_t,1),fmt(R12.landfill_t,0),chgP(R12.landfill_t,R12.base.landfill_t),'Diversion '+pct(R12.diversion_pct,1)+' over the period')
     + (m.scores.nature!=null?kf('Trees planted','trees',fmt(v.trees),fmt(R12.trees),'',''):'')
-    + kf('Program participants','people',fmt(v.participants),fmt(R12.participants),'','')
+    + (m.scores.community!=null?kf('Program participants','people',fmt(v.participants),fmt(R12.participants),'',''):'')
     + '</tbody></table></div>'
     + benchTable(p,tg,BM2,{'Kerbside recycling contamination':R12.contam_pct!=null?pct(R12.contam_pct,1):null})
     + '<div class="rp-h">Data quality and evidence</div><div class="rp-tw"><table class="tbl compact nowrap-first"><tbody><tr><td>Required figures supplied</td><td class="num">'+pct(m.complete_pct)+'</td></tr><tr><td>Figures backed by evidence</td><td class="num">'+pct(m.evidence_pct)+'</td></tr><tr><td>Evidence grades</td><td>'+D.CATEGORIES.filter(function(c){return c.k!=='carbon';}).map(function(c){ var e=(r.evidence||{})[c.k]; return esc(c.short)+' '+(e?(e.grade||'…'):'—'); }).join(' · ')+'</td></tr></tbody></table></div>'
