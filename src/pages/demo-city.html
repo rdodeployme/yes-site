@@ -23,141 +23,141 @@
 .page-city{--earth:#1E1712;--earth-2:#2A211A;--cream:#F3EFE9;--or:#CF7A2E;--or-l:#E9A860;--or-t:#FBF0E3;--or-ink:#8A4A14;
   --m-metal:#5F6467;--m-matt:#CF7A2E;--m-timber:#8A5A3C;--m-green:#5E7F3A}
 .page-city .ydemo b{font-weight:500;color:#F3EFE9}
-.cx-steps{margin:0;position:sticky;top:0;z-index:30;background:var(--earth-2);color:var(--cream);border-top:1px solid #3A2E25;border-bottom:1px solid #3A2E25}
-.cx-steps-in{display:flex;gap:8px;align-items:center;padding:10px clamp(16px,3vw,40px);overflow-x:auto;scrollbar-width:thin}
-.cx-step{flex:none;display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;border-radius:999px;border:1px solid #4A3B2F;background:transparent;color:var(--cream);font:500 14px/1.2 var(--font-body,Inter),system-ui,sans-serif;cursor:pointer;white-space:nowrap}
-.cx-step .n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#3A2E25;font:600 13px/1 var(--font-mono,"IBM Plex Mono"),monospace}
-.cx-step:hover{border-color:var(--or-l)}
-.cx-step[aria-current="step"]{background:var(--or-l);border-color:var(--or-l);color:var(--earth)}
-.cx-step[aria-current="step"] .n{background:var(--earth);color:var(--or-l)}
-.cx-step:focus-visible{outline:2px solid var(--or-l);outline-offset:2px}
-.cx-tools{margin-left:auto;flex-wrap:wrap;display:flex;gap:8px;align-items:center;flex:none}
-.cx-tools button{background:transparent;color:var(--cream);border:1px solid #4A3B2F;border-radius:999px;padding:8px 14px;font:500 13px/1 var(--font-body,Inter),sans-serif;cursor:pointer;white-space:nowrap}
-.cx-tools button:hover{border-color:var(--or-l)}
-.cx-tools button[aria-pressed="true"]{border-color:var(--or-l);color:var(--or-l)}
+.dcp-steps{margin:0;position:sticky;top:0;z-index:30;background:var(--earth-2);color:var(--cream);border-top:1px solid #3A2E25;border-bottom:1px solid #3A2E25}
+.dcp-steps-in{display:flex;gap:8px;align-items:center;padding:10px clamp(16px,3vw,40px);overflow-x:auto;scrollbar-width:thin}
+.dcp-step{flex:none;display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;border-radius:999px;border:1px solid #4A3B2F;background:transparent;color:var(--cream);font:500 14px/1.2 var(--font-body,Inter),system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.dcp-step .n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#3A2E25;font:600 13px/1 var(--font-mono,"IBM Plex Mono"),monospace}
+.dcp-step:hover{border-color:var(--or-l)}
+.dcp-step[aria-current="step"]{background:var(--or-l);border-color:var(--or-l);color:var(--earth)}
+.dcp-step[aria-current="step"] .n{background:var(--earth);color:var(--or-l)}
+.dcp-step:focus-visible{outline:2px solid var(--or-l);outline-offset:2px}
+.dcp-tools{margin-left:auto;flex-wrap:wrap;display:flex;gap:8px;align-items:center;flex:none}
+.dcp-tools button{background:transparent;color:var(--cream);border:1px solid #4A3B2F;border-radius:999px;padding:8px 14px;font:500 13px/1 var(--font-body,Inter),sans-serif;cursor:pointer;white-space:nowrap}
+.dcp-tools button:hover{border-color:var(--or-l)}
+.dcp-tools button[aria-pressed="true"]{border-color:var(--or-l);color:var(--or-l)}
 
 
-.cx-band{padding:22px clamp(16px,3vw,40px) 6px;max-width:1440px}
-.cx-band h3.cx-bh{font:700 clamp(18px,1.8vw,21px)/1.25 var(--font-display,Archivo),sans-serif;letter-spacing:-.01em;margin:6px 0 0}
-.cx-band .cx-sub{margin:4px 0 16px;color:#4B4F52;font-size:15px}
-.cx-ill{display:inline-block;font:500 10.5px/1 var(--font-mono,"IBM Plex Mono"),monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--or-ink);background:var(--or-t);border:1px solid #EAD7BF;border-radius:999px;padding:5px 9px;vertical-align:middle;margin-left:8px}
-.cx-tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
-.cx-tile{background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:14px 16px 12px;border-top:4px solid var(--c,#999)}
-.cx-tile .l{font:500 11px/1.3 var(--font-mono,"IBM Plex Mono"),monospace;letter-spacing:.1em;text-transform:uppercase;color:#4B4F52}
-.cx-tile .v{font:800 clamp(26px,2.6vw,34px)/1.05 var(--font-display,Archivo),sans-serif;letter-spacing:-.02em;margin:8px 0 4px;color:#0B0B0B}
-.cx-tile .v small{font:600 14px/1 var(--font-body,Inter),sans-serif;color:#4B4F52;margin-left:3px;letter-spacing:0}
-.cx-tile .d{font-size:13.5px;color:#4B4F52;line-height:1.4}
-.cx-tile.div{--c:#1E1712;background:var(--earth);color:var(--cream);border-color:var(--earth)}
-.cx-tile.div .l,.cx-tile.div .d{color:#D9CFC3}
-.cx-tile.div .v,.cx-tile.div .v small{color:#fff}
-.cx-trend{margin-top:14px;background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:14px 16px 10px}
-.cx-trend-h{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;align-items:baseline}
-.cx-trend-h h3{font:700 16px/1.2 var(--font-display,Archivo),sans-serif;margin:0}
-.cx-mults{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 18px;margin-top:10px}
-.cx-mult h4{margin:0;font:600 13.5px/1.3 var(--font-body,Inter),sans-serif;display:flex;justify-content:space-between;gap:8px}
-.cx-mult h4 span{color:#4B4F52;font-weight:500}
-.cx-trend svg{display:block;width:100%;height:auto;margin-top:6px}
-.cx-trend svg text{font:11px var(--font-body,Inter),sans-serif;fill:#4B4F52}
-.cx-trend svg .gl{stroke:#ECE7E0;stroke-width:1}
-.cx-trend .foot{font-size:12.5px;color:#4B4F52;margin:6px 0 0}
+.dcp-band{padding:22px clamp(16px,3vw,40px) 6px;max-width:1440px}
+.dcp-band h3.dcp-bh{font:700 clamp(18px,1.8vw,21px)/1.25 var(--font-display,Archivo),sans-serif;letter-spacing:-.01em;margin:6px 0 0}
+.dcp-band .dcp-sub{margin:4px 0 16px;color:#4B4F52;font-size:15px}
+.dcp-ill{display:inline-block;font:500 10.5px/1 var(--font-mono,"IBM Plex Mono"),monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--or-ink);background:var(--or-t);border:1px solid #EAD7BF;border-radius:999px;padding:5px 9px;vertical-align:middle;margin-left:8px}
+.dcp-tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.dcp-tile{background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:14px 16px 12px;border-top:4px solid var(--c,#999)}
+.dcp-tile .l{font:500 11px/1.3 var(--font-mono,"IBM Plex Mono"),monospace;letter-spacing:.1em;text-transform:uppercase;color:#4B4F52}
+.dcp-tile .v{font:800 clamp(26px,2.6vw,34px)/1.05 var(--font-display,Archivo),sans-serif;letter-spacing:-.02em;margin:8px 0 4px;color:#0B0B0B}
+.dcp-tile .v small{font:600 14px/1 var(--font-body,Inter),sans-serif;color:#4B4F52;margin-left:3px;letter-spacing:0}
+.dcp-tile .d{font-size:13.5px;color:#4B4F52;line-height:1.4}
+.dcp-tile.div{--c:#1E1712;background:var(--earth);color:var(--cream);border-color:var(--earth)}
+.dcp-tile.div .l,.dcp-tile.div .d{color:#D9CFC3}
+.dcp-tile.div .v,.dcp-tile.div .v small{color:#fff}
+.dcp-trend{margin-top:14px;background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:14px 16px 10px}
+.dcp-trend-h{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;align-items:baseline}
+.dcp-trend-h h3{font:700 16px/1.2 var(--font-display,Archivo),sans-serif;margin:0}
+.dcp-mults{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 18px;margin-top:10px}
+.dcp-mult h4{margin:0;font:600 13.5px/1.3 var(--font-body,Inter),sans-serif;display:flex;justify-content:space-between;gap:8px}
+.dcp-mult h4 span{color:#4B4F52;font-weight:500}
+.dcp-trend svg{display:block;width:100%;height:auto;margin-top:6px}
+.dcp-trend svg text{font:11px var(--font-body,Inter),sans-serif;fill:#4B4F52}
+.dcp-trend svg .gl{stroke:#ECE7E0;stroke-width:1}
+.dcp-trend .foot{font-size:12.5px;color:#4B4F52;margin:6px 0 0}
 
-.cx-trace{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;list-style:none;margin:0;padding:0;counter-reset:h}
-.cx-trace li{background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:14px 16px;counter-increment:h;position:relative}
-.cx-trace li::before{content:counter(h);display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--earth);color:var(--or-l);font:600 12px/1 var(--font-mono,"IBM Plex Mono"),monospace;margin-bottom:8px}
-.cx-trace b{display:block;font:700 15px/1.3 var(--font-display,Archivo),sans-serif;margin-bottom:4px}
-.cx-trace p{margin:0 0 8px;font-size:14px;line-height:1.45;color:#2A2A2A}
-.cx-trace .mono{font-family:var(--font-mono,"IBM Plex Mono"),monospace;font-size:13px}
-.cx-trace a,.cx-trace button{font:600 14px/1.2 var(--font-body,Inter),sans-serif;color:var(--or-ink);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
-.cx-trace li.on{border-color:var(--or);box-shadow:0 0 0 2px var(--or-t)}
+.dcp-trace{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;list-style:none;margin:0;padding:0;counter-reset:h}
+.dcp-trace li{background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:14px 16px;counter-increment:h;position:relative}
+.dcp-trace li::before{content:counter(h);display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--earth);color:var(--or-l);font:600 12px/1 var(--font-mono,"IBM Plex Mono"),monospace;margin-bottom:8px}
+.dcp-trace b{display:block;font:700 15px/1.3 var(--font-display,Archivo),sans-serif;margin-bottom:4px}
+.dcp-trace p{margin:0 0 8px;font-size:14px;line-height:1.45;color:#2A2A2A}
+.dcp-trace .mono{font-family:var(--font-mono,"IBM Plex Mono"),monospace;font-size:13px}
+.dcp-trace a,.dcp-trace button{font:600 14px/1.2 var(--font-body,Inter),sans-serif;color:var(--or-ink);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.dcp-trace li.on{border-color:var(--or);box-shadow:0 0 0 2px var(--or-t)}
 
-.cx-setup{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;padding-bottom:40px}
-.cx-card{background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:18px 20px}
-.cx-card h3{font:700 17px/1.25 var(--font-display,Archivo),sans-serif;margin:0 0 10px}
-.cx-weeks{display:grid;gap:10px}
-.cx-week{border-left:3px solid var(--or);padding:2px 0 2px 12px}
-.cx-week .w{font:500 11px/1.3 var(--font-mono,"IBM Plex Mono"),monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--or-ink)}
-.cx-week ul{margin:4px 0 0;padding-left:1.1em;font-size:14.5px;line-height:1.5}
-.cx-card p{font-size:14.5px;line-height:1.5;margin:0 0 10px}
-.cx-card ul.links{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.cx-card ul.links a{display:block;padding:12px 14px;border:1px solid #E2DDD5;border-radius:10px;text-decoration:none;color:#0B0B0B;font-weight:600;font-size:14.5px}
-.cx-card ul.links a span{display:block;font-weight:400;color:#4B4F52;font-size:13.5px;margin-top:2px}
-.cx-card ul.links a:hover{border-color:var(--or)}
+.dcp-setup{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;padding-bottom:40px}
+.dcp-card{background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:18px 20px}
+.dcp-card h3{font:700 17px/1.25 var(--font-display,Archivo),sans-serif;margin:0 0 10px}
+.dcp-weeks{display:grid;gap:10px}
+.dcp-week{border-left:3px solid var(--or);padding:2px 0 2px 12px}
+.dcp-week .w{font:500 11px/1.3 var(--font-mono,"IBM Plex Mono"),monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--or-ink)}
+.dcp-week ul{margin:4px 0 0;padding-left:1.1em;font-size:14.5px;line-height:1.5}
+.dcp-card p{font-size:14.5px;line-height:1.5;margin:0 0 10px}
+.dcp-card ul.links{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.dcp-card ul.links a{display:block;padding:12px 14px;border:1px solid #E2DDD5;border-radius:10px;text-decoration:none;color:#0B0B0B;font-weight:600;font-size:14.5px}
+.dcp-card ul.links a span{display:block;font-weight:400;color:#4B4F52;font-size:13.5px;margin-top:2px}
+.dcp-card ul.links a:hover{border-color:var(--or)}
 
 /* reset dialog */
-.cx-dlg{border:0;border-radius:14px;padding:22px 24px;max-width:440px;width:calc(100% - 32px);box-shadow:0 20px 60px rgba(0,0,0,.35)}
-.cx-dlg::backdrop{background:rgba(20,15,10,.55)}
-.cx-dlg h2{font:700 20px/1.2 var(--font-display,Archivo),sans-serif;margin:0 0 8px}
-.cx-dlg p{margin:0 0 14px;font-size:15px;line-height:1.5}
-.cx-dlg .row{display:flex;gap:10px;flex-wrap:wrap}
+.dcp-dlg{border:0;border-radius:14px;padding:22px 24px;max-width:440px;width:calc(100% - 32px);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.dcp-dlg::backdrop{background:rgba(20,15,10,.55)}
+.dcp-dlg h2{font:700 20px/1.2 var(--font-display,Archivo),sans-serif;margin:0 0 8px}
+.dcp-dlg p{margin:0 0 14px;font-size:15px;line-height:1.5}
+.dcp-dlg .row{display:flex;gap:10px;flex-wrap:wrap}
 
 /* the illustrative mark follows the figures onto paper */
-.cx-print{display:none}
+.dcp-print{display:none}
 /* start screen, step captions, definitions and finish screen: written to the viewer, so the page works with or without a presenter */
-.cx-cap{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px 36px;align-items:start;margin:0 0 18px;max-width:1440px}
-.cx-cap .k{display:block;font:500 11px/1.3 var(--font-mono,"IBM Plex Mono"),monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--or-ink);margin-bottom:6px}
-.cx-cap h2{font:800 clamp(24px,2.4vw,32px)/1.12 var(--font-display,Archivo),sans-serif;letter-spacing:-.02em;margin:0 0 8px;color:#0B0B0B}
-.cx-cap .lead{font-size:16.5px;line-height:1.55;margin:0;color:#2A211A;max-width:62ch}
-.cx-look{background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:14px 18px}
-.cx-look .k{margin-bottom:8px}
-.cx-look ul{margin:0;padding-left:1.15em;font-size:15px;line-height:1.5}
-.cx-look li{margin:4px 0}
-.cx-look .cx-tourbtn{margin-top:10px}
-.cx-term{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:help;text-decoration:underline dotted #8A4A14;text-decoration-thickness:2px;text-underline-offset:4px}
-.cx-term:hover,.cx-term[aria-expanded="true"]{color:var(--or-ink)}
-.cx-term:focus-visible{outline:2px solid var(--or);outline-offset:2px;border-radius:3px}
-.cx-pop{position:absolute;z-index:60;max-width:320px;background:#1E1712;color:#F3EFE9;border-radius:10px;padding:12px 14px;font:400 14px/1.5 var(--font-body,Inter),sans-serif;box-shadow:0 10px 30px rgba(20,15,10,.3)}
-.cx-pop b{display:block;color:#E9A860;font-weight:600;margin-bottom:3px}
-.cx-pop[hidden]{display:none}
-.cx-btn{display:inline-flex;align-items:center;gap:8px;font:600 15px/1 var(--font-body,Inter),sans-serif;padding:13px 20px;border-radius:999px;border:1.5px solid #1E1712;background:#1E1712;color:#fff;cursor:pointer;text-decoration:none;min-height:44px}
-.cx-btn:hover{background:#3A2E25;border-color:#3A2E25}
-.cx-btn.ghost{background:transparent;color:#1E1712}
-.cx-btn.ghost:hover{background:#fff}
-.cx-btn:focus-visible{outline:2px solid var(--or);outline-offset:2px}
-.cx-hero{max-width:1440px;padding:8px 0 40px}
-.cx-hero h1{font:800 clamp(30px,4vw,52px)/1.05 var(--font-display,Archivo),sans-serif;letter-spacing:-.03em;margin:6px 0 14px;color:#0B0B0B;max-width:20ch}
-.cx-hero .lead{font-size:clamp(17px,1.4vw,19px);line-height:1.55;max-width:64ch;margin:0 0 12px;color:#2A211A}
-.cx-note-ill{display:flex;gap:10px;align-items:flex-start;background:var(--or-t);border:1px solid #EAD7BF;border-radius:10px;padding:10px 14px;font-size:14.5px;line-height:1.45;max-width:70ch;margin:14px 0 22px}
-.cx-note-ill b{color:var(--or-ink)}
-.cx-path{list-style:none;margin:0 0 24px;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;counter-reset:p}
-.cx-path li{counter-increment:p;background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:14px 16px}
-.cx-path li::before{content:counter(p);display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--earth);color:var(--or-l);font:600 13px/1 var(--font-mono,"IBM Plex Mono"),monospace;margin-bottom:10px}
-.cx-path b{display:block;font:700 15.5px/1.3 var(--font-display,Archivo),sans-serif;margin-bottom:4px;color:#0B0B0B}
-.cx-path span{font-size:14px;line-height:1.45;color:#4B4F52}
-.cx-acts{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.cx-acts .t{font-size:14px;color:#4B4F52;margin-left:4px}
-.cx-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0 24px;max-width:1100px}
-.cx-three div{background:#fff;border:1px solid #E2DDD5;border-top:4px solid var(--or);border-radius:12px;padding:14px 16px;font-size:15px;line-height:1.45}
-.cx-three b{display:block;font:700 16px/1.3 var(--font-display,Archivo),sans-serif;margin-bottom:4px}
-.cx-ask{background:var(--earth);color:var(--cream);border-radius:16px;padding:22px 24px;max-width:1100px;margin-bottom:18px}
-.cx-ask h2{font:800 clamp(22px,2.2vw,28px)/1.15 var(--font-display,Archivo),sans-serif;margin:0 0 8px;color:#fff;letter-spacing:-.02em}
-.cx-ask p{margin:0 0 14px;font-size:16px;line-height:1.55;color:#E6DED3;max-width:64ch}
-.cx-ask ol{margin:0 0 16px;padding-left:1.2em;font-size:15px;line-height:1.55;color:#E6DED3}
-.cx-ask .cx-btn{background:var(--or-l);border-color:var(--or-l);color:var(--earth)}
-.cx-ask .cx-btn:hover{background:#fff;border-color:#fff}
-.cx-ask .cx-btn.ghost{background:transparent;color:#fff;border-color:#6B5A4C}
-.cx-gl{display:grid;gap:0;margin:0 0 12px;max-height:60vh;overflow:auto}
-.cx-gl div{padding:10px 0;border-top:1px solid #ECE7E0}
-.cx-gl dt{font-weight:700;font-size:15px}
-.cx-gl dd{margin:3px 0 0;font-size:14.5px;line-height:1.5;color:#2A211A}
-.cx-dlg.wide{max-width:620px}
-.cx-step.cx-edge{padding:8px 14px}
-@media (min-width:761px){ .cx-steps-in{flex-wrap:wrap;overflow-x:visible;row-gap:8px} }
-@media (max-width:1100px){ .cx-path{grid-template-columns:repeat(2,minmax(0,1fr))} }
-@media (max-width:760px){ .cx-cap,.cx-three{grid-template-columns:minmax(0,1fr)} .cx-path{grid-template-columns:minmax(0,1fr)} .cx-step.cx-edge .t{display:inline} }
-@media (max-width:1100px){ .cx-mults{grid-template-columns:repeat(2,minmax(0,1fr))} .cx-tiles{grid-template-columns:repeat(3,minmax(0,1fr))} .cx-trace{grid-template-columns:repeat(2,minmax(0,1fr))} }
+.dcp-cap{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px 36px;align-items:start;margin:0 0 18px;max-width:1440px}
+.dcp-cap .k{display:block;font:500 11px/1.3 var(--font-mono,"IBM Plex Mono"),monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--or-ink);margin-bottom:6px}
+.dcp-cap h2{font:800 clamp(24px,2.4vw,32px)/1.12 var(--font-display,Archivo),sans-serif;letter-spacing:-.02em;margin:0 0 8px;color:#0B0B0B}
+.dcp-cap .lead{font-size:16.5px;line-height:1.55;margin:0;color:#2A211A;max-width:62ch}
+.dcp-look{background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:14px 18px}
+.dcp-look .k{margin-bottom:8px}
+.dcp-look ul{margin:0;padding-left:1.15em;font-size:15px;line-height:1.5}
+.dcp-look li{margin:4px 0}
+.dcp-look .dcp-tourbtn{margin-top:10px}
+.dcp-term{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:help;text-decoration:underline dotted #8A4A14;text-decoration-thickness:2px;text-underline-offset:4px}
+.dcp-term:hover,.dcp-term[aria-expanded="true"]{color:var(--or-ink)}
+.dcp-term:focus-visible{outline:2px solid var(--or);outline-offset:2px;border-radius:3px}
+.dcp-pop{position:absolute;z-index:60;max-width:320px;background:#1E1712;color:#F3EFE9;border-radius:10px;padding:12px 14px;font:400 14px/1.5 var(--font-body,Inter),sans-serif;box-shadow:0 10px 30px rgba(20,15,10,.3)}
+.dcp-pop b{display:block;color:#E9A860;font-weight:600;margin-bottom:3px}
+.dcp-pop[hidden]{display:none}
+.dcp-btn{display:inline-flex;align-items:center;gap:8px;font:600 15px/1 var(--font-body,Inter),sans-serif;padding:13px 20px;border-radius:999px;border:1.5px solid #1E1712;background:#1E1712;color:#fff;cursor:pointer;text-decoration:none;min-height:44px}
+.dcp-btn:hover{background:#3A2E25;border-color:#3A2E25}
+.dcp-btn.ghost{background:transparent;color:#1E1712}
+.dcp-btn.ghost:hover{background:#fff}
+.dcp-btn:focus-visible{outline:2px solid var(--or);outline-offset:2px}
+.dcp-hero{max-width:1440px;padding:8px 0 40px}
+.dcp-hero h1{font:800 clamp(30px,4vw,52px)/1.05 var(--font-display,Archivo),sans-serif;letter-spacing:-.03em;margin:6px 0 14px;color:#0B0B0B;max-width:20ch}
+.dcp-hero .lead{font-size:clamp(17px,1.4vw,19px);line-height:1.55;max-width:64ch;margin:0 0 12px;color:#2A211A}
+.dcp-note-ill{display:flex;gap:10px;align-items:flex-start;background:var(--or-t);border:1px solid #EAD7BF;border-radius:10px;padding:10px 14px;font-size:14.5px;line-height:1.45;max-width:70ch;margin:14px 0 22px}
+.dcp-note-ill b{color:var(--or-ink)}
+.dcp-path{list-style:none;margin:0 0 24px;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;counter-reset:p}
+.dcp-path li{counter-increment:p;background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:14px 16px}
+.dcp-path li::before{content:counter(p);display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--earth);color:var(--or-l);font:600 13px/1 var(--font-mono,"IBM Plex Mono"),monospace;margin-bottom:10px}
+.dcp-path b{display:block;font:700 15.5px/1.3 var(--font-display,Archivo),sans-serif;margin-bottom:4px;color:#0B0B0B}
+.dcp-path span{font-size:14px;line-height:1.45;color:#4B4F52}
+.dcp-acts{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.dcp-acts .t{font-size:14px;color:#4B4F52;margin-left:4px}
+.dcp-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0 24px;max-width:1100px}
+.dcp-three div{background:#fff;border:1px solid #E2DDD5;border-top:4px solid var(--or);border-radius:12px;padding:14px 16px;font-size:15px;line-height:1.45}
+.dcp-three b{display:block;font:700 16px/1.3 var(--font-display,Archivo),sans-serif;margin-bottom:4px}
+.dcp-ask{background:var(--earth);color:var(--cream);border-radius:16px;padding:22px 24px;max-width:1100px;margin-bottom:18px}
+.dcp-ask h2{font:800 clamp(22px,2.2vw,28px)/1.15 var(--font-display,Archivo),sans-serif;margin:0 0 8px;color:#fff;letter-spacing:-.02em}
+.dcp-ask p{margin:0 0 14px;font-size:16px;line-height:1.55;color:#E6DED3;max-width:64ch}
+.dcp-ask ol{margin:0 0 16px;padding-left:1.2em;font-size:15px;line-height:1.55;color:#E6DED3}
+.dcp-ask .dcp-btn{background:var(--or-l);border-color:var(--or-l);color:var(--earth)}
+.dcp-ask .dcp-btn:hover{background:#fff;border-color:#fff}
+.dcp-ask .dcp-btn.ghost{background:transparent;color:#fff;border-color:#6B5A4C}
+.dcp-gl{display:grid;gap:0;margin:0 0 12px;max-height:60vh;overflow:auto}
+.dcp-gl div{padding:10px 0;border-top:1px solid #ECE7E0}
+.dcp-gl dt{font-weight:700;font-size:15px}
+.dcp-gl dd{margin:3px 0 0;font-size:14.5px;line-height:1.5;color:#2A211A}
+.dcp-dlg.wide{max-width:620px}
+.dcp-step.dcp-edge{padding:8px 14px}
+@media (min-width:761px){ .dcp-steps-in{flex-wrap:wrap;overflow-x:visible;row-gap:8px} }
+@media (max-width:1100px){ .dcp-path{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:760px){ .dcp-cap,.dcp-three{grid-template-columns:minmax(0,1fr)} .dcp-path{grid-template-columns:minmax(0,1fr)} .dcp-step.dcp-edge .t{display:inline} }
+@media (max-width:1100px){ .dcp-mults{grid-template-columns:repeat(2,minmax(0,1fr))} .dcp-tiles{grid-template-columns:repeat(3,minmax(0,1fr))} .dcp-trace{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:760px){
-  .cx-setup{grid-template-columns:minmax(0,1fr)}
-  .cx-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .cx-tile.div{grid-column:1/-1}
-  .cx-trace{grid-template-columns:minmax(0,1fr)}
-  .cx-step .t{display:none}
-  .cx-step{padding:6px}
-  .cx-tools button{padding:8px 10px}
+  .dcp-setup{grid-template-columns:minmax(0,1fr)}
+  .dcp-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dcp-tile.div{grid-column:1/-1}
+  .dcp-trace{grid-template-columns:minmax(0,1fr)}
+  .dcp-step .t{display:none}
+  .dcp-step{padding:6px}
+  .dcp-tools button{padding:8px 10px}
 }
 @media print{
-  .cx-steps,.cx-band,.cx-setup{display:none!important}
-  .cx-print{display:block;font:600 9px/1.3 "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A4A14;border:1px solid #CF7A2E;border-radius:4px;padding:4px 8px;margin:0 0 6px}
-  .page-city:has(.rp-sheet) .cx-print{display:none}
+  .dcp-steps,.dcp-band,.dcp-setup{display:none!important}
+  .dcp-print{display:block;font:600 9px/1.3 "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A4A14;border:1px solid #CF7A2E;border-radius:4px;padding:4px 8px;margin:0 0 6px}
+  .page-city:has(.rp-sheet) .dcp-print{display:none}
   .page-city .rp-sheet{position:relative}
   .page-city .rp-sheet::before{content:"Illustrative figures · Demo City Council is fictional · not a real report";display:block;font:600 8px/1.3 "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:#8A4A14;text-align:right;margin:0 0 3px}
 }
@@ -171,22 +171,22 @@
     <button class="btn btn-ghost btn-sm" type="button" data-gloss>What the words mean</button>
   </div>
 </header>
-<nav class="cx-steps no-print" aria-label="Demo path">
-  <div class="cx-steps-in" id="cx-steps"></div>
+<nav class="dcp-steps no-print" aria-label="Demo path">
+  <div class="dcp-steps-in" id="dcp-steps"></div>
 </nav>
-<section class="cx-band no-print" id="cx-band" hidden></section>
-<p class="cx-print">Illustrative figures · Demo City Council is fictional · not a real report</p>
+<section class="dcp-band no-print" id="dcp-band" hidden></section>
+<p class="dcp-print">Illustrative figures · Demo City Council is fictional · not a real report</p>
 <div id="app"></div>
-<div class="cx-pop" id="cx-pop" role="tooltip" hidden></div>
-<dialog class="cx-dlg wide" id="cx-gloss" aria-labelledby="cx-gloss-h">
-  <h2 id="cx-gloss-h">What the words mean</h2>
-  <dl class="cx-gl" id="cx-gl"></dl>
-  <div class="row"><button class="btn btn-ink" type="button" id="cx-gloss-close">Close</button><a class="btn btn-ghost" id="cx-gloss-more" href="/glossary/" target="_blank" rel="noopener" style="color:var(--ink)">Full glossary</a></div>
+<div class="dcp-pop" id="dcp-pop" role="tooltip" hidden></div>
+<dialog class="dcp-dlg wide" id="dcp-gloss" aria-labelledby="dcp-gloss-h">
+  <h2 id="dcp-gloss-h">What the words mean</h2>
+  <dl class="dcp-gl" id="dcp-gl"></dl>
+  <div class="row"><button class="btn btn-ink" type="button" id="dcp-gloss-close">Close</button><a class="btn btn-ghost" id="dcp-gloss-more" href="/glossary/" target="_blank" rel="noopener" style="color:var(--ink)">Full glossary</a></div>
 </dialog>
-<dialog class="cx-dlg" id="cx-reset" aria-labelledby="cx-reset-h">
-  <h2 id="cx-reset-h">Reset Demo City?</h2>
+<dialog class="dcp-dlg" id="dcp-reset" aria-labelledby="dcp-reset-h">
+  <h2 id="dcp-reset-h">Reset Demo City?</h2>
   <p>Demo City goes back to how it started in this browser: its figures, reports and people. Anything added during the call is cleared. The other demo organisations are not touched.</p>
-  <div class="row"><button class="btn btn-ink" type="button" id="cx-reset-go">Reset Demo City</button><button class="btn btn-ghost" type="button" id="cx-reset-no" style="color:var(--ink)">Keep it</button></div>
+  <div class="row"><button class="btn btn-ink" type="button" id="dcp-reset-go">Reset Demo City</button><button class="btn btn-ghost" type="button" id="dcp-reset-no" style="color:var(--ink)">Keep it</button></div>
 </dialog>
 
 <script src="/assets/yarta/dictionary.js"></script>
@@ -207,7 +207,7 @@
 (function(){
   'use strict';
   var P=window.YESPortal, E=window.YESE, X=window.YESDEMO, S=window.YESS, ID='demo-city';
-  var app=document.getElementById('app'), band=document.getElementById('cx-band'), bar=document.getElementById('cx-steps');
+  var app=document.getElementById('app'), band=document.getElementById('dcp-band'), bar=document.getElementById('dcp-steps');
   var BASE=(location.pathname.split('/sales/demo-city')[0]||'');   /* "/yes-site" on GitHub Pages, "" on a custom domain */
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function fmt(n,dp){ return n==null||!isFinite(n)?'—':Number(n).toLocaleString('en-AU',{minimumFractionDigits:dp||0,maximumFractionDigits:dp||0}); }
@@ -246,20 +246,20 @@
   }
   function materialsBand(){
     var M=materials(), T=M.T;
-    var tile=function(c,l,v,u,d){ return '<div class="cx-tile" style="--c:var('+c+')"><div class="l">'+l+'</div><div class="v">'+v+'<small>'+u+'</small></div><div class="d">'+d+'</div></div>'; };
-    return '<h3 class="cx-bh">What Demo City recovered, '+esc(P.mLabel(M.from))+' to '+esc(P.mLabel(M.to))+' <span class="cx-ill">Illustrative</span></h3>'
-      + '<p class="cx-sub">Four streams councils ask about first, from the verified monthly figures below. Demo City Council is fictional; these are sample figures, not results.</p>'
-      + '<div class="cx-tiles">'
+    var tile=function(c,l,v,u,d){ return '<div class="dcp-tile" style="--c:var('+c+')"><div class="l">'+l+'</div><div class="v">'+v+'<small>'+u+'</small></div><div class="d">'+d+'</div></div>'; };
+    return '<h3 class="dcp-bh">What Demo City recovered, '+esc(P.mLabel(M.from))+' to '+esc(P.mLabel(M.to))+' <span class="dcp-ill">Illustrative</span></h3>'
+      + '<p class="dcp-sub">Four streams councils ask about first, from the verified monthly figures below. Demo City Council is fictional; these are sample figures, not results.</p>'
+      + '<div class="dcp-tiles">'
       + tile('--m-metal','Metal',fmt(T.metal),'t','Steel and aluminium sent to metal reprocessors')
       + tile('--m-matt','Mattresses',fmt(T.matN),'','About '+fmt(T.matT)+' t, at 80 kg each (the method default)')
       + tile('--m-timber','Timber',fmt(T.timber),'t','Plain and treated timber recovered')
       + tile('--m-green','Green waste',fmt(T.green),'t','Garden and green waste recovered')
-      + '<div class="cx-tile div"><div class="l">Kept out of landfill</div><div class="v">'+fmt(T.div)+'<small>%</small></div><div class="d">'+fmt(T.kept)+' t of '+fmt(T.total)+' t of all council waste</div></div>'
+      + '<div class="dcp-tile div"><div class="l">Kept out of landfill</div><div class="v">'+fmt(T.div)+'<small>%</small></div><div class="d">'+fmt(T.kept)+' t of '+fmt(T.total)+' t of all council waste</div></div>'
       + '</div>'
-      + '<div class="cx-trend"><div class="cx-trend-h"><h3>12-month trend, tonnes a month</h3><span class="cx-ill">Illustrative</span></div><div class="cx-mults">'
+      + '<div class="dcp-trend"><div class="dcp-trend-h"><h3>12-month trend, tonnes a month</h3><span class="dcp-ill">Illustrative</span></div><div class="dcp-mults">'
       + [['metal','--m-metal','Metal'],['matT','--m-matt','Mattresses (tonnes)'],['timber','--m-timber','Timber'],['green','--m-green','Green waste']].map(function(k){
           var vals=M.months.map(function(x){ return x[k[0]]; }), lo=Math.min.apply(null,vals), hi=Math.max.apply(null,vals);
-          return '<div class="cx-mult"><h4>'+k[2]+'<span>'+fmt(lo)+'–'+fmt(hi)+' t</span></h4>'+multSvg(M,k[0],k[1],k[2])+'</div>'; }).join('')
+          return '<div class="dcp-mult"><h4>'+k[2]+'<span>'+fmt(lo)+'–'+fmt(hi)+' t</span></h4>'+multSvg(M,k[0],k[1],k[2])+'</div>'; }).join('')
       + '</div><p class="foot">Each chart has its own scale, so the smaller streams show their trend too. Hover a bar for its month and figure. The full dashboard below covers all ten categories.</p></div>';
   }
 
@@ -274,8 +274,8 @@
       ['See the factor','The carbon table lists every activity with its quantity, emissions factor, source and evidence grade. It downloads as a spreadsheet.','<button type="button" data-hop="2">Open Data and export</button>'],
       ['Check the report','The report ID is made from every figure: change one and the ID changes. Anyone can check it.','<span class="mono">'+esc(rid)+'</span><br><a href="'+BASE+'/verify/?id='+encodeURIComponent(rid)+'" target="_blank" rel="noopener">Check it on the verify page</a>']
     ];
-    return '<h3 class="cx-bh">Four clicks, left to right <span class="cx-ill">Illustrative</span></h3><p class="cx-sub">Click each card in turn; the page below follows.</p>'
-      + '<ol class="cx-trace">'+items.map(function(it,i){ return '<li'+(i===traceAt?' class="on"':'')+'><b>'+it[0]+'</b><p>'+it[1]+'</p>'+it[2]+'</li>'; }).join('')+'</ol>';
+    return '<h3 class="dcp-bh">Four clicks, left to right <span class="dcp-ill">Illustrative</span></h3><p class="dcp-sub">Click each card in turn; the page below follows.</p>'
+      + '<ol class="dcp-trace">'+items.map(function(it,i){ return '<li'+(i===traceAt?' class="on"':'')+'><b>'+it[0]+'</b><p>'+it[1]+'</p>'+it[2]+'</li>'; }).join('')+'</ol>';
   }
   var HOPS=['#/category/waste?m='+LM, '#/entry/'+ID+'/'+LM+'?c=waste', '#/data'];
 
@@ -283,9 +283,9 @@
   function setupBand(){
     var steps=(S&&S.ONBOARDING)||[], weeks={};
     steps.forEach(function(s){ (weeks[s.week]=weeks[s.week]||[]).push(s); });
-    var wk=Object.keys(weeks).sort(function(a,b){ return a-b; }).map(function(w){ return '<div class="cx-week"><div class="w">Week '+esc(w)+'</div><ul>'+weeks[w].map(function(s){ return '<li>'+esc(s.label||s.name||s.k)+'</li>'; }).join('')+'</ul></div>'; }).join('');
-    return '<div class="cx-setup"><div class="cx-card"><h3>The 30-day setup, step by step</h3>'+(wk||'<p>See the onboarding page.</p>')+'</div>'
-      + '<div class="cx-card"><h3>What the council does, and where to show it</h3>'
+    var wk=Object.keys(weeks).sort(function(a,b){ return a-b; }).map(function(w){ return '<div class="dcp-week"><div class="w">Week '+esc(w)+'</div><ul>'+weeks[w].map(function(s){ return '<li>'+esc(s.label||s.name||s.k)+'</li>'; }).join('')+'</ul></div>'; }).join('');
+    return '<div class="dcp-setup"><div class="dcp-card"><h3>The 30-day setup, step by step</h3>'+(wk||'<p>See the onboarding page.</p>')+'</div>'
+      + '<div class="dcp-card"><h3>What the council does, and where to show it</h3>'
       + '<p>The council sends the records it already holds: contractor and weighbridge reports, utility bills, fuel cards. Yarta builds the baseline year, sets up the logins and checks every month before a report is issued.</p>'
       + '<ul class="links">'
       + '<li><a href="'+BASE+'/onboarding/" target="_blank" rel="noopener">The onboarding plan<span>The public page: what happens in each week</span></a></li>'
@@ -308,7 +308,7 @@
     reportid:['Report ID','A code made from the report\'s own figures. Change one figure and the code changes, so anyone can check a report is genuine and unchanged on the Yarta verify page.'],
     roadmap:['Roadmap','The suggestions on the report, ranked by what would lift the score most, each with an estimated effect.']
   };
-  function term(k, txt){ return '<button type="button" class="cx-term" data-term="'+k+'" aria-expanded="false">'+esc(txt||GLOSS[k][0])+'</button>'; }
+  function term(k, txt){ return '<button type="button" class="dcp-term" data-term="'+k+'" aria-expanded="false">'+esc(txt||GLOSS[k][0])+'</button>'; }
 
   /* ---------------------------------------------------------- the path: a start screen, five steps, a finish screen */
   var STEPS=[
@@ -330,42 +330,42 @@
   ];
   var cur=-1;
   function caption(s,i){
-    return '<div class="cx-cap"><div><span class="k">Step '+(i+1)+' of 5</span><h2>'+esc(s.t)+'</h2><p class="lead">'+s.lead+'</p></div>'
-      + '<div class="cx-look"><span class="k">What to look at</span><ul>'+s.look.map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ul>'
-      + (s.tour?'<button type="button" class="cx-btn ghost cx-tourbtn" data-tour-open>Take the 1-minute dashboard tour</button>':'')+'</div></div>';
+    return '<div class="dcp-cap"><div><span class="k">Step '+(i+1)+' of 5</span><h2>'+esc(s.t)+'</h2><p class="lead">'+s.lead+'</p></div>'
+      + '<div class="dcp-look"><span class="k">What to look at</span><ul>'+s.look.map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ul>'
+      + (s.tour?'<button type="button" class="dcp-btn ghost dcp-tourbtn" data-tour-open>Take the 1-minute dashboard tour</button>':'')+'</div></div>';
   }
   function startScreen(){
-    return '<div class="cx-hero"><span class="k" style="font:500 11px/1.3 var(--font-mono,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--or-ink)">Yarta · 15-minute demo</span>'
+    return '<div class="dcp-hero"><span class="k" style="font:500 11px/1.3 var(--font-mono,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--or-ink)">Yarta · 15-minute demo</span>'
       + '<h1>See how Yarta works, using a sample council.</h1>'
       + '<p class="lead">Yarta turns the records a council already keeps (waste and recycling reports, energy and water bills, fuel cards) into one verified monthly report, a live dashboard and a roadmap for improving.</p>'
       + '<p class="lead">The council\'s team enters its figures once a month. A Yarta analyst checks every one against its document, then the report is issued and the dashboard moves.</p>'
-      + '<p class="cx-note-ill"><span><b>Demo City Council is fictional.</b> Every figure here is illustrative, so you can see how Yarta works without real data. Nothing you click is sent anywhere.</span></p>'
-      + '<ol class="cx-path">'
+      + '<p class="dcp-note-ill"><span><b>Demo City Council is fictional.</b> Every figure here is illustrative, so you can see how Yarta works without real data. Nothing you click is sent anywhere.</span></p>'
+      + '<ol class="dcp-path">'
       + '<li><b>The council\'s report</b><span>What arrives each month, and what is on it</span></li>'
       + '<li><b>Live dashboard</b><span>Where the council stands today, and the 12-month trend</span></li>'
       + '<li><b>Trace a figure</b><span>From a number back to the document behind it</span></li>'
       + '<li><b>What councillors see</b><span>The one-page summary for the executive or council</span></li>'
       + '<li><b>Setting up a real council</b><span>From signing to the first report in about 30 days</span></li>'
-      + '</ol><div class="cx-acts"><button type="button" class="cx-btn" data-go="0">Start →</button><button type="button" class="cx-btn ghost" data-gloss>What the words mean</button><span class="t">About 3 minutes a step. Use the bar above to jump around.</span></div></div>';
+      + '</ol><div class="dcp-acts"><button type="button" class="dcp-btn" data-go="0">Start →</button><button type="button" class="dcp-btn ghost" data-gloss>What the words mean</button><span class="t">About 3 minutes a step. Use the bar above to jump around.</span></div></div>';
   }
   function finishScreen(){
-    return '<div class="cx-hero"><span class="k" style="font:500 11px/1.3 var(--font-mono,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--or-ink)">Next steps</span>'
+    return '<div class="dcp-hero"><span class="k" style="font:500 11px/1.3 var(--font-mono,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--or-ink)">Next steps</span>'
       + '<h1>That\'s Yarta.</h1>'
-      + '<div class="cx-three"><div><b>One verified report a month</b>From records the council already keeps, checked by a Yarta analyst before it is issued.</div>'
+      + '<div class="dcp-three"><div><b>One verified report a month</b>From records the council already keeps, checked by a Yarta analyst before it is issued.</div>'
       + '<div><b>A live dashboard</b>Every figure traces back to its document, and every report can be checked.</div>'
       + '<div><b>A roadmap</b>Ranked by what would lift the score most, with the help to get there.</div></div>'
-      + '<div class="cx-ask"><h2>See it with your own council\'s figures.</h2><p>The quickest way to judge Yarta is your own first report. Here\'s how it starts:</p>'
+      + '<div class="dcp-ask"><h2>See it with your own council\'s figures.</h2><p>The quickest way to judge Yarta is your own first report. Here\'s how it starts:</p>'
       + '<ol><li>Send one month of the records you already keep.</li><li>Yarta enters and checks them against their documents.</li><li>You see your council\'s own report and dashboard.</li></ol>'
-      + '<div class="cx-acts"><a class="cx-btn" href="'+BASE+'/contact/" target="_blank" rel="noopener">Talk to Yarta</a><a class="cx-btn ghost" href="'+BASE+'/method/" target="_blank" rel="noopener">How the score is worked out</a></div></div>'
-      + '<div class="cx-acts"><button type="button" class="cx-btn ghost" data-go="-1">Start again</button><button type="button" class="cx-btn ghost" data-gloss>What the words mean</button></div></div>';
+      + '<div class="dcp-acts"><a class="dcp-btn" href="'+BASE+'/contact/" target="_blank" rel="noopener">Talk to Yarta</a><a class="dcp-btn ghost" href="'+BASE+'/method/" target="_blank" rel="noopener">How the score is worked out</a></div></div>'
+      + '<div class="dcp-acts"><button type="button" class="dcp-btn ghost" data-go="-1">Start again</button><button type="button" class="dcp-btn ghost" data-gloss>What the words mean</button></div></div>';
   }
   function stepButtons(){
-    var edge=function(i,label){ return '<button type="button" class="cx-step cx-edge" data-step="'+i+'"'+(i===cur?' aria-current="step"':'')+'><span class="t">'+label+'</span></button>'; };
+    var edge=function(i,label){ return '<button type="button" class="dcp-step dcp-edge" data-step="'+i+'"'+(i===cur?' aria-current="step"':'')+'><span class="t">'+label+'</span></button>'; };
     var nextLabel = cur<4 ? (cur<0?'Start':'Next: '+STEPS[cur+1].t) : (cur===4?'Next steps':'');
     bar.innerHTML=edge(-1,'Start here')
-      + STEPS.map(function(s,i){ return '<button type="button" class="cx-step" data-step="'+i+'"'+(i===cur?' aria-current="step"':'')+'><span class="n">'+(i+1)+'</span><span class="t">'+esc(s.t)+'</span></button>'; }).join('')
+      + STEPS.map(function(s,i){ return '<button type="button" class="dcp-step" data-step="'+i+'"'+(i===cur?' aria-current="step"':'')+'><span class="n">'+(i+1)+'</span><span class="t">'+esc(s.t)+'</span></button>'; }).join('')
       + edge(5,'Next steps')
-      + '<div class="cx-tools">'+(nextLabel?'<button type="button" id="cx-next">'+esc(nextLabel)+' →</button>':'')+'<button type="button" id="cx-reset-ask">Reset Demo City</button></div>';
+      + '<div class="dcp-tools">'+(nextLabel?'<button type="button" id="dcp-next">'+esc(nextLabel)+' →</button>':'')+'<button type="button" id="dcp-reset-ask">Reset Demo City</button></div>';
   }
   function show(i, keepHash){
     hidePop();
@@ -384,7 +384,7 @@
   }
 
   /* definitions: tap or hover a dotted word; "What the words mean" lists them all */
-  var pop=document.getElementById('cx-pop'), popFor=null;
+  var pop=document.getElementById('dcp-pop'), popFor=null;
   function hidePop(){ if(!pop) return; pop.hidden=true; if(popFor) popFor.setAttribute('aria-expanded','false'); popFor=null; }
   function showPop(btn){
     var g=GLOSS[btn.getAttribute('data-term')]; if(!g) return;
@@ -395,16 +395,16 @@
     var left=Math.min(Math.max(12, r.left+window.scrollX), window.scrollX+window.innerWidth-w-12);
     pop.style.left=left+'px'; pop.style.top=(r.bottom+window.scrollY+8)+'px';
   }
-  document.addEventListener('click', function(e){ var t=e.target.closest('.cx-term'); if(t){ e.preventDefault(); showPop(t); return; } if(!e.target.closest('#cx-pop')) hidePop(); });
-  document.addEventListener('mouseover', function(e){ var t=e.target.closest && e.target.closest('.cx-term'); if(t && matchMedia('(hover:hover)').matches && popFor!==t) showPop(t); });
+  document.addEventListener('click', function(e){ var t=e.target.closest('.dcp-term'); if(t){ e.preventDefault(); showPop(t); return; } if(!e.target.closest('#dcp-pop')) hidePop(); });
+  document.addEventListener('mouseover', function(e){ var t=e.target.closest && e.target.closest('.dcp-term'); if(t && matchMedia('(hover:hover)').matches && popFor!==t) showPop(t); });
   document.addEventListener('keydown', function(e){ if(e.key==='Escape') hidePop(); });
   window.addEventListener('resize', hidePop);
-  var gl=document.getElementById('cx-gl');
+  var gl=document.getElementById('dcp-gl');
   gl.innerHTML=Object.keys(GLOSS).map(function(k){ return '<div><dt>'+esc(GLOSS[k][0])+'</dt><dd>'+esc(GLOSS[k][1])+'</dd></div>'; }).join('');
-  document.getElementById('cx-gloss-more').setAttribute('href', BASE+'/glossary/');
-  function openGloss(){ hidePop(); var d=document.getElementById('cx-gloss'); if(d.showModal) d.showModal(); }
+  document.getElementById('dcp-gloss-more').setAttribute('href', BASE+'/glossary/');
+  function openGloss(){ hidePop(); var d=document.getElementById('dcp-gloss'); if(d.showModal) d.showModal(); }
   document.addEventListener('click', function(e){ if(e.target.closest('[data-gloss]')){ e.preventDefault(); openGloss(); } });
-  document.getElementById('cx-gloss-close').addEventListener('click', function(){ document.getElementById('cx-gloss').close(); });
+  document.getElementById('dcp-gloss-close').addEventListener('click', function(){ document.getElementById('dcp-gloss').close(); });
 
   /* stay signed in as Demo City: the step pages never show another organisation */
   function ensureCity(){ if(P.currentOrgId()!==ID || (P.state.session && P.state.users.some(function(u){ return u.id===P.state.session.user && u.role==='operator'; }))) P.signInAs(ID, false); }
@@ -412,17 +412,17 @@
 
   bar.addEventListener('click', function(e){
     var b=e.target.closest('[data-step]'); if(b){ show(+b.getAttribute('data-step')); return; }
-    if(e.target.closest('#cx-next')){ show(cur+1); return; }
-    if(e.target.closest('#cx-reset-ask')){ var d=document.getElementById('cx-reset'); if(d.showModal) d.showModal(); else if(window.confirm('Reset Demo City? The other demo organisations are not touched.')) doReset(); }
+    if(e.target.closest('#dcp-next')){ show(cur+1); return; }
+    if(e.target.closest('#dcp-reset-ask')){ var d=document.getElementById('dcp-reset'); if(d.showModal) d.showModal(); else if(window.confirm('Reset Demo City? The other demo organisations are not touched.')) doReset(); }
   });
   band.addEventListener('click', function(e){ var g=e.target.closest('[data-go]'); if(g){ show(+g.getAttribute('data-go')); return; } var h=e.target.closest('[data-hop]'); if(!h) return; traceAt=+h.getAttribute('data-hop'); band.innerHTML=traceBand(); P.signInAs(ID, HOPS[traceAt]); var a=document.getElementById('app'); if(a) a.scrollIntoView({behavior:'smooth', block:'start'}); });
   function doReset(){ var ok=X.resetCity && X.resetCity(); store('yarta-city-step','-1'); location.hash=''; setTimeout(function(){ location.reload(); }, ok===false?0:150); }
-  document.getElementById('cx-reset-go').addEventListener('click', doReset);
-  document.getElementById('cx-reset-no').addEventListener('click', function(){ document.getElementById('cx-reset').close(); });
+  document.getElementById('dcp-reset-go').addEventListener('click', doReset);
+  document.getElementById('dcp-reset-no').addEventListener('click', function(){ document.getElementById('dcp-reset').close(); });
   /* signing out on this page signs straight back in as Demo City */
   document.addEventListener('click', function(e){ if(e.target.closest('[data-act="signout"]')) setTimeout(function(){ show(cur); }, 0); });
   /* the portal's own "Reset demo data" would reset every demo organisation: keep this page to Demo City */
-  document.addEventListener('click', function(e){ var r=e.target.closest('[data-act="reset-ask"],[data-act="reset-demo"]'); if(r){ e.preventDefault(); e.stopImmediatePropagation(); var d=document.getElementById('cx-reset'); if(d.showModal) d.showModal(); } }, true);
+  document.addEventListener('click', function(e){ var r=e.target.closest('[data-act="reset-ask"],[data-act="reset-demo"]'); if(r){ e.preventDefault(); e.stopImmediatePropagation(); var d=document.getElementById('dcp-reset'); if(d.showModal) d.showModal(); } }, true);
 
   /* opens on the start screen; ?step=1..5 opens a step; a reload keeps the step you were on */
   var q=/[?&]step=([0-6])/.exec(location.search), saved=parseInt(store('yarta-city-step'),10);
