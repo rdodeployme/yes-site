@@ -86,6 +86,44 @@
   };
   X.TRIALS = TRIALS.map(function(t){ return {key:t.key, id:t.id, name:t.name}; });
 
+  /* "Send us one month of records": the first item under What needs you on a trial council's dashboard.
+     Added to the page after the portal draws it, so portal.js is untouched. Records go by email (a trial in
+     prototype mode keeps everything in the visitor's browser, so nothing entered here reaches Yarta). */
+  var RECORDS_TO = 'ryan@junk.com.au';   /* the inbox trial records go to */
+  var RECORDS = [
+    'Electricity bills for every meter and site',
+    'Gas bills',
+    'Fuel-card statements (litres by fuel type)',
+    'Water bills',
+    'Waste contractor reports: tonnes by stream, and landfill',
+    'Kerbside tonnes by service: garbage, recycling, organics, glass',
+    'Transfer station and hard-waste tonnes by stream'];
+  function escH(x){ return String(x).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function mailto(t){
+    var body = 'Hi Yarta team,\n\nAttached are one month of '+t.name+' records for our Yarta trial.\n\nMonth: \n\n'
+      + RECORDS.map(function(r){ return '- '+r; }).join('\n')
+      + '\n\nAnything we don\'t hold is noted below (Yarta marks it not reported, never guessed):\n\n\nName:\nRole:\nPhone:\n';
+    return 'mailto:'+RECORDS_TO+'?subject='+encodeURIComponent('Yarta trial: one month of records, '+t.name)+'&body='+encodeURIComponent(body);
+  }
+  function addRecordsAsk(){
+    var P = window.YESPortal; if(!P || !P.currentOrgId) return;
+    var t = TRIALS.filter(function(x){ return x.id===P.currentOrgId(); })[0]; if(!t) return;
+    var box = document.querySelector('#app .needs'); if(!box || box.querySelector('.tc-ask')) return;
+    var ul = box.querySelector('ul.ny-l:not(.ny-i)');
+    if(!ul){ ul=document.createElement('ul'); ul.className='ny-l'; var h=box.querySelector('.ny-h'); box.insertBefore(ul, h?h.nextSibling:box.firstChild); var h2=box.querySelector('.ny-h h2'); if(h2) h2.textContent='What needs you'; }
+    var li = document.createElement('li'); li.className='ny-r do tc-ask';
+    li.innerHTML = '<span class="ny-b"><span class="ny-t">Send us one month of your own records</span>'
+      + '<span class="ny-x">The figures in this trial are samples. Email us one recent month of '+escH(t.name)+'\'s records and Yarta will enter and check them, then show you your own report. Usually: electricity, gas and water bills; fuel-card statements; and your waste contractor\'s tonnes by stream, including kerbside, transfer station and hard waste. Send what you have. We\'ll tell you what\'s missing.</span></span>'
+      + '<span class="ny-a"><a class="btn btn-primary btn-sm" href="'+escH(mailto(t))+'">Email your records</a> <a class="btn btn-ghost btn-sm" href="../checklist/?sector=council" target="_blank" rel="noopener" style="color:var(--ink)">Full list</a></span>';
+    ul.insertBefore(li, ul.firstChild);
+    var n = box.querySelector('.ny-n'); if(n) n.textContent = String(ul.querySelectorAll('.ny-r').length);
+    else { var hh=box.querySelector('.ny-h h2'); if(hh){ var s=document.createElement('span'); s.className='ny-n'; s.textContent=String(ul.querySelectorAll('.ny-r').length); hh.parentNode.insertBefore(s, hh.nextSibling); } }
+  }
+  if(!live() && /\/portal\/?$/.test(location.pathname)){
+    var startAsk = function(){ var app=document.getElementById('app'); if(!app || !window.MutationObserver) return; addRecordsAsk(); new MutationObserver(addRecordsAsk).observe(app, {childList:true, subtree:true}); };
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', startAsk); else setTimeout(startAsk, 0);
+  }
+
   /* /portal/?trial=hume — sign the visitor straight in to that council's trial */
   try{
     var want = new URLSearchParams(location.search).get('trial');
